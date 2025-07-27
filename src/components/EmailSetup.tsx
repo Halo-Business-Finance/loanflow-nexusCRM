@@ -5,22 +5,13 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Mail, Check, X, Loader2 } from "lucide-react"
 import { useToast } from "@/hooks/use-toast"
 import { supabase } from "@/integrations/supabase/client"
+import type { Database } from "@/integrations/supabase/types"
 
 interface EmailSetupProps {
   trigger: React.ReactNode
 }
 
-interface EmailAccount {
-  id: string
-  user_id: string
-  email_address: string
-  display_name: string
-  access_token: string
-  refresh_token: string
-  is_active: boolean
-  created_at: string
-  updated_at: string
-}
+type EmailAccount = Database['public']['Tables']['email_accounts']['Row']
 
 export function EmailSetup({ trigger }: EmailSetupProps) {
   const [isOpen, setIsOpen] = useState(false)

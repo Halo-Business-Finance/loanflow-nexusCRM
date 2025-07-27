@@ -3,6 +3,7 @@ import { NavLink, useLocation } from "react-router-dom"
 import { Button } from "@/components/ui/button"
 import { RingCentralSetup } from "@/components/RingCentralSetup"
 import { PhoneDialer } from "@/components/PhoneDialer"
+import { EmailSetup } from "@/components/EmailSetup"
 
 import {
   Sidebar,
@@ -110,10 +111,14 @@ export function AppSidebar() {
                   </Button>
                 }
               />
-              <Button variant="outline" size="sm" className="w-full justify-start gap-2">
-                <Mail className="w-4 h-4" />
-                {state !== "collapsed" && <span>Email Account</span>}
-              </Button>
+              <EmailSetup 
+                trigger={
+                  <Button variant="outline" size="sm" className="w-full justify-start gap-2">
+                    <Mail className="w-4 h-4" />
+                    {state !== "collapsed" && <span>Email Account</span>}
+                  </Button>
+                }
+              />
             </div>
           </SidebarGroupContent>
         </SidebarGroup>

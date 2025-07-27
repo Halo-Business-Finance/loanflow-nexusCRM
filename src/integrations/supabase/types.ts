@@ -14,6 +14,45 @@ export type Database = {
   }
   public: {
     Tables: {
+      email_accounts: {
+        Row: {
+          access_token: string
+          created_at: string
+          display_name: string
+          email_address: string
+          expires_at: string
+          id: string
+          is_active: boolean
+          refresh_token: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          access_token: string
+          created_at?: string
+          display_name: string
+          email_address: string
+          expires_at: string
+          id?: string
+          is_active?: boolean
+          refresh_token: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          access_token?: string
+          created_at?: string
+          display_name?: string
+          email_address?: string
+          expires_at?: string
+          id?: string
+          is_active?: boolean
+          refresh_token?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           created_at: string
