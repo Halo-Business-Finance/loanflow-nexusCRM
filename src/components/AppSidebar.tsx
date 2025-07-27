@@ -1,5 +1,6 @@
-import { BarChart3, Users, UserCheck, FileText, Settings, Home, Target, Calendar } from "lucide-react"
+import { BarChart3, Users, UserCheck, FileText, Settings, Home, Target, Calendar, Phone, Mail } from "lucide-react"
 import { NavLink, useLocation } from "react-router-dom"
+import { Button } from "@/components/ui/button"
 
 import {
   Sidebar,
@@ -83,6 +84,23 @@ export function AppSidebar() {
                 </SidebarMenuItem>
               ))}
             </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
+
+        {/* Quick Actions */}
+        <SidebarGroup>
+          <SidebarGroupLabel>Quick Actions</SidebarGroupLabel>
+          <SidebarGroupContent>
+            <div className="space-y-2 px-2">
+              <Button variant="outline" size="sm" className="w-full justify-start gap-2">
+                <Phone className="w-4 h-4" />
+                {state !== "collapsed" && <span>Call Client</span>}
+              </Button>
+              <Button variant="outline" size="sm" className="w-full justify-start gap-2">
+                <Mail className="w-4 h-4" />
+                {state !== "collapsed" && <span>Send Email</span>}
+              </Button>
+            </div>
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>
