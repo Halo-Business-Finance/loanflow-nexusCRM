@@ -94,7 +94,7 @@ export function AppSidebar() {
             <div className="space-y-2 px-2">
               <Button variant="outline" size="sm" className="w-full justify-start gap-2">
                 <Phone className="w-4 h-4" />
-                {state !== "collapsed" && <span>Call Client</span>}
+                {state !== "collapsed" && <span>Phone System</span>}
               </Button>
               <Button variant="outline" size="sm" className="w-full justify-start gap-2">
                 <Mail className="w-4 h-4" />
