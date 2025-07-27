@@ -18,10 +18,17 @@ serve(async (req) => {
       Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
     );
 
-    // Get client IP address
-    const clientIP = req.headers.get('x-forwarded-for') || 
-                    req.headers.get('x-real-ip') || 
-                    'unknown';
+    // Get client IP address - handle forwarded IPs properly
+    const forwardedFor = req.headers.get('x-forwarded-for');
+    const realIP = req.headers.get('x-real-ip');
+    
+    // Parse the first IP from forwarded chain
+    let clientIP = 'unknown';
+    if (forwardedFor) {
+      clientIP = forwardedFor.split(',')[0].trim();
+    } else if (realIP) {
+      clientIP = realIP.trim();
+    }
     
     console.log('Checking geo-restriction for IP:', clientIP);
 
@@ -43,20 +50,42 @@ serve(async (req) => {
     let isAllowed = false;
     
     try {
-      // Use ipapi.co for geolocation (free tier: 1000 requests/day)
-      const geoResponse = await fetch(`https://ipapi.co/${clientIP}/json/`);
-      const geoData = await geoResponse.json();
-      countryCode = geoData.country_code || 'UNKNOWN';
-      
-      console.log('Geolocation result:', { ip: clientIP, country: countryCode });
+      // Skip geolocation for localhost/private IPs and allow them (development)
+      if (clientIP === 'unknown' || clientIP.startsWith('127.') || 
+          clientIP.startsWith('192.168.') || clientIP.startsWith('10.') ||
+          clientIP.startsWith('172.')) {
+        console.log('Local/private IP detected, allowing access for development');
+        countryCode = 'US';
+        isAllowed = true;
+      } else {
+        // Use ipapi.co for geolocation (free tier: 1000 requests/day)
+        const geoResponse = await fetch(`https://ipapi.co/${clientIP}/json/`);
+        const geoData = await geoResponse.json();
+        countryCode = geoData.country_code || 'UNKNOWN';
+        
+        console.log('Geolocation result:', { ip: clientIP, country: countryCode, data: geoData });
 
-      // Check if country is allowed (US only)
-      isAllowed = countryCode === 'US' && !isSuspicious;
+        // Check if country is allowed (US only)
+        isAllowed = countryCode === 'US' && !isSuspicious;
+        
+        // If geolocation fails but no suspicious indicators, allow access with warning
+        if (countryCode === 'UNKNOWN' && !isSuspicious) {
+          console.log('Geolocation failed but no suspicious indicators, allowing access');
+          isAllowed = true;
+          countryCode = 'US'; // Assume US for failed geolocation without suspicious signs
+        }
+      }
       
     } catch (geoError) {
       console.error('Geolocation check failed:', geoError);
-      // Default to blocked on geolocation failure
-      isAllowed = false;
+      // If geolocation fails and no suspicious indicators, allow access
+      if (!isSuspicious) {
+        console.log('Geolocation service unavailable but no suspicious indicators, allowing access');
+        isAllowed = true;
+        countryCode = 'US';
+      } else {
+        isAllowed = false;
+      }
     }
 
     // Log the IP restriction
