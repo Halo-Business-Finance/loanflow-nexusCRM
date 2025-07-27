@@ -204,9 +204,9 @@ export default function Dashboard() {
             <div className="space-y-4">
               {todayActivities.map((activity, index) => (
                 <div key={index} className="flex items-start gap-3 p-3 rounded-lg bg-muted/50">
-                  {activity.type === 'call' && <Phone className="w-4 h-4 text-primary mt-0.5" />}
-                  {activity.type === 'email' && <Mail className="w-4 h-4 text-primary mt-0.5" />}
-                  {activity.type === 'meeting' && <Calendar className="w-4 h-4 text-primary mt-0.5" />}
+                  {activity.type === 'call' && <Phone className="w-4 h-4 text-white mt-0.5" />}
+                  {activity.type === 'email' && <Mail className="w-4 h-4 text-white mt-0.5" />}
+                  {activity.type === 'meeting' && <Calendar className="w-4 h-4 text-white mt-0.5" />}
                   <div className="flex-1 space-y-1">
                     <p className="text-sm font-medium text-foreground">{activity.title}</p>
                     <div className="flex items-center gap-2">
