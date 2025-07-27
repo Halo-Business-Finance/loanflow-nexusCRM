@@ -156,7 +156,7 @@ export default function Dashboard() {
               <CardTitle className="text-sm font-medium text-muted-foreground">
                 {metric.title}
               </CardTitle>
-              <metric.icon className="h-4 w-4 text-primary" />
+              <metric.icon className="h-4 w-4 text-white" />
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold text-foreground">{metric.value}</div>
