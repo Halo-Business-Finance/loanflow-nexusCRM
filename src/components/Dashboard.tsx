@@ -239,7 +239,7 @@ export default function Dashboard() {
               <div key={index} className="flex items-center justify-between p-4 rounded-lg bg-gradient-card border">
                 <div className="flex items-center gap-4">
                   <div className="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center">
-                    <Users className="w-5 h-5 text-primary" />
+                    <Users className="w-5 h-5 text-white" />
                   </div>
                   <div>
                     <p className="font-medium text-foreground">{lead.name}</p>
