@@ -39,8 +39,8 @@ export default function Layout({ children }: LayoutProps) {
               <SidebarTrigger className="mr-4" />
               <h1 className="text-xl font-semibold text-foreground">LoanFlow CRM</h1>
             </div>
-            <div className="flex items-center gap-2 text-sm font-medium text-foreground">
-              <Clock className="w-4 h-4 text-primary" />
+            <div className="flex items-center gap-2 text-sm font-medium text-white">
+              <Clock className="w-4 h-4 text-white" />
               <span>{formatDateTime(currentDateTime)}</span>
             </div>
           </header>
