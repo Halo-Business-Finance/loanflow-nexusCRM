@@ -7,7 +7,8 @@ import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { Search, Phone, Mail, MapPin, Calendar, DollarSign, Filter } from "lucide-react"
+import { Search, Phone, Mail, MapPin, Calendar, DollarSign, Filter, ChevronDown, ChevronUp } from "lucide-react"
+import { LoanManager } from "@/components/LoanManager"
 
 interface Client {
   id: string
@@ -22,11 +23,27 @@ interface Client {
   last_activity: string
 }
 
+interface Loan {
+  id: string
+  loan_amount: number
+  interest_rate?: number
+  loan_term_months?: number
+  maturity_date?: string
+  loan_type: string
+  status: string
+  origination_date: string
+  monthly_payment?: number
+  remaining_balance?: number
+  notes?: string
+}
+
 export default function Clients() {
   const { user } = useAuth()
   const [clients, setClients] = useState<Client[]>([])
+  const [clientLoans, setClientLoans] = useState<{ [key: string]: Loan[] }>({})
   const [loading, setLoading] = useState(true)
   const [searchTerm, setSearchTerm] = useState("")
+  const [expandedClient, setExpandedClient] = useState<string | null>(null)
 
   useEffect(() => {
     if (user) {
@@ -44,11 +61,45 @@ export default function Clients() {
 
       if (error) throw error
       setClients(data || [])
+      
+      // Fetch loans for all clients
+      if (data && data.length > 0) {
+        await fetchAllClientLoans(data.map(c => c.id))
+      }
     } catch (error) {
       console.error('Error fetching clients:', error)
     } finally {
       setLoading(false)
     }
+  }
+
+  const fetchAllClientLoans = async (clientIds: string[]) => {
+    try {
+      const { data, error } = await supabase
+        .from('loans')
+        .select('*')
+        .in('client_id', clientIds)
+        .eq('user_id', user?.id)
+
+      if (error) throw error
+
+      // Group loans by client_id
+      const loansByClient: { [key: string]: Loan[] } = {}
+      data?.forEach(loan => {
+        if (!loansByClient[loan.client_id]) {
+          loansByClient[loan.client_id] = []
+        }
+        loansByClient[loan.client_id].push(loan)
+      })
+
+      setClientLoans(loansByClient)
+    } catch (error) {
+      console.error('Error fetching client loans:', error)
+    }
+  }
+
+  const handleLoansUpdate = () => {
+    fetchClients() // This will refetch both clients and loans
   }
 
   const filteredClients = clients.filter(client =>
@@ -156,84 +207,115 @@ export default function Clients() {
 
         {/* Client List */}
         <div className="grid gap-6">
-          {filteredClients.map((client) => (
-            <Card key={client.id} className="shadow-soft hover:shadow-medium transition-shadow">
-              <CardContent className="p-6">
-                <div className="flex items-start justify-between">
-                  <div className="flex gap-4">
-                    <Avatar className="h-12 w-12">
-                      <AvatarImage src={`https://api.dicebear.com/6/initials/svg?seed=${client.name}`} />
-                      <AvatarFallback>{client.name.split(' ').map(n => n[0]).join('')}</AvatarFallback>
-                    </Avatar>
-                    
-                    <div className="space-y-2">
-                      <div>
-                        <h3 className="font-semibold text-foreground">{client.name}</h3>
-                        <p className="text-sm text-muted-foreground">
-                          Client since {new Date(client.join_date).toLocaleDateString()}
-                        </p>
-                      </div>
+          {filteredClients.map((client) => {
+            const loans = clientLoans[client.id] || []
+            const isExpanded = expandedClient === client.id
+            
+            return (
+              <Card key={client.id} className="shadow-soft hover:shadow-medium transition-shadow">
+                <CardContent className="p-6">
+                  <div className="flex items-start justify-between">
+                    <div className="flex gap-4">
+                      <Avatar className="h-12 w-12">
+                        <AvatarImage src={`https://api.dicebear.com/6/initials/svg?seed=${client.name}`} />
+                        <AvatarFallback>{client.name.split(' ').map(n => n[0]).join('')}</AvatarFallback>
+                      </Avatar>
                       
-                      <div className="flex items-center gap-4 text-sm text-muted-foreground">
-                        <div className="flex items-center gap-1">
-                          <Mail className="h-4 w-4" />
-                          {client.email}
+                      <div className="space-y-2">
+                        <div>
+                          <h3 className="font-semibold text-foreground">{client.name}</h3>
+                          <p className="text-sm text-muted-foreground">
+                            Client since {new Date(client.join_date).toLocaleDateString()}
+                          </p>
                         </div>
-                        {client.phone && (
+                        
+                        <div className="flex items-center gap-4 text-sm text-muted-foreground">
                           <div className="flex items-center gap-1">
-                            <Phone className="h-4 w-4" />
-                            {client.phone}
+                            <Mail className="h-4 w-4" />
+                            {client.email}
                           </div>
-                        )}
-                        {client.location && (
-                          <div className="flex items-center gap-1">
-                            <MapPin className="h-4 w-4" />
-                            {client.location}
-                          </div>
-                        )}
+                          {client.phone && (
+                            <div className="flex items-center gap-1">
+                              <Phone className="h-4 w-4" />
+                              {client.phone}
+                            </div>
+                          )}
+                          {client.location && (
+                            <div className="flex items-center gap-1">
+                              <MapPin className="h-4 w-4" />
+                              {client.location}
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                    
+                    <div className="text-right space-y-2">
+                      <Badge variant={getStatusColor(client.status)}>
+                        {client.status}
+                      </Badge>
+                      <div className="text-sm text-muted-foreground">
+                        Last activity: {new Date(client.last_activity).toLocaleDateString()}
                       </div>
                     </div>
                   </div>
                   
-                  <div className="text-right space-y-2">
-                    <Badge variant={getStatusColor(client.status)}>
-                      {client.status}
-                    </Badge>
-                    <div className="text-sm text-muted-foreground">
-                      Last activity: {new Date(client.last_activity).toLocaleDateString()}
-                    </div>
-                  </div>
-                </div>
-                
-                <div className="mt-4 pt-4 border-t flex justify-between items-center">
-                  <div className="flex gap-6">
-                    <div className="text-center">
-                      <div className="text-sm text-muted-foreground">Total Loans</div>
-                      <div className="font-semibold">{client.total_loans}</div>
-                    </div>
-                    <div className="text-center">
-                      <div className="text-sm text-muted-foreground">Total Value</div>
-                      <div className="font-semibold text-accent">
-                        ${client.total_loan_value?.toLocaleString() || '0'}
+                  <div className="mt-4 pt-4 border-t flex justify-between items-center">
+                    <div className="flex gap-6">
+                      <div className="text-center">
+                        <div className="text-sm text-muted-foreground">Total Loans</div>
+                        <div className="font-semibold">{client.total_loans}</div>
+                      </div>
+                      <div className="text-center">
+                        <div className="text-sm text-muted-foreground">Total Value</div>
+                        <div className="font-semibold text-accent">
+                          ${client.total_loan_value?.toLocaleString() || '0'}
+                        </div>
                       </div>
                     </div>
+                    
+                    <div className="flex gap-2">
+                      <Button size="sm" variant="outline">
+                        <Phone className="h-4 w-4" />
+                      </Button>
+                      <Button size="sm" variant="outline">
+                        <Mail className="h-4 w-4" />
+                      </Button>
+                      <Button 
+                        size="sm" 
+                        variant="outline"
+                        onClick={() => setExpandedClient(isExpanded ? null : client.id)}
+                      >
+                        {isExpanded ? (
+                          <>
+                            <ChevronUp className="h-4 w-4 mr-1" />
+                            Hide Loans
+                          </>
+                        ) : (
+                          <>
+                            <ChevronDown className="h-4 w-4 mr-1" />
+                            View Loans
+                          </>
+                        )}
+                      </Button>
+                    </div>
                   </div>
-                  
-                  <div className="flex gap-2">
-                    <Button size="sm" variant="outline">
-                      <Phone className="h-4 w-4" />
-                    </Button>
-                    <Button size="sm" variant="outline">
-                      <Mail className="h-4 w-4" />
-                    </Button>
-                    <Button size="sm" variant="outline">
-                      View Details
-                    </Button>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          ))}
+
+                  {/* Expanded Loan Section */}
+                  {isExpanded && (
+                    <div className="mt-6 pt-6 border-t">
+                      <LoanManager
+                        clientId={client.id}
+                        clientName={client.name}
+                        loans={loans}
+                        onLoansUpdate={handleLoansUpdate}
+                      />
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+            )
+          })}
           
           {filteredClients.length === 0 && (
             <Card className="shadow-soft">

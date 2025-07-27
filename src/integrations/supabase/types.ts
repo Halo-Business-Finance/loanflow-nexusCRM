@@ -310,6 +310,78 @@ export type Database = {
         }
         Relationships: []
       }
+      loans: {
+        Row: {
+          client_id: string | null
+          created_at: string
+          id: string
+          interest_rate: number | null
+          lead_id: string | null
+          loan_amount: number
+          loan_term_months: number | null
+          loan_type: string | null
+          maturity_date: string | null
+          monthly_payment: number | null
+          notes: string | null
+          origination_date: string | null
+          remaining_balance: number | null
+          status: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          client_id?: string | null
+          created_at?: string
+          id?: string
+          interest_rate?: number | null
+          lead_id?: string | null
+          loan_amount: number
+          loan_term_months?: number | null
+          loan_type?: string | null
+          maturity_date?: string | null
+          monthly_payment?: number | null
+          notes?: string | null
+          origination_date?: string | null
+          remaining_balance?: number | null
+          status?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          client_id?: string | null
+          created_at?: string
+          id?: string
+          interest_rate?: number | null
+          lead_id?: string | null
+          loan_amount?: number
+          loan_term_months?: number | null
+          loan_type?: string | null
+          maturity_date?: string | null
+          monthly_payment?: number | null
+          notes?: string | null
+          origination_date?: string | null
+          remaining_balance?: number | null
+          status?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "loans_client_id_fkey"
+            columns: ["client_id"]
+            isOneToOne: false
+            referencedRelation: "clients"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "loans_lead_id_fkey"
+            columns: ["lead_id"]
+            isOneToOne: false
+            referencedRelation: "leads"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       pipeline_entries: {
         Row: {
           amount: number | null
