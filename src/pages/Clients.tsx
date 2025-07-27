@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Search, Phone, Mail, MapPin, Calendar, DollarSign, Filter } from "lucide-react"
 
-const customers = [
+const clients = [
   {
     id: 1,
     name: "Sarah Johnson",
@@ -57,7 +57,7 @@ const customers = [
   }
 ]
 
-export default function Customers() {
+export default function Clients() {
   const getStatusColor = (status: string) => {
     switch (status.toLowerCase()) {
       case 'active': return 'default'
@@ -73,11 +73,11 @@ export default function Customers() {
         {/* Header */}
         <div className="flex justify-between items-center">
           <div>
-            <h1 className="text-3xl font-bold text-foreground">Customers</h1>
-            <p className="text-muted-foreground">Manage your customer relationships</p>
+            <h1 className="text-3xl font-bold text-foreground">Clients</h1>
+            <p className="text-muted-foreground">Manage your client relationships</p>
           </div>
           <Button className="bg-gradient-primary">
-            Add Customer
+            Add Client
           </Button>
         </div>
 
@@ -88,7 +88,7 @@ export default function Customers() {
               <div className="relative flex-1">
                 <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
                 <Input
-                  placeholder="Search customers..."
+                  placeholder="Search clients..."
                   className="pl-10"
                 />
               </div>
@@ -100,23 +100,23 @@ export default function Customers() {
           </CardContent>
         </Card>
 
-        {/* Customer Stats */}
+        {/* Client Stats */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
           <Card className="shadow-soft">
             <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium">Total Customers</CardTitle>
+              <CardTitle className="text-sm font-medium">Total Clients</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">{customers.length}</div>
+              <div className="text-2xl font-bold">{clients.length}</div>
             </CardContent>
           </Card>
           <Card className="shadow-soft">
             <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium">Active Customers</CardTitle>
+              <CardTitle className="text-sm font-medium">Active Clients</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold">
-                {customers.filter(c => c.status === 'Active').length}
+                {clients.filter(c => c.status === 'Active').length}
               </div>
             </CardContent>
           </Card>
@@ -138,47 +138,47 @@ export default function Customers() {
           </Card>
         </div>
 
-        {/* Customer List */}
+        {/* Client List */}
         <div className="grid gap-6">
-          {customers.map((customer) => (
-            <Card key={customer.id} className="shadow-soft hover:shadow-medium transition-shadow">
+          {clients.map((client) => (
+            <Card key={client.id} className="shadow-soft hover:shadow-medium transition-shadow">
               <CardContent className="p-6">
                 <div className="flex items-start justify-between">
                   <div className="flex gap-4">
                     <Avatar className="h-12 w-12">
-                      <AvatarImage src={`https://api.dicebear.com/6/initials/svg?seed=${customer.name}`} />
-                      <AvatarFallback>{customer.name.split(' ').map(n => n[0]).join('')}</AvatarFallback>
+                      <AvatarImage src={`https://api.dicebear.com/6/initials/svg?seed=${client.name}`} />
+                      <AvatarFallback>{client.name.split(' ').map(n => n[0]).join('')}</AvatarFallback>
                     </Avatar>
                     
                     <div className="space-y-2">
                       <div>
-                        <h3 className="font-semibold text-foreground">{customer.name}</h3>
-                        <p className="text-sm text-muted-foreground">Customer since {customer.joinDate}</p>
+                        <h3 className="font-semibold text-foreground">{client.name}</h3>
+                        <p className="text-sm text-muted-foreground">Client since {client.joinDate}</p>
                       </div>
                       
                       <div className="flex items-center gap-4 text-sm text-muted-foreground">
                         <div className="flex items-center gap-1">
                           <Mail className="h-4 w-4" />
-                          {customer.email}
+                          {client.email}
                         </div>
                         <div className="flex items-center gap-1">
                           <Phone className="h-4 w-4" />
-                          {customer.phone}
+                          {client.phone}
                         </div>
                         <div className="flex items-center gap-1">
                           <MapPin className="h-4 w-4" />
-                          {customer.location}
+                          {client.location}
                         </div>
                       </div>
                     </div>
                   </div>
                   
                   <div className="text-right space-y-2">
-                    <Badge variant={getStatusColor(customer.status)}>
-                      {customer.status}
+                    <Badge variant={getStatusColor(client.status)}>
+                      {client.status}
                     </Badge>
                     <div className="text-sm text-muted-foreground">
-                      Last activity: {customer.lastActivity}
+                      Last activity: {client.lastActivity}
                     </div>
                   </div>
                 </div>
@@ -187,11 +187,11 @@ export default function Customers() {
                   <div className="flex gap-6">
                     <div className="text-center">
                       <div className="text-sm text-muted-foreground">Total Loans</div>
-                      <div className="font-semibold">{customer.totalLoans}</div>
+                      <div className="font-semibold">{client.totalLoans}</div>
                     </div>
                     <div className="text-center">
                       <div className="text-sm text-muted-foreground">Total Value</div>
-                      <div className="font-semibold text-accent">{customer.totalValue}</div>
+                      <div className="font-semibold text-accent">{client.totalValue}</div>
                     </div>
                   </div>
                   
