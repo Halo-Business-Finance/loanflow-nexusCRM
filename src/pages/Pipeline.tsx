@@ -64,12 +64,12 @@ const conversionRates = [
 ]
 
 const loanCloseData = [
-  { month: "Jan", closedLoans: 12, targetLoans: 15, avgDays: 28 },
-  { month: "Feb", closedLoans: 18, targetLoans: 20, avgDays: 25 },
-  { month: "Mar", closedLoans: 22, targetLoans: 25, avgDays: 23 },
-  { month: "Apr", closedLoans: 19, targetLoans: 22, avgDays: 26 },
-  { month: "May", closedLoans: 25, targetLoans: 28, avgDays: 22 },
-  { month: "Jun", closedLoans: 30, targetLoans: 30, avgDays: 20 },
+  { month: "Jan", closedLoans: 12, targetLoans: 15, avgDays: 28, closePercentage: 80 },
+  { month: "Feb", closedLoans: 18, targetLoans: 20, avgDays: 25, closePercentage: 90 },
+  { month: "Mar", closedLoans: 22, targetLoans: 25, avgDays: 23, closePercentage: 88 },
+  { month: "Apr", closedLoans: 19, targetLoans: 22, avgDays: 26, closePercentage: 86 },
+  { month: "May", closedLoans: 25, targetLoans: 28, avgDays: 22, closePercentage: 89 },
+  { month: "Jun", closedLoans: 30, targetLoans: 30, avgDays: 20, closePercentage: 100 },
 ]
 
 const chartConfig = {
@@ -80,6 +80,10 @@ const chartConfig = {
   targetLoans: {
     label: "Target Loans",
     color: "hsl(var(--accent))",
+  },
+  closePercentage: {
+    label: "Close %",
+    color: "hsl(var(--destructive))",
   },
 }
 
@@ -148,7 +152,7 @@ export default function Pipeline() {
       <Card className="shadow-soft">
         <CardHeader>
           <CardTitle>Loan Close Performance</CardTitle>
-          <p className="text-sm text-muted-foreground">Monthly closed loans vs targets</p>
+          <p className="text-sm text-muted-foreground">Monthly closed loans vs targets and close percentage</p>
         </CardHeader>
         <CardContent>
           <ChartContainer config={chartConfig} className="h-[350px]">
@@ -160,22 +164,33 @@ export default function Pipeline() {
                 className="text-muted-foreground"
               />
               <YAxis 
+                yAxisId="left"
                 tickLine={false}
                 axisLine={false}
                 className="text-muted-foreground"
+              />
+              <YAxis 
+                yAxisId="right"
+                orientation="right"
+                tickLine={false}
+                axisLine={false}
+                className="text-muted-foreground"
+                tickFormatter={(value) => `${value}%`}
               />
               <ChartTooltip 
                 content={
                   <ChartTooltipContent 
                     labelFormatter={(label) => `${label} 2024`}
                     formatter={(value, name) => [
-                      value,
-                      name === "closedLoans" ? "Closed" : "Target"
+                      name === "closePercentage" ? `${value}%` : value,
+                      name === "closedLoans" ? "Closed" : 
+                      name === "targetLoans" ? "Target" : "Close %"
                     ]}
                   />
                 }
               />
               <Line
+                yAxisId="left"
                 type="monotone"
                 dataKey="closedLoans"
                 stroke="var(--color-closedLoans)"
@@ -184,12 +199,22 @@ export default function Pipeline() {
                 activeDot={{ r: 8, stroke: "var(--color-closedLoans)", strokeWidth: 2 }}
               />
               <Line
+                yAxisId="left"
                 type="monotone"
                 dataKey="targetLoans"
                 stroke="var(--color-targetLoans)"
                 strokeWidth={2}
                 strokeDasharray="5 5"
                 dot={{ fill: "var(--color-targetLoans)", strokeWidth: 2, r: 4 }}
+              />
+              <Line
+                yAxisId="right"
+                type="monotone"
+                dataKey="closePercentage"
+                stroke="var(--color-closePercentage)"
+                strokeWidth={2}
+                dot={{ fill: "var(--color-closePercentage)", strokeWidth: 2, r: 4 }}
+                activeDot={{ r: 6, stroke: "var(--color-closePercentage)", strokeWidth: 2 }}
               />
             </LineChart>
           </ChartContainer>
