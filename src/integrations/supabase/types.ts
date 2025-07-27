@@ -161,6 +161,36 @@ export type Database = {
         }
         Relationships: []
       }
+      ip_restrictions: {
+        Row: {
+          country_code: string | null
+          created_at: string
+          id: string
+          ip_address: unknown
+          is_allowed: boolean
+          reason: string | null
+          updated_at: string
+        }
+        Insert: {
+          country_code?: string | null
+          created_at?: string
+          id?: string
+          ip_address: unknown
+          is_allowed?: boolean
+          reason?: string | null
+          updated_at?: string
+        }
+        Update: {
+          country_code?: string | null
+          created_at?: string
+          id?: string
+          ip_address?: unknown
+          is_allowed?: boolean
+          reason?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           created_at: string
@@ -395,6 +425,10 @@ export type Database = {
       }
       is_account_locked: {
         Args: { user_email: string }
+        Returns: boolean
+      }
+      is_ip_allowed: {
+        Args: { client_ip: unknown }
         Returns: boolean
       }
       lock_account: {
