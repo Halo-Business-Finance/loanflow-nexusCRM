@@ -14,6 +14,42 @@ export type Database = {
   }
   public: {
     Tables: {
+      account_lockouts: {
+        Row: {
+          created_at: string
+          email: string
+          id: string
+          is_active: boolean
+          locked_at: string
+          locked_by_system: boolean
+          reason: string
+          unlock_at: string
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          email: string
+          id?: string
+          is_active?: boolean
+          locked_at?: string
+          locked_by_system?: boolean
+          reason: string
+          unlock_at?: string
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          email?: string
+          id?: string
+          is_active?: boolean
+          locked_at?: string
+          locked_by_system?: boolean
+          reason?: string
+          unlock_at?: string
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       audit_logs: {
         Row: {
           action: string
@@ -23,6 +59,8 @@ export type Database = {
           new_values: Json | null
           old_values: Json | null
           record_id: string | null
+          risk_score: number | null
+          session_id: string | null
           table_name: string | null
           user_agent: string | null
           user_id: string | null
@@ -35,6 +73,8 @@ export type Database = {
           new_values?: Json | null
           old_values?: Json | null
           record_id?: string | null
+          risk_score?: number | null
+          session_id?: string | null
           table_name?: string | null
           user_agent?: string | null
           user_id?: string | null
@@ -47,6 +87,8 @@ export type Database = {
           new_values?: Json | null
           old_values?: Json | null
           record_id?: string | null
+          risk_score?: number | null
+          session_id?: string | null
           table_name?: string | null
           user_agent?: string | null
           user_id?: string | null
@@ -89,6 +131,33 @@ export type Database = {
           refresh_token?: string
           updated_at?: string
           user_id?: string
+        }
+        Relationships: []
+      }
+      failed_login_attempts: {
+        Row: {
+          attempt_time: string
+          created_at: string
+          email: string
+          id: string
+          ip_address: unknown | null
+          user_agent: string | null
+        }
+        Insert: {
+          attempt_time?: string
+          created_at?: string
+          email: string
+          id?: string
+          ip_address?: unknown | null
+          user_agent?: string | null
+        }
+        Update: {
+          attempt_time?: string
+          created_at?: string
+          email?: string
+          id?: string
+          ip_address?: unknown | null
+          user_agent?: string | null
         }
         Relationships: []
       }
@@ -155,6 +224,69 @@ export type Database = {
           updated_at?: string
           user_id?: string
           username?: string
+        }
+        Relationships: []
+      }
+      security_config: {
+        Row: {
+          created_at: string
+          description: string | null
+          id: string
+          key: string
+          updated_at: string
+          updated_by: string | null
+          value: Json
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          key: string
+          updated_at?: string
+          updated_by?: string | null
+          value: Json
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          key?: string
+          updated_at?: string
+          updated_by?: string | null
+          value?: Json
+        }
+        Relationships: []
+      }
+      security_events: {
+        Row: {
+          created_at: string
+          details: Json | null
+          event_type: string
+          id: string
+          ip_address: unknown | null
+          severity: string
+          user_agent: string | null
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          details?: Json | null
+          event_type: string
+          id?: string
+          ip_address?: unknown | null
+          severity: string
+          user_agent?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          details?: Json | null
+          event_type?: string
+          id?: string
+          ip_address?: unknown | null
+          severity?: string
+          user_agent?: string | null
+          user_id?: string | null
         }
         Relationships: []
       }
@@ -246,6 +378,10 @@ export type Database = {
         }
         Returns: string
       }
+      get_recent_failed_attempts: {
+        Args: { user_email: string }
+        Returns: number
+      }
       get_user_role: {
         Args: { user_id?: string }
         Returns: Database["public"]["Enums"]["user_role"]
@@ -256,6 +392,25 @@ export type Database = {
           user_id?: string
         }
         Returns: boolean
+      }
+      is_account_locked: {
+        Args: { user_email: string }
+        Returns: boolean
+      }
+      lock_account: {
+        Args: { user_email: string; lock_reason?: string }
+        Returns: string
+      }
+      log_security_event: {
+        Args: {
+          p_user_id?: string
+          p_event_type?: string
+          p_severity?: string
+          p_details?: Json
+          p_ip_address?: unknown
+          p_user_agent?: string
+        }
+        Returns: string
       }
     }
     Enums: {
