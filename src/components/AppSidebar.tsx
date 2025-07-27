@@ -1,10 +1,11 @@
-import { BarChart3, Users, UserCheck, FileText, Settings, Home, Target, Calendar, Phone, Mail } from "lucide-react"
+import { BarChart3, Users, UserCheck, FileText, Settings, Home, Target, Calendar, Phone, Mail, Shield, LogOut } from "lucide-react"
 import { NavLink, useLocation } from "react-router-dom"
 import { Button } from "@/components/ui/button"
 import { RingCentralSetup } from "@/components/RingCentralSetup"
 import { PhoneDialer } from "@/components/PhoneDialer"
 import { EmailSetup } from "@/components/EmailSetup"
 import { EmailComposer } from "@/components/EmailComposer"
+import { useAuth } from "@/components/auth/AuthProvider"
 
 import {
   Sidebar,
@@ -30,12 +31,14 @@ const navigationItems = [
 
 const settingsItems = [
   { title: "Settings", url: "/settings", icon: Settings },
+  { title: "Security", url: "/security", icon: Shield },
 ]
 
 export function AppSidebar() {
   const { state } = useSidebar()
   const location = useLocation()
   const currentPath = location.pathname
+  const { signOut, user, userRole, hasRole } = useAuth()
 
   const isActive = (path: string) => currentPath === path
   const getNavClass = ({ isActive }: { isActive: boolean }) =>
@@ -77,16 +80,22 @@ export function AppSidebar() {
           <SidebarGroupLabel>System</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
-              {settingsItems.map((item) => (
-                <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton asChild>
-                    <NavLink to={item.url} className={getNavClass}>
-                      <item.icon className="w-4 h-4" />
-                      {state !== "collapsed" && <span>{item.title}</span>}
-                    </NavLink>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              ))}
+              {settingsItems.map((item) => {
+                // Only show Security to admins
+                if (item.title === "Security" && !hasRole('admin')) {
+                  return null;
+                }
+                return (
+                  <SidebarMenuItem key={item.title}>
+                    <SidebarMenuButton asChild>
+                      <NavLink to={item.url} className={getNavClass}>
+                        <item.icon className="w-4 h-4" />
+                        {state !== "collapsed" && <span>{item.title}</span>}
+                      </NavLink>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                );
+              })}
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
@@ -131,6 +140,25 @@ export function AppSidebar() {
             </div>
           </SidebarGroupContent>
         </SidebarGroup>
+
+        {/* User Info and Logout */}
+        <div className="mt-auto p-4 border-t">
+          {state !== "collapsed" && (
+            <div className="mb-3">
+              <p className="text-sm font-medium">{user?.email}</p>
+              <p className="text-xs text-muted-foreground capitalize">{userRole} User</p>
+            </div>
+          )}
+          <Button 
+            variant="outline" 
+            size="sm" 
+            className="w-full justify-start gap-2"
+            onClick={signOut}
+          >
+            <LogOut className="w-4 h-4" />
+            {state !== "collapsed" && <span>Sign Out</span>}
+          </Button>
+        </div>
       </SidebarContent>
     </Sidebar>
   )
