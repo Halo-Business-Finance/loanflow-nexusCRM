@@ -50,7 +50,7 @@ serve(async (req) => {
 
     switch (action) {
       case 'get_auth_url': {
-        const clientId = '00000000-0000-0000-0000-000000000000'; // This will need to be configured
+        const clientId = Deno.env.get('MICROSOFT_CLIENT_ID')!;
         const redirectUri = `${supabaseUrl}/functions/v1/microsoft-auth`;
         const scope = 'https://graph.microsoft.com/Mail.Send https://graph.microsoft.com/User.Read offline_access';
         
@@ -68,8 +68,8 @@ serve(async (req) => {
       }
 
       case 'exchange_code': {
-        const clientId = '00000000-0000-0000-0000-000000000000'; // This will need to be configured  
-        const clientSecret = 'your-client-secret'; // This will need to be configured
+        const clientId = Deno.env.get('MICROSOFT_CLIENT_ID')!;
+        const clientSecret = Deno.env.get('MICROSOFT_CLIENT_SECRET')!;
         const redirectUri = `${supabaseUrl}/functions/v1/microsoft-auth`;
 
         // Exchange code for tokens

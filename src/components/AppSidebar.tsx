@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button"
 import { RingCentralSetup } from "@/components/RingCentralSetup"
 import { PhoneDialer } from "@/components/PhoneDialer"
 import { EmailSetup } from "@/components/EmailSetup"
+import { EmailComposer } from "@/components/EmailComposer"
 
 import {
   Sidebar,
@@ -103,6 +104,14 @@ export function AppSidebar() {
                   </Button>
                 }
               />
+              <EmailComposer 
+                trigger={
+                  <Button variant="outline" size="sm" className="w-full justify-start gap-2">
+                    <Mail className="w-4 h-4" />
+                    {state !== "collapsed" && <span>Send Email</span>}
+                  </Button>
+                }
+              />
               <RingCentralSetup 
                 trigger={
                   <Button variant="outline" size="sm" className="w-full justify-start gap-2">
@@ -115,7 +124,7 @@ export function AppSidebar() {
                 trigger={
                   <Button variant="outline" size="sm" className="w-full justify-start gap-2">
                     <Mail className="w-4 h-4" />
-                    {state !== "collapsed" && <span>Email Account</span>}
+                    {state !== "collapsed" && <span>Email Settings</span>}
                   </Button>
                 }
               />
