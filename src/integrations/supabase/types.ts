@@ -95,6 +95,65 @@ export type Database = {
         }
         Relationships: []
       }
+      clients: {
+        Row: {
+          created_at: string
+          email: string
+          id: string
+          join_date: string | null
+          last_activity: string | null
+          lead_id: string | null
+          location: string | null
+          name: string
+          phone: string | null
+          status: string
+          total_loan_value: number | null
+          total_loans: number | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          email: string
+          id?: string
+          join_date?: string | null
+          last_activity?: string | null
+          lead_id?: string | null
+          location?: string | null
+          name: string
+          phone?: string | null
+          status?: string
+          total_loan_value?: number | null
+          total_loans?: number | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          email?: string
+          id?: string
+          join_date?: string | null
+          last_activity?: string | null
+          lead_id?: string | null
+          location?: string | null
+          name?: string
+          phone?: string | null
+          status?: string
+          total_loan_value?: number | null
+          total_loans?: number | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "clients_lead_id_fkey"
+            columns: ["lead_id"]
+            isOneToOne: false
+            referencedRelation: "leads"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       email_accounts: {
         Row: {
           access_token: string
@@ -190,6 +249,123 @@ export type Database = {
           updated_at?: string
         }
         Relationships: []
+      }
+      leads: {
+        Row: {
+          converted_at: string | null
+          created_at: string
+          credit_score: number | null
+          email: string
+          id: string
+          income: number | null
+          is_converted_to_client: boolean | null
+          last_contact: string | null
+          loan_amount: number | null
+          location: string | null
+          name: string
+          notes: string | null
+          phone: string | null
+          priority: string
+          stage: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          converted_at?: string | null
+          created_at?: string
+          credit_score?: number | null
+          email: string
+          id?: string
+          income?: number | null
+          is_converted_to_client?: boolean | null
+          last_contact?: string | null
+          loan_amount?: number | null
+          location?: string | null
+          name: string
+          notes?: string | null
+          phone?: string | null
+          priority?: string
+          stage?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          converted_at?: string | null
+          created_at?: string
+          credit_score?: number | null
+          email?: string
+          id?: string
+          income?: number | null
+          is_converted_to_client?: boolean | null
+          last_contact?: string | null
+          loan_amount?: number | null
+          location?: string | null
+          name?: string
+          notes?: string | null
+          phone?: string | null
+          priority?: string
+          stage?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      pipeline_entries: {
+        Row: {
+          amount: number | null
+          client_id: string | null
+          created_at: string
+          id: string
+          last_contact: string | null
+          lead_id: string | null
+          notes: string | null
+          priority: string
+          stage: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          amount?: number | null
+          client_id?: string | null
+          created_at?: string
+          id?: string
+          last_contact?: string | null
+          lead_id?: string | null
+          notes?: string | null
+          priority?: string
+          stage: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          amount?: number | null
+          client_id?: string | null
+          created_at?: string
+          id?: string
+          last_contact?: string | null
+          lead_id?: string | null
+          notes?: string | null
+          priority?: string
+          stage?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "pipeline_entries_client_id_fkey"
+            columns: ["client_id"]
+            isOneToOne: false
+            referencedRelation: "clients"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "pipeline_entries_lead_id_fkey"
+            columns: ["lead_id"]
+            isOneToOne: false
+            referencedRelation: "leads"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       profiles: {
         Row: {

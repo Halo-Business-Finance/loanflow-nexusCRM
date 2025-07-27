@@ -1,3 +1,6 @@
+import { useState, useEffect } from "react"
+import { supabase } from "@/integrations/supabase/client"
+import { useAuth } from "@/components/auth/AuthProvider"
 import Layout from "@/components/Layout"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
@@ -6,58 +9,53 @@ import { Input } from "@/components/ui/input"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Search, Phone, Mail, MapPin, Calendar, DollarSign, Filter } from "lucide-react"
 
-const clients = [
-  {
-    id: 1,
-    name: "Sarah Johnson",
-    email: "sarah.johnson@email.com",
-    phone: "(555) 123-4567",
-    location: "New York, NY",
-    totalLoans: 3,
-    totalValue: "$850,000",
-    status: "Active",
-    lastActivity: "2 days ago",
-    joinDate: "Jan 2023"
-  },
-  {
-    id: 2,
-    name: "Michael Chen",
-    email: "m.chen@email.com",
-    phone: "(555) 234-5678",
-    location: "San Francisco, CA",
-    totalLoans: 2,
-    totalValue: "$650,000",
-    status: "Active",
-    lastActivity: "1 week ago",
-    joinDate: "Mar 2023"
-  },
-  {
-    id: 3,
-    name: "Emily Rodriguez",
-    email: "emily.r@email.com",
-    phone: "(555) 345-6789",
-    location: "Austin, TX",
-    totalLoans: 1,
-    totalValue: "$275,000",
-    status: "Pending",
-    lastActivity: "3 days ago",
-    joinDate: "May 2023"
-  },
-  {
-    id: 4,
-    name: "David Thompson",
-    email: "d.thompson@email.com",
-    phone: "(555) 456-7890",
-    location: "Chicago, IL",
-    totalLoans: 4,
-    totalValue: "$1,200,000",
-    status: "Active",
-    lastActivity: "1 day ago",
-    joinDate: "Dec 2022"
-  }
-]
+interface Client {
+  id: string
+  name: string
+  email: string
+  phone?: string
+  location?: string
+  status: string
+  total_loans: number
+  total_loan_value: number
+  join_date: string
+  last_activity: string
+}
 
 export default function Clients() {
+  const { user } = useAuth()
+  const [clients, setClients] = useState<Client[]>([])
+  const [loading, setLoading] = useState(true)
+  const [searchTerm, setSearchTerm] = useState("")
+
+  useEffect(() => {
+    if (user) {
+      fetchClients()
+    }
+  }, [user])
+
+  const fetchClients = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('clients')
+        .select('*')
+        .eq('user_id', user?.id)
+        .order('created_at', { ascending: false })
+
+      if (error) throw error
+      setClients(data || [])
+    } catch (error) {
+      console.error('Error fetching clients:', error)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const filteredClients = clients.filter(client =>
+    client.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    client.email.toLowerCase().includes(searchTerm.toLowerCase())
+  )
+
   const getStatusColor = (status: string) => {
     switch (status.toLowerCase()) {
       case 'active': return 'default'
@@ -65,6 +63,20 @@ export default function Clients() {
       case 'inactive': return 'destructive'
       default: return 'secondary'
     }
+  }
+
+  const totalLoanValue = clients.reduce((sum, client) => sum + (client.total_loan_value || 0), 0)
+  const activeClients = clients.filter(c => c.status === 'Active').length
+  const avgLoanSize = clients.length > 0 ? totalLoanValue / clients.length : 0
+
+  if (loading) {
+    return (
+      <Layout>
+        <div className="flex items-center justify-center min-h-64">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+        </div>
+      </Layout>
+    )
   }
 
   return (
@@ -89,6 +101,8 @@ export default function Clients() {
                 <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
                 <Input
                   placeholder="Search clients..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
                   className="pl-10"
                 />
               </div>
@@ -115,9 +129,7 @@ export default function Clients() {
               <CardTitle className="text-sm font-medium">Active Clients</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">
-                {clients.filter(c => c.status === 'Active').length}
-              </div>
+              <div className="text-2xl font-bold">{activeClients}</div>
             </CardContent>
           </Card>
           <Card className="shadow-soft">
@@ -125,7 +137,9 @@ export default function Clients() {
               <CardTitle className="text-sm font-medium">Total Loan Value</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold text-accent">$2.975M</div>
+              <div className="text-2xl font-bold text-accent">
+                ${(totalLoanValue / 1000000).toFixed(1)}M
+              </div>
             </CardContent>
           </Card>
           <Card className="shadow-soft">
@@ -133,14 +147,16 @@ export default function Clients() {
               <CardTitle className="text-sm font-medium">Avg. Loan Size</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">$297K</div>
+              <div className="text-2xl font-bold">
+                ${(avgLoanSize / 1000).toFixed(0)}K
+              </div>
             </CardContent>
           </Card>
         </div>
 
         {/* Client List */}
         <div className="grid gap-6">
-          {clients.map((client) => (
+          {filteredClients.map((client) => (
             <Card key={client.id} className="shadow-soft hover:shadow-medium transition-shadow">
               <CardContent className="p-6">
                 <div className="flex items-start justify-between">
@@ -153,7 +169,9 @@ export default function Clients() {
                     <div className="space-y-2">
                       <div>
                         <h3 className="font-semibold text-foreground">{client.name}</h3>
-                        <p className="text-sm text-muted-foreground">Client since {client.joinDate}</p>
+                        <p className="text-sm text-muted-foreground">
+                          Client since {new Date(client.join_date).toLocaleDateString()}
+                        </p>
                       </div>
                       
                       <div className="flex items-center gap-4 text-sm text-muted-foreground">
@@ -161,14 +179,18 @@ export default function Clients() {
                           <Mail className="h-4 w-4" />
                           {client.email}
                         </div>
-                        <div className="flex items-center gap-1">
-                          <Phone className="h-4 w-4" />
-                          {client.phone}
-                        </div>
-                        <div className="flex items-center gap-1">
-                          <MapPin className="h-4 w-4" />
-                          {client.location}
-                        </div>
+                        {client.phone && (
+                          <div className="flex items-center gap-1">
+                            <Phone className="h-4 w-4" />
+                            {client.phone}
+                          </div>
+                        )}
+                        {client.location && (
+                          <div className="flex items-center gap-1">
+                            <MapPin className="h-4 w-4" />
+                            {client.location}
+                          </div>
+                        )}
                       </div>
                     </div>
                   </div>
@@ -178,7 +200,7 @@ export default function Clients() {
                       {client.status}
                     </Badge>
                     <div className="text-sm text-muted-foreground">
-                      Last activity: {client.lastActivity}
+                      Last activity: {new Date(client.last_activity).toLocaleDateString()}
                     </div>
                   </div>
                 </div>
@@ -187,11 +209,13 @@ export default function Clients() {
                   <div className="flex gap-6">
                     <div className="text-center">
                       <div className="text-sm text-muted-foreground">Total Loans</div>
-                      <div className="font-semibold">{client.totalLoans}</div>
+                      <div className="font-semibold">{client.total_loans}</div>
                     </div>
                     <div className="text-center">
                       <div className="text-sm text-muted-foreground">Total Value</div>
-                      <div className="font-semibold text-accent">{client.totalValue}</div>
+                      <div className="font-semibold text-accent">
+                        ${client.total_loan_value?.toLocaleString() || '0'}
+                      </div>
                     </div>
                   </div>
                   
@@ -210,6 +234,16 @@ export default function Clients() {
               </CardContent>
             </Card>
           ))}
+          
+          {filteredClients.length === 0 && (
+            <Card className="shadow-soft">
+              <CardContent className="p-12 text-center">
+                <div className="text-muted-foreground">
+                  {searchTerm ? 'No clients found matching your search.' : 'No clients yet. Convert some leads to get started!'}
+                </div>
+              </CardContent>
+            </Card>
+          )}
         </div>
       </div>
     </Layout>

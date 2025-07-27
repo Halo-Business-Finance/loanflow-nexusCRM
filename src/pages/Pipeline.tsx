@@ -1,3 +1,6 @@
+import { useState, useEffect } from "react"
+import { supabase } from "@/integrations/supabase/client"
+import { useAuth } from "@/components/auth/AuthProvider"
 import Layout from "@/components/Layout"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
@@ -7,54 +10,26 @@ import { DollarSign, Users, Phone, Mail, Calendar } from "lucide-react"
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart"
 import { LineChart, Line, XAxis, YAxis, ResponsiveContainer } from "recharts"
 
-const pipelineStages = [
-  {
-    name: "Initial Contact",
-    count: 45,
-    value: "$3,450,000",
-    leads: [
-      { name: "John Smith", amount: "$200,000", priority: "high", lastContact: "1 hour ago" },
-      { name: "Maria Garcia", amount: "$180,000", priority: "medium", lastContact: "3 hours ago" },
-      { name: "Robert Kim", amount: "$220,000", priority: "low", lastContact: "1 day ago" },
-    ]
-  },
-  {
-    name: "Qualified",
-    count: 32,
-    value: "$2,890,000",
-    leads: [
-      { name: "Sarah Johnson", amount: "$450,000", priority: "high", lastContact: "2 hours ago" },
-      { name: "Michael Chen", amount: "$320,000", priority: "medium", lastContact: "4 hours ago" },
-      { name: "Lisa Wang", amount: "$520,000", priority: "high", lastContact: "5 hours ago" },
-    ]
-  },
-  {
-    name: "Application",
-    count: 18,
-    value: "$2,140,000",
-    leads: [
-      { name: "Emily Rodriguez", amount: "$275,000", priority: "high", lastContact: "1 day ago" },
-      { name: "James Wilson", amount: "$340,000", priority: "medium", lastContact: "2 days ago" },
-    ]
-  },
-  {
-    name: "Pre-approval",
-    count: 12,
-    value: "$1,680,000",
-    leads: [
-      { name: "David Thompson", amount: "$180,000", priority: "low", lastContact: "2 days ago" },
-      { name: "Anna Lee", amount: "$390,000", priority: "high", lastContact: "3 days ago" },
-    ]
-  },
-  {
-    name: "Closing",
-    count: 8,
-    value: "$980,000",
-    leads: [
-      { name: "Chris Brown", amount: "$250,000", priority: "high", lastContact: "1 day ago" },
-    ]
+interface PipelineEntry {
+  id: string
+  stage: string
+  amount: number
+  priority: string
+  last_contact: string
+  lead?: {
+    name: string
   }
-]
+  client?: {
+    name: string
+  }
+}
+
+interface StageData {
+  name: string
+  count: number
+  value: number
+  entries: PipelineEntry[]
+}
 
 const conversionRates = [
   { from: "Initial Contact", to: "Qualified", rate: 71 },
@@ -87,7 +62,64 @@ const chartConfig = {
   },
 }
 
+const stageOrder = ["Initial Contact", "Qualified", "Application", "Pre-approval", "Documentation", "Closing"]
+
 export default function Pipeline() {
+  const { user } = useAuth()
+  const [pipelineData, setPipelineData] = useState<StageData[]>([])
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    if (user) {
+      fetchPipelineData()
+    }
+  }, [user])
+
+  const fetchPipelineData = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('pipeline_entries')
+        .select(`
+          *,
+          lead:leads(name),
+          client:clients(name)
+        `)
+        .eq('user_id', user?.id)
+
+      if (error) throw error
+
+      // Group by stage
+      const stageGroups: { [key: string]: PipelineEntry[] } = {}
+      stageOrder.forEach(stage => {
+        stageGroups[stage] = []
+      })
+
+      data?.forEach(entry => {
+        if (stageGroups[entry.stage]) {
+          stageGroups[entry.stage].push(entry)
+        }
+      })
+
+      const stages: StageData[] = stageOrder.map(stageName => {
+        const entries = stageGroups[stageName] || []
+        const totalValue = entries.reduce((sum, entry) => sum + (entry.amount || 0), 0)
+        
+        return {
+          name: stageName,
+          count: entries.length,
+          value: totalValue,
+          entries: entries.slice(0, 3) // Show only first 3 for display
+        }
+      })
+
+      setPipelineData(stages)
+    } catch (error) {
+      console.error('Error fetching pipeline data:', error)
+    } finally {
+      setLoading(false)
+    }
+  }
+
   const getPriorityColor = (priority: string) => {
     switch (priority.toLowerCase()) {
       case 'high': return 'destructive'
@@ -97,11 +129,18 @@ export default function Pipeline() {
     }
   }
 
-  const totalValue = pipelineStages.reduce((sum, stage) => {
-    return sum + parseInt(stage.value.replace(/[$,]/g, ''))
-  }, 0)
+  const totalValue = pipelineData.reduce((sum, stage) => sum + stage.value, 0)
+  const totalLeads = pipelineData.reduce((sum, stage) => sum + stage.count, 0)
 
-  const totalLeads = pipelineStages.reduce((sum, stage) => sum + stage.count, 0)
+  if (loading) {
+    return (
+      <Layout>
+        <div className="flex items-center justify-center min-h-64">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+        </div>
+      </Layout>
+    )
+  }
 
   return (
     <Layout>
@@ -222,8 +261,8 @@ export default function Pipeline() {
       </Card>
 
       {/* Pipeline Stages */}
-      <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
-        {pipelineStages.map((stage, index) => (
+      <div className="grid grid-cols-1 lg:grid-cols-6 gap-6">
+        {pipelineData.map((stage, index) => (
           <div key={stage.name} className="space-y-4">
             {/* Stage Header */}
             <Card className="shadow-soft">
@@ -232,34 +271,40 @@ export default function Pipeline() {
                 <div className="space-y-1">
                   <div className="flex items-center gap-2 text-sm">
                     <Users className="w-4 h-4 text-primary" />
-                    <span className="font-medium">{stage.count} leads</span>
+                    <span className="font-medium">{stage.count} entries</span>
                   </div>
                   <div className="flex items-center gap-2 text-sm">
                     <DollarSign className="w-4 h-4 text-accent" />
-                    <span className="font-medium text-accent">{stage.value}</span>
+                    <span className="font-medium text-accent">
+                      ${stage.value.toLocaleString()}
+                    </span>
                   </div>
                 </div>
               </CardHeader>
             </Card>
 
-            {/* Stage Leads */}
+            {/* Stage Entries */}
             <div className="space-y-3">
-              {stage.leads.map((lead, leadIndex) => (
-                <Card key={leadIndex} className="shadow-soft hover:shadow-medium transition-shadow cursor-pointer">
+              {stage.entries.map((entry, entryIndex) => (
+                <Card key={entryIndex} className="shadow-soft hover:shadow-medium transition-shadow cursor-pointer">
                   <CardContent className="p-4">
                     <div className="space-y-3">
                       <div className="flex justify-between items-start">
                         <div>
-                          <div className="font-medium text-foreground">{lead.name}</div>
-                          <div className="text-sm text-muted-foreground">{lead.lastContact}</div>
+                          <div className="font-medium text-foreground">
+                            {entry.lead?.name || entry.client?.name || 'Unknown'}
+                          </div>
+                          <div className="text-sm text-muted-foreground">
+                            {new Date(entry.last_contact).toLocaleDateString()}
+                          </div>
                         </div>
-                        <Badge variant={getPriorityColor(lead.priority)} className="text-xs">
-                          {lead.priority}
+                        <Badge variant={getPriorityColor(entry.priority)} className="text-xs">
+                          {entry.priority}
                         </Badge>
                       </div>
                       
                       <div className="text-lg font-bold text-accent">
-                        {lead.amount}
+                        ${entry.amount?.toLocaleString() || '0'}
                       </div>
                       
                       <div className="flex gap-1">
@@ -279,11 +324,11 @@ export default function Pipeline() {
               ))}
               
               {/* Show more indicator */}
-              {stage.count > stage.leads.length && (
+              {stage.count > stage.entries.length && (
                 <Card className="shadow-soft border-dashed">
                   <CardContent className="p-4 text-center">
                     <div className="text-sm text-muted-foreground">
-                      +{stage.count - stage.leads.length} more leads
+                      +{stage.count - stage.entries.length} more entries
                     </div>
                     <Button variant="ghost" size="sm" className="mt-2">
                       View All

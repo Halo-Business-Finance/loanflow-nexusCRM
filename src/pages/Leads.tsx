@@ -1,4 +1,6 @@
-import { useState } from "react"
+import { useState, useEffect } from "react"
+import { supabase } from "@/integrations/supabase/client"
+import { useAuth } from "@/components/auth/AuthProvider"
 import Layout from "@/components/Layout"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
@@ -6,83 +8,128 @@ import { Input } from "@/components/ui/input"
 import { Badge } from "@/components/ui/badge"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Search, Plus, Filter, Phone, Mail, User, MapPin, DollarSign } from "lucide-react"
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter } from "@/components/ui/dialog"
+import { useToast } from "@/hooks/use-toast"
+import { Search, Plus, Filter, Phone, Mail, User, MapPin, DollarSign, ArrowRight } from "lucide-react"
 
-const leads = [
-  {
-    id: 1,
-    name: "Sarah Johnson",
-    email: "sarah.johnson@email.com",
-    phone: "(555) 123-4567",
-    location: "San Francisco, CA",
-    loanAmount: "$450,000",
-    stage: "Pre-approval",
-    priority: "high",
-    lastContact: "2 hours ago",
-    creditScore: 750,
-    income: "$120,000"
-  },
-  {
-    id: 2,
-    name: "Michael Chen",
-    email: "m.chen@email.com",
-    phone: "(555) 234-5678",
-    location: "Los Angeles, CA",
-    loanAmount: "$320,000",
-    stage: "Application",
-    priority: "medium",
-    lastContact: "4 hours ago",
-    creditScore: 720,
-    income: "$95,000"
-  },
-  {
-    id: 3,
-    name: "Emily Rodriguez",
-    email: "emily.r@email.com",
-    phone: "(555) 345-6789",
-    location: "Austin, TX",
-    loanAmount: "$275,000",
-    stage: "Initial Contact",
-    priority: "high",
-    lastContact: "1 day ago",
-    creditScore: 680,
-    income: "$85,000"
-  },
-  {
-    id: 4,
-    name: "David Thompson",
-    email: "d.thompson@email.com",
-    phone: "(555) 456-7890",
-    location: "Denver, CO",
-    loanAmount: "$180,000",
-    stage: "Documentation",
-    priority: "low",
-    lastContact: "2 days ago",
-    creditScore: 710,
-    income: "$70,000"
-  },
-  {
-    id: 5,
-    name: "Lisa Wang",
-    email: "lisa.wang@email.com",
-    phone: "(555) 567-8901",
-    location: "Seattle, WA",
-    loanAmount: "$520,000",
-    stage: "Qualified",
-    priority: "high",
-    lastContact: "3 hours ago",
-    creditScore: 780,
-    income: "$140,000"
-  }
-]
+interface Lead {
+  id: string
+  name: string
+  email: string
+  phone?: string
+  location?: string
+  loan_amount?: number
+  stage: string
+  priority: string
+  credit_score?: number
+  income?: number
+  last_contact: string
+  is_converted_to_client: boolean
+}
 
 const stages = ["All", "Initial Contact", "Qualified", "Application", "Pre-approval", "Documentation", "Closing"]
 const priorities = ["All", "High", "Medium", "Low"]
 
 export default function Leads() {
+  const { user } = useAuth()
+  const { toast } = useToast()
+  const [leads, setLeads] = useState<Lead[]>([])
+  const [loading, setLoading] = useState(true)
   const [searchTerm, setSearchTerm] = useState("")
   const [selectedStage, setSelectedStage] = useState("All")
   const [selectedPriority, setSelectedPriority] = useState("All")
+  const [convertingLead, setConvertingLead] = useState<Lead | null>(null)
+
+  useEffect(() => {
+    if (user) {
+      fetchLeads()
+    }
+  }, [user])
+
+  const fetchLeads = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('leads')
+        .select('*')
+        .eq('user_id', user?.id)
+        .order('created_at', { ascending: false })
+
+      if (error) throw error
+      setLeads(data || [])
+    } catch (error) {
+      console.error('Error fetching leads:', error)
+      toast({
+        title: "Error",
+        description: "Failed to fetch leads",
+        variant: "destructive",
+      })
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const convertToClient = async (lead: Lead) => {
+    try {
+      // Create client record
+      const { data: client, error: clientError } = await supabase
+        .from('clients')
+        .insert({
+          user_id: user?.id,
+          lead_id: lead.id,
+          name: lead.name,
+          email: lead.email,
+          phone: lead.phone,
+          location: lead.location,
+          status: 'Active',
+          total_loans: 0,
+          total_loan_value: 0
+        })
+        .select()
+        .single()
+
+      if (clientError) throw clientError
+
+      // Create pipeline entry for the new client
+      const { error: pipelineError } = await supabase
+        .from('pipeline_entries')
+        .insert({
+          user_id: user?.id,
+          lead_id: lead.id,
+          client_id: client.id,
+          stage: lead.stage,
+          amount: lead.loan_amount || 0,
+          priority: lead.priority,
+        })
+
+      if (pipelineError) throw pipelineError
+
+      // Mark lead as converted
+      const { error: updateError } = await supabase
+        .from('leads')
+        .update({
+          is_converted_to_client: true,
+          converted_at: new Date().toISOString()
+        })
+        .eq('id', lead.id)
+
+      if (updateError) throw updateError
+
+      toast({
+        title: "Success!",
+        description: `${lead.name} has been converted to a client and added to the pipeline.`,
+      })
+
+      fetchLeads() // Refresh the leads list
+      setConvertingLead(null)
+    } catch (error) {
+      console.error('Error converting lead:', error)
+      toast({
+        title: "Error",
+        description: "Failed to convert lead to client",
+        variant: "destructive",
+      })
+    }
+  }
 
   const filteredLeads = leads.filter(lead => {
     const matchesSearch = lead.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -112,6 +159,16 @@ export default function Leads() {
       case 'Closing': return 'default'
       default: return 'secondary'
     }
+  }
+
+  if (loading) {
+    return (
+      <Layout>
+        <div className="flex items-center justify-center min-h-64">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+        </div>
+      </Layout>
+    )
   }
 
   return (
@@ -177,7 +234,7 @@ export default function Leads() {
         <TabsContent value="grid" className="space-y-4">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {filteredLeads.map((lead) => (
-              <Card key={lead.id} className="shadow-soft hover:shadow-medium transition-shadow cursor-pointer">
+              <Card key={lead.id} className={`shadow-soft hover:shadow-medium transition-shadow cursor-pointer ${lead.is_converted_to_client ? 'opacity-60' : ''}`}>
                 <CardHeader className="pb-3">
                   <div className="flex justify-between items-start">
                     <div className="flex items-center gap-3">
@@ -185,8 +242,13 @@ export default function Leads() {
                         <User className="w-5 h-5 text-primary" />
                       </div>
                       <div>
-                        <CardTitle className="text-lg">{lead.name}</CardTitle>
-                        <p className="text-sm text-muted-foreground">{lead.lastContact}</p>
+                        <CardTitle className="text-lg flex items-center gap-2">
+                          {lead.name}
+                          {lead.is_converted_to_client && (
+                            <Badge variant="default" className="text-xs">Client</Badge>
+                          )}
+                        </CardTitle>
+                        <p className="text-sm text-muted-foreground">{new Date(lead.last_contact).toLocaleDateString()}</p>
                       </div>
                     </div>
                     <Badge variant={getPriorityColor(lead.priority)}>
@@ -200,27 +262,35 @@ export default function Leads() {
                       <Mail className="w-4 h-4 text-muted-foreground" />
                       <span className="text-muted-foreground">{lead.email}</span>
                     </div>
-                    <div className="flex items-center gap-2 text-sm">
-                      <Phone className="w-4 h-4 text-muted-foreground" />
-                      <span className="text-muted-foreground">{lead.phone}</span>
-                    </div>
-                    <div className="flex items-center gap-2 text-sm">
-                      <MapPin className="w-4 h-4 text-muted-foreground" />
-                      <span className="text-muted-foreground">{lead.location}</span>
-                    </div>
-                    <div className="flex items-center gap-2 text-sm">
-                      <DollarSign className="w-4 h-4 text-muted-foreground" />
-                      <span className="font-medium text-foreground">{lead.loanAmount}</span>
-                    </div>
+                    {lead.phone && (
+                      <div className="flex items-center gap-2 text-sm">
+                        <Phone className="w-4 h-4 text-muted-foreground" />
+                        <span className="text-muted-foreground">{lead.phone}</span>
+                      </div>
+                    )}
+                    {lead.location && (
+                      <div className="flex items-center gap-2 text-sm">
+                        <MapPin className="w-4 h-4 text-muted-foreground" />
+                        <span className="text-muted-foreground">{lead.location}</span>
+                      </div>
+                    )}
+                    {lead.loan_amount && (
+                      <div className="flex items-center gap-2 text-sm">
+                        <DollarSign className="w-4 h-4 text-muted-foreground" />
+                        <span className="font-medium text-foreground">${lead.loan_amount.toLocaleString()}</span>
+                      </div>
+                    )}
                   </div>
                   
                   <div className="flex justify-between items-center pt-2 border-t">
                     <Badge variant={getStageColor(lead.stage)}>
                       {lead.stage}
                     </Badge>
-                    <div className="text-sm text-muted-foreground">
-                      Credit: {lead.creditScore}
-                    </div>
+                    {lead.credit_score && (
+                      <div className="text-sm text-muted-foreground">
+                        Credit: {lead.credit_score}
+                      </div>
+                    )}
                   </div>
                   
                   <div className="flex gap-2 pt-2">
@@ -232,6 +302,35 @@ export default function Leads() {
                       <Mail className="w-3 h-3 mr-1" />
                       Email
                     </Button>
+                    {!lead.is_converted_to_client && (
+                      <Dialog>
+                        <DialogTrigger asChild>
+                          <Button size="sm" variant="default" className="flex-1" onClick={() => setConvertingLead(lead)}>
+                            <ArrowRight className="w-3 h-3 mr-1" />
+                            Convert
+                          </Button>
+                        </DialogTrigger>
+                        <DialogContent>
+                          <DialogHeader>
+                            <DialogTitle>Convert Lead to Client</DialogTitle>
+                          </DialogHeader>
+                          <div className="space-y-4">
+                            <p>Are you sure you want to convert <strong>{lead.name}</strong> to a client?</p>
+                            <p className="text-sm text-muted-foreground">
+                              This will create a new client record and add them to your pipeline.
+                            </p>
+                          </div>
+                          <DialogFooter>
+                            <Button variant="outline" onClick={() => setConvertingLead(null)}>
+                              Cancel
+                            </Button>
+                            <Button onClick={() => convertToClient(lead)}>
+                              Convert to Client
+                            </Button>
+                          </DialogFooter>
+                        </DialogContent>
+                      </Dialog>
+                    )}
                   </div>
                 </CardContent>
               </Card>
@@ -257,14 +356,19 @@ export default function Leads() {
                   </thead>
                   <tbody>
                     {filteredLeads.map((lead) => (
-                      <tr key={lead.id} className="border-b hover:bg-muted/20">
+                      <tr key={lead.id} className={`border-b hover:bg-muted/20 ${lead.is_converted_to_client ? 'opacity-60' : ''}`}>
                         <td className="p-4">
                           <div className="flex items-center gap-3">
                             <div className="w-8 h-8 bg-primary/10 rounded-full flex items-center justify-center">
                               <User className="w-4 h-4 text-primary" />
                             </div>
                             <div>
-                              <div className="font-medium">{lead.name}</div>
+                              <div className="font-medium flex items-center gap-2">
+                                {lead.name}
+                                {lead.is_converted_to_client && (
+                                  <Badge variant="default" className="text-xs">Client</Badge>
+                                )}
+                              </div>
                               <div className="text-sm text-muted-foreground">{lead.location}</div>
                             </div>
                           </div>
@@ -275,7 +379,9 @@ export default function Leads() {
                             <div className="text-muted-foreground">{lead.phone}</div>
                           </div>
                         </td>
-                        <td className="p-4 font-medium">{lead.loanAmount}</td>
+                        <td className="p-4 font-medium">
+                          {lead.loan_amount ? `$${lead.loan_amount.toLocaleString()}` : '-'}
+                        </td>
                         <td className="p-4">
                           <Badge variant={getStageColor(lead.stage)}>
                             {lead.stage}
@@ -286,7 +392,7 @@ export default function Leads() {
                             {lead.priority}
                           </Badge>
                         </td>
-                        <td className="p-4">{lead.creditScore}</td>
+                        <td className="p-4">{lead.credit_score || '-'}</td>
                         <td className="p-4">
                           <div className="flex gap-2">
                             <Button size="sm" variant="outline">
@@ -295,6 +401,32 @@ export default function Leads() {
                             <Button size="sm" variant="outline">
                               <Mail className="w-3 h-3" />
                             </Button>
+                            {!lead.is_converted_to_client && (
+                              <Dialog>
+                                <DialogTrigger asChild>
+                                  <Button size="sm" variant="default">
+                                    <ArrowRight className="w-3 h-3" />
+                                  </Button>
+                                </DialogTrigger>
+                                <DialogContent>
+                                  <DialogHeader>
+                                    <DialogTitle>Convert Lead to Client</DialogTitle>
+                                  </DialogHeader>
+                                  <div className="space-y-4">
+                                    <p>Are you sure you want to convert <strong>{lead.name}</strong> to a client?</p>
+                                    <p className="text-sm text-muted-foreground">
+                                      This will create a new client record and add them to your pipeline.
+                                    </p>
+                                  </div>
+                                  <DialogFooter>
+                                    <Button variant="outline">Cancel</Button>
+                                    <Button onClick={() => convertToClient(lead)}>
+                                      Convert to Client
+                                    </Button>
+                                  </DialogFooter>
+                                </DialogContent>
+                              </Dialog>
+                            )}
                           </div>
                         </td>
                       </tr>
