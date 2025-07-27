@@ -2,6 +2,7 @@ import { BarChart3, Users, UserCheck, FileText, Settings, Home, Target, Calendar
 import { NavLink, useLocation } from "react-router-dom"
 import { Button } from "@/components/ui/button"
 import { RingCentralSetup } from "@/components/RingCentralSetup"
+import { PhoneDialer } from "@/components/PhoneDialer"
 
 import {
   Sidebar,
@@ -93,11 +94,19 @@ export function AppSidebar() {
           <SidebarGroupLabel>Quick Actions</SidebarGroupLabel>
           <SidebarGroupContent>
             <div className="space-y-2 px-2">
+              <PhoneDialer 
+                trigger={
+                  <Button variant="outline" size="sm" className="w-full justify-start gap-2">
+                    <Phone className="w-4 h-4" />
+                    {state !== "collapsed" && <span>Make Call</span>}
+                  </Button>
+                }
+              />
               <RingCentralSetup 
                 trigger={
                   <Button variant="outline" size="sm" className="w-full justify-start gap-2">
                     <Phone className="w-4 h-4" />
-                    {state !== "collapsed" && <span>Phone System</span>}
+                    {state !== "collapsed" && <span>Phone Settings</span>}
                   </Button>
                 }
               />
