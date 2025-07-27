@@ -142,12 +142,6 @@ export default function Dashboard() {
         <div>
           <h1 className="text-3xl font-bold text-foreground">Dashboard</h1>
           <p className="text-muted-foreground">Welcome back! Here's your performance overview.</p>
-          <div className="flex items-center gap-2 mt-2">
-            <Clock className="w-4 h-4 text-primary" />
-            <span className="text-sm font-medium text-primary">
-              {formatDateTime(currentDateTime)}
-            </span>
-          </div>
         </div>
         <Button className="bg-gradient-primary shadow-medium">
           New Lead
