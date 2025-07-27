@@ -33,14 +33,18 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     // Listen for auth changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      async (event, session) => {
+      (event, session) => {
         setUser(session?.user ?? null)
+        setLoading(false)
+        
+        // Defer role fetching to avoid infinite loops
         if (session?.user) {
-          await fetchUserRole(session.user.id)
+          setTimeout(() => {
+            fetchUserRole(session.user.id)
+          }, 0)
         } else {
           setUserRole(null)
         }
-        setLoading(false)
       }
     )
 
