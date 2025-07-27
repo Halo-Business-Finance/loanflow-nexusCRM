@@ -1,3 +1,4 @@
+import { useState, useEffect } from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Progress } from "@/components/ui/progress"
@@ -111,6 +112,29 @@ const todayActivities = [
 ]
 
 export default function Dashboard() {
+  const [currentDateTime, setCurrentDateTime] = useState(new Date())
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCurrentDateTime(new Date())
+    }, 1000) // Update every second
+
+    return () => clearInterval(timer)
+  }, [])
+
+  const formatDateTime = (date: Date) => {
+    const options: Intl.DateTimeFormatOptions = {
+      weekday: 'long',
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit'
+    }
+    return date.toLocaleDateString('en-US', options)
+  }
+
   return (
     <div className="space-y-6">
       {/* Header */}
@@ -118,6 +142,12 @@ export default function Dashboard() {
         <div>
           <h1 className="text-3xl font-bold text-foreground">Dashboard</h1>
           <p className="text-muted-foreground">Welcome back! Here's your performance overview.</p>
+          <div className="flex items-center gap-2 mt-2">
+            <Clock className="w-4 h-4 text-primary" />
+            <span className="text-sm font-medium text-primary">
+              {formatDateTime(currentDateTime)}
+            </span>
+          </div>
         </div>
         <Button className="bg-gradient-primary shadow-medium">
           New Lead
