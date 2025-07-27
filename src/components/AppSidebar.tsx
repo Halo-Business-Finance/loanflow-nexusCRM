@@ -1,6 +1,7 @@
 import { BarChart3, Users, UserCheck, FileText, Settings, Home, Target, Calendar, Phone, Mail } from "lucide-react"
 import { NavLink, useLocation } from "react-router-dom"
 import { Button } from "@/components/ui/button"
+import { RingCentralSetup } from "@/components/RingCentralSetup"
 
 import {
   Sidebar,
@@ -92,10 +93,14 @@ export function AppSidebar() {
           <SidebarGroupLabel>Quick Actions</SidebarGroupLabel>
           <SidebarGroupContent>
             <div className="space-y-2 px-2">
-              <Button variant="outline" size="sm" className="w-full justify-start gap-2">
-                <Phone className="w-4 h-4" />
-                {state !== "collapsed" && <span>Phone System</span>}
-              </Button>
+              <RingCentralSetup 
+                trigger={
+                  <Button variant="outline" size="sm" className="w-full justify-start gap-2">
+                    <Phone className="w-4 h-4" />
+                    {state !== "collapsed" && <span>Phone System</span>}
+                  </Button>
+                }
+              />
               <Button variant="outline" size="sm" className="w-full justify-start gap-2">
                 <Mail className="w-4 h-4" />
                 {state !== "collapsed" && <span>Email Account</span>}
