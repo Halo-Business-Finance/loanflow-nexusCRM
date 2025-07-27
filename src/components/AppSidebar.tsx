@@ -98,7 +98,7 @@ export function AppSidebar() {
               </Button>
               <Button variant="outline" size="sm" className="w-full justify-start gap-2">
                 <Mail className="w-4 h-4" />
-                {state !== "collapsed" && <span>Send Email</span>}
+                {state !== "collapsed" && <span>Email Account</span>}
               </Button>
             </div>
           </SidebarGroupContent>
