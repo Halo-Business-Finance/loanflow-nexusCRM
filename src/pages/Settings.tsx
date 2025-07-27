@@ -237,10 +237,10 @@ export default function Settings() {
 
                 <div className="space-y-2">
                   <Label>Language</Label>
-                  <select className="w-full px-3 py-2 text-sm border rounded-md">
+                  <select className="w-full px-3 py-2 text-sm border rounded-md bg-background">
                     <option>English (US)</option>
-                    <option>Spanish</option>
-                    <option>French</option>
+                    <option>Español (Spanish)</option>
+                    <option>Français (French)</option>
                   </select>
                 </div>
 
@@ -248,11 +248,13 @@ export default function Settings() {
 
                 <div className="space-y-2">
                   <Label>Time Zone</Label>
-                  <select className="w-full px-3 py-2 text-sm border rounded-md">
+                  <select className="w-full px-3 py-2 text-sm border rounded-md bg-background">
                     <option>Eastern Time (US)</option>
                     <option>Central Time (US)</option>
                     <option>Mountain Time (US)</option>
                     <option>Pacific Time (US)</option>
+                    <option>Alaska Time (US)</option>
+                    <option>Hawaii Time (US)</option>
                   </select>
                 </div>
               </CardContent>
