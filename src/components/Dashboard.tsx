@@ -13,6 +13,8 @@ import {
   Mail,
   Clock
 } from "lucide-react"
+import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart"
+import { LineChart, Line, XAxis, YAxis } from "recharts"
 
 const metrics = [
   {
@@ -110,6 +112,26 @@ const todayActivities = [
     priority: "medium"
   }
 ]
+
+const loanCloseData = [
+  { month: "Jan", closedLoans: 12, targetLoans: 15, avgDays: 28 },
+  { month: "Feb", closedLoans: 18, targetLoans: 20, avgDays: 25 },
+  { month: "Mar", closedLoans: 22, targetLoans: 25, avgDays: 23 },
+  { month: "Apr", closedLoans: 19, targetLoans: 22, avgDays: 26 },
+  { month: "May", closedLoans: 25, targetLoans: 28, avgDays: 22 },
+  { month: "Jun", closedLoans: 30, targetLoans: 30, avgDays: 20 },
+]
+
+const chartConfig = {
+  closedLoans: {
+    label: "Closed Loans",
+    color: "hsl(var(--primary))",
+  },
+  targetLoans: {
+    label: "Target Loans",
+    color: "hsl(var(--accent))",
+  },
+}
 
 export default function Dashboard() {
   const [currentDateTime, setCurrentDateTime] = useState(new Date())
@@ -221,6 +243,58 @@ export default function Dashboard() {
           </CardContent>
         </Card>
       </div>
+
+      {/* Loan Close Performance */}
+      <Card className="shadow-soft">
+        <CardHeader>
+          <CardTitle>Loan Close Performance</CardTitle>
+          <p className="text-sm text-muted-foreground">Monthly closed loans vs targets</p>
+        </CardHeader>
+        <CardContent>
+          <ChartContainer config={chartConfig} className="h-[300px]">
+            <LineChart data={loanCloseData}>
+              <XAxis 
+                dataKey="month" 
+                tickLine={false}
+                axisLine={false}
+                className="text-muted-foreground"
+              />
+              <YAxis 
+                tickLine={false}
+                axisLine={false}
+                className="text-muted-foreground"
+              />
+              <ChartTooltip 
+                content={
+                  <ChartTooltipContent 
+                    labelFormatter={(label) => `${label} 2024`}
+                    formatter={(value, name) => [
+                      value,
+                      name === "closedLoans" ? "Closed" : "Target"
+                    ]}
+                  />
+                }
+              />
+              <Line
+                type="monotone"
+                dataKey="closedLoans"
+                stroke="var(--color-closedLoans)"
+                strokeWidth={3}
+                dot={{ fill: "var(--color-closedLoans)", strokeWidth: 2, r: 6 }}
+                activeDot={{ r: 8, stroke: "var(--color-closedLoans)", strokeWidth: 2 }}
+              />
+              <Line
+                type="monotone"
+                dataKey="targetLoans"
+                stroke="var(--color-targetLoans)"
+                strokeWidth={2}
+                strokeDasharray="5 5"
+                dot={{ fill: "var(--color-targetLoans)", strokeWidth: 2, r: 4 }}
+              />
+            </LineChart>
+          </ChartContainer>
+        </CardContent>
+      </Card>
 
       {/* Recent Leads */}
       <Card className="shadow-soft">
