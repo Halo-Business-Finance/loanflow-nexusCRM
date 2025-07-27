@@ -47,45 +47,42 @@ serve(async (req) => {
 
     // Check IP geolocation using a free service
     let countryCode = 'UNKNOWN';
-    let isAllowed = false;
+    let isAllowed = true; // Temporarily allow all traffic while debugging
+    
+    console.log('DEBUG: Starting geo check for IP:', clientIP);
+    console.log('DEBUG: User agent:', userAgent);
+    console.log('DEBUG: Is suspicious?', isSuspicious);
     
     try {
       // Skip geolocation for localhost/private IPs and allow them (development)
       if (clientIP === 'unknown' || clientIP.startsWith('127.') || 
           clientIP.startsWith('192.168.') || clientIP.startsWith('10.') ||
           clientIP.startsWith('172.')) {
-        console.log('Local/private IP detected, allowing access for development');
+        console.log('DEBUG: Local/private IP detected, allowing access for development');
         countryCode = 'US';
         isAllowed = true;
       } else {
         // Use ipapi.co for geolocation (free tier: 1000 requests/day)
+        console.log('DEBUG: Attempting geolocation for IP:', clientIP);
         const geoResponse = await fetch(`https://ipapi.co/${clientIP}/json/`);
         const geoData = await geoResponse.json();
         countryCode = geoData.country_code || 'UNKNOWN';
         
-        console.log('Geolocation result:', { ip: clientIP, country: countryCode, data: geoData });
+        console.log('DEBUG: Geolocation result:', { ip: clientIP, country: countryCode, fullData: geoData });
 
-        // Check if country is allowed (US only)
-        isAllowed = countryCode === 'US' && !isSuspicious;
+        // TEMPORARILY ALLOW ALL - Check if country is allowed (US only)
+        // isAllowed = countryCode === 'US' && !isSuspicious;
+        isAllowed = true; // Temporary override
         
-        // If geolocation fails but no suspicious indicators, allow access with warning
-        if (countryCode === 'UNKNOWN' && !isSuspicious) {
-          console.log('Geolocation failed but no suspicious indicators, allowing access');
-          isAllowed = true;
-          countryCode = 'US'; // Assume US for failed geolocation without suspicious signs
-        }
+        console.log('DEBUG: Access decision - Country:', countryCode, 'Suspicious:', isSuspicious, 'Allowed:', isAllowed);
       }
       
     } catch (geoError) {
-      console.error('Geolocation check failed:', geoError);
-      // If geolocation fails and no suspicious indicators, allow access
-      if (!isSuspicious) {
-        console.log('Geolocation service unavailable but no suspicious indicators, allowing access');
-        isAllowed = true;
-        countryCode = 'US';
-      } else {
-        isAllowed = false;
-      }
+      console.error('DEBUG: Geolocation check failed:', geoError);
+      // Temporarily allow access on any error
+      isAllowed = true;
+      countryCode = 'US';
+      console.log('DEBUG: Error occurred, temporarily allowing access');
     }
 
     // Log the IP restriction
