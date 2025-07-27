@@ -1,1 +1,4 @@
 project_id = "gshxxsniwytjgcnthyfq"
+
+[functions.geo-security]
+verify_jwt = false

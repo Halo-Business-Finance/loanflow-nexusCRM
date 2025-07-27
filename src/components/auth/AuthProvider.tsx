@@ -86,6 +86,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const signIn = async (email: string, password: string) => {
     try {
+      // Check geo-restrictions first
+      console.log('Checking geo-restrictions...')
+      const geoCheck = await supabase.functions.invoke('geo-security')
+      
+      if (geoCheck.error || !geoCheck.data?.allowed) {
+        throw new Error(geoCheck.data?.reason || 'Access restricted to US locations only')
+      }
+
       console.log('Attempting to sign in with email:', email)
       const { error, data } = await supabase.auth.signInWithPassword({
         email,
@@ -119,6 +127,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const signUp = async (email: string, password: string, firstName: string, lastName: string) => {
     try {
+      // Check geo-restrictions first
+      console.log('Checking geo-restrictions for signup...')
+      const geoCheck = await supabase.functions.invoke('geo-security')
+      
+      if (geoCheck.error || !geoCheck.data?.allowed) {
+        throw new Error(geoCheck.data?.reason || 'Account creation restricted to US locations only')
+      }
+
       const { error } = await supabase.auth.signUp({
         email,
         password,

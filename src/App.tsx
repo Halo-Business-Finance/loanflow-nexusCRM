@@ -6,6 +6,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider, useAuth } from "@/components/auth/AuthProvider";
 import { AuthPage } from "@/components/auth/AuthPage";
 import { SecurityDashboard } from "@/components/security/SecurityDashboard";
+import { GeoSecurityCheck } from "@/components/GeoSecurityCheck";
 import Index from "./pages/Index";
 import Leads from "./pages/Leads";
 import Pipeline from "./pages/Pipeline";
@@ -54,13 +55,15 @@ function AuthenticatedApp() {
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
-    <AuthProvider>
-      <TooltipProvider>
-        <Toaster />
-        <Sonner />
-        <AuthenticatedApp />
-      </TooltipProvider>
-    </AuthProvider>
+    <GeoSecurityCheck>
+      <AuthProvider>
+        <TooltipProvider>
+          <Toaster />
+          <Sonner />
+          <AuthenticatedApp />
+        </TooltipProvider>
+      </AuthProvider>
+    </GeoSecurityCheck>
   </QueryClientProvider>
 );
 
