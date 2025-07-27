@@ -7,7 +7,7 @@ import Index from "./pages/Index";
 import Leads from "./pages/Leads";
 import Pipeline from "./pages/Pipeline";
 import Customers from "./pages/Customers";
-import Applications from "./pages/Applications";
+import Documents from "./pages/Documents";
 import Activities from "./pages/Activities";
 import Reports from "./pages/Reports";
 import Settings from "./pages/Settings";
@@ -26,7 +26,7 @@ const App = () => (
           <Route path="/leads" element={<Leads />} />
           <Route path="/customers" element={<Customers />} />
           <Route path="/pipeline" element={<Pipeline />} />
-          <Route path="/applications" element={<Applications />} />
+          <Route path="/documents" element={<Documents />} />
           <Route path="/activities" element={<Activities />} />
           <Route path="/reports" element={<Reports />} />
           <Route path="/settings" element={<Settings />} />

@@ -18,7 +18,7 @@ const navigationItems = [
   { title: "Leads", url: "/leads", icon: Target },
   { title: "Customers", url: "/customers", icon: Users },
   { title: "Pipeline", url: "/pipeline", icon: BarChart3 },
-  { title: "Applications", url: "/applications", icon: FileText },
+  { title: "Documents", url: "/documents", icon: FileText },
   { title: "Activities", url: "/activities", icon: Calendar },
   { title: "Reports", url: "/reports", icon: BarChart3 },
 ]
