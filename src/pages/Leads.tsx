@@ -607,7 +607,7 @@ export default function Leads() {
                     {lead.phone && (
                       <div className="flex items-center gap-2 text-sm">
                         <Phone className="w-4 h-4 text-muted-foreground" />
-                        <span className="text-muted-foreground">{lead.phone}</span>
+                        <span className="text-muted-foreground">{formatPhoneNumber(lead.phone)}</span>
                       </div>
                     )}
                      {lead.address && (
@@ -736,7 +736,7 @@ export default function Leads() {
                         <td className="p-4">
                           <div className="text-sm">
                             <div>{lead.email}</div>
-                            <div className="text-muted-foreground">{lead.phone}</div>
+                            <div className="text-muted-foreground">{lead.phone ? formatPhoneNumber(lead.phone) : ''}</div>
                           </div>
                         </td>
                         <td className="p-4 font-medium">
