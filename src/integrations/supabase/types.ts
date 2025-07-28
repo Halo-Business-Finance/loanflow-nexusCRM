@@ -253,6 +253,7 @@ export type Database = {
       leads: {
         Row: {
           annual_revenue: number | null
+          business_address: string | null
           business_name: string | null
           call_notes: string | null
           converted_at: string | null
@@ -268,6 +269,7 @@ export type Database = {
           location: string | null
           name: string
           notes: string | null
+          owns_property: boolean | null
           phone: string | null
           priority: string
           stage: string
@@ -276,6 +278,7 @@ export type Database = {
         }
         Insert: {
           annual_revenue?: number | null
+          business_address?: string | null
           business_name?: string | null
           call_notes?: string | null
           converted_at?: string | null
@@ -291,6 +294,7 @@ export type Database = {
           location?: string | null
           name: string
           notes?: string | null
+          owns_property?: boolean | null
           phone?: string | null
           priority?: string
           stage?: string
@@ -299,6 +303,7 @@ export type Database = {
         }
         Update: {
           annual_revenue?: number | null
+          business_address?: string | null
           business_name?: string | null
           call_notes?: string | null
           converted_at?: string | null
@@ -314,6 +319,7 @@ export type Database = {
           location?: string | null
           name?: string
           notes?: string | null
+          owns_property?: boolean | null
           phone?: string | null
           priority?: string
           stage?: string

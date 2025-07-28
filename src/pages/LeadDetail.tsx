@@ -10,6 +10,7 @@ import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { Badge } from "@/components/ui/badge"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { Switch } from "@/components/ui/switch"
 import { Separator } from "@/components/ui/separator"
 import { useToast } from "@/hooks/use-toast"
 import { formatNumber, formatCurrency } from "@/lib/utils"
@@ -26,7 +27,10 @@ import {
   Edit,
   Phone as PhoneIcon,
   Calendar,
-  UserCheck
+  UserCheck,
+  Home,
+  CheckCircle,
+  XCircle
 } from "lucide-react"
 
 interface Lead {
@@ -36,6 +40,8 @@ interface Lead {
   phone?: string
   location?: string
   business_name?: string
+  business_address?: string
+  owns_property?: boolean
   loan_amount?: number
   loan_type?: string
   stage: string
@@ -81,6 +87,8 @@ export default function LeadDetail() {
     phone: "",
     location: "",
     business_name: "",
+    business_address: "",
+    owns_property: false,
     loan_amount: "",
     loan_type: "",
     stage: "",
@@ -124,6 +132,8 @@ export default function LeadDetail() {
         phone: data.phone || "",
         location: data.location || "",
         business_name: data.business_name || "",
+        business_address: data.business_address || "",
+        owns_property: data.owns_property || false,
         loan_amount: data.loan_amount?.toString() || "",
         loan_type: data.loan_type || "",
         stage: data.stage || "",
@@ -243,6 +253,8 @@ export default function LeadDetail() {
         phone: editableFields.phone || null,
         location: editableFields.location || null,
         business_name: editableFields.business_name || null,
+        business_address: editableFields.business_address || null,
+        owns_property: editableFields.owns_property,
         loan_amount: editableFields.loan_amount ? parseFloat(editableFields.loan_amount) : null,
         loan_type: editableFields.loan_type || null,
         stage: editableFields.stage,
@@ -388,21 +400,6 @@ export default function LeadDetail() {
                   </div>
                 </div>
 
-                <div className="flex items-center gap-3">
-                  <Building className="w-4 h-4" style={{ color: 'white' }} />
-                  <div className="flex-1">
-                    <p className="text-sm" style={{ color: 'white' }}>Business Name</p>
-                    {isEditing ? (
-                      <Input
-                        value={editableFields.business_name}
-                        onChange={(e) => setEditableFields({...editableFields, business_name: e.target.value})}
-                        placeholder="Enter business name"
-                      />
-                    ) : (
-                      <p className="font-medium" style={{ color: 'white' }}>{lead.business_name || 'N/A'}</p>
-                    )}
-                  </div>
-                </div>
 
                 <div className="flex items-center gap-3">
                   <Mail className="w-4 h-4" style={{ color: 'white' }} />
@@ -511,6 +508,82 @@ export default function LeadDetail() {
             </CardContent>
           </Card>
 
+          {/* Business Information */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2" style={{ color: 'white' }}>
+                <Building className="w-5 h-5" />
+                Business Information
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="grid grid-cols-1 gap-4">
+                <div className="flex items-center gap-3">
+                  <Building className="w-4 h-4" style={{ color: 'white' }} />
+                  <div className="flex-1">
+                    <p className="text-sm" style={{ color: 'white' }}>Business Name</p>
+                    {isEditing ? (
+                      <Input
+                        value={editableFields.business_name}
+                        onChange={(e) => setEditableFields({...editableFields, business_name: e.target.value})}
+                        placeholder="Enter business name"
+                      />
+                    ) : (
+                      <p className="font-medium" style={{ color: 'white' }}>{lead.business_name || 'N/A'}</p>
+                    )}
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-3">
+                  <Home className="w-4 h-4" style={{ color: 'white' }} />
+                  <div className="flex-1">
+                    <p className="text-sm" style={{ color: 'white' }}>Business Address</p>
+                    {isEditing ? (
+                      <Textarea
+                        value={editableFields.business_address}
+                        onChange={(e) => setEditableFields({...editableFields, business_address: e.target.value})}
+                        placeholder="Enter business address"
+                        rows={2}
+                      />
+                    ) : (
+                      <p className="font-medium" style={{ color: 'white' }}>{lead.business_address || 'N/A'}</p>
+                    )}
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-3">
+                  <div className="flex-1">
+                    <p className="text-sm" style={{ color: 'white' }}>Property Ownership</p>
+                    {isEditing ? (
+                      <div className="flex items-center gap-2 mt-2">
+                        <Switch
+                          checked={editableFields.owns_property}
+                          onCheckedChange={(checked) => setEditableFields({...editableFields, owns_property: checked})}
+                        />
+                        <span className="text-sm" style={{ color: 'white' }}>
+                          {editableFields.owns_property ? 'Owns Property' : 'Does not own property'}
+                        </span>
+                      </div>
+                    ) : (
+                      <div className="flex items-center gap-2">
+                        {lead.owns_property ? (
+                          <CheckCircle className="w-4 h-4 text-green-500" />
+                        ) : (
+                          <XCircle className="w-4 h-4 text-red-500" />
+                        )}
+                        <p className="font-medium" style={{ color: 'white' }}>
+                          {lead.owns_property ? 'Owns Property' : 'Does not own property'}
+                        </p>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+
+        <div className="grid grid-cols-1 gap-6">
           {/* Financial Information */}
           <Card>
             <CardHeader>
