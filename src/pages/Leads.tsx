@@ -731,21 +731,21 @@ export default function Leads() {
                   </thead>
                   <tbody>
                     {filteredLeads.map((lead) => (
-                      <tr key={lead.id} className={`border-b hover:bg-muted/20 cursor-pointer ${lead.is_converted_to_client ? 'opacity-60' : ''}`} onClick={() => openEditDialog(lead)}>
+                      <tr key={lead.id} className={`border-b hover:bg-muted/20 cursor-pointer text-white ${lead.is_converted_to_client ? 'opacity-60' : ''}`} onClick={() => openEditDialog(lead)}>
                         <td className="p-4">
                           <div className="flex items-center gap-3">
                             <div className="w-8 h-8 bg-primary/10 rounded-full flex items-center justify-center">
                               <User className="w-4 h-4 text-primary" />
                             </div>
                              <div>
-                               <div className="font-medium flex items-center gap-2">
+                               <div className="font-medium flex items-center gap-2 text-white">
                                  {lead.name}
                                  {lead.is_converted_to_client && (
                                    <Badge variant="default" className="text-xs">Client</Badge>
                                  )}
                                </div>
                                {lead.business_name && (
-                                 <div className="text-sm text-primary font-medium">{lead.business_name}</div>
+                                 <div className="text-sm text-white font-medium">{lead.business_name}</div>
                                )}
                                <div className="text-sm text-white">{lead.address}</div>
                              </div>
