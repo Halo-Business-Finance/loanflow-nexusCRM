@@ -602,7 +602,7 @@ export default function Leads() {
         </TabsList>
         
         <TabsContent value="grid" className="space-y-4">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
             {filteredLeads.map((lead) => (
               <Card key={lead.id} className={`shadow-soft hover:shadow-medium transition-shadow cursor-pointer text-white ${lead.is_converted_to_client ? 'opacity-60' : ''}`} onClick={() => navigate(`/leads/${lead.id}`)}>
                 <CardHeader className="pb-3 text-white">
