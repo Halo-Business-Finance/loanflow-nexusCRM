@@ -43,7 +43,23 @@ export default function Leads() {
   const [selectedPriority, setSelectedPriority] = useState("All")
   const [convertingLead, setConvertingLead] = useState<Lead | null>(null)
   const [showAddDialog, setShowAddDialog] = useState(false)
+  const [showEditDialog, setShowEditDialog] = useState(false)
+  const [editingLead, setEditingLead] = useState<Lead | null>(null)
   const [newLead, setNewLead] = useState({
+    name: "",
+    email: "",
+    phone: "",
+    location: "",
+    business_name: "",
+    loan_amount: "",
+    credit_score: "",
+    income: "",
+    priority: "medium",
+    stage: "Initial Contact",
+    notes: ""
+  })
+  
+  const [editLead, setEditLead] = useState({
     name: "",
     email: "",
     phone: "",
@@ -195,6 +211,64 @@ export default function Leads() {
       toast({
         title: "Error",
         description: "Failed to add new lead",
+        variant: "destructive",
+      })
+    }
+  }
+
+  const openEditDialog = (lead: Lead) => {
+    setEditingLead(lead)
+    setEditLead({
+      name: lead.name,
+      email: lead.email,
+      phone: lead.phone || "",
+      location: lead.location || "",
+      business_name: lead.business_name || "",
+      loan_amount: lead.loan_amount?.toString() || "",
+      credit_score: lead.credit_score?.toString() || "",
+      income: lead.income?.toString() || "",
+      priority: lead.priority,
+      stage: lead.stage,
+      notes: "" // notes field not shown in current interface
+    })
+    setShowEditDialog(true)
+  }
+
+  const updateLead = async () => {
+    if (!editingLead) return
+    
+    try {
+      const { error } = await supabase
+        .from('leads')
+        .update({
+          name: editLead.name,
+          email: editLead.email,
+          phone: editLead.phone || null,
+          location: editLead.location || null,
+          business_name: editLead.business_name || null,
+          loan_amount: editLead.loan_amount ? parseFloat(editLead.loan_amount) : null,
+          credit_score: editLead.credit_score ? parseInt(editLead.credit_score) : null,
+          income: editLead.income ? parseFloat(editLead.income) : null,
+          priority: editLead.priority,
+          stage: editLead.stage,
+        })
+        .eq('id', editingLead.id)
+
+      if (error) throw error
+
+      toast({
+        title: "Success!",
+        description: "Lead has been updated successfully.",
+      })
+
+      setShowEditDialog(false)
+      setEditingLead(null)
+      fetchLeads() // Refresh the leads list
+    } catch (error) {
+      console.error('Error updating lead:', error)
+      toast({
+        title: "Error",
+        description: "Failed to update lead",
         variant: "destructive",
       })
     }
@@ -454,7 +528,7 @@ export default function Leads() {
         <TabsContent value="grid" className="space-y-4">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {filteredLeads.map((lead) => (
-              <Card key={lead.id} className={`shadow-soft hover:shadow-medium transition-shadow cursor-pointer ${lead.is_converted_to_client ? 'opacity-60' : ''}`}>
+              <Card key={lead.id} className={`shadow-soft hover:shadow-medium transition-shadow cursor-pointer ${lead.is_converted_to_client ? 'opacity-60' : ''}`} onClick={() => openEditDialog(lead)}>
                 <CardHeader className="pb-3">
                   <div className="flex justify-between items-start">
                     <div className="flex items-center gap-3">
@@ -514,18 +588,36 @@ export default function Leads() {
                   </div>
                   
                   <div className="flex gap-2 pt-2">
-                    <Button size="sm" variant="outline" className="flex-1">
+                    <Button 
+                      size="sm" 
+                      variant="outline" 
+                      className="flex-1"
+                      onClick={(e) => e.stopPropagation()}
+                    >
                       <Phone className="w-3 h-3 mr-1" />
                       Call
                     </Button>
-                    <Button size="sm" variant="outline" className="flex-1">
+                    <Button 
+                      size="sm" 
+                      variant="outline" 
+                      className="flex-1"
+                      onClick={(e) => e.stopPropagation()}
+                    >
                       <Mail className="w-3 h-3 mr-1" />
                       Email
                     </Button>
                     {!lead.is_converted_to_client && (
                       <Dialog>
                         <DialogTrigger asChild>
-                          <Button size="sm" variant="default" className="flex-1" onClick={() => setConvertingLead(lead)}>
+                          <Button 
+                            size="sm" 
+                            variant="default" 
+                            className="flex-1" 
+                            onClick={(e) => {
+                              e.stopPropagation()
+                              setConvertingLead(lead)
+                            }}
+                          >
                             <ArrowRight className="w-3 h-3 mr-1" />
                             Convert
                           </Button>
@@ -576,7 +668,7 @@ export default function Leads() {
                   </thead>
                   <tbody>
                     {filteredLeads.map((lead) => (
-                      <tr key={lead.id} className={`border-b hover:bg-muted/20 ${lead.is_converted_to_client ? 'opacity-60' : ''}`}>
+                      <tr key={lead.id} className={`border-b hover:bg-muted/20 cursor-pointer ${lead.is_converted_to_client ? 'opacity-60' : ''}`} onClick={() => openEditDialog(lead)}>
                         <td className="p-4">
                           <div className="flex items-center gap-3">
                             <div className="w-8 h-8 bg-primary/10 rounded-full flex items-center justify-center">
@@ -658,6 +750,147 @@ export default function Leads() {
           </Card>
         </TabsContent>
       </Tabs>
+
+      {/* Edit Lead Dialog */}
+      <Dialog open={showEditDialog} onOpenChange={setShowEditDialog}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle>Edit Lead</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4">
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <Label htmlFor="edit-name">Name *</Label>
+                <Input
+                  id="edit-name"
+                  value={editLead.name}
+                  onChange={(e) => setEditLead(prev => ({ ...prev, name: e.target.value }))}
+                  placeholder="Full name"
+                />
+              </div>
+              <div>
+                <Label htmlFor="edit-business_name">Business Name</Label>
+                <Input
+                  id="edit-business_name"
+                  value={editLead.business_name}
+                  onChange={(e) => setEditLead(prev => ({ ...prev, business_name: e.target.value }))}
+                  placeholder="Company or business name"
+                />
+              </div>
+            </div>
+            
+            <div>
+              <Label htmlFor="edit-email">Email *</Label>
+              <Input
+                id="edit-email"
+                type="email"
+                value={editLead.email}
+                onChange={(e) => setEditLead(prev => ({ ...prev, email: e.target.value }))}
+                placeholder="email@example.com"
+              />
+            </div>
+            
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <Label htmlFor="edit-phone">Phone</Label>
+                <Input
+                  id="edit-phone"
+                  value={editLead.phone}
+                  onChange={(e) => setEditLead(prev => ({ ...prev, phone: e.target.value }))}
+                  placeholder="(555) 123-4567"
+                />
+              </div>
+              <div>
+                <Label htmlFor="edit-location">Location</Label>
+                <Input
+                  id="edit-location"
+                  value={editLead.location}
+                  onChange={(e) => setEditLead(prev => ({ ...prev, location: e.target.value }))}
+                  placeholder="City, State"
+                />
+              </div>
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <Label htmlFor="edit-loan_amount">Loan Amount</Label>
+                <Input
+                  id="edit-loan_amount"
+                  type="number"
+                  value={editLead.loan_amount}
+                  onChange={(e) => setEditLead(prev => ({ ...prev, loan_amount: e.target.value }))}
+                  placeholder="250000"
+                />
+              </div>
+              <div>
+                <Label htmlFor="edit-credit_score">Credit Score</Label>
+                <Input
+                  id="edit-credit_score"
+                  type="number"
+                  value={editLead.credit_score}
+                  onChange={(e) => setEditLead(prev => ({ ...prev, credit_score: e.target.value }))}
+                  placeholder="750"
+                />
+              </div>
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <Label htmlFor="edit-income">Annual Income</Label>
+                <Input
+                  id="edit-income"
+                  type="number"
+                  value={editLead.income}
+                  onChange={(e) => setEditLead(prev => ({ ...prev, income: e.target.value }))}
+                  placeholder="75000"
+                />
+              </div>
+              <div>
+                <Label htmlFor="edit-priority">Priority</Label>
+                <Select value={editLead.priority} onValueChange={(value) => setEditLead(prev => ({ ...prev, priority: value }))}>
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="high">High</SelectItem>
+                    <SelectItem value="medium">Medium</SelectItem>
+                    <SelectItem value="low">Low</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+
+            <div>
+              <Label htmlFor="edit-stage">Stage</Label>
+              <Select value={editLead.stage} onValueChange={(value) => setEditLead(prev => ({ ...prev, stage: value }))}>
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="Initial Contact">Initial Contact</SelectItem>
+                  <SelectItem value="Qualified">Qualified</SelectItem>
+                  <SelectItem value="Application">Application</SelectItem>
+                  <SelectItem value="Pre-approval">Pre-approval</SelectItem>
+                  <SelectItem value="Documentation">Documentation</SelectItem>
+                  <SelectItem value="Closing">Closing</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setShowEditDialog(false)}>
+              Cancel
+            </Button>
+            <Button 
+              onClick={updateLead}
+              disabled={!editLead.name || !editLead.email}
+            >
+              Update Lead
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
       </div>
     </Layout>
   )
