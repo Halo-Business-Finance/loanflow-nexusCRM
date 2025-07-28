@@ -159,6 +159,7 @@ export function LoanManager({ clientId, clientName, loans, onLoansUpdate }: Loan
       case 'bridge loan': return 'destructive'
       case 'conventional loan': return 'outline'
       case 'equipment financing': return 'default'
+      case 'usda b&i loan': return 'secondary'
       default: return 'secondary'
     }
   }
@@ -216,6 +217,7 @@ export function LoanManager({ clientId, clientName, loans, onLoansUpdate }: Loan
                       <SelectItem value="Bridge Loan">Bridge Loan</SelectItem>
                       <SelectItem value="Conventional Loan">Conventional Loan</SelectItem>
                       <SelectItem value="Equipment Financing">Equipment Financing</SelectItem>
+                      <SelectItem value="USDA B&I Loan">USDA B&I Loan</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
