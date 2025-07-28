@@ -72,6 +72,7 @@ interface Lead {
   loan_amount?: number;
   created_at: string;
   address?: string;
+  is_converted_to_client?: boolean;
 }
 
 interface PipelineEntry {
@@ -220,9 +221,9 @@ export default function Dashboard() {
       "Closing": 0
     }
 
-    // Count leads by stage
+    // Count leads by stage (exclude converted leads)
     leadsData.forEach(lead => {
-      if (stageCounts.hasOwnProperty(lead.stage)) {
+      if (stageCounts.hasOwnProperty(lead.stage) && !lead.is_converted_to_client) {
         stageCounts[lead.stage as keyof typeof stageCounts]++
       }
     })
