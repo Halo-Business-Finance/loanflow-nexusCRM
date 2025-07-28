@@ -275,6 +275,7 @@ export type Database = {
           owns_property: boolean | null
           phone: string | null
           priority: string
+          property_payment_amount: number | null
           stage: string
           updated_at: string
           user_id: string
@@ -303,6 +304,7 @@ export type Database = {
           owns_property?: boolean | null
           phone?: string | null
           priority?: string
+          property_payment_amount?: number | null
           stage?: string
           updated_at?: string
           user_id: string
@@ -331,6 +333,7 @@ export type Database = {
           owns_property?: boolean | null
           phone?: string | null
           priority?: string
+          property_payment_amount?: number | null
           stage?: string
           updated_at?: string
           user_id?: string

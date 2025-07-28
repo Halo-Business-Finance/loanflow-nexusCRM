@@ -139,7 +139,7 @@ export default function LeadDetail() {
         business_name: data.business_name || "",
         business_address: data.business_address || "",
         owns_property: data.owns_property || false,
-        property_payment_amount: data.property_payment_amount?.toString() || "",
+        property_payment_amount: (data as any).property_payment_amount?.toString() || "",
         loan_amount: data.loan_amount?.toString() || "",
         loan_type: data.loan_type || "",
         stage: data.stage || "",
@@ -623,7 +623,7 @@ export default function LeadDetail() {
                           />
                         ) : (
                           <p className="font-medium" style={{ color: 'white' }}>
-                            {lead.property_payment_amount ? formatCurrency(lead.property_payment_amount) : 'N/A'}
+                            {(lead as any).property_payment_amount ? formatCurrency((lead as any).property_payment_amount) : 'N/A'}
                           </p>
                         )}
                       </div>
