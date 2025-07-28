@@ -512,6 +512,7 @@ export type Database = {
           first_name: string | null
           id: string
           is_active: boolean | null
+          job_title: string | null
           last_name: string | null
           phone_number: string | null
           updated_at: string
@@ -522,6 +523,7 @@ export type Database = {
           first_name?: string | null
           id: string
           is_active?: boolean | null
+          job_title?: string | null
           last_name?: string | null
           phone_number?: string | null
           updated_at?: string
@@ -532,6 +534,7 @@ export type Database = {
           first_name?: string | null
           id?: string
           is_active?: boolean | null
+          job_title?: string | null
           last_name?: string | null
           phone_number?: string | null
           updated_at?: string

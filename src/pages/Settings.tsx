@@ -225,9 +225,13 @@ export default function Settings() {
                   />
                 </div>
 
-                <Button className="bg-gradient-primary gap-2">
+                <Button 
+                  className="bg-gradient-primary gap-2" 
+                  onClick={saveProfile}
+                  disabled={loading}
+                >
                   <Save className="h-4 w-4" />
-                  Save Changes
+                  {loading ? 'Saving...' : 'Save Changes'}
                 </Button>
               </CardContent>
             </Card>
