@@ -244,7 +244,7 @@ export default function Leads() {
           name: editLead.name,
           email: editLead.email,
           phone: editLead.phone || null,
-          address: editLead.address || null,
+          location: editLead.address || null,
           business_name: editLead.business_name || null,
           loan_amount: editLead.loan_amount ? parseFloat(editLead.loan_amount) : null,
           credit_score: editLead.credit_score ? parseInt(editLead.credit_score) : null,
