@@ -726,7 +726,7 @@ export default function Leads() {
                           <Button 
                             size="sm" 
                             variant="default" 
-                            className="flex-1" 
+                            className="px-2 py-1 text-xs h-6" 
                             onClick={(e) => {
                               e.stopPropagation()
                               setConvertingLead(lead)
