@@ -46,6 +46,7 @@ const stages = [
   "Proposal",
   "Negotiation",
   "Closing",
+  "Funded",
   "Won",
   "Lost",
   "Archive"

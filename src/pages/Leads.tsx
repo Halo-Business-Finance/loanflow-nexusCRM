@@ -36,7 +36,7 @@ interface Lead {
   is_converted_to_client: boolean
 }
 
-const stages = ["All", "New Lead", "Initial Contact", "Qualified", "Application", "Pre-approval", "Documentation", "Closing", "Archive"]
+const stages = ["All", "New Lead", "Initial Contact", "Qualified", "Application", "Pre-approval", "Documentation", "Closing", "Funded", "Archive"]
 const priorities = ["All", "High", "Medium", "Low"]
 const loanTypes = ["SBA 7(a) Loan", "SBA 504 Loan", "Bridge Loan", "Conventional Loan", "Equipment Financing", "USDA B&I Loan", "Working Capital Loan", "Line of Credit", "Land Loan", "Factoring"]
 
