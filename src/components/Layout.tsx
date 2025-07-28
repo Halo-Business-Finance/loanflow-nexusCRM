@@ -4,6 +4,7 @@ import { ReactNode, useState, useEffect } from "react"
 import { Clock, ArrowLeft, ArrowRight } from "lucide-react"
 import { useNavigate } from "react-router-dom"
 import { Button } from "@/components/ui/button"
+import { NotificationBell } from "@/components/NotificationBell"
 
 interface LayoutProps {
   children: ReactNode
@@ -66,9 +67,12 @@ export default function Layout({ children }: LayoutProps) {
               </Button>
               <h1 className="text-xl font-semibold text-foreground ml-2">Welcome back!</h1>
             </div>
-            <div className="flex items-center gap-2 text-sm font-medium text-white">
-              <Clock className="w-4 h-4 text-white" />
-              <span>{formatDateTime(currentDateTime)}</span>
+            <div className="flex items-center gap-4 text-sm font-medium text-white">
+              <NotificationBell />
+              <div className="flex items-center gap-2">
+                <Clock className="w-4 h-4 text-white" />
+                <span>{formatDateTime(currentDateTime)}</span>
+              </div>
             </div>
           </header>
           <main className="flex-1 p-6 bg-muted/30">
