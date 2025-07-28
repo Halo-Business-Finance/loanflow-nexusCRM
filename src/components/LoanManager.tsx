@@ -45,6 +45,7 @@ export function LoanManager({ clientId, clientName, loans, onLoansUpdate }: Loan
     status: "Active",
     monthly_payment: "",
     remaining_balance: "",
+    maturity_date: "",
     notes: ""
   })
 
@@ -65,9 +66,9 @@ export function LoanManager({ clientId, clientName, loans, onLoansUpdate }: Loan
       const monthlyPayment = newLoan.monthly_payment ? parseFloat(newLoan.monthly_payment) : null
       const remainingBalance = newLoan.remaining_balance ? parseFloat(newLoan.remaining_balance) : loanAmount
 
-      // Calculate maturity date if term is provided
-      let maturityDate = null
-      if (termMonths) {
+      // Use provided maturity date or calculate if term is provided
+      let maturityDate = newLoan.maturity_date || null
+      if (!maturityDate && termMonths) {
         const maturity = new Date()
         maturity.setMonth(maturity.getMonth() + termMonths)
         maturityDate = maturity.toISOString().split('T')[0]
@@ -105,6 +106,7 @@ export function LoanManager({ clientId, clientName, loans, onLoansUpdate }: Loan
         status: "Active",
         monthly_payment: "",
         remaining_balance: "",
+        maturity_date: "",
         notes: ""
       })
       onLoansUpdate()
@@ -267,15 +269,26 @@ export function LoanManager({ clientId, clientName, loans, onLoansUpdate }: Loan
                 </div>
               </div>
 
-              <div>
-                <Label htmlFor="remaining_balance">Remaining Balance</Label>
-                <Input
-                  id="remaining_balance"
-                  type="number"
-                  placeholder="420000"
-                  value={newLoan.remaining_balance}
-                  onChange={(e) => setNewLoan({ ...newLoan, remaining_balance: e.target.value })}
-                />
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <Label htmlFor="remaining_balance">Remaining Balance</Label>
+                  <Input
+                    id="remaining_balance"
+                    type="number"
+                    placeholder="420000"
+                    value={newLoan.remaining_balance}
+                    onChange={(e) => setNewLoan({ ...newLoan, remaining_balance: e.target.value })}
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="maturity_date">Maturity Date</Label>
+                  <Input
+                    id="maturity_date"
+                    type="date"
+                    value={newLoan.maturity_date}
+                    onChange={(e) => setNewLoan({ ...newLoan, maturity_date: e.target.value })}
+                  />
+                </div>
               </div>
 
               <div>
