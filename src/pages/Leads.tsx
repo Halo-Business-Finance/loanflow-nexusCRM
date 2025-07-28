@@ -34,7 +34,7 @@ interface Lead {
 
 const stages = ["All", "Initial Contact", "Qualified", "Application", "Pre-approval", "Documentation", "Closing"]
 const priorities = ["All", "High", "Medium", "Low"]
-const loanTypes = ["Mortgage", "Personal Loan", "Auto Loan", "Business Loan", "Home Equity", "Student Loan", "Credit Line"]
+const loanTypes = ["SBA 7(a) Loan", "SBA 504 Loan", "Bridge Loan", "Conventional Loan", "Equipment Financing", "USDA B&I Loan", "Working Capital Loan", "Line of Credit", "Land Loan", "Factoring"]
 
 // Phone number formatting function
 const formatPhoneNumber = (value: string) => {
@@ -70,7 +70,7 @@ export default function Leads() {
     address: "",
     business_name: "",
     loan_amount: "",
-    loan_type: "Mortgage",
+    loan_type: "SBA 7(a) Loan",
     credit_score: "",
     income: "",
     priority: "medium",
@@ -85,7 +85,7 @@ export default function Leads() {
     address: "",
     business_name: "",
     loan_amount: "",
-    loan_type: "Mortgage",
+    loan_type: "SBA 7(a) Loan",
     credit_score: "",
     income: "",
     priority: "medium",
@@ -219,7 +219,7 @@ export default function Leads() {
         address: "",
         business_name: "",
         loan_amount: "",
-        loan_type: "Mortgage",
+        loan_type: "SBA 7(a) Loan",
         credit_score: "",
         income: "",
         priority: "medium",
@@ -247,7 +247,7 @@ export default function Leads() {
       address: lead.address || "",
       business_name: lead.business_name || "",
       loan_amount: lead.loan_amount?.toString() || "",
-      loan_type: lead.loan_type || "Mortgage",
+      loan_type: lead.loan_type || "SBA 7(a) Loan",
       credit_score: lead.credit_score?.toString() || "",
       income: lead.income?.toString() || "",
       priority: lead.priority,
