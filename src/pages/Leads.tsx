@@ -622,6 +622,11 @@ export default function Leads() {
                         <span className="font-medium text-foreground">${lead.loan_amount.toLocaleString()}</span>
                       </div>
                     )}
+                    {lead.loan_type && (
+                      <div className="flex items-center gap-2 text-sm">
+                        <span className="text-xs bg-muted px-2 py-1 rounded font-medium">{lead.loan_type}</span>
+                      </div>
+                    )}
                   </div>
                   
                   <div className="flex justify-between items-center pt-2 border-t">
@@ -708,6 +713,7 @@ export default function Leads() {
                       <th className="text-left p-4 font-medium">Name</th>
                       <th className="text-left p-4 font-medium">Contact</th>
                       <th className="text-left p-4 font-medium">Loan Amount</th>
+                      <th className="text-left p-4 font-medium">Loan Type</th>
                       <th className="text-left p-4 font-medium">Stage</th>
                       <th className="text-left p-4 font-medium">Priority</th>
                       <th className="text-left p-4 font-medium">Credit Score</th>
@@ -741,6 +747,9 @@ export default function Leads() {
                         </td>
                         <td className="p-4 font-medium">
                           {lead.loan_amount ? `$${lead.loan_amount.toLocaleString()}` : '-'}
+                        </td>
+                        <td className="p-4">
+                          <span className="text-xs bg-muted px-2 py-1 rounded font-medium">{lead.loan_type || '-'}</span>
                         </td>
                         <td className="p-4">
                           <Badge variant={getStageColor(lead.stage)}>
