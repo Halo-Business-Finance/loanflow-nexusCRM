@@ -757,9 +757,9 @@ export default function Leads() {
                              <div className="text-white">{lead.phone ? formatPhoneNumber(lead.phone) : ''}</div>
                            </div>
                         </td>
-                        <td className="p-4 font-medium">
-                          {lead.loan_amount ? `$${lead.loan_amount.toLocaleString()}` : '-'}
-                        </td>
+                         <td className="p-4 font-medium text-white">
+                           {lead.loan_amount ? `$${lead.loan_amount.toLocaleString()}` : '-'}
+                         </td>
                         <td className="p-4">
                           <span className="text-xs bg-muted px-2 py-1 rounded font-medium text-white">{lead.loan_type || '-'}</span>
                         </td>
@@ -773,7 +773,7 @@ export default function Leads() {
                             {lead.priority}
                           </Badge>
                         </td>
-                        <td className="p-4">{lead.credit_score || '-'}</td>
+                        <td className="p-4 text-white">{lead.credit_score || '-'}</td>
                         <td className="p-4">
                           <div className="flex gap-2">
                             <Button size="sm" variant="outline">
