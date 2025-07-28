@@ -47,6 +47,7 @@ interface Lead {
   business_address?: string
   owns_property?: boolean
   property_payment_amount?: number
+  year_established?: number
   loan_amount?: number
   loan_type?: string
   stage: string
@@ -98,6 +99,7 @@ export default function LeadDetail() {
     business_address: "",
     owns_property: false,
     property_payment_amount: "",
+    year_established: "",
     loan_amount: "",
     loan_type: "",
     stage: "",
@@ -140,6 +142,7 @@ export default function LeadDetail() {
         business_address: data.business_address || "",
         owns_property: data.owns_property || false,
         property_payment_amount: (data as any).property_payment_amount?.toString() || "",
+        year_established: (data as any).year_established?.toString() || "",
         loan_amount: data.loan_amount?.toString() || "",
         loan_type: data.loan_type || "",
         stage: data.stage || "",
@@ -264,6 +267,7 @@ export default function LeadDetail() {
         business_address: editableFields.business_address || null,
         owns_property: editableFields.owns_property,
         property_payment_amount: editableFields.property_payment_amount ? parseFloat(editableFields.property_payment_amount) : null,
+        year_established: editableFields.year_established ? parseInt(editableFields.year_established) : null,
         loan_amount: editableFields.loan_amount ? parseFloat(editableFields.loan_amount) : null,
         loan_type: editableFields.loan_type || null,
         stage: editableFields.stage,
@@ -575,6 +579,27 @@ export default function LeadDetail() {
                       />
                     ) : (
                       <p className="font-medium" style={{ color: 'white' }}>{lead.business_address || 'N/A'}</p>
+                    )}
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-3">
+                  <Calendar className="w-4 h-4" style={{ color: 'white' }} />
+                  <div className="flex-1">
+                    <p className="text-sm" style={{ color: 'white' }}>Year Established</p>
+                    {isEditing ? (
+                      <Input
+                        type="number"
+                        value={editableFields.year_established}
+                        onChange={(e) => setEditableFields({...editableFields, year_established: e.target.value})}
+                        placeholder="Enter year established (e.g., 2010)"
+                        min="1800"
+                        max={new Date().getFullYear()}
+                      />
+                    ) : (
+                      <p className="font-medium" style={{ color: 'white' }}>
+                        {(lead as any).year_established || 'N/A'}
+                      </p>
                     )}
                   </div>
                 </div>

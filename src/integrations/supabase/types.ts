@@ -279,6 +279,7 @@ export type Database = {
           stage: string
           updated_at: string
           user_id: string
+          year_established: number | null
         }
         Insert: {
           annual_revenue?: number | null
@@ -308,6 +309,7 @@ export type Database = {
           stage?: string
           updated_at?: string
           user_id: string
+          year_established?: number | null
         }
         Update: {
           annual_revenue?: number | null
@@ -337,6 +339,7 @@ export type Database = {
           stage?: string
           updated_at?: string
           user_id?: string
+          year_established?: number | null
         }
         Relationships: []
       }
