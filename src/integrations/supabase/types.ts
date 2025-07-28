@@ -409,6 +409,45 @@ export type Database = {
           },
         ]
       }
+      notifications: {
+        Row: {
+          created_at: string
+          id: string
+          is_read: boolean
+          message: string
+          related_id: string | null
+          related_type: string | null
+          title: string
+          type: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          is_read?: boolean
+          message: string
+          related_id?: string | null
+          related_type?: string | null
+          title: string
+          type?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          is_read?: boolean
+          message?: string
+          related_id?: string | null
+          related_type?: string | null
+          title?: string
+          type?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       pipeline_entries: {
         Row: {
           amount: number | null
@@ -469,24 +508,30 @@ export type Database = {
       profiles: {
         Row: {
           created_at: string
+          email: string | null
           first_name: string | null
           id: string
+          is_active: boolean | null
           last_name: string | null
           phone_number: string | null
           updated_at: string
         }
         Insert: {
           created_at?: string
+          email?: string | null
           first_name?: string | null
           id: string
+          is_active?: boolean | null
           last_name?: string | null
           phone_number?: string | null
           updated_at?: string
         }
         Update: {
           created_at?: string
+          email?: string | null
           first_name?: string | null
           id?: string
+          is_active?: boolean | null
           last_name?: string | null
           phone_number?: string | null
           updated_at?: string

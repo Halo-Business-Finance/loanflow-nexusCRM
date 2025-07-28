@@ -1,3 +1,4 @@
+import { useState, useEffect } from "react"
 import Layout from "@/components/Layout"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
@@ -19,6 +20,9 @@ import {
   Save,
   Upload
 } from "lucide-react"
+import { supabase } from "@/integrations/supabase/client"
+import { useAuth } from "@/components/auth/AuthProvider"
+import { useToast } from "@/hooks/use-toast"
 
 // Phone number formatting function
 const formatPhoneNumber = (value: string) => {
@@ -36,6 +40,105 @@ const formatPhoneNumber = (value: string) => {
 }
 
 export default function Settings() {
+  const { user } = useAuth()
+  const { toast } = useToast()
+  const [loading, setLoading] = useState(false)
+  const [profile, setProfile] = useState({
+    first_name: '',
+    last_name: '',
+    email: '',
+    phone_number: '',
+    job_title: ''
+  })
+
+  useEffect(() => {
+    if (user) {
+      fetchProfile()
+    }
+  }, [user])
+
+  const fetchProfile = async () => {
+    if (!user) return
+
+    try {
+      const { data, error } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('id', user.id)
+        .single()
+
+      if (error && error.code !== 'PGRST116') throw error
+
+      if (data) {
+        setProfile({
+          first_name: data.first_name || '',
+          last_name: data.last_name || '',
+          email: data.email || user.email || '',
+          phone_number: data.phone_number || '',
+          job_title: data.job_title || ''
+        })
+      } else {
+        // Create profile if it doesn't exist
+        setProfile({
+          first_name: '',
+          last_name: '',
+          email: user.email || '',
+          phone_number: '',
+          job_title: ''
+        })
+      }
+    } catch (error) {
+      console.error('Error fetching profile:', error)
+      toast({
+        title: "Error",
+        description: "Failed to load profile data",
+        variant: "destructive"
+      })
+    }
+  }
+
+  const saveProfile = async () => {
+    if (!user) return
+
+    setLoading(true)
+    try {
+      const { error } = await supabase
+        .from('profiles')
+        .upsert({
+          id: user.id,
+          first_name: profile.first_name,
+          last_name: profile.last_name,
+          email: profile.email,
+          phone_number: profile.phone_number,
+          job_title: profile.job_title,
+          updated_at: new Date().toISOString()
+        })
+
+      if (error) throw error
+
+      toast({
+        title: "Success",
+        description: "Profile updated successfully"
+      })
+    } catch (error) {
+      console.error('Error saving profile:', error)
+      toast({
+        title: "Error",
+        description: "Failed to update profile",
+        variant: "destructive"
+      })
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const handleInputChange = (field: string, value: string) => {
+    setProfile(prev => ({
+      ...prev,
+      [field]: field === 'phone_number' ? formatPhoneNumber(value) : value
+    }))
+  }
+
   return (
     <Layout>
       <div className="space-y-6">
@@ -61,7 +164,9 @@ export default function Settings() {
                 <div className="flex items-center gap-6">
                   <Avatar className="h-20 w-20">
                     <AvatarImage src="/api/placeholder/80/80" />
-                    <AvatarFallback>JS</AvatarFallback>
+                    <AvatarFallback>
+                      {profile.first_name?.[0]}{profile.last_name?.[0]}
+                    </AvatarFallback>
                   </Avatar>
                   <div className="space-y-2">
                     <Button variant="outline" className="gap-2">
@@ -77,25 +182,47 @@ export default function Settings() {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="space-y-2">
                     <Label htmlFor="firstName">First Name</Label>
-                    <Input id="firstName" defaultValue="John" />
+                    <Input 
+                      id="firstName" 
+                      value={profile.first_name}
+                      onChange={(e) => handleInputChange('first_name', e.target.value)}
+                    />
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="lastName">Last Name</Label>
-                    <Input id="lastName" defaultValue="Smith" />
+                    <Input 
+                      id="lastName" 
+                      value={profile.last_name}
+                      onChange={(e) => handleInputChange('last_name', e.target.value)}
+                    />
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="email">Email</Label>
-                    <Input id="email" type="email" defaultValue="john.smith@loanflow.com" />
+                    <Input 
+                      id="email" 
+                      type="email" 
+                      value={profile.email}
+                      onChange={(e) => handleInputChange('email', e.target.value)}
+                    />
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="phone">Phone</Label>
-                    <Input id="phone" defaultValue="(555) 123-4567" placeholder="(555) 123-4567" />
+                    <Input 
+                      id="phone" 
+                      value={profile.phone_number}
+                      onChange={(e) => handleInputChange('phone_number', e.target.value)}
+                      placeholder="(555) 123-4567" 
+                    />
                   </div>
                 </div>
 
                 <div className="space-y-2">
                   <Label htmlFor="title">Job Title</Label>
-                  <Input id="title" defaultValue="Senior Loan Officer" />
+                  <Input 
+                    id="title" 
+                    value={profile.job_title}
+                    onChange={(e) => handleInputChange('job_title', e.target.value)}
+                  />
                 </div>
 
                 <Button className="bg-gradient-primary gap-2">
