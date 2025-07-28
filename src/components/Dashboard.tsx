@@ -70,6 +70,7 @@ interface Lead {
   stage: string;
   priority: string;
   loan_amount?: number;
+  loan_type?: string;
   created_at: string;
   address?: string;
   is_converted_to_client?: boolean;
@@ -405,6 +406,7 @@ export default function Dashboard() {
   ).map(lead => ({
     name: lead.name,
     amount: lead.loan_amount ? `$${Number(lead.loan_amount).toLocaleString()}` : 'N/A',
+    loanType: lead.loan_type || 'N/A',
     stage: lead.stage,
     lastContact: lead.last_contact ? new Date(lead.last_contact).toLocaleDateString() : 'N/A',
     priority: lead.priority
@@ -656,6 +658,7 @@ export default function Dashboard() {
                   <div>
                     <p className="font-medium text-foreground">{lead.name}</p>
                     <p className="text-sm text-muted-foreground">{lead.amount}</p>
+                    <p className="text-xs text-muted-foreground">Program: {lead.loanType}</p>
                   </div>
                 </div>
                 <div className="flex items-center gap-4">
