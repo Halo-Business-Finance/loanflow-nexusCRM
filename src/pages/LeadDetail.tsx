@@ -52,6 +52,8 @@ interface Lead {
   credit_score?: number
   income?: number
   annual_revenue?: number
+  interest_rate?: number
+  maturity_date?: string
   notes?: string
   call_notes?: string
   last_contact: string
@@ -98,7 +100,9 @@ export default function LeadDetail() {
     priority: "",
     credit_score: "",
     income: "",
-    annual_revenue: ""
+    annual_revenue: "",
+    interest_rate: "",
+    maturity_date: ""
   })
 
   useEffect(() => {
@@ -143,7 +147,9 @@ export default function LeadDetail() {
         priority: data.priority || "",
         credit_score: data.credit_score?.toString() || "",
         income: data.income?.toString() || "",
-        annual_revenue: data.annual_revenue?.toString() || ""
+        annual_revenue: data.annual_revenue?.toString() || "",
+        interest_rate: data.interest_rate?.toString() || "",
+        maturity_date: data.maturity_date || ""
       })
       
       // If lead is converted, fetch client data
@@ -264,7 +270,9 @@ export default function LeadDetail() {
         priority: editableFields.priority,
         credit_score: editableFields.credit_score ? parseInt(editableFields.credit_score) : null,
         income: editableFields.income ? parseFloat(editableFields.income) : null,
-        annual_revenue: editableFields.annual_revenue ? parseFloat(editableFields.annual_revenue) : null
+        annual_revenue: editableFields.annual_revenue ? parseFloat(editableFields.annual_revenue) : null,
+        interest_rate: editableFields.interest_rate ? parseFloat(editableFields.interest_rate) : null,
+        maturity_date: editableFields.maturity_date || null
       }
 
       const { error } = await supabase
@@ -597,6 +605,49 @@ export default function LeadDetail() {
                     )}
                   </div>
                 </div>
+
+                {/* Conditional property-related fields */}
+                {(lead.owns_property || editableFields.owns_property) && (
+                  <>
+                    <div className="flex items-center gap-3">
+                      <Target className="w-4 h-4" style={{ color: 'white' }} />
+                      <div className="flex-1">
+                        <p className="text-sm" style={{ color: 'white' }}>Interest Rate (%)</p>
+                        {isEditing ? (
+                          <Input
+                            type="number"
+                            step="0.01"
+                            value={editableFields.interest_rate}
+                            onChange={(e) => setEditableFields({...editableFields, interest_rate: e.target.value})}
+                            placeholder="Enter interest rate"
+                          />
+                        ) : (
+                          <p className="font-medium" style={{ color: 'white' }}>
+                            {lead.interest_rate ? `${lead.interest_rate}%` : 'N/A'}
+                          </p>
+                        )}
+                      </div>
+                    </div>
+
+                    <div className="flex items-center gap-3">
+                      <Calendar className="w-4 h-4" style={{ color: 'white' }} />
+                      <div className="flex-1">
+                        <p className="text-sm" style={{ color: 'white' }}>Loan Maturity Date</p>
+                        {isEditing ? (
+                          <Input
+                            type="date"
+                            value={editableFields.maturity_date}
+                            onChange={(e) => setEditableFields({...editableFields, maturity_date: e.target.value})}
+                          />
+                        ) : (
+                          <p className="font-medium" style={{ color: 'white' }}>
+                            {lead.maturity_date ? new Date(lead.maturity_date).toLocaleDateString() : 'N/A'}
+                          </p>
+                        )}
+                      </div>
+                    </div>
+                  </>
+                )}
 
                 <div className="flex items-center gap-3">
                   <DollarSign className="w-4 h-4" style={{ color: 'white' }} />

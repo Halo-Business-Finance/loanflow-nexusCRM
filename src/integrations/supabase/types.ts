@@ -262,11 +262,13 @@ export type Database = {
           email: string
           id: string
           income: number | null
+          interest_rate: number | null
           is_converted_to_client: boolean | null
           last_contact: string | null
           loan_amount: number | null
           loan_type: string | null
           location: string | null
+          maturity_date: string | null
           name: string
           notes: string | null
           owns_property: boolean | null
@@ -287,11 +289,13 @@ export type Database = {
           email: string
           id?: string
           income?: number | null
+          interest_rate?: number | null
           is_converted_to_client?: boolean | null
           last_contact?: string | null
           loan_amount?: number | null
           loan_type?: string | null
           location?: string | null
+          maturity_date?: string | null
           name: string
           notes?: string | null
           owns_property?: boolean | null
@@ -312,11 +316,13 @@ export type Database = {
           email?: string
           id?: string
           income?: number | null
+          interest_rate?: number | null
           is_converted_to_client?: boolean | null
           last_contact?: string | null
           loan_amount?: number | null
           loan_type?: string | null
           location?: string | null
+          maturity_date?: string | null
           name?: string
           notes?: string | null
           owns_property?: boolean | null
