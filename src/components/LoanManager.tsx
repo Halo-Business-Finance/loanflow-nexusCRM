@@ -162,6 +162,8 @@ export function LoanManager({ clientId, clientName, loans, onLoansUpdate }: Loan
       case 'usda b&i loan': return 'secondary'
       case 'working capital loan': return 'outline'
       case 'line of credit': return 'default'
+      case 'land': return 'secondary'
+      case 'factoring': return 'outline'
       default: return 'secondary'
     }
   }
@@ -222,6 +224,8 @@ export function LoanManager({ clientId, clientName, loans, onLoansUpdate }: Loan
                       <SelectItem value="USDA B&I Loan">USDA B&I Loan</SelectItem>
                       <SelectItem value="Working Capital Loan">Working Capital Loan</SelectItem>
                       <SelectItem value="Line of Credit">Line of Credit</SelectItem>
+                      <SelectItem value="Land">Land</SelectItem>
+                      <SelectItem value="Factoring">Factoring</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
