@@ -262,6 +262,7 @@ export type Database = {
           is_converted_to_client: boolean | null
           last_contact: string | null
           loan_amount: number | null
+          loan_type: string | null
           location: string | null
           name: string
           notes: string | null
@@ -282,6 +283,7 @@ export type Database = {
           is_converted_to_client?: boolean | null
           last_contact?: string | null
           loan_amount?: number | null
+          loan_type?: string | null
           location?: string | null
           name: string
           notes?: string | null
@@ -302,6 +304,7 @@ export type Database = {
           is_converted_to_client?: boolean | null
           last_contact?: string | null
           loan_amount?: number | null
+          loan_type?: string | null
           location?: string | null
           name?: string
           notes?: string | null

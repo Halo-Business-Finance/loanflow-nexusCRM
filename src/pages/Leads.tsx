@@ -23,6 +23,7 @@ interface Lead {
   address?: string
   business_name?: string
   loan_amount?: number
+  loan_type?: string
   stage: string
   priority: string
   credit_score?: number
@@ -33,6 +34,7 @@ interface Lead {
 
 const stages = ["All", "Initial Contact", "Qualified", "Application", "Pre-approval", "Documentation", "Closing"]
 const priorities = ["All", "High", "Medium", "Low"]
+const loanTypes = ["Mortgage", "Personal Loan", "Auto Loan", "Business Loan", "Home Equity", "Student Loan", "Credit Line"]
 
 export default function Leads() {
   const { user } = useAuth()
@@ -53,6 +55,7 @@ export default function Leads() {
     address: "",
     business_name: "",
     loan_amount: "",
+    loan_type: "Mortgage",
     credit_score: "",
     income: "",
     priority: "medium",
@@ -67,6 +70,7 @@ export default function Leads() {
     address: "",
     business_name: "",
     loan_amount: "",
+    loan_type: "Mortgage",
     credit_score: "",
     income: "",
     priority: "medium",
@@ -177,6 +181,7 @@ export default function Leads() {
           address: newLead.address || null,
           business_name: newLead.business_name || null,
           loan_amount: newLead.loan_amount ? parseFloat(newLead.loan_amount) : null,
+          loan_type: newLead.loan_type || null,
           credit_score: newLead.credit_score ? parseInt(newLead.credit_score) : null,
           income: newLead.income ? parseFloat(newLead.income) : null,
           priority: newLead.priority,
@@ -199,6 +204,7 @@ export default function Leads() {
         address: "",
         business_name: "",
         loan_amount: "",
+        loan_type: "Mortgage",
         credit_score: "",
         income: "",
         priority: "medium",
@@ -226,6 +232,7 @@ export default function Leads() {
       address: lead.address || "",
       business_name: lead.business_name || "",
       loan_amount: lead.loan_amount?.toString() || "",
+      loan_type: lead.loan_type || "Mortgage",
       credit_score: lead.credit_score?.toString() || "",
       income: lead.income?.toString() || "",
       priority: lead.priority,
@@ -248,6 +255,7 @@ export default function Leads() {
           location: editLead.address || null,
           business_name: editLead.business_name || null,
           loan_amount: editLead.loan_amount ? parseFloat(editLead.loan_amount) : null,
+          loan_type: editLead.loan_type || null,
           credit_score: editLead.credit_score ? parseInt(editLead.credit_score) : null,
           income: editLead.income ? parseFloat(editLead.income) : null,
           priority: editLead.priority,
@@ -404,6 +412,22 @@ export default function Leads() {
                     placeholder="250000"
                   />
                 </div>
+                <div>
+                  <Label htmlFor="loan_type">Loan Type</Label>
+                  <Select value={newLead.loan_type} onValueChange={(value) => setNewLead(prev => ({ ...prev, loan_type: value }))}>
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {loanTypes.map(type => (
+                        <SelectItem key={type} value={type}>{type}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
                 <div>
                   <Label htmlFor="credit_score">Credit Score</Label>
                   <Input
@@ -830,6 +854,22 @@ export default function Leads() {
                   placeholder="250000"
                 />
               </div>
+              <div>
+                <Label htmlFor="edit-loan_type">Loan Type</Label>
+                <Select value={editLead.loan_type} onValueChange={(value) => setEditLead(prev => ({ ...prev, loan_type: value }))}>
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {loanTypes.map(type => (
+                      <SelectItem key={type} value={type}>{type}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
               <div>
                 <Label htmlFor="edit-credit_score">Credit Score</Label>
                 <Input
