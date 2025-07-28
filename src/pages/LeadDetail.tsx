@@ -261,7 +261,7 @@ export default function LeadDetail() {
     if (!lead) return
 
     try {
-      const updateData = {
+      const updateData: any = {
         name: editableFields.name,
         email: editableFields.email,
         phone: editableFields.phone || null,
@@ -284,6 +284,15 @@ export default function LeadDetail() {
         existing_loan_amount: editableFields.existing_loan_amount ? parseFloat(editableFields.existing_loan_amount) : null
       }
 
+      // Check if stage is being changed to "Funded" and lead isn't already converted
+      const isBeingFunded = editableFields.stage === "Funded" && lead.stage !== "Funded" && !lead.is_converted_to_client
+
+      if (isBeingFunded) {
+        // Mark lead as converted
+        updateData.is_converted_to_client = true
+        updateData.converted_at = new Date().toISOString()
+      }
+
       const { error } = await supabase
         .from('leads')
         .update(updateData)
@@ -291,9 +300,16 @@ export default function LeadDetail() {
 
       if (error) throw error
 
+      // If being funded, create client record
+      if (isBeingFunded) {
+        await convertLeadToClient()
+      }
+
       toast({
         title: "Success",
-        description: "Lead information updated successfully",
+        description: isBeingFunded 
+          ? "Lead updated and converted to client successfully" 
+          : "Lead information updated successfully",
       })
       
       setIsEditing(false)
@@ -304,6 +320,67 @@ export default function LeadDetail() {
       toast({
         title: "Error",
         description: "Failed to update lead information",
+        variant: "destructive",
+      })
+    }
+  }
+
+  const convertLeadToClient = async () => {
+    if (!lead || !user) return
+
+    try {
+      const clientData = {
+        name: editableFields.name,
+        email: editableFields.email,
+        phone: editableFields.phone || null,
+        location: editableFields.location || null,
+        status: 'Active',
+        user_id: user.id,
+        lead_id: lead.id,
+        join_date: new Date().toISOString(),
+        last_activity: new Date().toISOString()
+      }
+
+      const { data: newClient, error: clientError } = await supabase
+        .from('clients')
+        .insert(clientData)
+        .select()
+        .single()
+
+      if (clientError) throw clientError
+
+      // Create a loan record if loan amount is specified
+      if (editableFields.loan_amount && parseFloat(editableFields.loan_amount) > 0) {
+        const loanData = {
+          client_id: newClient.id,
+          lead_id: lead.id,
+          user_id: user.id,
+          loan_amount: parseFloat(editableFields.loan_amount),
+          loan_type: editableFields.loan_type || 'Mortgage',
+          interest_rate: editableFields.interest_rate ? parseFloat(editableFields.interest_rate) : null,
+          maturity_date: editableFields.maturity_date || null,
+          status: 'Active',
+          remaining_balance: parseFloat(editableFields.loan_amount)
+        }
+
+        const { error: loanError } = await supabase
+          .from('loans')
+          .insert(loanData)
+
+        if (loanError) {
+          console.error('Error creating loan:', loanError)
+          // Don't throw error here as client was already created successfully
+        }
+      }
+
+      setClient(newClient)
+      
+      console.log('Lead successfully converted to client:', newClient)
+    } catch (error) {
+      console.error('Error converting lead to client:', error)
+      toast({
+        title: "Warning", 
+        description: "Lead updated but there was an issue creating the client record",
         variant: "destructive",
       })
     }
@@ -502,6 +579,7 @@ export default function LeadDetail() {
                             <SelectItem value="Pre-approval">Pre-approval</SelectItem>
                             <SelectItem value="Documentation">Documentation</SelectItem>
                             <SelectItem value="Closing">Closing</SelectItem>
+                            <SelectItem value="Funded">Funded</SelectItem>
                           </SelectContent>
                         </Select>
                       ) : (
@@ -905,10 +983,11 @@ export default function LeadDetail() {
                             <SelectItem value="Initial Contact">Initial Contact</SelectItem>
                             <SelectItem value="Qualified">Qualified</SelectItem>
                             <SelectItem value="Application">Application</SelectItem>
-                          <SelectItem value="Pre-approval">Pre-approval</SelectItem>
-                          <SelectItem value="Documentation">Documentation</SelectItem>
-                          <SelectItem value="Closing">Closing</SelectItem>
-                        </SelectContent>
+                            <SelectItem value="Pre-approval">Pre-approval</SelectItem>
+                            <SelectItem value="Documentation">Documentation</SelectItem>
+                            <SelectItem value="Closing">Closing</SelectItem>
+                            <SelectItem value="Funded">Funded</SelectItem>
+                          </SelectContent>
                       </Select>
                     ) : (
                       <p className="font-medium" style={{ color: 'white' }}>{lead.stage || 'N/A'}</p>
