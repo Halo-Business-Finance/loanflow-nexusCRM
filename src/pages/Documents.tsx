@@ -72,7 +72,7 @@ export default function Documents() {
   const [isIframeLoading, setIsIframeLoading] = useState(true)
   
   // Replace this with your actual halo-docs-portal URL
-  const HALO_DOCS_PORTAL_URL = "https://your-halo-docs-portal.lovable.app"
+  const HALO_DOCS_PORTAL_URL = "https://preview--halo-docs-portal.lovable.app/"
   
   const getStatusColor = (status: string) => {
     switch (status.toLowerCase()) {
