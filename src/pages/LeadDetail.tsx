@@ -33,7 +33,8 @@ import {
   Home,
   CheckCircle,
   XCircle,
-  Target
+  Target,
+  FileText
 } from "lucide-react"
 
 interface Lead {
@@ -963,7 +964,7 @@ export default function LeadDetail() {
             <CardTitle style={{ color: 'white' }}>Quick Actions</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="flex gap-4">
+            <div className="flex gap-4 flex-wrap">
               <PhoneDialer 
                 trigger={
                   <Button variant="outline" className="flex-1">
@@ -980,6 +981,14 @@ export default function LeadDetail() {
                   </Button>
                 }
               />
+              <Button 
+                variant="outline" 
+                className="flex-1"
+                onClick={() => navigate('/documents')}
+              >
+                <FileText className="w-4 h-4 mr-2" />
+                Documents
+              </Button>
               {!lead.is_converted_to_client && (
                 <Button className="flex-1">
                   Convert to Client
