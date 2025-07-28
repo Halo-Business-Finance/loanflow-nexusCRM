@@ -10,6 +10,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Separator } from "@/components/ui/separator"
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog"
 import { supabase } from "@/integrations/supabase/client"
 import { useToast } from "@/hooks/use-toast"
 import { PhoneDialer } from "@/components/PhoneDialer"
@@ -54,7 +55,7 @@ interface UserProfile {
 }
 
 export default function Users() {
-  const { hasRole } = useAuth()
+  const { hasRole, user: currentUser } = useAuth()
   const { toast } = useToast()
   const [users, setUsers] = useState<UserProfile[]>([])
   const [loading, setLoading] = useState(true)
@@ -247,6 +248,61 @@ export default function Users() {
         title: "Error",
         description: "Failed to update user",
         variant: "destructive"
+      })
+    }
+  }
+
+  const deleteUser = async (userId: string, userEmail: string) => {
+    try {
+      // First, delete associated data
+      // Delete user roles
+      const { error: roleError } = await supabase
+        .from('user_roles')
+        .delete()
+        .eq('user_id', userId)
+
+      if (roleError) throw roleError
+
+      // Delete user profile
+      const { error: profileError } = await supabase
+        .from('profiles')
+        .delete()
+        .eq('id', userId)
+
+      if (profileError) throw profileError
+
+      // Delete user sessions
+      const { error: sessionError } = await supabase
+        .from('user_sessions')
+        .delete()
+        .eq('user_id', userId)
+
+      if (sessionError) throw sessionError
+
+      // Delete notifications
+      const { error: notificationError } = await supabase
+        .from('notifications')
+        .delete()
+        .eq('user_id', userId)
+
+      if (notificationError) throw notificationError
+
+      // Note: We cannot delete from auth.users table directly through the client
+      // The user's auth record will remain but they won't be able to access the system
+      // without the associated profile and role records
+
+      toast({
+        title: "Success!",
+        description: `User ${userEmail} has been deleted successfully.`,
+      })
+
+      fetchUsers() // Refresh the users list
+    } catch (error) {
+      console.error('Error deleting user:', error)
+      toast({
+        title: "Error",
+        description: "Failed to delete user",
+        variant: "destructive",
       })
     }
   }
@@ -488,6 +544,33 @@ export default function Users() {
                   >
                     {user.is_active ? 'Deactivate' : 'Activate'}
                   </Button>
+                  {user.email !== currentUser?.email && ( // Prevent self-deletion
+                    <AlertDialog>
+                      <AlertDialogTrigger asChild>
+                        <Button variant="destructive" size="sm">
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                      </AlertDialogTrigger>
+                      <AlertDialogContent>
+                        <AlertDialogHeader>
+                          <AlertDialogTitle>Delete User</AlertDialogTitle>
+                          <AlertDialogDescription>
+                            Are you sure you want to delete <strong>{user.first_name} {user.last_name}</strong> ({user.email})? 
+                            This will remove all their data including profile, roles, sessions, and notifications. This action cannot be undone.
+                          </AlertDialogDescription>
+                        </AlertDialogHeader>
+                        <AlertDialogFooter>
+                          <AlertDialogCancel>Cancel</AlertDialogCancel>
+                          <AlertDialogAction
+                            onClick={() => deleteUser(user.id, user.email)}
+                            className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                          >
+                            Delete User
+                          </AlertDialogAction>
+                        </AlertDialogFooter>
+                      </AlertDialogContent>
+                    </AlertDialog>
+                  )}
                 </div>
               </CardContent>
             </Card>
