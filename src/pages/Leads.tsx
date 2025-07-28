@@ -19,7 +19,7 @@ interface Lead {
   name: string
   email: string
   phone?: string
-  location?: string
+  address?: string
   business_name?: string
   loan_amount?: number
   stage: string
@@ -49,7 +49,7 @@ export default function Leads() {
     name: "",
     email: "",
     phone: "",
-    location: "",
+    address: "",
     business_name: "",
     loan_amount: "",
     credit_score: "",
@@ -63,7 +63,7 @@ export default function Leads() {
     name: "",
     email: "",
     phone: "",
-    location: "",
+    address: "",
     business_name: "",
     loan_amount: "",
     credit_score: "",
@@ -112,7 +112,7 @@ export default function Leads() {
           name: lead.name,
           email: lead.email,
           phone: lead.phone,
-          location: lead.location,
+          address: lead.address,
           status: 'Active',
           total_loans: 0,
           total_loan_value: 0
@@ -173,7 +173,7 @@ export default function Leads() {
           name: newLead.name,
           email: newLead.email,
           phone: newLead.phone || null,
-          location: newLead.location || null,
+          address: newLead.address || null,
           business_name: newLead.business_name || null,
           loan_amount: newLead.loan_amount ? parseFloat(newLead.loan_amount) : null,
           credit_score: newLead.credit_score ? parseInt(newLead.credit_score) : null,
@@ -195,7 +195,7 @@ export default function Leads() {
         name: "",
         email: "",
         phone: "",
-        location: "",
+        address: "",
         business_name: "",
         loan_amount: "",
         credit_score: "",
@@ -222,7 +222,7 @@ export default function Leads() {
       name: lead.name,
       email: lead.email,
       phone: lead.phone || "",
-      location: lead.location || "",
+      address: lead.address || "",
       business_name: lead.business_name || "",
       loan_amount: lead.loan_amount?.toString() || "",
       credit_score: lead.credit_score?.toString() || "",
@@ -244,7 +244,7 @@ export default function Leads() {
           name: editLead.name,
           email: editLead.email,
           phone: editLead.phone || null,
-          location: editLead.location || null,
+          address: editLead.address || null,
           business_name: editLead.business_name || null,
           loan_amount: editLead.loan_amount ? parseFloat(editLead.loan_amount) : null,
           credit_score: editLead.credit_score ? parseInt(editLead.credit_score) : null,
@@ -378,12 +378,12 @@ export default function Leads() {
                   />
                 </div>
                 <div>
-                  <Label htmlFor="location">Location</Label>
+                  <Label htmlFor="address">Full Address</Label>
                   <Input
-                    id="location"
-                    value={newLead.location}
-                    onChange={(e) => setNewLead(prev => ({ ...prev, location: e.target.value }))}
-                    placeholder="City, State"
+                    id="address"
+                    value={newLead.address}
+                    onChange={(e) => setNewLead(prev => ({ ...prev, address: e.target.value }))}
+                    placeholder="123 Main St, City, State, ZIP"
                   />
                 </div>
               </div>
@@ -562,12 +562,12 @@ export default function Leads() {
                         <span className="text-muted-foreground">{lead.phone}</span>
                       </div>
                     )}
-                    {lead.location && (
-                      <div className="flex items-center gap-2 text-sm">
-                        <MapPin className="w-4 h-4 text-muted-foreground" />
-                        <span className="text-muted-foreground">{lead.location}</span>
-                      </div>
-                    )}
+                     {lead.address && (
+                       <div className="flex items-center gap-2 text-sm">
+                         <MapPin className="w-4 h-4 text-muted-foreground" />
+                         <span className="text-muted-foreground">{lead.address}</span>
+                       </div>
+                     )}
                     {lead.loan_amount && (
                       <div className="flex items-center gap-2 text-sm">
                         <DollarSign className="w-4 h-4 text-muted-foreground" />
@@ -681,7 +681,7 @@ export default function Leads() {
                                   <Badge variant="default" className="text-xs">Client</Badge>
                                 )}
                               </div>
-                              <div className="text-sm text-muted-foreground">{lead.location}</div>
+                              <div className="text-sm text-muted-foreground">{lead.address}</div>
                             </div>
                           </div>
                         </td>
@@ -801,12 +801,12 @@ export default function Leads() {
                 />
               </div>
               <div>
-                <Label htmlFor="edit-location">Location</Label>
+                <Label htmlFor="edit-address">Full Address</Label>
                 <Input
-                  id="edit-location"
-                  value={editLead.location}
-                  onChange={(e) => setEditLead(prev => ({ ...prev, location: e.target.value }))}
-                  placeholder="City, State"
+                  id="edit-address"
+                  value={editLead.address}
+                  onChange={(e) => setEditLead(prev => ({ ...prev, address: e.target.value }))}
+                  placeholder="123 Main St, City, State, ZIP"
                 />
               </div>
             </div>
