@@ -544,18 +544,23 @@ export default function LeadDetail() {
                   <div className="flex-1">
                     <p className="text-sm" style={{ color: 'white' }}>Loan Type</p>
                     {isEditing ? (
-                      <Select value={editableFields.loan_type} onValueChange={(value) => setEditableFields({...editableFields, loan_type: value})}>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select loan type" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="Mortgage">Mortgage</SelectItem>
-                          <SelectItem value="Business Loan">Business Loan</SelectItem>
-                          <SelectItem value="Personal Loan">Personal Loan</SelectItem>
-                          <SelectItem value="Auto Loan">Auto Loan</SelectItem>
-                          <SelectItem value="Refinance">Refinance</SelectItem>
-                        </SelectContent>
-                      </Select>
+                        <Select value={editableFields.loan_type} onValueChange={(value) => setEditableFields({...editableFields, loan_type: value})}>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select loan type" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="SBA 7(a) Loan">SBA 7(a) Loan</SelectItem>
+                            <SelectItem value="SBA 504 Loan">SBA 504 Loan</SelectItem>
+                            <SelectItem value="Bridge Loan">Bridge Loan</SelectItem>
+                            <SelectItem value="Conventional Loan">Conventional Loan</SelectItem>
+                            <SelectItem value="Equipment Financing">Equipment Financing</SelectItem>
+                            <SelectItem value="USDA B&I Loan">USDA B&I Loan</SelectItem>
+                            <SelectItem value="Working Capital Loan">Working Capital Loan</SelectItem>
+                            <SelectItem value="Line of Credit">Line of Credit</SelectItem>
+                            <SelectItem value="Land Loan">Land Loan</SelectItem>
+                            <SelectItem value="Factoring">Factoring</SelectItem>
+                          </SelectContent>
+                        </Select>
                     ) : (
                       <p className="font-medium" style={{ color: 'white' }}>{lead.loan_type || 'N/A'}</p>
                     )}
