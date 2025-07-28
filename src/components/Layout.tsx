@@ -64,7 +64,7 @@ export default function Layout({ children }: LayoutProps) {
               >
                 <ArrowRight className="w-4 h-4" />
               </Button>
-              <h1 className="text-xl font-semibold text-foreground ml-2">LoanFlow CRM</h1>
+              <h1 className="text-xl font-semibold text-foreground ml-2">Welcome back!</h1>
             </div>
             <div className="flex items-center gap-2 text-sm font-medium text-white">
               <Clock className="w-4 h-4 text-white" />
