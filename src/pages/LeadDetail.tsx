@@ -46,6 +46,7 @@ interface Lead {
   business_name?: string
   business_address?: string
   owns_property?: boolean
+  property_payment_amount?: number
   loan_amount?: number
   loan_type?: string
   stage: string
@@ -96,6 +97,7 @@ export default function LeadDetail() {
     business_name: "",
     business_address: "",
     owns_property: false,
+    property_payment_amount: "",
     loan_amount: "",
     loan_type: "",
     stage: "",
@@ -137,6 +139,7 @@ export default function LeadDetail() {
         business_name: data.business_name || "",
         business_address: data.business_address || "",
         owns_property: data.owns_property || false,
+        property_payment_amount: data.property_payment_amount?.toString() || "",
         loan_amount: data.loan_amount?.toString() || "",
         loan_type: data.loan_type || "",
         stage: data.stage || "",
@@ -260,6 +263,7 @@ export default function LeadDetail() {
         business_name: editableFields.business_name || null,
         business_address: editableFields.business_address || null,
         owns_property: editableFields.owns_property,
+        property_payment_amount: editableFields.property_payment_amount ? parseFloat(editableFields.property_payment_amount) : null,
         loan_amount: editableFields.loan_amount ? parseFloat(editableFields.loan_amount) : null,
         loan_type: editableFields.loan_type || null,
         stage: editableFields.stage,
@@ -606,6 +610,25 @@ export default function LeadDetail() {
                 {/* Conditional property-related fields */}
                 {(lead.owns_property || editableFields.owns_property) && (
                   <>
+                    <div className="flex items-center gap-3">
+                      <DollarSign className="w-4 h-4" style={{ color: 'white' }} />
+                      <div className="flex-1">
+                        <p className="text-sm" style={{ color: 'white' }}>Property Payment Amount</p>
+                        {isEditing ? (
+                          <Input
+                            type="number"
+                            value={editableFields.property_payment_amount}
+                            onChange={(e) => setEditableFields({...editableFields, property_payment_amount: e.target.value})}
+                            placeholder="Enter monthly/yearly payment amount"
+                          />
+                        ) : (
+                          <p className="font-medium" style={{ color: 'white' }}>
+                            {lead.property_payment_amount ? formatCurrency(lead.property_payment_amount) : 'N/A'}
+                          </p>
+                        )}
+                      </div>
+                    </div>
+
                     <div className="flex items-center gap-3">
                       <Target className="w-4 h-4" style={{ color: 'white' }} />
                       <div className="flex-1">
