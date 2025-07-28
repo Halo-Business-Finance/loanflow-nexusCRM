@@ -553,187 +553,220 @@ export default function LeadDetail() {
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
-              <div className="grid grid-cols-1 gap-4">
-                <div className="flex items-center gap-3">
-                  <Building className="w-4 h-4" style={{ color: 'white' }} />
-                  <div className="flex-1">
-                    <p className="text-sm" style={{ color: 'white' }}>Business Name</p>
-                    {isEditing ? (
-                      <Input
-                        value={editableFields.business_name}
-                        onChange={(e) => setEditableFields({...editableFields, business_name: e.target.value})}
-                        placeholder="Enter business name"
-                      />
-                    ) : (
-                      <p className="font-medium" style={{ color: 'white' }}>{lead.business_name || 'N/A'}</p>
-                    )}
-                  </div>
-                </div>
-
-                <div className="flex items-center gap-3">
-                  <Home className="w-4 h-4" style={{ color: 'white' }} />
-                  <div className="flex-1">
-                    <p className="text-sm" style={{ color: 'white' }}>Business Address</p>
-                    {isEditing ? (
-                      <Textarea
-                        value={editableFields.business_address}
-                        onChange={(e) => setEditableFields({...editableFields, business_address: e.target.value})}
-                        placeholder="Enter business address"
-                        rows={2}
-                      />
-                    ) : (
-                      <p className="font-medium" style={{ color: 'white' }}>{lead.business_address || 'N/A'}</p>
-                    )}
-                  </div>
-                </div>
-
-                <div className="flex items-center gap-3">
-                  <Calendar className="w-4 h-4" style={{ color: 'white' }} />
-                  <div className="flex-1">
-                    <p className="text-sm" style={{ color: 'white' }}>Year Established</p>
-                    {isEditing ? (
-                      <Input
-                        type="number"
-                        value={editableFields.year_established}
-                        onChange={(e) => setEditableFields({...editableFields, year_established: e.target.value})}
-                        placeholder="Enter year established (e.g., 2010)"
-                        min="1800"
-                        max={new Date().getFullYear()}
-                      />
-                    ) : (
-                      <p className="font-medium" style={{ color: 'white' }}>
-                        {(lead as any).year_established || 'N/A'}
-                      </p>
-                    )}
-                  </div>
-                </div>
-
-                <div className="flex items-center gap-3">
-                  <div className="flex-1">
-                    <p className="text-sm" style={{ color: 'white' }}>Property Ownership</p>
-                    {isEditing ? (
-                      <div className="flex items-center gap-2 mt-2">
-                        <Switch
-                          checked={editableFields.owns_property}
-                          onCheckedChange={(checked) => setEditableFields({...editableFields, owns_property: checked})}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {/* Left Column */}
+                <div className="space-y-4">
+                  <div className="flex items-center gap-3">
+                    <Building className="w-4 h-4" style={{ color: 'white' }} />
+                    <div className="flex-1">
+                      <p className="text-sm" style={{ color: 'white' }}>Business Name</p>
+                      {isEditing ? (
+                        <Input
+                          value={editableFields.business_name}
+                          onChange={(e) => setEditableFields({...editableFields, business_name: e.target.value})}
+                          placeholder="Enter business name"
                         />
-                        <span className="text-sm" style={{ color: 'white' }}>
-                          {editableFields.owns_property ? 'Owns Property' : 'Does not own property'}
-                        </span>
-                      </div>
-                    ) : (
-                      <div className="flex items-center gap-2">
-                        {lead.owns_property ? (
-                          <CheckCircle className="w-4 h-4 text-green-500" />
-                        ) : (
-                          <XCircle className="w-4 h-4 text-red-500" />
-                        )}
+                      ) : (
+                        <p className="font-medium" style={{ color: 'white' }}>{lead.business_name || 'N/A'}</p>
+                      )}
+                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-3">
+                    <Home className="w-4 h-4" style={{ color: 'white' }} />
+                    <div className="flex-1">
+                      <p className="text-sm" style={{ color: 'white' }}>Business Address</p>
+                      {isEditing ? (
+                        <Textarea
+                          value={editableFields.business_address}
+                          onChange={(e) => setEditableFields({...editableFields, business_address: e.target.value})}
+                          placeholder="Enter business address"
+                          rows={2}
+                        />
+                      ) : (
+                        <p className="font-medium" style={{ color: 'white' }}>{lead.business_address || 'N/A'}</p>
+                      )}
+                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-3">
+                    <Calendar className="w-4 h-4" style={{ color: 'white' }} />
+                    <div className="flex-1">
+                      <p className="text-sm" style={{ color: 'white' }}>Year Established</p>
+                      {isEditing ? (
+                        <Input
+                          type="number"
+                          value={editableFields.year_established}
+                          onChange={(e) => setEditableFields({...editableFields, year_established: e.target.value})}
+                          placeholder="Enter year established (e.g., 2010)"
+                          min="1800"
+                          max={new Date().getFullYear()}
+                        />
+                      ) : (
                         <p className="font-medium" style={{ color: 'white' }}>
-                          {lead.owns_property ? 'Owns Property' : 'Does not own property'}
+                          {(lead as any).year_established || 'N/A'}
                         </p>
-                      </div>
-                    )}
+                      )}
+                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-3">
+                    <DollarSign className="w-4 h-4" style={{ color: 'white' }} />
+                    <div className="flex-1">
+                      <p className="text-sm" style={{ color: 'white' }}>Annual Revenue</p>
+                      {isEditing ? (
+                        <Input
+                          type="number"
+                          value={editableFields.annual_revenue}
+                          onChange={(e) => setEditableFields({...editableFields, annual_revenue: e.target.value})}
+                          placeholder="Enter annual revenue"
+                        />
+                      ) : (
+                        <p className="font-medium" style={{ color: 'white' }}>
+                          {formatCurrency(lead.annual_revenue)}
+                        </p>
+                      )}
+                    </div>
+                  </div>
+                </div>
+
+                {/* Right Column */}
+                <div className="space-y-4">
+                  <div className="flex items-center gap-3">
+                    <div className="flex-1">
+                      <p className="text-sm" style={{ color: 'white' }}>Property Ownership</p>
+                      {isEditing ? (
+                        <div className="flex items-center gap-2 mt-2">
+                          <Switch
+                            checked={editableFields.owns_property}
+                            onCheckedChange={(checked) => setEditableFields({...editableFields, owns_property: checked})}
+                          />
+                          <span className="text-sm" style={{ color: 'white' }}>
+                            {editableFields.owns_property ? 'Owns Property' : 'Does not own property'}
+                          </span>
+                        </div>
+                      ) : (
+                        <div className="flex items-center gap-2">
+                          {lead.owns_property ? (
+                            <CheckCircle className="w-4 h-4 text-green-500" />
+                          ) : (
+                            <XCircle className="w-4 h-4 text-red-500" />
+                          )}
+                          <p className="font-medium" style={{ color: 'white' }}>
+                            {lead.owns_property ? 'Owns Property' : 'Does not own property'}
+                          </p>
+                        </div>
+                      )}
+                    </div>
                   </div>
                 </div>
 
                 {/* Conditional property-related fields */}
                 {(lead.owns_property || editableFields.owns_property) && (
-                  <>
-                    <div className="flex items-center gap-3">
-                      <DollarSign className="w-4 h-4" style={{ color: 'white' }} />
-                      <div className="flex-1">
-                        <p className="text-sm" style={{ color: 'white' }}>Property Payment Amount</p>
-                        {isEditing ? (
-                          <Input
-                            type="number"
-                            value={editableFields.property_payment_amount}
-                            onChange={(e) => setEditableFields({...editableFields, property_payment_amount: e.target.value})}
-                            placeholder="Enter monthly/yearly payment amount"
-                          />
-                        ) : (
-                          <p className="font-medium" style={{ color: 'white' }}>
-                            {(lead as any).property_payment_amount ? formatCurrency((lead as any).property_payment_amount) : 'N/A'}
-                          </p>
-                        )}
+                  <div className="col-span-full">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-4 border-t border-gray-200/10">
+                      {/* Property Fields Left Column */}
+                      <div className="space-y-4">
+                        <div className="flex items-center gap-3">
+                          <DollarSign className="w-4 h-4" style={{ color: 'white' }} />
+                          <div className="flex-1">
+                            <p className="text-sm" style={{ color: 'white' }}>Property Payment Amount</p>
+                            {isEditing ? (
+                              <Input
+                                type="number"
+                                value={editableFields.property_payment_amount}
+                                onChange={(e) => setEditableFields({...editableFields, property_payment_amount: e.target.value})}
+                                placeholder="Enter monthly/yearly payment amount"
+                              />
+                            ) : (
+                              <p className="font-medium" style={{ color: 'white' }}>
+                                {(lead as any).property_payment_amount ? formatCurrency((lead as any).property_payment_amount) : 'N/A'}
+                              </p>
+                            )}
+                          </div>
+                        </div>
+
+                        <div className="flex items-center gap-3">
+                          <Target className="w-4 h-4" style={{ color: 'white' }} />
+                          <div className="flex-1">
+                            <p className="text-sm" style={{ color: 'white' }}>Interest Rate (%)</p>
+                            {isEditing ? (
+                              <Input
+                                type="number"
+                                step="0.01"
+                                value={editableFields.interest_rate}
+                                onChange={(e) => setEditableFields({...editableFields, interest_rate: e.target.value})}
+                                placeholder="Enter interest rate"
+                              />
+                            ) : (
+                              <p className="font-medium" style={{ color: 'white' }}>
+                                {lead.interest_rate ? `${lead.interest_rate}%` : 'N/A'}
+                              </p>
+                            )}
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Property Fields Right Column */}
+                      <div className="space-y-4">
+                        <div className="flex items-center gap-3">
+                          <Calendar className="w-4 h-4" style={{ color: 'white' }} />
+                          <div className="flex-1">
+                            <p className="text-sm" style={{ color: 'white' }}>Loan Maturity Date</p>
+                            {isEditing ? (
+                              <Input
+                                type="date"
+                                value={editableFields.maturity_date}
+                                onChange={(e) => setEditableFields({...editableFields, maturity_date: e.target.value})}
+                              />
+                            ) : (
+                              <p className="font-medium" style={{ color: 'white' }}>
+                                {lead.maturity_date ? new Date(lead.maturity_date).toLocaleDateString() : 'N/A'}
+                              </p>
+                            )}
+                          </div>
+                        </div>
+
+                        <div className="flex items-center gap-3">
+                          <DollarSign className="w-4 h-4" style={{ color: 'white' }} />
+                          <div className="flex-1">
+                            <p className="text-sm" style={{ color: 'white' }}>Existing Loan Amount</p>
+                            {isEditing ? (
+                              <Input
+                                type="number"
+                                value={editableFields.existing_loan_amount}
+                                onChange={(e) => setEditableFields({...editableFields, existing_loan_amount: e.target.value})}
+                                placeholder="Enter existing loan amount"
+                              />
+                            ) : (
+                              <p className="font-medium" style={{ color: 'white' }}>
+                                {lead.existing_loan_amount ? formatCurrency(lead.existing_loan_amount) : 'N/A'}
+                              </p>
+                            )}
+                          </div>
+                        </div>
                       </div>
                     </div>
-
-                    <div className="flex items-center gap-3">
-                      <Target className="w-4 h-4" style={{ color: 'white' }} />
-                      <div className="flex-1">
-                        <p className="text-sm" style={{ color: 'white' }}>Interest Rate (%)</p>
-                        {isEditing ? (
-                          <Input
-                            type="number"
-                            step="0.01"
-                            value={editableFields.interest_rate}
-                            onChange={(e) => setEditableFields({...editableFields, interest_rate: e.target.value})}
-                            placeholder="Enter interest rate"
-                          />
-                        ) : (
-                          <p className="font-medium" style={{ color: 'white' }}>
-                            {lead.interest_rate ? `${lead.interest_rate}%` : 'N/A'}
-                          </p>
-                        )}
-                      </div>
-                    </div>
-
-                    <div className="flex items-center gap-3">
-                      <Calendar className="w-4 h-4" style={{ color: 'white' }} />
-                      <div className="flex-1">
-                        <p className="text-sm" style={{ color: 'white' }}>Loan Maturity Date</p>
-                        {isEditing ? (
-                          <Input
-                            type="date"
-                            value={editableFields.maturity_date}
-                            onChange={(e) => setEditableFields({...editableFields, maturity_date: e.target.value})}
-                          />
-                        ) : (
-                          <p className="font-medium" style={{ color: 'white' }}>
-                            {lead.maturity_date ? new Date(lead.maturity_date).toLocaleDateString() : 'N/A'}
-                          </p>
-                        )}
-                      </div>
-                    </div>
-
-                    <div className="flex items-center gap-3">
-                      <DollarSign className="w-4 h-4" style={{ color: 'white' }} />
-                      <div className="flex-1">
-                        <p className="text-sm" style={{ color: 'white' }}>Existing Loan Amount</p>
-                        {isEditing ? (
-                          <Input
-                            type="number"
-                            value={editableFields.existing_loan_amount}
-                            onChange={(e) => setEditableFields({...editableFields, existing_loan_amount: e.target.value})}
-                            placeholder="Enter existing loan amount"
-                          />
-                        ) : (
-                          <p className="font-medium" style={{ color: 'white' }}>
-                            {lead.existing_loan_amount ? formatCurrency(lead.existing_loan_amount) : 'N/A'}
-                          </p>
-                        )}
-                      </div>
-                    </div>
-                  </>
-                )}
-
-                <div className="flex items-center gap-3">
-                  <DollarSign className="w-4 h-4" style={{ color: 'white' }} />
-                  <div className="flex-1">
-                    <p className="text-sm" style={{ color: 'white' }}>Annual Revenue</p>
-                    {isEditing ? (
-                      <Input
-                        type="number"
-                        value={editableFields.annual_revenue}
-                        onChange={(e) => setEditableFields({...editableFields, annual_revenue: e.target.value})}
-                        placeholder="Enter annual revenue"
-                      />
-                    ) : (
-                      <p className="font-medium" style={{ color: 'white' }}>
-                        {formatCurrency(lead.annual_revenue)}
-                      </p>
-                    )}
                   </div>
+                )}
+              </div>
+
+              <div className="flex items-center gap-3">
+                <DollarSign className="w-4 h-4" style={{ color: 'white' }} />
+                <div className="flex-1">
+                  <p className="text-sm" style={{ color: 'white' }}>Annual Revenue</p>
+                  {isEditing ? (
+                    <Input
+                      type="number"
+                      value={editableFields.annual_revenue}
+                      onChange={(e) => setEditableFields({...editableFields, annual_revenue: e.target.value})}
+                      placeholder="Enter annual revenue"
+                    />
+                  ) : (
+                    <p className="font-medium" style={{ color: 'white' }}>
+                      {formatCurrency(lead.annual_revenue)}
+                    </p>
+                  )}
                 </div>
               </div>
             </CardContent>
@@ -750,123 +783,128 @@ export default function LeadDetail() {
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
-              <div className="grid grid-cols-1 gap-4">
-                <div className="flex items-center gap-3">
-                  <DollarSign className="w-4 h-4" style={{ color: 'white' }} />
-                  <div className="flex-1">
-                    <p className="text-sm" style={{ color: 'white' }}>Loan Amount</p>
-                    {isEditing ? (
-                      <Input
-                        type="number"
-                        value={editableFields.loan_amount}
-                        onChange={(e) => setEditableFields({...editableFields, loan_amount: e.target.value})}
-                        placeholder="Enter loan amount"
-                      />
-                    ) : (
-                      <p className="font-medium text-lg" style={{ color: 'white' }}>
-                        {formatCurrency(lead.loan_amount)}
-                      </p>
-                    )}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {/* Left Column */}
+                <div className="space-y-4">
+                  <div className="flex items-center gap-3">
+                    <DollarSign className="w-4 h-4" style={{ color: 'white' }} />
+                    <div className="flex-1">
+                      <p className="text-sm" style={{ color: 'white' }}>Loan Amount</p>
+                      {isEditing ? (
+                        <Input
+                          type="number"
+                          value={editableFields.loan_amount}
+                          onChange={(e) => setEditableFields({...editableFields, loan_amount: e.target.value})}
+                          placeholder="Enter loan amount"
+                        />
+                      ) : (
+                        <p className="font-medium text-lg" style={{ color: 'white' }}>
+                          {formatCurrency(lead.loan_amount)}
+                        </p>
+                      )}
+                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-3">
+                    <Building className="w-4 h-4" style={{ color: 'white' }} />
+                    <div className="flex-1">
+                      <p className="text-sm" style={{ color: 'white' }}>Loan Type</p>
+                      {isEditing ? (
+                          <Select value={editableFields.loan_type} onValueChange={(value) => setEditableFields({...editableFields, loan_type: value})}>
+                            <SelectTrigger>
+                              <SelectValue placeholder="Select loan type" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="SBA 7(a) Loan">SBA 7(a) Loan</SelectItem>
+                              <SelectItem value="SBA 504 Loan">SBA 504 Loan</SelectItem>
+                              <SelectItem value="Bridge Loan">Bridge Loan</SelectItem>
+                              <SelectItem value="Conventional Loan">Conventional Loan</SelectItem>
+                              <SelectItem value="Equipment Financing">Equipment Financing</SelectItem>
+                              <SelectItem value="USDA B&I Loan">USDA B&I Loan</SelectItem>
+                              <SelectItem value="Working Capital Loan">Working Capital Loan</SelectItem>
+                              <SelectItem value="Line of Credit">Line of Credit</SelectItem>
+                              <SelectItem value="Land Loan">Land Loan</SelectItem>
+                              <SelectItem value="Factoring">Factoring</SelectItem>
+                            </SelectContent>
+                          </Select>
+                      ) : (
+                        <p className="font-medium" style={{ color: 'white' }}>{lead.loan_type || 'N/A'}</p>
+                      )}
+                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-3">
+                    <CreditCard className="w-4 h-4" style={{ color: 'white' }} />
+                    <div className="flex-1">
+                      <p className="text-sm" style={{ color: 'white' }}>Credit Score</p>
+                      {isEditing ? (
+                        <Input
+                          type="number"
+                          value={editableFields.credit_score}
+                          onChange={(e) => setEditableFields({...editableFields, credit_score: e.target.value})}
+                          placeholder="Enter credit score"
+                          min="300"
+                          max="850"
+                        />
+                      ) : (
+                        <p className="font-medium" style={{ color: 'white' }}>{formatNumber(lead.credit_score)}</p>
+                      )}
+                    </div>
                   </div>
                 </div>
 
-                <div className="flex items-center gap-3">
-                  <Building className="w-4 h-4" style={{ color: 'white' }} />
-                  <div className="flex-1">
-                    <p className="text-sm" style={{ color: 'white' }}>Loan Type</p>
-                    {isEditing ? (
-                        <Select value={editableFields.loan_type} onValueChange={(value) => setEditableFields({...editableFields, loan_type: value})}>
+                {/* Right Column */}
+                <div className="space-y-4">
+                  <div className="flex items-center gap-3">
+                    <DollarSign className="w-4 h-4" style={{ color: 'white' }} />
+                    <div className="flex-1">
+                      <p className="text-sm" style={{ color: 'white' }}>Net Operating Income</p>
+                      {isEditing ? (
+                        <Input
+                          type="number"
+                          value={editableFields.net_operating_income}
+                          onChange={(e) => setEditableFields({...editableFields, net_operating_income: e.target.value})}
+                          placeholder="Enter net operating income"
+                        />
+                      ) : (
+                        <p className="font-medium" style={{ color: 'white' }}>
+                          {formatCurrency((lead as any).net_operating_income)}
+                        </p>
+                      )}
+                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-3">
+                    <Building className="w-4 h-4" style={{ color: 'white' }} />
+                    <div className="flex-1">
+                      <p className="text-sm" style={{ color: 'white' }}>Bank/Lender Name</p>
+                      {isEditing ? (
+                        <Input
+                          value={editableFields.bank_lender_name}
+                          onChange={(e) => setEditableFields({...editableFields, bank_lender_name: e.target.value})}
+                          placeholder="Enter bank or lender name"
+                        />
+                      ) : (
+                        <p className="font-medium" style={{ color: 'white' }}>
+                          {(lead as any).bank_lender_name || 'N/A'}
+                        </p>
+                      )}
+                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-3">
+                    <Target className="w-4 h-4" style={{ color: 'white' }} />
+                    <div className="flex-1">
+                      <p className="text-sm" style={{ color: 'white' }}>Loan Stage</p>
+                      {isEditing ? (
+                        <Select value={editableFields.stage} onValueChange={(value) => setEditableFields({...editableFields, stage: value})}>
                           <SelectTrigger>
-                            <SelectValue placeholder="Select loan type" />
+                            <SelectValue placeholder="Select stage" />
                           </SelectTrigger>
                           <SelectContent>
-                            <SelectItem value="SBA 7(a) Loan">SBA 7(a) Loan</SelectItem>
-                            <SelectItem value="SBA 504 Loan">SBA 504 Loan</SelectItem>
-                            <SelectItem value="Bridge Loan">Bridge Loan</SelectItem>
-                            <SelectItem value="Conventional Loan">Conventional Loan</SelectItem>
-                            <SelectItem value="Equipment Financing">Equipment Financing</SelectItem>
-                            <SelectItem value="USDA B&I Loan">USDA B&I Loan</SelectItem>
-                            <SelectItem value="Working Capital Loan">Working Capital Loan</SelectItem>
-                            <SelectItem value="Line of Credit">Line of Credit</SelectItem>
-                            <SelectItem value="Land Loan">Land Loan</SelectItem>
-                            <SelectItem value="Factoring">Factoring</SelectItem>
-                          </SelectContent>
-                        </Select>
-                    ) : (
-                      <p className="font-medium" style={{ color: 'white' }}>{lead.loan_type || 'N/A'}</p>
-                    )}
-                  </div>
-                </div>
-
-                <div className="flex items-center gap-3">
-                  <CreditCard className="w-4 h-4" style={{ color: 'white' }} />
-                  <div className="flex-1">
-                    <p className="text-sm" style={{ color: 'white' }}>Credit Score</p>
-                    {isEditing ? (
-                      <Input
-                        type="number"
-                        value={editableFields.credit_score}
-                        onChange={(e) => setEditableFields({...editableFields, credit_score: e.target.value})}
-                        placeholder="Enter credit score"
-                        min="300"
-                        max="850"
-                      />
-                    ) : (
-                      <p className="font-medium" style={{ color: 'white' }}>{formatNumber(lead.credit_score)}</p>
-                    )}
-                  </div>
-                </div>
-
-                <div className="flex items-center gap-3">
-                  <DollarSign className="w-4 h-4" style={{ color: 'white' }} />
-                  <div className="flex-1">
-                    <p className="text-sm" style={{ color: 'white' }}>Net Operating Income</p>
-                    {isEditing ? (
-                      <Input
-                        type="number"
-                        value={editableFields.net_operating_income}
-                        onChange={(e) => setEditableFields({...editableFields, net_operating_income: e.target.value})}
-                        placeholder="Enter net operating income"
-                      />
-                    ) : (
-                      <p className="font-medium" style={{ color: 'white' }}>
-                        {formatCurrency((lead as any).net_operating_income)}
-                      </p>
-                    )}
-                  </div>
-                </div>
-
-                <div className="flex items-center gap-3">
-                  <Building className="w-4 h-4" style={{ color: 'white' }} />
-                  <div className="flex-1">
-                    <p className="text-sm" style={{ color: 'white' }}>Bank/Lender Name</p>
-                    {isEditing ? (
-                      <Input
-                        value={editableFields.bank_lender_name}
-                        onChange={(e) => setEditableFields({...editableFields, bank_lender_name: e.target.value})}
-                        placeholder="Enter bank or lender name"
-                      />
-                    ) : (
-                      <p className="font-medium" style={{ color: 'white' }}>
-                        {(lead as any).bank_lender_name || 'N/A'}
-                      </p>
-                    )}
-                  </div>
-                </div>
-
-                <div className="flex items-center gap-3">
-                  <Target className="w-4 h-4" style={{ color: 'white' }} />
-                  <div className="flex-1">
-                    <p className="text-sm" style={{ color: 'white' }}>Loan Stage</p>
-                    {isEditing ? (
-                      <Select value={editableFields.stage} onValueChange={(value) => setEditableFields({...editableFields, stage: value})}>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select stage" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="Initial Contact">Initial Contact</SelectItem>
-                          <SelectItem value="Qualified">Qualified</SelectItem>
-                          <SelectItem value="Application">Application</SelectItem>
+                            <SelectItem value="Initial Contact">Initial Contact</SelectItem>
+                            <SelectItem value="Qualified">Qualified</SelectItem>
+                            <SelectItem value="Application">Application</SelectItem>
                           <SelectItem value="Pre-approval">Pre-approval</SelectItem>
                           <SelectItem value="Documentation">Documentation</SelectItem>
                           <SelectItem value="Closing">Closing</SelectItem>
@@ -876,6 +914,7 @@ export default function LeadDetail() {
                       <p className="font-medium" style={{ color: 'white' }}>{lead.stage || 'N/A'}</p>
                     )}
                   </div>
+                </div>
                 </div>
 
               </div>
