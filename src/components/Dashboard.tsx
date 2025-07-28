@@ -80,6 +80,7 @@ interface PipelineEntry {
   stage: string;
   amount?: number;
   created_at: string;
+  lead_id?: string;
 }
 
 interface PipelineStage {
@@ -213,6 +214,9 @@ export default function Dashboard() {
   }
 
   const calculatePipelineStages = (leadsData: Lead[], pipelineData: PipelineEntry[]) => {
+    console.log('Pipeline calculation - Leads data:', leadsData)
+    console.log('Pipeline calculation - Pipeline data:', pipelineData)
+    
     const stageCounts = {
       "Initial Contact": 0,
       "Qualified": 0, 
@@ -221,19 +225,29 @@ export default function Dashboard() {
       "Closing": 0
     }
 
-    // Count leads by stage (exclude converted leads)
+    // Count all leads by their current stage (including converted ones)
     leadsData.forEach(lead => {
-      if (stageCounts.hasOwnProperty(lead.stage) && !lead.is_converted_to_client) {
+      if (stageCounts.hasOwnProperty(lead.stage)) {
         stageCounts[lead.stage as keyof typeof stageCounts]++
+        console.log(`Added lead to ${lead.stage}: ${lead.name} (converted: ${lead.is_converted_to_client})`)
       }
     })
 
-    // Count pipeline entries by stage
+    // Only count pipeline entries for leads that are NOT already counted
+    // (i.e., pipeline entries that don't have corresponding leads)
     pipelineData.forEach(entry => {
-      if (stageCounts.hasOwnProperty(entry.stage)) {
+      // Check if this pipeline entry corresponds to a converted lead
+      const correspondingLead = leadsData.find(lead => lead.id === entry.lead_id)
+      
+      if (stageCounts.hasOwnProperty(entry.stage) && !correspondingLead) {
         stageCounts[entry.stage as keyof typeof stageCounts]++
+        console.log(`Added pipeline entry to ${entry.stage} (no corresponding lead)`)
+      } else if (correspondingLead) {
+        console.log(`Skipped pipeline entry for ${entry.stage} - already counted lead ${correspondingLead.name}`)
       }
     })
+
+    console.log('Final stage counts:', stageCounts)
 
     // Calculate total for percentage calculation
     const total = Object.values(stageCounts).reduce((sum, count) => sum + count, 0)
