@@ -31,7 +31,7 @@ interface Lead {
   stage: string
   priority: string
   credit_score?: number
-  income?: number
+  net_operating_income?: number
   last_contact: string
   is_converted_to_client: boolean
 }
@@ -77,7 +77,7 @@ export default function Leads() {
     loan_amount: "",
     loan_type: "SBA 7(a) Loan",
     credit_score: "",
-    income: "",
+    net_operating_income: "",
     priority: "medium",
     stage: "Initial Contact",
     notes: ""
@@ -92,7 +92,7 @@ export default function Leads() {
     loan_amount: "",
     loan_type: "SBA 7(a) Loan",
     credit_score: "",
-    income: "",
+    net_operating_income: "",
     priority: "medium",
     stage: "Initial Contact",
     notes: ""
@@ -203,7 +203,7 @@ export default function Leads() {
           loan_amount: newLead.loan_amount ? parseFloat(newLead.loan_amount) : null,
           loan_type: newLead.loan_type || null,
           credit_score: newLead.credit_score ? parseInt(newLead.credit_score) : null,
-          income: newLead.income ? parseFloat(newLead.income) : null,
+          net_operating_income: newLead.net_operating_income ? parseFloat(newLead.net_operating_income) : null,
           priority: newLead.priority,
           stage: newLead.stage,
           notes: newLead.notes || null
@@ -226,7 +226,7 @@ export default function Leads() {
         loan_amount: "",
         loan_type: "SBA 7(a) Loan",
         credit_score: "",
-        income: "",
+        net_operating_income: "",
         priority: "medium",
         stage: "Initial Contact",
         notes: ""
@@ -254,7 +254,7 @@ export default function Leads() {
       loan_amount: lead.loan_amount?.toString() || "",
       loan_type: lead.loan_type || "SBA 7(a) Loan",
       credit_score: lead.credit_score?.toString() || "",
-      income: lead.income?.toString() || "",
+      net_operating_income: lead.net_operating_income?.toString() || "",
       priority: lead.priority,
       stage: lead.stage,
       notes: "" // notes field not shown in current interface
@@ -277,7 +277,7 @@ export default function Leads() {
           loan_amount: editLead.loan_amount ? parseFloat(editLead.loan_amount) : null,
           loan_type: editLead.loan_type || null,
           credit_score: editLead.credit_score ? parseInt(editLead.credit_score) : null,
-          income: editLead.income ? parseFloat(editLead.income) : null,
+          net_operating_income: editLead.net_operating_income ? parseFloat(editLead.net_operating_income) : null,
           priority: editLead.priority,
           stage: editLead.stage,
         })
@@ -485,17 +485,17 @@ export default function Leads() {
                 </div>
               </div>
 
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <Label htmlFor="income">Annual Income</Label>
-                  <Input
-                    id="income"
-                    type="number"
-                    value={newLead.income}
-                    onChange={(e) => setNewLead(prev => ({ ...prev, income: e.target.value }))}
-                    placeholder="75000"
-                  />
-                </div>
+               <div className="grid grid-cols-2 gap-4">
+                 <div>
+                   <Label htmlFor="net_operating_income">Net Operating Income</Label>
+                   <Input
+                     id="net_operating_income"
+                     type="number"
+                     value={newLead.net_operating_income}
+                     onChange={(e) => setNewLead(prev => ({ ...prev, net_operating_income: e.target.value }))}
+                     placeholder="500000"
+                   />
+                 </div>
                 <div>
                   <Label htmlFor="priority">Priority</Label>
                   <Select value={newLead.priority} onValueChange={(value) => setNewLead(prev => ({ ...prev, priority: value }))}>
@@ -1040,16 +1040,16 @@ export default function Leads() {
             </div>
 
             <div className="grid grid-cols-2 gap-4">
-              <div>
-                <Label htmlFor="edit-income">Annual Income</Label>
-                <Input
-                  id="edit-income"
-                  type="number"
-                  value={editLead.income}
-                  onChange={(e) => setEditLead(prev => ({ ...prev, income: e.target.value }))}
-                  placeholder="75000"
-                />
-              </div>
+               <div>
+                 <Label htmlFor="edit-net_operating_income">Net Operating Income</Label>
+                 <Input
+                   id="edit-net_operating_income"
+                   type="number"
+                   value={editLead.net_operating_income}
+                   onChange={(e) => setEditLead(prev => ({ ...prev, net_operating_income: e.target.value }))}
+                   placeholder="500000"
+                 />
+               </div>
               <div>
                 <Label htmlFor="edit-priority">Priority</Label>
                 <Select value={editLead.priority} onValueChange={(value) => setEditLead(prev => ({ ...prev, priority: value }))}>
