@@ -605,8 +605,8 @@ export default function Leads() {
                   <div className="space-y-2">
                     {lead.business_name && (
                       <div className="flex items-center gap-2 text-sm">
-                        <Building className="w-4 h-4 text-muted-foreground" />
-                        <span className="font-medium text-foreground">{lead.business_name}</span>
+                        <Building className="w-4 h-4 text-white" />
+                        <span className="font-medium text-white">{lead.business_name}</span>
                       </div>
                     )}
                      <div className="flex items-center gap-2 text-sm">
@@ -627,13 +627,13 @@ export default function Leads() {
                       )}
                     {lead.loan_amount && (
                       <div className="flex items-center gap-2 text-sm">
-                        <DollarSign className="w-4 h-4 text-muted-foreground" />
-                        <span className="font-medium text-foreground">${lead.loan_amount.toLocaleString()}</span>
+                        <DollarSign className="w-4 h-4 text-white" />
+                        <span className="font-medium text-white">${lead.loan_amount.toLocaleString()}</span>
                       </div>
                     )}
                     {lead.loan_type && (
                       <div className="flex items-center gap-2 text-sm">
-                        <span className="text-xs bg-muted px-2 py-1 rounded font-medium">{lead.loan_type}</span>
+                        <span className="text-xs bg-muted px-2 py-1 rounded font-medium text-white">{lead.loan_type}</span>
                       </div>
                     )}
                   </div>
@@ -761,7 +761,7 @@ export default function Leads() {
                           {lead.loan_amount ? `$${lead.loan_amount.toLocaleString()}` : '-'}
                         </td>
                         <td className="p-4">
-                          <span className="text-xs bg-muted px-2 py-1 rounded font-medium">{lead.loan_type || '-'}</span>
+                          <span className="text-xs bg-muted px-2 py-1 rounded font-medium text-white">{lead.loan_type || '-'}</span>
                         </td>
                         <td className="p-4">
                           <Badge variant={getStageColor(lead.stage)}>
