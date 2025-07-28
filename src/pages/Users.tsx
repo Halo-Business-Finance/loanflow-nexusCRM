@@ -12,6 +12,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Separator } from "@/components/ui/separator"
 import { supabase } from "@/integrations/supabase/client"
 import { useToast } from "@/hooks/use-toast"
+import { PhoneDialer } from "@/components/PhoneDialer"
+import { EmailComposer } from "@/components/EmailComposer"
 import { 
   Users as UsersIcon, 
   UserPlus, 
@@ -444,10 +446,14 @@ export default function Users() {
               <CardContent className="space-y-4">
                 <div className="space-y-2">
                   {user.phone_number && (
-                    <div className="flex items-center gap-2 text-sm">
-                      <Phone className="h-4 w-4 text-muted-foreground" />
-                      {user.phone_number}
-                    </div>
+                    <PhoneDialer 
+                      trigger={
+                        <button className="flex items-center gap-2 text-sm text-muted-foreground hover:text-primary transition-colors">
+                          <Phone className="h-4 w-4" />
+                          {user.phone_number}
+                        </button>
+                      }
+                    />
                   )}
                   <div className="flex items-center gap-2 text-sm">
                     <Calendar className="h-4 w-4 text-muted-foreground" />

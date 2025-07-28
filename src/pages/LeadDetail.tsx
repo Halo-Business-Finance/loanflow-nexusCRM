@@ -13,6 +13,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Switch } from "@/components/ui/switch"
 import { Separator } from "@/components/ui/separator"
 import { useToast } from "@/hooks/use-toast"
+import { PhoneDialer } from "@/components/PhoneDialer"
+import { EmailComposer } from "@/components/EmailComposer"
 import { formatNumber, formatCurrency } from "@/lib/utils"
 import { 
   ArrowLeft, 
@@ -853,14 +855,22 @@ export default function LeadDetail() {
           </CardHeader>
           <CardContent>
             <div className="flex gap-4">
-              <Button variant="outline" className="flex-1">
-                <PhoneIcon className="w-4 h-4 mr-2" />
-                Call Lead
-              </Button>
-              <Button variant="outline" className="flex-1">
-                <Mail className="w-4 h-4 mr-2" />
-                Send Email
-              </Button>
+              <PhoneDialer 
+                trigger={
+                  <Button variant="outline" className="flex-1">
+                    <PhoneIcon className="w-4 h-4 mr-2" />
+                    Call Lead
+                  </Button>
+                }
+              />
+              <EmailComposer 
+                trigger={
+                  <Button variant="outline" className="flex-1">
+                    <Mail className="w-4 h-4 mr-2" />
+                    Send Email
+                  </Button>
+                }
+              />
               {!lead.is_converted_to_client && (
                 <Button className="flex-1">
                   Convert to Client

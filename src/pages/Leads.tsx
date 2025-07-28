@@ -14,6 +14,8 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, Dialog
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { useToast } from "@/hooks/use-toast"
+import { PhoneDialer } from "@/components/PhoneDialer"
+import { EmailComposer } from "@/components/EmailComposer"
 import { Search, Plus, Filter, Phone, Mail, User, MapPin, DollarSign, ArrowRight, Building } from "lucide-react"
 
 interface Lead {
@@ -611,15 +613,23 @@ export default function Leads() {
                         <span className="font-medium" style={{ color: 'white' }}>{lead.business_name}</span>
                       </div>
                     )}
-                     <div className="flex items-center gap-2 text-sm">
-                       <Mail className="w-4 h-4 text-white" />
-                       <span style={{ color: 'white' }}>{lead.email}</span>
-                     </div>
+                     <EmailComposer 
+                       trigger={
+                         <button className="flex items-center gap-2 text-sm hover:text-primary transition-colors">
+                           <Mail className="w-4 h-4 text-white" />
+                           <span style={{ color: 'white' }}>{lead.email}</span>
+                         </button>
+                       }
+                     />
                      {lead.phone && (
-                       <div className="flex items-center gap-2 text-sm">
-                         <Phone className="w-4 h-4 text-white" />
-                         <span style={{ color: 'white' }}>{formatPhoneNumber(lead.phone)}</span>
-                       </div>
+                       <PhoneDialer 
+                         trigger={
+                           <button className="flex items-center gap-2 text-sm hover:text-primary transition-colors">
+                             <Phone className="w-4 h-4 text-white" />
+                             <span style={{ color: 'white' }}>{formatPhoneNumber(lead.phone)}</span>
+                           </button>
+                         }
+                       />
                      )}
                       {lead.address && (
                         <div className="flex items-center gap-2 text-sm">
@@ -651,25 +661,33 @@ export default function Leads() {
                      )}
                   </div>
                   
-                  <div className="flex gap-2 pt-2">
-                    <Button 
-                      size="sm" 
-                      variant="outline" 
-                      className="flex-1"
-                      onClick={(e) => e.stopPropagation()}
-                    >
-                      <Phone className="w-3 h-3 mr-1" />
-                      Call
-                    </Button>
-                    <Button 
-                      size="sm" 
-                      variant="outline" 
-                      className="flex-1"
-                      onClick={(e) => e.stopPropagation()}
-                    >
-                      <Mail className="w-3 h-3 mr-1" />
-                      Email
-                    </Button>
+                   <div className="flex gap-2 pt-2">
+                    <PhoneDialer 
+                      trigger={
+                        <Button 
+                          size="sm" 
+                          variant="outline" 
+                          className="flex-1"
+                          onClick={(e) => e.stopPropagation()}
+                        >
+                          <Phone className="w-3 h-3 mr-1" />
+                          Call
+                        </Button>
+                      }
+                    />
+                    <EmailComposer 
+                      trigger={
+                        <Button 
+                          size="sm" 
+                          variant="outline" 
+                          className="flex-1"
+                          onClick={(e) => e.stopPropagation()}
+                        >
+                          <Mail className="w-3 h-3 mr-1" />
+                          Email
+                        </Button>
+                      }
+                    />
                     {!lead.is_converted_to_client && (
                       <Dialog>
                         <DialogTrigger asChild>
@@ -776,14 +794,22 @@ export default function Leads() {
                           </Badge>
                         </td>
                         <td className="p-4 text-white">{lead.credit_score || '-'}</td>
-                        <td className="p-4">
-                          <div className="flex gap-2">
-                            <Button size="sm" variant="outline">
-                              <Phone className="w-3 h-3" />
-                            </Button>
-                            <Button size="sm" variant="outline">
-                              <Mail className="w-3 h-3" />
-                            </Button>
+                         <td className="p-4">
+                           <div className="flex gap-2">
+                             <PhoneDialer 
+                               trigger={
+                                 <Button size="sm" variant="outline">
+                                   <Phone className="w-3 h-3" />
+                                 </Button>
+                               }
+                             />
+                             <EmailComposer 
+                               trigger={
+                                 <Button size="sm" variant="outline">
+                                   <Mail className="w-3 h-3" />
+                                 </Button>
+                               }
+                             />
                             {!lead.is_converted_to_client && (
                               <Dialog>
                                 <DialogTrigger asChild>

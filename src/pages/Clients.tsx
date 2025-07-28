@@ -9,6 +9,8 @@ import { Input } from "@/components/ui/input"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Search, Phone, Mail, MapPin, Calendar, DollarSign, Filter, ChevronDown, ChevronUp } from "lucide-react"
 import { LoanManager } from "@/components/LoanManager"
+import { PhoneDialer } from "@/components/PhoneDialer"
+import { EmailComposer } from "@/components/EmailComposer"
 import { formatNumber, formatCurrency } from "@/lib/utils"
 
 interface Client {
@@ -236,16 +238,24 @@ export default function Clients() {
                           </p>
                         </div>
                         
-                        <div className="flex items-center gap-4 text-sm text-muted-foreground">
-                          <div className="flex items-center gap-1">
-                            <Mail className="h-4 w-4" />
-                            {client.email}
-                          </div>
+                         <div className="flex items-center gap-4 text-sm text-muted-foreground">
+                          <EmailComposer 
+                            trigger={
+                              <button className="flex items-center gap-1 text-sm text-muted-foreground hover:text-primary transition-colors">
+                                <Mail className="h-4 w-4" />
+                                {client.email}
+                              </button>
+                            }
+                          />
                           {client.phone && (
-                            <div className="flex items-center gap-1">
-                              <Phone className="h-4 w-4" />
-                              {client.phone}
-                            </div>
+                            <PhoneDialer 
+                              trigger={
+                                <button className="flex items-center gap-1 text-sm text-muted-foreground hover:text-primary transition-colors">
+                                  <Phone className="h-4 w-4" />
+                                  {client.phone}
+                                </button>
+                              }
+                            />
                           )}
                           {client.location && (
                             <div className="flex items-center gap-1">
@@ -282,12 +292,20 @@ export default function Clients() {
                     </div>
                     
                     <div className="flex gap-2">
-                      <Button size="sm" variant="outline">
-                        <Phone className="h-4 w-4" />
-                      </Button>
-                      <Button size="sm" variant="outline">
-                        <Mail className="h-4 w-4" />
-                      </Button>
+                      <PhoneDialer 
+                        trigger={
+                          <Button size="sm" variant="outline">
+                            <Phone className="h-4 w-4" />
+                          </Button>
+                        }
+                      />
+                      <EmailComposer 
+                        trigger={
+                          <Button size="sm" variant="outline">
+                            <Mail className="h-4 w-4" />
+                          </Button>
+                        }
+                      />
                       <Button 
                         size="sm" 
                         variant="outline"
