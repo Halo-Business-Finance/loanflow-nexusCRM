@@ -23,7 +23,8 @@ import {
   Save,
   Edit,
   Phone as PhoneIcon,
-  Calendar
+  Calendar,
+  UserCheck
 } from "lucide-react"
 
 interface Lead {
@@ -47,6 +48,18 @@ interface Lead {
   is_converted_to_client: boolean
 }
 
+interface Client {
+  id: string
+  name: string
+  email: string
+  phone?: string
+  location?: string
+  status: string
+  total_loans: number
+  total_loan_value: number
+  join_date: string
+}
+
 export default function LeadDetail() {
   const { id } = useParams<{ id: string }>()
   const navigate = useNavigate()
@@ -54,6 +67,7 @@ export default function LeadDetail() {
   const { toast } = useToast()
   
   const [lead, setLead] = useState<Lead | null>(null)
+  const [client, setClient] = useState<Client | null>(null)
   const [loading, setLoading] = useState(true)
   const [isEditing, setIsEditing] = useState(false)
   const [callNotes, setCallNotes] = useState("")
@@ -86,6 +100,11 @@ export default function LeadDetail() {
       setLead(mappedLead)
       setCallNotes(data.call_notes || "")
       setGeneralNotes(data.notes || "")
+      
+      // If lead is converted, fetch client data
+      if (data.is_converted_to_client) {
+        await fetchClientData(data.id)
+      }
     } catch (error) {
       console.error('Error fetching lead:', error)
       toast({
@@ -96,6 +115,26 @@ export default function LeadDetail() {
       navigate('/leads')
     } finally {
       setLoading(false)
+    }
+  }
+
+  const fetchClientData = async (leadId: string) => {
+    try {
+      const { data, error } = await supabase
+        .from('clients')
+        .select('*')
+        .eq('lead_id', leadId)
+        .eq('user_id', user?.id)
+        .single()
+
+      if (error) {
+        console.error('Error fetching client data:', error)
+        return
+      }
+      
+      setClient(data)
+    } catch (error) {
+      console.error('Error fetching client:', error)
     }
   }
 
@@ -400,6 +439,81 @@ export default function LeadDetail() {
             </div>
           </CardContent>
         </Card>
+
+        {/* Existing Client Information */}
+        {lead.is_converted_to_client && client && (
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2" style={{ color: 'white' }}>
+                <UserCheck className="w-5 h-5" />
+                Existing Client Information
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="flex items-center gap-3">
+                  <User className="w-4 h-4" style={{ color: 'white' }} />
+                  <div>
+                    <p className="text-sm" style={{ color: 'white' }}>Client Name</p>
+                    <p className="font-medium" style={{ color: 'white' }}>{client.name}</p>
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-3">
+                  <Mail className="w-4 h-4" style={{ color: 'white' }} />
+                  <div>
+                    <p className="text-sm" style={{ color: 'white' }}>Email</p>
+                    <p className="font-medium" style={{ color: 'white' }}>{client.email}</p>
+                  </div>
+                </div>
+
+                {client.phone && (
+                  <div className="flex items-center gap-3">
+                    <Phone className="w-4 h-4" style={{ color: 'white' }} />
+                    <div>
+                      <p className="text-sm" style={{ color: 'white' }}>Phone</p>
+                      <p className="font-medium" style={{ color: 'white' }}>{client.phone}</p>
+                    </div>
+                  </div>
+                )}
+
+                <div className="flex items-center gap-3">
+                  <Badge variant="default" className="w-fit">
+                    {client.status}
+                  </Badge>
+                </div>
+
+                <div className="flex items-center gap-3">
+                  <DollarSign className="w-4 h-4" style={{ color: 'white' }} />
+                  <div>
+                    <p className="text-sm" style={{ color: 'white' }}>Total Loans</p>
+                    <p className="font-medium" style={{ color: 'white' }}>{client.total_loans}</p>
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-3">
+                  <DollarSign className="w-4 h-4" style={{ color: 'white' }} />
+                  <div>
+                    <p className="text-sm" style={{ color: 'white' }}>Total Loan Value</p>
+                    <p className="font-medium" style={{ color: 'white' }}>
+                      ${Number(client.total_loan_value).toLocaleString()}
+                    </p>
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-3">
+                  <Calendar className="w-4 h-4" style={{ color: 'white' }} />
+                  <div>
+                    <p className="text-sm" style={{ color: 'white' }}>Client Since</p>
+                    <p className="font-medium" style={{ color: 'white' }}>
+                      {new Date(client.join_date).toLocaleDateString()}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        )}
 
         {/* Call Notes Section */}
         <Card>
