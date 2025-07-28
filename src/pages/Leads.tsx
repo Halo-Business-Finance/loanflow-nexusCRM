@@ -593,7 +593,7 @@ export default function Leads() {
                             <Badge variant="default" className="text-xs">Client</Badge>
                           )}
                         </CardTitle>
-                        <p className="text-sm text-white">{new Date(lead.last_contact).toLocaleDateString()}</p>
+                        <p className="text-sm" style={{ color: 'white' }}>{new Date(lead.last_contact).toLocaleDateString()}</p>
                       </div>
                     </div>
                     <Badge variant={getPriorityColor(lead.priority)}>
@@ -606,29 +606,29 @@ export default function Leads() {
                     {lead.business_name && (
                       <div className="flex items-center gap-2 text-sm">
                         <Building className="w-4 h-4 text-white" />
-                        <span className="font-medium text-white">{lead.business_name}</span>
+                        <span className="font-medium" style={{ color: 'white' }}>{lead.business_name}</span>
                       </div>
                     )}
                      <div className="flex items-center gap-2 text-sm">
                        <Mail className="w-4 h-4 text-white" />
-                       <span className="text-white">{lead.email}</span>
+                       <span style={{ color: 'white' }}>{lead.email}</span>
                      </div>
                      {lead.phone && (
                        <div className="flex items-center gap-2 text-sm">
                          <Phone className="w-4 h-4 text-white" />
-                         <span className="text-white">{formatPhoneNumber(lead.phone)}</span>
+                         <span style={{ color: 'white' }}>{formatPhoneNumber(lead.phone)}</span>
                        </div>
                      )}
                       {lead.address && (
                         <div className="flex items-center gap-2 text-sm">
                           <MapPin className="w-4 h-4 text-white" />
-                          <span className="text-white">{lead.address}</span>
+                          <span style={{ color: 'white' }}>{lead.address}</span>
                         </div>
                       )}
                     {lead.loan_amount && (
                       <div className="flex items-center gap-2 text-sm">
                         <DollarSign className="w-4 h-4 text-white" />
-                        <span className="font-medium text-white">${lead.loan_amount.toLocaleString()}</span>
+                        <span className="font-medium" style={{ color: 'white' }}>${lead.loan_amount.toLocaleString()}</span>
                       </div>
                     )}
                     {lead.loan_type && (
