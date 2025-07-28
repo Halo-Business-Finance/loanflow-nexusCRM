@@ -253,6 +253,7 @@ export type Database = {
       leads: {
         Row: {
           annual_revenue: number | null
+          bank_lender_name: string | null
           business_address: string | null
           business_name: string | null
           call_notes: string | null
@@ -271,6 +272,7 @@ export type Database = {
           location: string | null
           maturity_date: string | null
           name: string
+          net_operating_income: number | null
           notes: string | null
           owns_property: boolean | null
           phone: string | null
@@ -283,6 +285,7 @@ export type Database = {
         }
         Insert: {
           annual_revenue?: number | null
+          bank_lender_name?: string | null
           business_address?: string | null
           business_name?: string | null
           call_notes?: string | null
@@ -301,6 +304,7 @@ export type Database = {
           location?: string | null
           maturity_date?: string | null
           name: string
+          net_operating_income?: number | null
           notes?: string | null
           owns_property?: boolean | null
           phone?: string | null
@@ -313,6 +317,7 @@ export type Database = {
         }
         Update: {
           annual_revenue?: number | null
+          bank_lender_name?: string | null
           business_address?: string | null
           business_name?: string | null
           call_notes?: string | null
@@ -331,6 +336,7 @@ export type Database = {
           location?: string | null
           maturity_date?: string | null
           name?: string
+          net_operating_income?: number | null
           notes?: string | null
           owns_property?: boolean | null
           phone?: string | null

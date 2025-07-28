@@ -53,7 +53,8 @@ interface Lead {
   stage: string
   priority: string
   credit_score?: number
-  income?: number
+  net_operating_income?: number
+  bank_lender_name?: string
   annual_revenue?: number
   interest_rate?: number
   maturity_date?: string
@@ -105,7 +106,8 @@ export default function LeadDetail() {
     stage: "",
     priority: "",
     credit_score: "",
-    income: "",
+    net_operating_income: "",
+    bank_lender_name: "",
     annual_revenue: "",
     interest_rate: "",
     maturity_date: "",
@@ -148,7 +150,8 @@ export default function LeadDetail() {
         stage: data.stage || "",
         priority: data.priority || "",
         credit_score: data.credit_score?.toString() || "",
-        income: data.income?.toString() || "",
+        net_operating_income: (data as any).net_operating_income?.toString() || "",
+        bank_lender_name: (data as any).bank_lender_name || "",
         annual_revenue: data.annual_revenue?.toString() || "",
         interest_rate: data.interest_rate?.toString() || "",
         maturity_date: data.maturity_date || "",
@@ -273,7 +276,8 @@ export default function LeadDetail() {
         stage: editableFields.stage,
         priority: editableFields.priority,
         credit_score: editableFields.credit_score ? parseInt(editableFields.credit_score) : null,
-        income: editableFields.income ? parseFloat(editableFields.income) : null,
+        net_operating_income: editableFields.net_operating_income ? parseFloat(editableFields.net_operating_income) : null,
+        bank_lender_name: editableFields.bank_lender_name || null,
         annual_revenue: editableFields.annual_revenue ? parseFloat(editableFields.annual_revenue) : null,
         interest_rate: editableFields.interest_rate ? parseFloat(editableFields.interest_rate) : null,
         maturity_date: editableFields.maturity_date || null,
@@ -816,17 +820,35 @@ export default function LeadDetail() {
                 <div className="flex items-center gap-3">
                   <DollarSign className="w-4 h-4" style={{ color: 'white' }} />
                   <div className="flex-1">
-                    <p className="text-sm" style={{ color: 'white' }}>Annual Income</p>
+                    <p className="text-sm" style={{ color: 'white' }}>Net Operating Income</p>
                     {isEditing ? (
                       <Input
                         type="number"
-                        value={editableFields.income}
-                        onChange={(e) => setEditableFields({...editableFields, income: e.target.value})}
-                        placeholder="Enter annual income"
+                        value={editableFields.net_operating_income}
+                        onChange={(e) => setEditableFields({...editableFields, net_operating_income: e.target.value})}
+                        placeholder="Enter net operating income"
                       />
                     ) : (
                       <p className="font-medium" style={{ color: 'white' }}>
-                        {formatCurrency(lead.income)}
+                        {formatCurrency((lead as any).net_operating_income)}
+                      </p>
+                    )}
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-3">
+                  <Building className="w-4 h-4" style={{ color: 'white' }} />
+                  <div className="flex-1">
+                    <p className="text-sm" style={{ color: 'white' }}>Bank/Lender Name</p>
+                    {isEditing ? (
+                      <Input
+                        value={editableFields.bank_lender_name}
+                        onChange={(e) => setEditableFields({...editableFields, bank_lender_name: e.target.value})}
+                        placeholder="Enter bank or lender name"
+                      />
+                    ) : (
+                      <p className="font-medium" style={{ color: 'white' }}>
+                        {(lead as any).bank_lender_name || 'N/A'}
                       </p>
                     )}
                   </div>
