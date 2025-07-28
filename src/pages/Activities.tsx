@@ -185,7 +185,7 @@ export default function Activities() {
                     {/* Timeline indicator */}
                     <div className="flex flex-col items-center">
                       <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10">
-                        <IconComponent className="h-4 w-4 text-primary" />
+                        <IconComponent className="h-4 w-4 text-white" />
                       </div>
                       {index < activities.length - 1 && (
                         <div className="h-6 w-px bg-border mt-2" />
