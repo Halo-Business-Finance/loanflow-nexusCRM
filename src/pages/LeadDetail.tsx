@@ -12,6 +12,7 @@ import { Badge } from "@/components/ui/badge"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Separator } from "@/components/ui/separator"
 import { useToast } from "@/hooks/use-toast"
+import { formatNumber, formatCurrency } from "@/lib/utils"
 import { 
   ArrowLeft, 
   User, 
@@ -533,7 +534,7 @@ export default function LeadDetail() {
                       />
                     ) : (
                       <p className="font-medium text-lg" style={{ color: 'white' }}>
-                        {lead.loan_amount ? `$${lead.loan_amount.toLocaleString()}` : 'N/A'}
+                        {formatCurrency(lead.loan_amount)}
                       </p>
                     )}
                   </div>
@@ -581,7 +582,7 @@ export default function LeadDetail() {
                         max="850"
                       />
                     ) : (
-                      <p className="font-medium" style={{ color: 'white' }}>{lead.credit_score || 'N/A'}</p>
+                      <p className="font-medium" style={{ color: 'white' }}>{formatNumber(lead.credit_score)}</p>
                     )}
                   </div>
                 </div>
@@ -599,7 +600,7 @@ export default function LeadDetail() {
                       />
                     ) : (
                       <p className="font-medium" style={{ color: 'white' }}>
-                        {lead.income ? `$${lead.income.toLocaleString()}` : 'N/A'}
+                        {formatCurrency(lead.income)}
                       </p>
                     )}
                   </div>
@@ -618,7 +619,7 @@ export default function LeadDetail() {
                       />
                     ) : (
                       <p className="font-medium" style={{ color: 'white' }}>
-                        {lead.annual_revenue ? `$${lead.annual_revenue.toLocaleString()}` : 'N/A'}
+                        {formatCurrency(lead.annual_revenue)}
                       </p>
                     )}
                   </div>
@@ -700,7 +701,7 @@ export default function LeadDetail() {
                   <DollarSign className="w-4 h-4" style={{ color: 'white' }} />
                   <div>
                     <p className="text-sm" style={{ color: 'white' }}>Total Loans</p>
-                    <p className="font-medium" style={{ color: 'white' }}>{client.total_loans}</p>
+                    <p className="font-medium" style={{ color: 'white' }}>{formatNumber(client.total_loans)}</p>
                   </div>
                 </div>
 
@@ -709,7 +710,7 @@ export default function LeadDetail() {
                   <div>
                     <p className="text-sm" style={{ color: 'white' }}>Total Loan Value</p>
                     <p className="font-medium" style={{ color: 'white' }}>
-                      ${Number(client.total_loan_value).toLocaleString()}
+                      {formatCurrency(client.total_loan_value)}
                     </p>
                   </div>
                 </div>

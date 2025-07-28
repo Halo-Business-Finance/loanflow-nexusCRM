@@ -11,6 +11,7 @@ import { useToast } from "@/hooks/use-toast"
 import { supabase } from "@/integrations/supabase/client"
 import { useAuth } from "@/components/auth/AuthProvider"
 import { Plus, DollarSign, Calendar, Percent, Trash2 } from "lucide-react"
+import { formatNumber, formatCurrency } from "@/lib/utils"
 
 interface Loan {
   id: string
@@ -328,7 +329,7 @@ export function LoanManager({ clientId, clientName, loans, onLoansUpdate }: Loan
                       <DollarSign className="w-5 h-5 text-primary" />
                     </div>
                     <div>
-                      <CardTitle className="text-lg">${loan.loan_amount.toLocaleString()}</CardTitle>
+                      <CardTitle className="text-lg">{formatCurrency(loan.loan_amount)}</CardTitle>
                       <div className="flex gap-2 mt-1">
                         <Badge variant={getLoanTypeColor(loan.loan_type)}>{loan.loan_type}</Badge>
                         <Badge variant={getStatusColor(loan.status)}>{loan.status}</Badge>
@@ -365,14 +366,14 @@ export function LoanManager({ clientId, clientName, loans, onLoansUpdate }: Loan
                     <div className="flex items-center gap-2">
                       <DollarSign className="w-4 h-4 text-muted-foreground" />
                       <span className="text-muted-foreground">Payment:</span>
-                      <span className="font-medium">${loan.monthly_payment.toLocaleString()}</span>
+                      <span className="font-medium">{formatCurrency(loan.monthly_payment)}</span>
                     </div>
                   )}
                   {loan.remaining_balance && (
                     <div className="flex items-center gap-2">
                       <DollarSign className="w-4 h-4 text-muted-foreground" />
                       <span className="text-muted-foreground">Balance:</span>
-                      <span className="font-medium">${loan.remaining_balance.toLocaleString()}</span>
+                      <span className="font-medium">{formatCurrency(loan.remaining_balance)}</span>
                     </div>
                   )}
                 </div>

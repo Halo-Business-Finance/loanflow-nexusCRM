@@ -31,6 +31,7 @@ import { useNavigate } from "react-router-dom"
 import { useAuth } from "@/components/auth/AuthProvider"
 import { PhoneDialer } from "@/components/PhoneDialer"
 import { EmailComposer } from "@/components/EmailComposer"
+import { formatNumber, formatCurrency } from "@/lib/utils"
 
 // Initial metrics structure - will be updated with real data
 const initialMetrics = [
@@ -296,28 +297,28 @@ export default function Dashboard() {
     setMetrics([
       {
         title: "Total Pipeline Value",
-        value: `$${totalPipelineValue.toLocaleString()}`,
+        value: formatCurrency(totalPipelineValue),
         change: "+0%", // Could calculate based on previous period
         icon: DollarSign,
         trend: "neutral"
       },
       {
         title: "Active Leads", 
-        value: leadsData.length.toString(),
+        value: formatNumber(leadsData.length),
         change: "+0%",
         icon: Users,
         trend: "neutral"
       },
       {
         title: "Applications This Month",
-        value: applicationsThisMonth.toString(),
+        value: formatNumber(applicationsThisMonth),
         change: "+0%",
         icon: FileText,
         trend: "neutral"
       },
       {
         title: "Conversion Rate",
-        value: `${conversionRate}%`,
+        value: `${formatNumber(conversionRate)}%`,
         change: "+0%",
         icon: TrendingUp,
         trend: "neutral"
@@ -407,7 +408,7 @@ export default function Dashboard() {
     lead.stage.toLowerCase().includes(leadsFilter.toLowerCase())
   ).map(lead => ({
     name: lead.name,
-    amount: lead.loan_amount ? `$${Number(lead.loan_amount).toLocaleString()}` : 'N/A',
+    amount: formatCurrency(lead.loan_amount),
     loanType: lead.loan_type || 'N/A',
     stage: lead.stage,
     lastContact: lead.last_contact ? new Date(lead.last_contact).toLocaleDateString() : 'N/A',

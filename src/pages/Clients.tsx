@@ -9,6 +9,7 @@ import { Input } from "@/components/ui/input"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Search, Phone, Mail, MapPin, Calendar, DollarSign, Filter, ChevronDown, ChevronUp } from "lucide-react"
 import { LoanManager } from "@/components/LoanManager"
+import { formatNumber, formatCurrency } from "@/lib/utils"
 
 interface Client {
   id: string
@@ -172,7 +173,7 @@ export default function Clients() {
               <CardTitle className="text-sm font-medium">Total Clients</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">{clients.length}</div>
+              <div className="text-2xl font-bold">{formatNumber(clients.length)}</div>
             </CardContent>
           </Card>
           <Card className="shadow-soft">
@@ -180,7 +181,7 @@ export default function Clients() {
               <CardTitle className="text-sm font-medium">Active Clients</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">{activeClients}</div>
+              <div className="text-2xl font-bold">{formatNumber(activeClients)}</div>
             </CardContent>
           </Card>
           <Card className="shadow-soft">
@@ -189,7 +190,10 @@ export default function Clients() {
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold text-accent">
-                ${(totalLoanValue / 1000000).toFixed(1)}M
+                {totalLoanValue >= 1000000 
+                  ? `${formatCurrency((totalLoanValue / 1000000).toFixed(1))}M` 
+                  : formatCurrency(totalLoanValue)
+                }
               </div>
             </CardContent>
           </Card>
@@ -199,7 +203,10 @@ export default function Clients() {
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold">
-                ${(avgLoanSize / 1000).toFixed(0)}K
+                {avgLoanSize >= 1000 
+                  ? `${formatCurrency((avgLoanSize / 1000).toFixed(0))}K` 
+                  : formatCurrency(avgLoanSize)
+                }
               </div>
             </CardContent>
           </Card>
@@ -264,12 +271,12 @@ export default function Clients() {
                     <div className="flex gap-6">
                       <div className="text-center">
                         <div className="text-sm text-muted-foreground">Total Loans</div>
-                        <div className="font-semibold">{client.total_loans}</div>
+                        <div className="font-semibold">{formatNumber(client.total_loans)}</div>
                       </div>
                       <div className="text-center">
                         <div className="text-sm text-muted-foreground">Total Value</div>
                         <div className="font-semibold text-accent">
-                          ${client.total_loan_value?.toLocaleString() || '0'}
+                          {formatCurrency(client.total_loan_value)}
                         </div>
                       </div>
                     </div>
