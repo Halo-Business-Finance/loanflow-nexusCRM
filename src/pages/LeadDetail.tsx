@@ -57,6 +57,7 @@ export default function LeadDetail() {
   const [isEditing, setIsEditing] = useState(false)
   const [callNotes, setCallNotes] = useState("")
   const [newCallNote, setNewCallNote] = useState("")
+  const [generalNotes, setGeneralNotes] = useState("")
 
   useEffect(() => {
     if (id && user) {
@@ -83,6 +84,7 @@ export default function LeadDetail() {
       
       setLead(mappedLead)
       setCallNotes(data.call_notes || "")
+      setGeneralNotes(data.notes || "")
     } catch (error) {
       console.error('Error fetching lead:', error)
       toast({
@@ -126,6 +128,34 @@ export default function LeadDetail() {
       toast({
         title: "Error",
         description: "Failed to save call notes",
+        variant: "destructive",
+      })
+    }
+  }
+
+  const saveGeneralNotes = async () => {
+    if (!lead) return
+
+    try {
+      const { error } = await supabase
+        .from('leads')
+        .update({ notes: generalNotes })
+        .eq('id', lead.id)
+
+      if (error) throw error
+
+      toast({
+        title: "Success",
+        description: "General notes saved successfully",
+      })
+      
+      // Refresh lead data
+      fetchLead()
+    } catch (error) {
+      console.error('Error saving general notes:', error)
+      toast({
+        title: "Error",
+        description: "Failed to save general notes",
         variant: "destructive",
       })
     }
@@ -333,17 +363,30 @@ export default function LeadDetail() {
           </Card>
         </div>
 
-        {/* Notes Section */}
-        {lead.notes && (
-          <Card>
-            <CardHeader>
-              <CardTitle style={{ color: 'white' }}>General Notes</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p style={{ color: 'white' }}>{lead.notes}</p>
-            </CardContent>
-          </Card>
-        )}
+        {/* General Notes Section */}
+        <Card>
+          <CardHeader>
+            <CardTitle style={{ color: 'white' }}>General Notes</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="generalNotes" style={{ color: 'white' }}>
+                Notes
+              </Label>
+              <Textarea
+                id="generalNotes"
+                placeholder="Enter general notes about this lead..."
+                value={generalNotes}
+                onChange={(e) => setGeneralNotes(e.target.value)}
+                rows={4}
+              />
+              <Button onClick={saveGeneralNotes}>
+                <Save className="w-4 h-4 mr-2" />
+                Save General Notes
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
 
         {/* Call Notes Section */}
         <Card>
