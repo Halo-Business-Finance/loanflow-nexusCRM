@@ -579,15 +579,15 @@ export default function Leads() {
         <TabsContent value="grid" className="space-y-4">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {filteredLeads.map((lead) => (
-              <Card key={lead.id} className={`shadow-soft hover:shadow-medium transition-shadow cursor-pointer ${lead.is_converted_to_client ? 'opacity-60' : ''}`} onClick={() => openEditDialog(lead)}>
-                <CardHeader className="pb-3">
+              <Card key={lead.id} className={`shadow-soft hover:shadow-medium transition-shadow cursor-pointer text-white ${lead.is_converted_to_client ? 'opacity-60' : ''}`} onClick={() => openEditDialog(lead)}>
+                <CardHeader className="pb-3 text-white">
                   <div className="flex justify-between items-start">
                     <div className="flex items-center gap-3">
                       <div className="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center">
                         <User className="w-5 h-5 text-primary" />
                       </div>
                       <div>
-                        <CardTitle className="text-lg flex items-center gap-2 text-white">
+                        <CardTitle className="text-lg flex items-center gap-2 !text-white">
                           {lead.name}
                           {lead.is_converted_to_client && (
                             <Badge variant="default" className="text-xs">Client</Badge>
@@ -601,7 +601,7 @@ export default function Leads() {
                     </Badge>
                   </div>
                 </CardHeader>
-                <CardContent className="space-y-3">
+                <CardContent className="space-y-3 text-white">
                   <div className="space-y-2">
                     {lead.business_name && (
                       <div className="flex items-center gap-2 text-sm">
