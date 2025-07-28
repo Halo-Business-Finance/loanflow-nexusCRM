@@ -25,7 +25,8 @@ import {
 } from "lucide-react"
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart"
 import { LineChart, Line, XAxis, YAxis, ResponsiveContainer } from "recharts"
-import { useToast } from "@/components/ui/use-toast"
+import { useToast } from "@/hooks/use-toast"
+import { useNavigate } from "react-router-dom"
 
 const metrics = [
   {
@@ -150,6 +151,7 @@ const chartConfig = {
 
 export default function Dashboard() {
   const { toast } = useToast()
+  const navigate = useNavigate()
   const [currentDateTime, setCurrentDateTime] = useState(new Date())
   const [selectedMetric, setSelectedMetric] = useState<string | null>(null)
   const [selectedLead, setSelectedLead] = useState<typeof recentLeads[0] | null>(null)
@@ -179,15 +181,31 @@ export default function Dashboard() {
   }
 
   const handleMetricClick = (metric: typeof metrics[0]) => {
-    setSelectedMetric(metric.title)
-    toast({
-      title: "Metric Details",
-      description: `Viewing ${metric.title}: ${metric.value}`,
-    })
+    // Navigate to relevant pages based on metric type
+    switch (metric.title) {
+      case "Total Pipeline Value":
+        navigate("/pipeline")
+        break
+      case "Active Leads":
+        navigate("/leads")
+        break
+      case "Applications This Month":
+        navigate("/documents")
+        break
+      case "Conversion Rate":
+        navigate("/reports")
+        break
+      default:
+        toast({
+          title: "Metric Details",
+          description: `Viewing ${metric.title}: ${metric.value}`,
+        })
+    }
   }
 
   const handleLeadClick = (lead: typeof recentLeads[0]) => {
-    setSelectedLead(lead)
+    // Navigate to leads page and potentially open lead details
+    navigate("/leads", { state: { selectedLead: lead } })
   }
 
   const handleRefreshData = () => {
@@ -206,10 +224,19 @@ export default function Dashboard() {
   }
 
   const handleActivityClick = (activity: typeof todayActivities[0]) => {
-    toast({
-      title: `${activity.type.charAt(0).toUpperCase() + activity.type.slice(1)} Activity`,
-      description: `${activity.title} scheduled for ${activity.time}`,
-    })
+    // Navigate to activities page or perform action based on activity type
+    if (activity.type === "call") {
+      // Could integrate with phone system
+      toast({
+        title: "Initiating Call",
+        description: `Starting call: ${activity.title}`,
+      })
+    } else if (activity.type === "email") {
+      // Could open email composer
+      navigate("/activities")
+    } else {
+      navigate("/activities")
+    }
   }
 
   const filteredPipelineStages = pipelineStages.filter(stage =>
@@ -220,6 +247,16 @@ export default function Dashboard() {
     lead.name.toLowerCase().includes(leadsFilter.toLowerCase()) ||
     lead.stage.toLowerCase().includes(leadsFilter.toLowerCase())
   )
+
+  const handlePipelineStageClick = (stage: typeof pipelineStages[0]) => {
+    // Navigate to leads page filtered by this stage
+    navigate("/leads", { state: { filterByStage: stage.name } })
+  }
+
+  const handleNewLeadClick = () => {
+    // Navigate to leads page with add dialog open
+    navigate("/leads", { state: { openAddDialog: true } })
+  }
 
   return (
     <div className="space-y-6">
@@ -240,7 +277,7 @@ export default function Dashboard() {
             <RefreshCw className={`h-4 w-4 ${isRefreshing ? 'animate-spin' : ''}`} />
             Refresh
           </Button>
-          <Button className="bg-gradient-primary shadow-medium">
+          <Button className="bg-gradient-primary shadow-medium" onClick={handleNewLeadClick}>
             New Lead
           </Button>
         </div>
@@ -298,10 +335,7 @@ export default function Dashboard() {
                 <div 
                   key={stage.name} 
                   className="space-y-2 p-3 rounded-lg hover:bg-muted/50 transition-colors cursor-pointer"
-                  onClick={() => toast({
-                    title: "Pipeline Stage",
-                    description: `${stage.name}: ${stage.count} leads (${stage.percentage}% progress)`,
-                  })}
+                  onClick={() => handlePipelineStageClick(stage)}
                 >
                   <div className="flex justify-between text-sm">
                     <span className="text-foreground font-medium">{stage.name}</span>
@@ -520,15 +554,39 @@ export default function Dashboard() {
               </div>
               
               <div className="flex gap-2 pt-4">
-                <Button className="flex-1 gap-2">
+                <Button 
+                  className="flex-1 gap-2"
+                  onClick={() => {
+                    toast({
+                      title: "Initiating Call",
+                      description: `Calling ${selectedLead.name}...`,
+                    })
+                  }}
+                >
                   <Phone className="h-4 w-4" />
                   Call
                 </Button>
-                <Button variant="outline" className="flex-1 gap-2">
+                <Button 
+                  variant="outline" 
+                  className="flex-1 gap-2"
+                  onClick={() => {
+                    navigate("/activities")
+                    toast({
+                      title: "Email Composer",
+                      description: `Opening email to ${selectedLead.name}...`,
+                    })
+                  }}
+                >
                   <Mail className="h-4 w-4" />
                   Email
                 </Button>
-                <Button variant="outline" className="flex-1 gap-2">
+                <Button 
+                  variant="outline" 
+                  className="flex-1 gap-2"
+                  onClick={() => {
+                    navigate("/leads", { state: { editLead: selectedLead } })
+                  }}
+                >
                   <Edit className="h-4 w-4" />
                   Edit
                 </Button>
