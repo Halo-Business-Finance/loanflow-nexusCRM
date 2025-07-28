@@ -1,14 +1,25 @@
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar"
 import { AppSidebar } from "@/components/AppSidebar"
 import { ReactNode, useState, useEffect } from "react"
-import { Clock } from "lucide-react"
+import { Clock, ArrowLeft, ArrowRight } from "lucide-react"
+import { useNavigate } from "react-router-dom"
+import { Button } from "@/components/ui/button"
 
 interface LayoutProps {
   children: ReactNode
 }
 
 export default function Layout({ children }: LayoutProps) {
+  const navigate = useNavigate()
   const [currentDateTime, setCurrentDateTime] = useState(new Date())
+
+  const handleGoBack = () => {
+    navigate(-1)
+  }
+
+  const handleGoForward = () => {
+    navigate(1)
+  }
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -35,9 +46,25 @@ export default function Layout({ children }: LayoutProps) {
         <AppSidebar />
         <div className="flex-1 flex flex-col">
           <header className="h-16 border-b bg-card shadow-soft flex items-center justify-between px-6">
-            <div className="flex items-center">
-              <SidebarTrigger className="mr-4" />
-              <h1 className="text-xl font-semibold text-foreground">LoanFlow CRM</h1>
+            <div className="flex items-center gap-2">
+              <SidebarTrigger className="mr-2" />
+              <Button 
+                variant="ghost" 
+                size="sm" 
+                onClick={handleGoBack}
+                className="text-white hover:bg-white/10"
+              >
+                <ArrowLeft className="w-4 h-4" />
+              </Button>
+              <Button 
+                variant="ghost" 
+                size="sm" 
+                onClick={handleGoForward}
+                className="text-white hover:bg-white/10"
+              >
+                <ArrowRight className="w-4 h-4" />
+              </Button>
+              <h1 className="text-xl font-semibold text-foreground ml-2">LoanFlow CRM</h1>
             </div>
             <div className="flex items-center gap-2 text-sm font-medium text-white">
               <Clock className="w-4 h-4 text-white" />
