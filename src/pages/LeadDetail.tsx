@@ -578,6 +578,25 @@ export default function LeadDetail() {
                     )}
                   </div>
                 </div>
+
+                <div className="flex items-center gap-3">
+                  <DollarSign className="w-4 h-4" style={{ color: 'white' }} />
+                  <div className="flex-1">
+                    <p className="text-sm" style={{ color: 'white' }}>Annual Revenue</p>
+                    {isEditing ? (
+                      <Input
+                        type="number"
+                        value={editableFields.annual_revenue}
+                        onChange={(e) => setEditableFields({...editableFields, annual_revenue: e.target.value})}
+                        placeholder="Enter annual revenue"
+                      />
+                    ) : (
+                      <p className="font-medium" style={{ color: 'white' }}>
+                        {formatCurrency(lead.annual_revenue)}
+                      </p>
+                    )}
+                  </div>
+                </div>
               </div>
             </CardContent>
           </Card>
@@ -679,24 +698,6 @@ export default function LeadDetail() {
                   </div>
                 </div>
 
-                <div className="flex items-center gap-3">
-                  <DollarSign className="w-4 h-4" style={{ color: 'white' }} />
-                  <div className="flex-1">
-                    <p className="text-sm" style={{ color: 'white' }}>Annual Revenue</p>
-                    {isEditing ? (
-                      <Input
-                        type="number"
-                        value={editableFields.annual_revenue}
-                        onChange={(e) => setEditableFields({...editableFields, annual_revenue: e.target.value})}
-                        placeholder="Enter annual revenue"
-                      />
-                    ) : (
-                      <p className="font-medium" style={{ color: 'white' }}>
-                        {formatCurrency(lead.annual_revenue)}
-                      </p>
-                    )}
-                  </div>
-                </div>
               </div>
             </CardContent>
           </Card>
