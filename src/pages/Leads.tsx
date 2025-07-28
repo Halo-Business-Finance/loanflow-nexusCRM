@@ -20,6 +20,7 @@ interface Lead {
   email: string
   phone?: string
   location?: string
+  business_name?: string
   loan_amount?: number
   stage: string
   priority: string
@@ -47,6 +48,7 @@ export default function Leads() {
     email: "",
     phone: "",
     location: "",
+    business_name: "",
     loan_amount: "",
     credit_score: "",
     income: "",
@@ -156,6 +158,7 @@ export default function Leads() {
           email: newLead.email,
           phone: newLead.phone || null,
           location: newLead.location || null,
+          business_name: newLead.business_name || null,
           loan_amount: newLead.loan_amount ? parseFloat(newLead.loan_amount) : null,
           credit_score: newLead.credit_score ? parseInt(newLead.credit_score) : null,
           income: newLead.income ? parseFloat(newLead.income) : null,
@@ -177,6 +180,7 @@ export default function Leads() {
         email: "",
         phone: "",
         location: "",
+        business_name: "",
         loan_amount: "",
         credit_score: "",
         income: "",
@@ -268,15 +272,25 @@ export default function Leads() {
                   />
                 </div>
                 <div>
-                  <Label htmlFor="email">Email *</Label>
+                  <Label htmlFor="business_name">Business Name</Label>
                   <Input
-                    id="email"
-                    type="email"
-                    value={newLead.email}
-                    onChange={(e) => setNewLead(prev => ({ ...prev, email: e.target.value }))}
-                    placeholder="email@example.com"
+                    id="business_name"
+                    value={newLead.business_name}
+                    onChange={(e) => setNewLead(prev => ({ ...prev, business_name: e.target.value }))}
+                    placeholder="Company or business name"
                   />
                 </div>
+              </div>
+              
+              <div>
+                <Label htmlFor="email">Email *</Label>
+                <Input
+                  id="email"
+                  type="email"
+                  value={newLead.email}
+                  onChange={(e) => setNewLead(prev => ({ ...prev, email: e.target.value }))}
+                  placeholder="email@example.com"
+                />
               </div>
               
               <div className="grid grid-cols-2 gap-4">
