@@ -41,7 +41,7 @@ export function LoanManager({ clientId, clientName, loans, onLoansUpdate }: Loan
     loan_amount: "",
     interest_rate: "",
     loan_term_months: "",
-    loan_type: "Mortgage",
+    loan_type: "SBA 7(a) Loan",
     status: "Active",
     monthly_payment: "",
     remaining_balance: "",
@@ -101,7 +101,7 @@ export function LoanManager({ clientId, clientName, loans, onLoansUpdate }: Loan
         loan_amount: "",
         interest_rate: "",
         loan_term_months: "",
-        loan_type: "Mortgage",
+        loan_type: "SBA 7(a) Loan",
         status: "Active",
         monthly_payment: "",
         remaining_balance: "",
@@ -154,9 +154,11 @@ export function LoanManager({ clientId, clientName, loans, onLoansUpdate }: Loan
 
   const getLoanTypeColor = (type: string) => {
     switch (type.toLowerCase()) {
-      case 'mortgage': return 'default'
-      case 'personal': return 'secondary'
-      case 'auto': return 'outline'
+      case 'sba 7(a) loan': return 'default'
+      case 'sba 504 loan': return 'secondary'
+      case 'bridge loan': return 'destructive'
+      case 'conventional loan': return 'outline'
+      case 'equipment financing': return 'default'
       default: return 'secondary'
     }
   }
@@ -209,11 +211,11 @@ export function LoanManager({ clientId, clientName, loans, onLoansUpdate }: Loan
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="Mortgage">Mortgage</SelectItem>
-                      <SelectItem value="Personal">Personal</SelectItem>
-                      <SelectItem value="Auto">Auto</SelectItem>
-                      <SelectItem value="Business">Business</SelectItem>
-                      <SelectItem value="Other">Other</SelectItem>
+                      <SelectItem value="SBA 7(a) Loan">SBA 7(a) Loan</SelectItem>
+                      <SelectItem value="SBA 504 Loan">SBA 504 Loan</SelectItem>
+                      <SelectItem value="Bridge Loan">Bridge Loan</SelectItem>
+                      <SelectItem value="Conventional Loan">Conventional Loan</SelectItem>
+                      <SelectItem value="Equipment Financing">Equipment Financing</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
