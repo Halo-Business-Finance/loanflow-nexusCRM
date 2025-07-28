@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react"
+import { supabase } from "@/integrations/supabase/client"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Progress } from "@/components/ui/progress"
@@ -27,8 +28,10 @@ import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/
 import { LineChart, Line, XAxis, YAxis, ResponsiveContainer } from "recharts"
 import { useToast } from "@/hooks/use-toast"
 import { useNavigate } from "react-router-dom"
+import { useAuth } from "@/components/auth/AuthProvider"
 
-const metrics = [
+// Initial metrics structure - will be updated with real data
+const initialMetrics = [
   {
     title: "Total Pipeline Value",
     value: "$0",
@@ -59,6 +62,31 @@ const metrics = [
   }
 ]
 
+// Types for our data structures
+interface Lead {
+  id: string;
+  name: string;
+  email: string;
+  stage: string;
+  priority: string;
+  loan_amount?: number;
+  created_at: string;
+  address?: string;
+}
+
+interface PipelineEntry {
+  id: string;
+  stage: string;
+  amount?: number;
+  created_at: string;
+}
+
+interface PipelineStage {
+  name: string;
+  count: number;
+  percentage: number;
+}
+
 const recentLeads: Array<{
   name: string;
   amount: string;
@@ -67,7 +95,8 @@ const recentLeads: Array<{
   priority: string;
 }> = []
 
-const pipelineStages = [
+// Initial pipeline stages - will be updated with real data
+const initialPipelineStages = [
   { name: "Initial Contact", count: 0, percentage: 0 },
   { name: "Qualified", count: 0, percentage: 0 },
   { name: "Application", count: 0, percentage: 0 },
@@ -109,12 +138,20 @@ const chartConfig = {
 export default function Dashboard() {
   const { toast } = useToast()
   const navigate = useNavigate()
+  const { user } = useAuth()
   const [currentDateTime, setCurrentDateTime] = useState(new Date())
   const [selectedMetric, setSelectedMetric] = useState<string | null>(null)
   const [selectedLead, setSelectedLead] = useState<typeof recentLeads[0] | null>(null)
   const [isRefreshing, setIsRefreshing] = useState(false)
   const [pipelineFilter, setPipelineFilter] = useState("")
   const [leadsFilter, setLeadsFilter] = useState("")
+  
+  // State for real data
+  const [metrics, setMetrics] = useState(initialMetrics)
+  const [pipelineStages, setPipelineStages] = useState<PipelineStage[]>(initialPipelineStages)
+  const [leads, setLeads] = useState<Lead[]>([])
+  const [pipelineEntries, setPipelineEntries] = useState<PipelineEntry[]>([])
+  const [totalClients, setTotalClients] = useState(0)
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -123,6 +160,147 @@ export default function Dashboard() {
 
     return () => clearInterval(timer)
   }, [])
+
+  // Fetch dashboard data
+  useEffect(() => {
+    if (user) {
+      fetchDashboardData()
+    }
+  }, [user])
+
+  const fetchDashboardData = async () => {
+    if (!user) return
+
+    try {
+      // Fetch leads
+      const { data: leadsData } = await supabase
+        .from('leads')
+        .select('*')
+        .eq('user_id', user.id)
+        .order('created_at', { ascending: false })
+
+      // Fetch pipeline entries  
+      const { data: pipelineData } = await supabase
+        .from('pipeline_entries')
+        .select('*')
+        .eq('user_id', user.id)
+
+      // Fetch clients count
+      const { data: clientsData } = await supabase
+        .from('clients')
+        .select('id, total_loan_value')
+        .eq('user_id', user.id)
+
+      if (leadsData) setLeads(leadsData)
+      if (pipelineData) setPipelineEntries(pipelineData)
+      if (clientsData) setTotalClients(clientsData.length)
+
+      // Calculate pipeline stages
+      calculatePipelineStages(leadsData || [], pipelineData || [])
+      
+      // Calculate metrics
+      calculateMetrics(leadsData || [], clientsData || [], pipelineData || [])
+
+    } catch (error) {
+      console.error('Error fetching dashboard data:', error)
+      toast({
+        title: "Error",
+        description: "Failed to load dashboard data",
+        variant: "destructive",
+      })
+    }
+  }
+
+  const calculatePipelineStages = (leadsData: Lead[], pipelineData: PipelineEntry[]) => {
+    const stageCounts = {
+      "Initial Contact": 0,
+      "Qualified": 0, 
+      "Application": 0,
+      "Pre-approval": 0,
+      "Closing": 0
+    }
+
+    // Count leads by stage
+    leadsData.forEach(lead => {
+      if (stageCounts.hasOwnProperty(lead.stage)) {
+        stageCounts[lead.stage as keyof typeof stageCounts]++
+      }
+    })
+
+    // Count pipeline entries by stage
+    pipelineData.forEach(entry => {
+      if (stageCounts.hasOwnProperty(entry.stage)) {
+        stageCounts[entry.stage as keyof typeof stageCounts]++
+      }
+    })
+
+    // Calculate total for percentage calculation
+    const total = Object.values(stageCounts).reduce((sum, count) => sum + count, 0)
+
+    // Create pipeline stages with percentages
+    const stages: PipelineStage[] = Object.entries(stageCounts).map(([name, count]) => ({
+      name,
+      count,
+      percentage: total > 0 ? Math.round((count / total) * 100) : 0
+    }))
+
+    setPipelineStages(stages)
+  }
+
+  const calculateMetrics = (leadsData: Lead[], clientsData: any[], pipelineData: PipelineEntry[]) => {
+    // Calculate total pipeline value
+    const totalPipelineValue = leadsData.reduce((sum, lead) => {
+      return sum + (lead.loan_amount || 0)
+    }, 0) + pipelineData.reduce((sum, entry) => {
+      return sum + (entry.amount || 0)
+    }, 0)
+
+    // Calculate applications this month
+    const currentMonth = new Date().getMonth()
+    const currentYear = new Date().getFullYear()
+    const applicationsThisMonth = leadsData.filter(lead => {
+      const leadDate = new Date(lead.created_at)
+      return leadDate.getMonth() === currentMonth && 
+             leadDate.getFullYear() === currentYear &&
+             lead.stage === 'Application'
+    }).length
+
+    // Calculate conversion rate (clients / total leads)
+    const conversionRate = leadsData.length > 0 ? 
+      Math.round((clientsData.length / leadsData.length) * 100) : 0
+
+    // Update metrics
+    setMetrics([
+      {
+        title: "Total Pipeline Value",
+        value: `$${totalPipelineValue.toLocaleString()}`,
+        change: "+0%", // Could calculate based on previous period
+        icon: DollarSign,
+        trend: "neutral"
+      },
+      {
+        title: "Active Leads", 
+        value: leadsData.length.toString(),
+        change: "+0%",
+        icon: Users,
+        trend: "neutral"
+      },
+      {
+        title: "Applications This Month",
+        value: applicationsThisMonth.toString(),
+        change: "+0%",
+        icon: FileText,
+        trend: "neutral"
+      },
+      {
+        title: "Conversion Rate",
+        value: `${conversionRate}%`,
+        change: "+0%",
+        icon: TrendingUp,
+        trend: "neutral"
+      }
+    ])
+  }
 
   const formatDateTime = (date: Date) => {
     const options: Intl.DateTimeFormatOptions = {
@@ -171,13 +349,14 @@ export default function Dashboard() {
       title: "Refreshing Data",
       description: "Updating dashboard with latest information...",
     })
-    setTimeout(() => {
+    
+    fetchDashboardData().finally(() => {
       setIsRefreshing(false)
       toast({
-        title: "Data Updated",
+        title: "Data Updated", 
         description: "Dashboard has been refreshed with the latest data.",
       })
-    }, 2000)
+    })
   }
 
   const handleActivityClick = (activity: typeof todayActivities[0]) => {
