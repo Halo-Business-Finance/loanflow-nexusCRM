@@ -9,6 +9,7 @@ import { SecurityDashboard } from "@/components/security/SecurityDashboard";
 import { GeoSecurityCheck } from "@/components/GeoSecurityCheck";
 import Index from "./pages/Index";
 import Leads from "./pages/Leads";
+import LeadDetail from "./pages/LeadDetail";
 import Pipeline from "./pages/Pipeline";
 import Clients from "./pages/Clients";
 import Documents from "./pages/Documents";
@@ -40,6 +41,7 @@ function AuthenticatedApp() {
       <Routes>
         <Route path="/" element={<Index />} />
         <Route path="/leads" element={<Leads />} />
+        <Route path="/leads/:id" element={<LeadDetail />} />
         <Route path="/clients" element={<Clients />} />
         <Route path="/pipeline" element={<Pipeline />} />
         <Route path="/documents" element={<Documents />} />

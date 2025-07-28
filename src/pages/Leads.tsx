@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react"
+import { useNavigate } from "react-router-dom"
 import { supabase } from "@/integrations/supabase/client"
 import { useAuth } from "@/components/auth/AuthProvider"
 import Layout from "@/components/Layout"
@@ -52,6 +53,7 @@ const formatPhoneNumber = (value: string) => {
 }
 
 export default function Leads() {
+  const navigate = useNavigate()
   const { user } = useAuth()
   const { toast } = useToast()
   const [leads, setLeads] = useState<Lead[]>([])
@@ -579,7 +581,7 @@ export default function Leads() {
         <TabsContent value="grid" className="space-y-4">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {filteredLeads.map((lead) => (
-              <Card key={lead.id} className={`shadow-soft hover:shadow-medium transition-shadow cursor-pointer text-white ${lead.is_converted_to_client ? 'opacity-60' : ''}`} onClick={() => openEditDialog(lead)}>
+              <Card key={lead.id} className={`shadow-soft hover:shadow-medium transition-shadow cursor-pointer text-white ${lead.is_converted_to_client ? 'opacity-60' : ''}`} onClick={() => navigate(`/leads/${lead.id}`)}>
                 <CardHeader className="pb-3 text-white">
                   <div className="flex justify-between items-start">
                     <div className="flex items-center gap-3">
@@ -731,7 +733,7 @@ export default function Leads() {
                   </thead>
                   <tbody>
                     {filteredLeads.map((lead) => (
-                      <tr key={lead.id} className={`border-b hover:bg-muted/20 cursor-pointer text-white ${lead.is_converted_to_client ? 'opacity-60' : ''}`} onClick={() => openEditDialog(lead)}>
+                      <tr key={lead.id} className={`border-b hover:bg-muted/20 cursor-pointer text-white ${lead.is_converted_to_client ? 'opacity-60' : ''}`} onClick={() => navigate(`/leads/${lead.id}`)}>
                         <td className="p-4">
                           <div className="flex items-center gap-3">
                             <div className="w-8 h-8 bg-primary/10 rounded-full flex items-center justify-center">

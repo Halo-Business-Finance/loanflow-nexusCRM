@@ -253,6 +253,7 @@ export type Database = {
       leads: {
         Row: {
           business_name: string | null
+          call_notes: string | null
           converted_at: string | null
           created_at: string
           credit_score: number | null
@@ -274,6 +275,7 @@ export type Database = {
         }
         Insert: {
           business_name?: string | null
+          call_notes?: string | null
           converted_at?: string | null
           created_at?: string
           credit_score?: number | null
@@ -295,6 +297,7 @@ export type Database = {
         }
         Update: {
           business_name?: string | null
+          call_notes?: string | null
           converted_at?: string | null
           created_at?: string
           credit_score?: number | null
