@@ -31,107 +31,64 @@ import { useNavigate } from "react-router-dom"
 const metrics = [
   {
     title: "Total Pipeline Value",
-    value: "$2,847,500",
-    change: "+12.5%",
+    value: "$0",
+    change: "0%",
     icon: DollarSign,
-    trend: "up"
+    trend: "neutral"
   },
   {
     title: "Active Leads",
-    value: "147",
-    change: "+8.2%",
+    value: "0",
+    change: "0%",
     icon: Users,
-    trend: "up"
+    trend: "neutral"
   },
   {
     title: "Applications This Month",
-    value: "23",
-    change: "+15.3%",
+    value: "0",
+    change: "0%",
     icon: FileText,
-    trend: "up"
+    trend: "neutral"
   },
   {
     title: "Conversion Rate",
-    value: "18.5%",
-    change: "+2.1%",
+    value: "0%",
+    change: "0%",
     icon: TrendingUp,
-    trend: "up"
+    trend: "neutral"
   }
 ]
 
-const recentLeads = [
-  {
-    name: "Sarah Johnson",
-    amount: "$450,000",
-    stage: "Pre-approval",
-    lastContact: "2 hours ago",
-    priority: "high"
-  },
-  {
-    name: "Michael Chen",
-    amount: "$320,000",
-    stage: "Application",
-    lastContact: "4 hours ago",
-    priority: "medium"
-  },
-  {
-    name: "Emily Rodriguez",
-    amount: "$275,000",
-    stage: "Initial Contact",
-    lastContact: "1 day ago",
-    priority: "high"
-  },
-  {
-    name: "David Thompson",
-    amount: "$180,000",
-    stage: "Documentation",
-    lastContact: "2 days ago",
-    priority: "low"
-  }
-]
+const recentLeads: Array<{
+  name: string;
+  amount: string;
+  stage: string;
+  lastContact: string;
+  priority: string;
+}> = []
 
 const pipelineStages = [
-  { name: "Initial Contact", count: 45, percentage: 30 },
-  { name: "Qualified", count: 32, percentage: 65 },
-  { name: "Application", count: 18, percentage: 75 },
-  { name: "Pre-approval", count: 12, percentage: 85 },
-  { name: "Closing", count: 8, percentage: 95 }
+  { name: "Initial Contact", count: 0, percentage: 0 },
+  { name: "Qualified", count: 0, percentage: 0 },
+  { name: "Application", count: 0, percentage: 0 },
+  { name: "Pre-approval", count: 0, percentage: 0 },
+  { name: "Closing", count: 0, percentage: 0 }
 ]
 
-const todayActivities = [
-  {
-    type: "call",
-    title: "Follow up call with Sarah Johnson",
-    time: "10:00 AM",
-    priority: "high"
-  },
-  {
-    type: "email",
-    title: "Send documents to Michael Chen",
-    time: "11:30 AM",
-    priority: "medium"
-  },
-  {
-    type: "meeting",
-    title: "Loan consultation with new prospect",
-    time: "2:00 PM",
-    priority: "high"
-  },
-  {
-    type: "call",
-    title: "Check on Emily Rodriguez application",
-    time: "4:00 PM",
-    priority: "medium"
-  }
-]
+const todayActivities: Array<{
+  type: string;
+  title: string;
+  time: string;
+  priority: string;
+}> = []
 
 const loanCloseData = [
-  { month: "Jan", closedLoans: 12, targetLoans: 15, avgDays: 28, closePercentage: 80 },
-  { month: "Feb", closedLoans: 18, targetLoans: 20, avgDays: 25, closePercentage: 90 },
-  { month: "Mar", closedLoans: 22, targetLoans: 25, avgDays: 23, closePercentage: 88 },
-  { month: "Apr", closedLoans: 19, targetLoans: 22, avgDays: 26, closePercentage: 86 },
-  { month: "May", closedLoans: 25, targetLoans: 28, avgDays: 22, closePercentage: 89 },
-  { month: "Jun", closedLoans: 30, targetLoans: 30, avgDays: 20, closePercentage: 100 },
+  { month: "Jan", closedLoans: 0, targetLoans: 0, avgDays: 0, closePercentage: 0 },
+  { month: "Feb", closedLoans: 0, targetLoans: 0, avgDays: 0, closePercentage: 0 },
+  { month: "Mar", closedLoans: 0, targetLoans: 0, avgDays: 0, closePercentage: 0 },
+  { month: "Apr", closedLoans: 0, targetLoans: 0, avgDays: 0, closePercentage: 0 },
+  { month: "May", closedLoans: 0, targetLoans: 0, avgDays: 0, closePercentage: 0 },
+  { month: "Jun", closedLoans: 0, targetLoans: 0, avgDays: 0, closePercentage: 0 },
 ]
 
 const chartConfig = {
