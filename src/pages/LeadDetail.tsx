@@ -9,6 +9,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { Badge } from "@/components/ui/badge"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Separator } from "@/components/ui/separator"
 import { useToast } from "@/hooks/use-toast"
 import { 
@@ -73,6 +74,20 @@ export default function LeadDetail() {
   const [callNotes, setCallNotes] = useState("")
   const [newCallNote, setNewCallNote] = useState("")
   const [generalNotes, setGeneralNotes] = useState("")
+  const [editableFields, setEditableFields] = useState({
+    name: "",
+    email: "",
+    phone: "",
+    location: "",
+    business_name: "",
+    loan_amount: "",
+    loan_type: "",
+    stage: "",
+    priority: "",
+    credit_score: "",
+    income: "",
+    annual_revenue: ""
+  })
 
   useEffect(() => {
     if (id && user) {
@@ -100,6 +115,22 @@ export default function LeadDetail() {
       setLead(mappedLead)
       setCallNotes(data.call_notes || "")
       setGeneralNotes(data.notes || "")
+      
+      // Set editable fields for edit mode
+      setEditableFields({
+        name: data.name || "",
+        email: data.email || "",
+        phone: data.phone || "",
+        location: data.location || "",
+        business_name: data.business_name || "",
+        loan_amount: data.loan_amount?.toString() || "",
+        loan_type: data.loan_type || "",
+        stage: data.stage || "",
+        priority: data.priority || "",
+        credit_score: data.credit_score?.toString() || "",
+        income: data.income?.toString() || "",
+        annual_revenue: data.annual_revenue?.toString() || ""
+      })
       
       // If lead is converted, fetch client data
       if (data.is_converted_to_client) {
@@ -201,6 +232,50 @@ export default function LeadDetail() {
     }
   }
 
+  const saveLeadChanges = async () => {
+    if (!lead) return
+
+    try {
+      const updateData = {
+        name: editableFields.name,
+        email: editableFields.email,
+        phone: editableFields.phone || null,
+        location: editableFields.location || null,
+        business_name: editableFields.business_name || null,
+        loan_amount: editableFields.loan_amount ? parseFloat(editableFields.loan_amount) : null,
+        loan_type: editableFields.loan_type || null,
+        stage: editableFields.stage,
+        priority: editableFields.priority,
+        credit_score: editableFields.credit_score ? parseInt(editableFields.credit_score) : null,
+        income: editableFields.income ? parseFloat(editableFields.income) : null,
+        annual_revenue: editableFields.annual_revenue ? parseFloat(editableFields.annual_revenue) : null
+      }
+
+      const { error } = await supabase
+        .from('leads')
+        .update(updateData)
+        .eq('id', lead.id)
+
+      if (error) throw error
+
+      toast({
+        title: "Success",
+        description: "Lead information updated successfully",
+      })
+      
+      setIsEditing(false)
+      // Refresh lead data
+      fetchLead()
+    } catch (error) {
+      console.error('Error updating lead:', error)
+      toast({
+        title: "Error",
+        description: "Failed to update lead information",
+        variant: "destructive",
+      })
+    }
+  }
+
   const getPriorityColor = (priority: string) => {
     switch (priority.toLowerCase()) {
       case 'high': return 'destructive'
@@ -271,10 +346,18 @@ export default function LeadDetail() {
               </div>
             </div>
           </div>
-          <Button onClick={() => setIsEditing(!isEditing)}>
-            <Edit className="w-4 h-4 mr-2" />
-            {isEditing ? 'View Mode' : 'Edit Mode'}
-          </Button>
+          <div className="flex gap-2">
+            <Button onClick={() => setIsEditing(!isEditing)}>
+              <Edit className="w-4 h-4 mr-2" />
+              {isEditing ? 'Cancel' : 'Edit'}
+            </Button>
+            {isEditing && (
+              <Button onClick={saveLeadChanges}>
+                <Save className="w-4 h-4 mr-2" />
+                Save Changes
+              </Button>
+            )}
+          </div>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -290,49 +373,129 @@ export default function LeadDetail() {
               <div className="grid grid-cols-1 gap-4">
                 <div className="flex items-center gap-3">
                   <User className="w-4 h-4" style={{ color: 'white' }} />
-                  <div>
+                  <div className="flex-1">
                     <p className="text-sm" style={{ color: 'white' }}>Full Name</p>
-                    <p className="font-medium" style={{ color: 'white' }}>{lead.name}</p>
+                    {isEditing ? (
+                      <Input
+                        value={editableFields.name}
+                        onChange={(e) => setEditableFields({...editableFields, name: e.target.value})}
+                        placeholder="Enter full name"
+                      />
+                    ) : (
+                      <p className="font-medium" style={{ color: 'white' }}>{lead.name}</p>
+                    )}
                   </div>
                 </div>
 
-                {lead.business_name && (
-                  <div className="flex items-center gap-3">
-                    <Building className="w-4 h-4" style={{ color: 'white' }} />
-                    <div>
-                      <p className="text-sm" style={{ color: 'white' }}>Business Name</p>
-                      <p className="font-medium" style={{ color: 'white' }}>{lead.business_name}</p>
-                    </div>
+                <div className="flex items-center gap-3">
+                  <Building className="w-4 h-4" style={{ color: 'white' }} />
+                  <div className="flex-1">
+                    <p className="text-sm" style={{ color: 'white' }}>Business Name</p>
+                    {isEditing ? (
+                      <Input
+                        value={editableFields.business_name}
+                        onChange={(e) => setEditableFields({...editableFields, business_name: e.target.value})}
+                        placeholder="Enter business name"
+                      />
+                    ) : (
+                      <p className="font-medium" style={{ color: 'white' }}>{lead.business_name || 'N/A'}</p>
+                    )}
                   </div>
-                )}
+                </div>
 
                 <div className="flex items-center gap-3">
                   <Mail className="w-4 h-4" style={{ color: 'white' }} />
-                  <div>
+                  <div className="flex-1">
                     <p className="text-sm" style={{ color: 'white' }}>Email</p>
-                    <p className="font-medium" style={{ color: 'white' }}>{lead.email}</p>
+                    {isEditing ? (
+                      <Input
+                        type="email"
+                        value={editableFields.email}
+                        onChange={(e) => setEditableFields({...editableFields, email: e.target.value})}
+                        placeholder="Enter email"
+                      />
+                    ) : (
+                      <p className="font-medium" style={{ color: 'white' }}>{lead.email}</p>
+                    )}
                   </div>
                 </div>
 
-                {lead.phone && (
-                  <div className="flex items-center gap-3">
-                    <Phone className="w-4 h-4" style={{ color: 'white' }} />
-                    <div>
-                      <p className="text-sm" style={{ color: 'white' }}>Phone</p>
-                      <p className="font-medium" style={{ color: 'white' }}>{lead.phone}</p>
-                    </div>
+                <div className="flex items-center gap-3">
+                  <Phone className="w-4 h-4" style={{ color: 'white' }} />
+                  <div className="flex-1">
+                    <p className="text-sm" style={{ color: 'white' }}>Phone</p>
+                    {isEditing ? (
+                      <Input
+                        value={editableFields.phone}
+                        onChange={(e) => setEditableFields({...editableFields, phone: e.target.value})}
+                        placeholder="Enter phone number"
+                      />
+                    ) : (
+                      <p className="font-medium" style={{ color: 'white' }}>{lead.phone || 'N/A'}</p>
+                    )}
                   </div>
-                )}
+                </div>
 
-                {lead.location && (
+                <div className="flex items-center gap-3">
+                  <MapPin className="w-4 h-4" style={{ color: 'white' }} />
+                  <div className="flex-1">
+                    <p className="text-sm" style={{ color: 'white' }}>Address</p>
+                    {isEditing ? (
+                      <Input
+                        value={editableFields.location}
+                        onChange={(e) => setEditableFields({...editableFields, location: e.target.value})}
+                        placeholder="Enter address"
+                      />
+                    ) : (
+                      <p className="font-medium" style={{ color: 'white' }}>{lead.location || 'N/A'}</p>
+                    )}
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-2 gap-4">
                   <div className="flex items-center gap-3">
-                    <MapPin className="w-4 h-4" style={{ color: 'white' }} />
-                    <div>
-                      <p className="text-sm" style={{ color: 'white' }}>Address</p>
-                      <p className="font-medium" style={{ color: 'white' }}>{lead.location}</p>
+                    <div className="flex-1">
+                      <p className="text-sm" style={{ color: 'white' }}>Stage</p>
+                      {isEditing ? (
+                        <Select value={editableFields.stage} onValueChange={(value) => setEditableFields({...editableFields, stage: value})}>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select stage" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="Initial Contact">Initial Contact</SelectItem>
+                            <SelectItem value="Qualified">Qualified</SelectItem>
+                            <SelectItem value="Application">Application</SelectItem>
+                            <SelectItem value="Pre-approval">Pre-approval</SelectItem>
+                            <SelectItem value="Documentation">Documentation</SelectItem>
+                            <SelectItem value="Closing">Closing</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      ) : (
+                        <Badge variant={getStageColor(lead.stage)}>{lead.stage}</Badge>
+                      )}
                     </div>
                   </div>
-                )}
+
+                  <div className="flex items-center gap-3">
+                    <div className="flex-1">
+                      <p className="text-sm" style={{ color: 'white' }}>Priority</p>
+                      {isEditing ? (
+                        <Select value={editableFields.priority} onValueChange={(value) => setEditableFields({...editableFields, priority: value})}>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select priority" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="low">Low</SelectItem>
+                            <SelectItem value="medium">Medium</SelectItem>
+                            <SelectItem value="high">High</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      ) : (
+                        <Badge variant={getPriorityColor(lead.priority)}>{lead.priority} Priority</Badge>
+                      )}
+                    </div>
+                  </div>
+                </div>
 
                 <div className="flex items-center gap-3">
                   <Calendar className="w-4 h-4" style={{ color: 'white' }} />
@@ -356,61 +519,106 @@ export default function LeadDetail() {
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
-              {lead.loan_amount && (
+              <div className="grid grid-cols-1 gap-4">
                 <div className="flex items-center gap-3">
                   <DollarSign className="w-4 h-4" style={{ color: 'white' }} />
-                  <div>
+                  <div className="flex-1">
                     <p className="text-sm" style={{ color: 'white' }}>Loan Amount</p>
-                    <p className="font-medium text-lg" style={{ color: 'white' }}>
-                      ${lead.loan_amount.toLocaleString()}
-                    </p>
+                    {isEditing ? (
+                      <Input
+                        type="number"
+                        value={editableFields.loan_amount}
+                        onChange={(e) => setEditableFields({...editableFields, loan_amount: e.target.value})}
+                        placeholder="Enter loan amount"
+                      />
+                    ) : (
+                      <p className="font-medium text-lg" style={{ color: 'white' }}>
+                        {lead.loan_amount ? `$${lead.loan_amount.toLocaleString()}` : 'N/A'}
+                      </p>
+                    )}
                   </div>
                 </div>
-              )}
 
-              {lead.loan_type && (
                 <div className="flex items-center gap-3">
                   <Building className="w-4 h-4" style={{ color: 'white' }} />
-                  <div>
+                  <div className="flex-1">
                     <p className="text-sm" style={{ color: 'white' }}>Loan Type</p>
-                    <p className="font-medium" style={{ color: 'white' }}>{lead.loan_type}</p>
+                    {isEditing ? (
+                      <Select value={editableFields.loan_type} onValueChange={(value) => setEditableFields({...editableFields, loan_type: value})}>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select loan type" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="Mortgage">Mortgage</SelectItem>
+                          <SelectItem value="Business Loan">Business Loan</SelectItem>
+                          <SelectItem value="Personal Loan">Personal Loan</SelectItem>
+                          <SelectItem value="Auto Loan">Auto Loan</SelectItem>
+                          <SelectItem value="Refinance">Refinance</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    ) : (
+                      <p className="font-medium" style={{ color: 'white' }}>{lead.loan_type || 'N/A'}</p>
+                    )}
                   </div>
                 </div>
-              )}
 
-              {lead.credit_score && (
                 <div className="flex items-center gap-3">
                   <CreditCard className="w-4 h-4" style={{ color: 'white' }} />
-                  <div>
+                  <div className="flex-1">
                     <p className="text-sm" style={{ color: 'white' }}>Credit Score</p>
-                    <p className="font-medium" style={{ color: 'white' }}>{lead.credit_score}</p>
+                    {isEditing ? (
+                      <Input
+                        type="number"
+                        value={editableFields.credit_score}
+                        onChange={(e) => setEditableFields({...editableFields, credit_score: e.target.value})}
+                        placeholder="Enter credit score"
+                        min="300"
+                        max="850"
+                      />
+                    ) : (
+                      <p className="font-medium" style={{ color: 'white' }}>{lead.credit_score || 'N/A'}</p>
+                    )}
                   </div>
                 </div>
-              )}
 
-              {lead.income && (
                 <div className="flex items-center gap-3">
                   <DollarSign className="w-4 h-4" style={{ color: 'white' }} />
-                  <div>
+                  <div className="flex-1">
                     <p className="text-sm" style={{ color: 'white' }}>Annual Income</p>
-                    <p className="font-medium" style={{ color: 'white' }}>
-                      ${lead.income.toLocaleString()}
-                    </p>
+                    {isEditing ? (
+                      <Input
+                        type="number"
+                        value={editableFields.income}
+                        onChange={(e) => setEditableFields({...editableFields, income: e.target.value})}
+                        placeholder="Enter annual income"
+                      />
+                    ) : (
+                      <p className="font-medium" style={{ color: 'white' }}>
+                        {lead.income ? `$${lead.income.toLocaleString()}` : 'N/A'}
+                      </p>
+                    )}
                   </div>
                 </div>
-              )}
 
-              {lead.annual_revenue && (
                 <div className="flex items-center gap-3">
                   <DollarSign className="w-4 h-4" style={{ color: 'white' }} />
-                  <div>
+                  <div className="flex-1">
                     <p className="text-sm" style={{ color: 'white' }}>Annual Revenue</p>
-                    <p className="font-medium" style={{ color: 'white' }}>
-                      ${lead.annual_revenue.toLocaleString()}
-                    </p>
+                    {isEditing ? (
+                      <Input
+                        type="number"
+                        value={editableFields.annual_revenue}
+                        onChange={(e) => setEditableFields({...editableFields, annual_revenue: e.target.value})}
+                        placeholder="Enter annual revenue"
+                      />
+                    ) : (
+                      <p className="font-medium" style={{ color: 'white' }}>
+                        {lead.annual_revenue ? `$${lead.annual_revenue.toLocaleString()}` : 'N/A'}
+                      </p>
+                    )}
                   </div>
                 </div>
-              )}
+              </div>
             </CardContent>
           </Card>
         </div>
