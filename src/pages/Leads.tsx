@@ -9,6 +9,8 @@ import { Badge } from "@/components/ui/badge"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter } from "@/components/ui/dialog"
+import { Label } from "@/components/ui/label"
+import { Textarea } from "@/components/ui/textarea"
 import { useToast } from "@/hooks/use-toast"
 import { Search, Plus, Filter, Phone, Mail, User, MapPin, DollarSign, ArrowRight } from "lucide-react"
 
@@ -39,6 +41,19 @@ export default function Leads() {
   const [selectedStage, setSelectedStage] = useState("All")
   const [selectedPriority, setSelectedPriority] = useState("All")
   const [convertingLead, setConvertingLead] = useState<Lead | null>(null)
+  const [showAddDialog, setShowAddDialog] = useState(false)
+  const [newLead, setNewLead] = useState({
+    name: "",
+    email: "",
+    phone: "",
+    location: "",
+    loan_amount: "",
+    credit_score: "",
+    income: "",
+    priority: "medium",
+    stage: "Initial Contact",
+    notes: ""
+  })
 
   useEffect(() => {
     if (user) {
@@ -131,6 +146,56 @@ export default function Leads() {
     }
   }
 
+  const addNewLead = async () => {
+    try {
+      const { error } = await supabase
+        .from('leads')
+        .insert({
+          user_id: user?.id,
+          name: newLead.name,
+          email: newLead.email,
+          phone: newLead.phone || null,
+          location: newLead.location || null,
+          loan_amount: newLead.loan_amount ? parseFloat(newLead.loan_amount) : null,
+          credit_score: newLead.credit_score ? parseInt(newLead.credit_score) : null,
+          income: newLead.income ? parseFloat(newLead.income) : null,
+          priority: newLead.priority,
+          stage: newLead.stage,
+          notes: newLead.notes || null
+        })
+
+      if (error) throw error
+
+      toast({
+        title: "Success!",
+        description: "New lead has been added successfully.",
+      })
+
+      // Reset form and close dialog
+      setNewLead({
+        name: "",
+        email: "",
+        phone: "",
+        location: "",
+        loan_amount: "",
+        credit_score: "",
+        income: "",
+        priority: "medium",
+        stage: "Initial Contact",
+        notes: ""
+      })
+      setShowAddDialog(false)
+      fetchLeads() // Refresh the leads list
+    } catch (error) {
+      console.error('Error adding lead:', error)
+      toast({
+        title: "Error",
+        description: "Failed to add new lead",
+        variant: "destructive",
+      })
+    }
+  }
+
   const filteredLeads = leads.filter(lead => {
     const matchesSearch = lead.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          lead.email.toLowerCase().includes(searchTerm.toLowerCase())
@@ -180,10 +245,151 @@ export default function Leads() {
           <h1 className="text-3xl font-bold text-foreground">Leads Management</h1>
           <p className="text-muted-foreground">Track and manage your loan prospects</p>
         </div>
-        <Button className="bg-gradient-primary shadow-medium">
-          <Plus className="w-4 h-4 mr-2" />
-          Add New Lead
-        </Button>
+        <Dialog open={showAddDialog} onOpenChange={setShowAddDialog}>
+          <DialogTrigger asChild>
+            <Button className="bg-gradient-primary shadow-medium">
+              <Plus className="w-4 h-4 mr-2" />
+              Add New Lead
+            </Button>
+          </DialogTrigger>
+          <DialogContent className="max-w-md">
+            <DialogHeader>
+              <DialogTitle>Add New Lead</DialogTitle>
+            </DialogHeader>
+            <div className="space-y-4">
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <Label htmlFor="name">Name *</Label>
+                  <Input
+                    id="name"
+                    value={newLead.name}
+                    onChange={(e) => setNewLead(prev => ({ ...prev, name: e.target.value }))}
+                    placeholder="Full name"
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="email">Email *</Label>
+                  <Input
+                    id="email"
+                    type="email"
+                    value={newLead.email}
+                    onChange={(e) => setNewLead(prev => ({ ...prev, email: e.target.value }))}
+                    placeholder="email@example.com"
+                  />
+                </div>
+              </div>
+              
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <Label htmlFor="phone">Phone</Label>
+                  <Input
+                    id="phone"
+                    value={newLead.phone}
+                    onChange={(e) => setNewLead(prev => ({ ...prev, phone: e.target.value }))}
+                    placeholder="(555) 123-4567"
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="location">Location</Label>
+                  <Input
+                    id="location"
+                    value={newLead.location}
+                    onChange={(e) => setNewLead(prev => ({ ...prev, location: e.target.value }))}
+                    placeholder="City, State"
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <Label htmlFor="loan_amount">Loan Amount</Label>
+                  <Input
+                    id="loan_amount"
+                    type="number"
+                    value={newLead.loan_amount}
+                    onChange={(e) => setNewLead(prev => ({ ...prev, loan_amount: e.target.value }))}
+                    placeholder="250000"
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="credit_score">Credit Score</Label>
+                  <Input
+                    id="credit_score"
+                    type="number"
+                    value={newLead.credit_score}
+                    onChange={(e) => setNewLead(prev => ({ ...prev, credit_score: e.target.value }))}
+                    placeholder="750"
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <Label htmlFor="income">Annual Income</Label>
+                  <Input
+                    id="income"
+                    type="number"
+                    value={newLead.income}
+                    onChange={(e) => setNewLead(prev => ({ ...prev, income: e.target.value }))}
+                    placeholder="75000"
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="priority">Priority</Label>
+                  <Select value={newLead.priority} onValueChange={(value) => setNewLead(prev => ({ ...prev, priority: value }))}>
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="high">High</SelectItem>
+                      <SelectItem value="medium">Medium</SelectItem>
+                      <SelectItem value="low">Low</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+
+              <div>
+                <Label htmlFor="stage">Stage</Label>
+                <Select value={newLead.stage} onValueChange={(value) => setNewLead(prev => ({ ...prev, stage: value }))}>
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="Initial Contact">Initial Contact</SelectItem>
+                    <SelectItem value="Qualified">Qualified</SelectItem>
+                    <SelectItem value="Application">Application</SelectItem>
+                    <SelectItem value="Pre-approval">Pre-approval</SelectItem>
+                    <SelectItem value="Documentation">Documentation</SelectItem>
+                    <SelectItem value="Closing">Closing</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div>
+                <Label htmlFor="notes">Notes</Label>
+                <Textarea
+                  id="notes"
+                  value={newLead.notes}
+                  onChange={(e) => setNewLead(prev => ({ ...prev, notes: e.target.value }))}
+                  placeholder="Additional notes about this lead..."
+                  rows={3}
+                />
+              </div>
+            </div>
+            <DialogFooter>
+              <Button variant="outline" onClick={() => setShowAddDialog(false)}>
+                Cancel
+              </Button>
+              <Button 
+                onClick={addNewLead}
+                disabled={!newLead.name || !newLead.email}
+              >
+                Add Lead
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
       </div>
 
       {/* Filters */}
