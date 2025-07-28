@@ -16,6 +16,7 @@ import { useToast } from "@/hooks/use-toast"
 import { PhoneDialer } from "@/components/PhoneDialer"
 import { EmailComposer } from "@/components/EmailComposer"
 import { formatNumber, formatCurrency } from "@/lib/utils"
+import { useNotifications } from "@/hooks/useNotifications"
 import { 
   ArrowLeft, 
   User, 
@@ -34,7 +35,8 @@ import {
   CheckCircle,
   XCircle,
   Target,
-  FileText
+  FileText,
+  Bell
 } from "lucide-react"
 
 interface Lead {
@@ -83,6 +85,7 @@ export default function LeadDetail() {
   const navigate = useNavigate()
   const { user } = useAuth()
   const { toast } = useToast()
+  const { createNotification } = useNotifications()
   
   const [lead, setLead] = useState<Lead | null>(null)
   const [client, setClient] = useState<Client | null>(null)
@@ -91,6 +94,8 @@ export default function LeadDetail() {
   const [callNotes, setCallNotes] = useState("")
   const [newCallNote, setNewCallNote] = useState("")
   const [generalNotes, setGeneralNotes] = useState("")
+  const [notificationTitle, setNotificationTitle] = useState("")
+  const [notificationMessage, setNotificationMessage] = useState("")
   const [editableFields, setEditableFields] = useState({
     name: "",
     email: "",
@@ -252,6 +257,41 @@ export default function LeadDetail() {
       toast({
         title: "Error",
         description: "Failed to save general notes",
+        variant: "destructive",
+      })
+    }
+  }
+
+  const saveNotification = async () => {
+    if (!notificationTitle.trim() || !notificationMessage.trim()) {
+      toast({
+        title: "Error",
+        description: "Please fill in both title and message for the notification",
+        variant: "destructive",
+      })
+      return
+    }
+
+    try {
+      await createNotification({
+        title: notificationTitle,
+        message: notificationMessage,
+        type: lead ? 'lead_note' : 'client_note',
+        leadId: lead?.id,
+        clientId: client?.id,
+      })
+
+      setNotificationTitle("")
+      setNotificationMessage("")
+      toast({
+        title: "Success",
+        description: "Notification created successfully",
+      })
+    } catch (error) {
+      console.error('Error creating notification:', error)
+      toast({
+        title: "Error",
+        description: "Failed to create notification",
         variant: "destructive",
       })
     }
@@ -1139,6 +1179,32 @@ export default function LeadDetail() {
               <Button onClick={saveCallNotes} disabled={!newCallNote.trim()}>
                 <Save className="w-4 h-4 mr-2" />
                 Save Call Note
+              </Button>
+            </div>
+
+            <Separator />
+
+            {/* Create Notification */}
+            <div className="space-y-2">
+              <Label style={{ color: 'white' }}>Create Notification</Label>
+              <Input
+                placeholder="Notification title..."
+                value={notificationTitle}
+                onChange={(e) => setNotificationTitle(e.target.value)}
+              />
+              <Textarea
+                placeholder="Notification message..."
+                value={notificationMessage}
+                onChange={(e) => setNotificationMessage(e.target.value)}
+                rows={3}
+              />
+              <Button 
+                onClick={saveNotification} 
+                disabled={!notificationTitle.trim() || !notificationMessage.trim()}
+                variant="outline"
+              >
+                <Bell className="w-4 h-4 mr-2" />
+                Create Notification
               </Button>
             </div>
           </CardContent>

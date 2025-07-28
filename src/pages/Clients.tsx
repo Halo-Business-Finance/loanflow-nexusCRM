@@ -6,14 +6,16 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
+import { Textarea } from "@/components/ui/textarea"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { Search, Phone, Mail, MapPin, Calendar, DollarSign, Filter, ChevronDown, ChevronUp, Trash2 } from "lucide-react"
+import { Search, Phone, Mail, MapPin, Calendar, DollarSign, Filter, ChevronDown, ChevronUp, Trash2, Bell, MessageSquare } from "lucide-react"
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog"
 import { useToast } from "@/hooks/use-toast"
 import { LoanManager } from "@/components/LoanManager"
 import { PhoneDialer } from "@/components/PhoneDialer"
 import { EmailComposer } from "@/components/EmailComposer"
 import { formatNumber, formatCurrency } from "@/lib/utils"
+import { useNotifications } from "@/hooks/useNotifications"
 
 interface Client {
   id: string
@@ -45,11 +47,15 @@ interface Loan {
 export default function Clients() {
   const { user, hasRole } = useAuth()
   const { toast } = useToast()
+  const { createNotification } = useNotifications()
   const [clients, setClients] = useState<Client[]>([])
   const [clientLoans, setClientLoans] = useState<{ [key: string]: Loan[] }>({})
   const [loading, setLoading] = useState(true)
   const [searchTerm, setSearchTerm] = useState("")
   const [expandedClient, setExpandedClient] = useState<string | null>(null)
+  const [showNotificationForm, setShowNotificationForm] = useState<string | null>(null)
+  const [notificationTitle, setNotificationTitle] = useState("")
+  const [notificationMessage, setNotificationMessage] = useState("")
 
   useEffect(() => {
     if (user) {
@@ -143,6 +149,41 @@ export default function Clients() {
       toast({
         title: "Error",
         description: "Failed to delete client",
+        variant: "destructive",
+      })
+    }
+  }
+
+  const saveNotification = async (clientId: string, clientName: string) => {
+    if (!notificationTitle.trim() || !notificationMessage.trim()) {
+      toast({
+        title: "Error",
+        description: "Please fill in both title and message for the notification",
+        variant: "destructive",
+      })
+      return
+    }
+
+    try {
+      await createNotification({
+        title: notificationTitle,
+        message: notificationMessage,
+        type: 'client_note',
+        clientId: clientId,
+      })
+
+      setNotificationTitle("")
+      setNotificationMessage("")
+      setShowNotificationForm(null)
+      toast({
+        title: "Success",
+        description: "Notification created successfully",
+      })
+    } catch (error) {
+      console.error('Error creating notification:', error)
+      toast({
+        title: "Error",
+        description: "Failed to create notification",
         variant: "destructive",
       })
     }
@@ -366,6 +407,13 @@ export default function Clients() {
                           </>
                         )}
                       </Button>
+                      <Button 
+                        size="sm" 
+                        variant="outline"
+                        onClick={() => setShowNotificationForm(showNotificationForm === client.id ? null : client.id)}
+                      >
+                        <Bell className="h-4 w-4" />
+                      </Button>
                       {hasRole('admin') && (
                         <AlertDialog>
                           <AlertDialogTrigger asChild>
@@ -404,6 +452,44 @@ export default function Clients() {
                         loans={loans}
                         onLoansUpdate={handleLoansUpdate}
                       />
+                    </div>
+                  )}
+
+                  {/* Notification Form */}
+                  {showNotificationForm === client.id && (
+                    <div className="mt-6 pt-6 border-t space-y-4">
+                      <div className="flex items-center gap-2">
+                        <MessageSquare className="h-5 w-5" />
+                        <h3 className="font-semibold">Create Notification for {client.name}</h3>
+                      </div>
+                      <Input
+                        placeholder="Notification title..."
+                        value={notificationTitle}
+                        onChange={(e) => setNotificationTitle(e.target.value)}
+                      />
+                      <Textarea
+                        placeholder="Notification message..."
+                        value={notificationMessage}
+                        onChange={(e) => setNotificationMessage(e.target.value)}
+                        rows={3}
+                      />
+                      <div className="flex gap-2">
+                        <Button 
+                          onClick={() => saveNotification(client.id, client.name)} 
+                          disabled={!notificationTitle.trim() || !notificationMessage.trim()}
+                          size="sm"
+                        >
+                          <Bell className="w-4 h-4 mr-2" />
+                          Create Notification
+                        </Button>
+                        <Button 
+                          variant="outline" 
+                          onClick={() => setShowNotificationForm(null)}
+                          size="sm"
+                        >
+                          Cancel
+                        </Button>
+                      </div>
                     </div>
                   )}
                 </CardContent>
