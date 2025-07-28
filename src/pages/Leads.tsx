@@ -602,7 +602,7 @@ export default function Leads() {
         </TabsList>
         
         <TabsContent value="grid" className="space-y-4">
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-3 sm:gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-2 md:gap-3 lg:gap-4">
             {filteredLeads.map((lead) => (
               <Card key={lead.id} className={`shadow-soft hover:shadow-medium transition-shadow cursor-pointer text-white ${lead.is_converted_to_client ? 'opacity-60' : ''}`} onClick={() => navigate(`/leads/${lead.id}`)}>
                 <CardHeader className="pb-3 text-white">
@@ -682,13 +682,13 @@ export default function Leads() {
                      )}
                   </div>
                   
-                   <div className="flex gap-2 pt-2">
+                   <div className="flex gap-1 pt-2 flex-wrap">
                     <PhoneDialer 
                       trigger={
                         <Button 
                           size="sm" 
                           variant="outline" 
-                          className="flex-1"
+                          className="px-2 text-xs"
                           onClick={(e) => e.stopPropagation()}
                         >
                           <Phone className="w-3 h-3 mr-1" />
@@ -701,7 +701,7 @@ export default function Leads() {
                         <Button 
                           size="sm" 
                           variant="outline" 
-                          className="flex-1"
+                          className="px-2 text-xs"
                           onClick={(e) => e.stopPropagation()}
                         >
                           <Mail className="w-3 h-3 mr-1" />
@@ -709,10 +709,10 @@ export default function Leads() {
                         </Button>
                       }
                     />
-                    <Button 
-                      size="sm" 
-                      variant="outline" 
-                      className="flex-1"
+                     <Button 
+                       size="sm" 
+                       variant="outline" 
+                       className="px-2 text-xs"
                       onClick={(e) => {
                         e.stopPropagation()
                         openEditDialog(lead)
