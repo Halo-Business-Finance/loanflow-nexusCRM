@@ -59,7 +59,6 @@ export default function Clients() {
       const { data, error } = await supabase
         .from('clients')
         .select('*')
-        .eq('user_id', user?.id)
         .order('created_at', { ascending: false })
 
       if (error) throw error
@@ -82,7 +81,6 @@ export default function Clients() {
         .from('loans')
         .select('*')
         .in('client_id', clientIds)
-        .eq('user_id', user?.id)
 
       if (error) throw error
 

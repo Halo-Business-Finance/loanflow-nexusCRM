@@ -183,20 +183,17 @@ export default function Dashboard() {
       const { data: leadsData } = await supabase
         .from('leads')
         .select('*')
-        .eq('user_id', user.id)
         .order('created_at', { ascending: false })
 
       // Fetch pipeline entries  
       const { data: pipelineData } = await supabase
         .from('pipeline_entries')
         .select('*')
-        .eq('user_id', user.id)
 
       // Fetch clients count
       const { data: clientsData } = await supabase
         .from('clients')
         .select('id, total_loan_value')
-        .eq('user_id', user.id)
 
       if (leadsData) setLeads(leadsData)
       if (pipelineData) setPipelineEntries(pipelineData)

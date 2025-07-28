@@ -118,7 +118,6 @@ export default function Pipeline() {
           lead:leads(name),
           client:clients(name)
         `)
-        .eq('user_id', user?.id)
 
       if (error) throw error
 

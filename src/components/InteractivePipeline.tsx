@@ -91,8 +91,7 @@ export default function InteractivePipeline() {
           *,
           lead:leads(*),
           client:clients(*)
-        `)
-        .eq('user_id', user.id);
+        `);
 
       if (error) throw error;
 

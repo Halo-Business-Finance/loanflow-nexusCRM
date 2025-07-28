@@ -120,7 +120,6 @@ export default function LeadDetail() {
         .from('leads')
         .select('*')
         .eq('id', id)
-        .eq('user_id', user?.id)
         .single()
 
       if (error) throw error
@@ -173,7 +172,6 @@ export default function LeadDetail() {
         .from('clients')
         .select('*')
         .eq('lead_id', leadId)
-        .eq('user_id', user?.id)
         .single()
 
       if (error) {
