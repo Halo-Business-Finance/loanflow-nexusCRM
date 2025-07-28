@@ -243,7 +243,7 @@ export default function Leads() {
     setEditLead({
       name: lead.name,
       email: lead.email,
-      phone: lead.phone || "",
+      phone: formatPhoneNumber(lead.phone || ""),
       address: lead.address || "",
       business_name: lead.business_name || "",
       loan_amount: lead.loan_amount?.toString() || "",
