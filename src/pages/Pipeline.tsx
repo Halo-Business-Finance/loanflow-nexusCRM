@@ -9,8 +9,8 @@ import { Progress } from "@/components/ui/progress"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { DollarSign, Users, Phone, Mail, Calendar } from "lucide-react"
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart"
-import { LineChart, Line, XAxis, YAxis, ResponsiveContainer } from "recharts"
-import InteractivePipeline from "@/components/InteractivePipeline"
+import { LineChart, Line, XAxis, YAxis, ResponsiveContainer, BarChart, Bar, PieChart, Pie, Cell, AreaChart, Area } from "recharts"
+
 
 interface PipelineEntry {
   id: string
@@ -49,6 +49,30 @@ const loanCloseData = [
   { month: "Jun", closedLoans: 30, targetLoans: 30, avgDays: 20, closePercentage: 100 },
 ]
 
+const velocityData = [
+  { stage: "Initial Contact", avgDays: 5, leadCount: 45 },
+  { stage: "Qualification", avgDays: 8, leadCount: 32 },
+  { stage: "Proposal", avgDays: 12, leadCount: 18 },
+  { stage: "Negotiation", avgDays: 15, leadCount: 12 },
+  { stage: "Closing", avgDays: 22, leadCount: 8 },
+]
+
+const performanceData = [
+  { name: "Lead Generation", value: 85, color: "#8884d8" },
+  { name: "Qualification", value: 72, color: "#82ca9d" },
+  { name: "Proposal", value: 56, color: "#ffc658" },
+  { name: "Closing", value: 68, color: "#ff7300" },
+]
+
+const pipelineValueData = [
+  { month: "Jan", value: 1200000, leads: 45 },
+  { month: "Feb", value: 1450000, leads: 52 },
+  { month: "Mar", value: 1680000, leads: 48 },
+  { month: "Apr", value: 1520000, leads: 41 },
+  { month: "May", value: 1850000, leads: 55 },
+  { month: "Jun", value: 2100000, leads: 62 },
+]
+
 const chartConfig = {
   closedLoans: {
     label: "Closed Loans",
@@ -61,6 +85,14 @@ const chartConfig = {
   closePercentage: {
     label: "Close %",
     color: "hsl(var(--destructive))",
+  },
+  value: {
+    label: "Pipeline Value",
+    color: "hsl(var(--primary))",
+  },
+  leads: {
+    label: "Number of Leads",
+    color: "hsl(var(--accent))",
   },
 }
 
@@ -167,193 +199,355 @@ export default function Pipeline() {
         </div>
       </div>
 
-      <Tabs defaultValue="interactive" className="w-full">
+      <Tabs defaultValue="performance" className="w-full">
         <TabsList>
-          <TabsTrigger value="interactive">Interactive View</TabsTrigger>
-          <TabsTrigger value="analytics">Analytics View</TabsTrigger>
+          <TabsTrigger value="performance">Performance Dashboard</TabsTrigger>
+          <TabsTrigger value="analytics">Detailed Analytics</TabsTrigger>
         </TabsList>
         
-        <TabsContent value="interactive" className="space-y-6">
-          <InteractivePipeline />
+        <TabsContent value="performance" className="space-y-6">
+          {/* Pipeline Value Trend */}
+          <Card className="shadow-soft">
+            <CardHeader>
+              <CardTitle>Pipeline Value Trend</CardTitle>
+              <p className="text-sm text-muted-foreground">Monthly pipeline value and lead count over time</p>
+            </CardHeader>
+            <CardContent>
+              <ChartContainer config={chartConfig} className="h-[350px]">
+                <AreaChart data={pipelineValueData}>
+                  <XAxis 
+                    dataKey="month" 
+                    tickLine={false}
+                    axisLine={false}
+                    className="text-muted-foreground"
+                  />
+                  <YAxis 
+                    yAxisId="left"
+                    tickLine={false}
+                    axisLine={false}
+                    className="text-muted-foreground"
+                    tickFormatter={(value) => `$${(value / 1000000).toFixed(1)}M`}
+                  />
+                  <YAxis 
+                    yAxisId="right"
+                    orientation="right"
+                    tickLine={false}
+                    axisLine={false}
+                    className="text-muted-foreground"
+                  />
+                  <ChartTooltip 
+                    content={
+                      <ChartTooltipContent 
+                        labelFormatter={(label) => `${label} 2024`}
+                        formatter={(value, name) => [
+                          name === "value" ? `$${(Number(value) / 1000000).toFixed(1)}M` : value,
+                          name === "value" ? "Pipeline Value" : "Leads"
+                        ]}
+                      />
+                    }
+                  />
+                  <Area
+                    yAxisId="left"
+                    type="monotone"
+                    dataKey="value"
+                    stroke="var(--color-value)"
+                    fill="var(--color-value)"
+                    fillOpacity={0.3}
+                    strokeWidth={3}
+                  />
+                  <Line
+                    yAxisId="right"
+                    type="monotone"
+                    dataKey="leads"
+                    stroke="var(--color-leads)"
+                    strokeWidth={2}
+                    dot={{ fill: "var(--color-leads)", strokeWidth: 2, r: 4 }}
+                  />
+                </AreaChart>
+              </ChartContainer>
+            </CardContent>
+          </Card>
+
+          {/* Sales Velocity */}
+          <Card className="shadow-soft">
+            <CardHeader>
+              <CardTitle>Sales Velocity by Stage</CardTitle>
+              <p className="text-sm text-muted-foreground">Average days in each stage and lead count</p>
+            </CardHeader>
+            <CardContent>
+              <ChartContainer config={chartConfig} className="h-[350px]">
+                <BarChart data={velocityData}>
+                  <XAxis 
+                    dataKey="stage" 
+                    tickLine={false}
+                    axisLine={false}
+                    className="text-muted-foreground"
+                    angle={-45}
+                    textAnchor="end"
+                    height={80}
+                  />
+                  <YAxis 
+                    yAxisId="left"
+                    tickLine={false}
+                    axisLine={false}
+                    className="text-muted-foreground"
+                  />
+                  <YAxis 
+                    yAxisId="right"
+                    orientation="right"
+                    tickLine={false}
+                    axisLine={false}
+                    className="text-muted-foreground"
+                  />
+                  <ChartTooltip 
+                    content={
+                      <ChartTooltipContent 
+                        formatter={(value, name) => [
+                          name === "avgDays" ? `${value} days` : `${value} leads`,
+                          name === "avgDays" ? "Avg Days" : "Lead Count"
+                        ]}
+                      />
+                    }
+                  />
+                  <Bar
+                    yAxisId="left"
+                    dataKey="avgDays"
+                    fill="var(--color-value)"
+                    radius={[4, 4, 0, 0]}
+                  />
+                  <Line
+                    yAxisId="right"
+                    type="monotone"
+                    dataKey="leadCount"
+                    stroke="var(--color-leads)"
+                    strokeWidth={3}
+                    dot={{ fill: "var(--color-leads)", strokeWidth: 2, r: 6 }}
+                  />
+                </BarChart>
+              </ChartContainer>
+            </CardContent>
+          </Card>
+
+          {/* Performance Metrics */}
+          <Card className="shadow-soft">
+            <CardHeader>
+              <CardTitle>Performance Metrics</CardTitle>
+              <p className="text-sm text-muted-foreground">Key performance indicators by stage</p>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="h-[300px]">
+                  <ChartContainer config={chartConfig} className="h-full">
+                    <PieChart>
+                      <Pie
+                        data={performanceData}
+                        cx="50%"
+                        cy="50%"
+                        outerRadius={80}
+                        dataKey="value"
+                        label={({ name, value }) => `${name}: ${value}%`}
+                      >
+                        {performanceData.map((entry, index) => (
+                          <Cell key={`cell-${index}`} fill={entry.color} />
+                        ))}
+                      </Pie>
+                      <ChartTooltip />
+                    </PieChart>
+                  </ChartContainer>
+                </div>
+                
+                <div className="space-y-4">
+                  {performanceData.map((metric) => (
+                    <div key={metric.name} className="space-y-2">
+                      <div className="flex justify-between items-center">
+                        <span className="text-sm font-medium">{metric.name}</span>
+                        <span className="text-sm font-bold">{metric.value}%</span>
+                      </div>
+                      <Progress value={metric.value} className="h-2" />
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Conversion Rates */}
+          <Card className="shadow-soft">
+            <CardHeader>
+              <CardTitle>Stage Conversion Rates</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                {conversionRates.map((conversion) => (
+                  <div key={conversion.from} className="space-y-2">
+                    <div className="text-sm font-medium text-foreground">
+                      {conversion.from} → {conversion.to}
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <Progress value={conversion.rate} className="flex-1" />
+                      <span className="text-sm font-medium text-foreground">{conversion.rate}%</span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
         </TabsContent>
         
         <TabsContent value="analytics" className="space-y-6">
+          {/* Loan Close Performance */}
+          <Card className="shadow-soft">
+            <CardHeader>
+              <CardTitle>Loan Close Performance</CardTitle>
+              <p className="text-sm text-muted-foreground">Monthly closed loans vs targets and close percentage</p>
+            </CardHeader>
+            <CardContent>
+              <ChartContainer config={chartConfig} className="h-[350px]">
+                <LineChart data={loanCloseData}>
+                  <XAxis 
+                    dataKey="month" 
+                    tickLine={false}
+                    axisLine={false}
+                    className="text-muted-foreground"
+                  />
+                  <YAxis 
+                    yAxisId="left"
+                    tickLine={false}
+                    axisLine={false}
+                    className="text-muted-foreground"
+                  />
+                  <YAxis 
+                    yAxisId="right"
+                    orientation="right"
+                    tickLine={false}
+                    axisLine={false}
+                    className="text-muted-foreground"
+                    tickFormatter={(value) => `${value}%`}
+                  />
+                  <ChartTooltip 
+                    content={
+                      <ChartTooltipContent 
+                        labelFormatter={(label) => `${label} 2024`}
+                        formatter={(value, name) => [
+                          name === "closePercentage" ? `${value}%` : value,
+                          name === "closedLoans" ? "Closed" : 
+                          name === "targetLoans" ? "Target" : "Close %"
+                        ]}
+                      />
+                    }
+                  />
+                  <Line
+                    yAxisId="left"
+                    type="monotone"
+                    dataKey="closedLoans"
+                    stroke="var(--color-closedLoans)"
+                    strokeWidth={3}
+                    dot={{ fill: "var(--color-closedLoans)", strokeWidth: 2, r: 6 }}
+                    activeDot={{ r: 8, stroke: "var(--color-closedLoans)", strokeWidth: 2 }}
+                  />
+                  <Line
+                    yAxisId="left"
+                    type="monotone"
+                    dataKey="targetLoans"
+                    stroke="var(--color-targetLoans)"
+                    strokeWidth={2}
+                    strokeDasharray="5 5"
+                    dot={{ fill: "var(--color-targetLoans)", strokeWidth: 2, r: 4 }}
+                  />
+                  <Line
+                    yAxisId="right"
+                    type="monotone"
+                    dataKey="closePercentage"
+                    stroke="var(--color-closePercentage)"
+                    strokeWidth={2}
+                    dot={{ fill: "var(--color-closePercentage)", strokeWidth: 2, r: 4 }}
+                    activeDot={{ r: 6, stroke: "var(--color-closePercentage)", strokeWidth: 2 }}
+                  />
+                </LineChart>
+              </ChartContainer>
+            </CardContent>
+          </Card>
 
-      {/* Conversion Rates */}
-      <Card className="shadow-soft">
-        <CardHeader>
-          <CardTitle>Conversion Rates</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {conversionRates.map((conversion) => (
-              <div key={conversion.from} className="space-y-2">
-                <div className="text-sm font-medium text-foreground">
-                  {conversion.from} → {conversion.to}
-                </div>
-                <div className="flex items-center gap-2">
-                  <Progress value={conversion.rate} className="flex-1" />
-                  <span className="text-sm font-medium text-foreground">{conversion.rate}%</span>
+          {/* Pipeline Stages Overview */}
+          <div className="grid grid-cols-1 lg:grid-cols-6 gap-6">
+            {pipelineData.map((stage, index) => (
+              <div key={stage.name} className="space-y-4">
+                {/* Stage Header */}
+                <Card className="shadow-soft">
+                  <CardHeader className="pb-3">
+                    <CardTitle className="text-lg">{stage.name}</CardTitle>
+                    <div className="space-y-1">
+                      <div className="flex items-center gap-2 text-sm">
+                        <Users className="w-4 h-4 text-primary" />
+                        <span className="font-medium">{stage.count} entries</span>
+                      </div>
+                      <div className="flex items-center gap-2 text-sm">
+                        <DollarSign className="w-4 h-4 text-accent" />
+                        <span className="font-medium text-accent">
+                          ${stage.value.toLocaleString()}
+                        </span>
+                      </div>
+                    </div>
+                  </CardHeader>
+                </Card>
+
+                {/* Stage Entries */}
+                <div className="space-y-3">
+                  {stage.entries.map((entry, entryIndex) => (
+                    <Card key={entryIndex} className="shadow-soft hover:shadow-medium transition-shadow cursor-pointer">
+                      <CardContent className="p-4">
+                        <div className="space-y-3">
+                          <div className="flex justify-between items-start">
+                            <div>
+                              <div className="font-medium text-foreground">
+                                {entry.lead?.name || entry.client?.name || 'Unknown'}
+                              </div>
+                              <div className="text-sm text-muted-foreground">
+                                {new Date(entry.last_contact).toLocaleDateString()}
+                              </div>
+                            </div>
+                            <Badge variant={getPriorityColor(entry.priority)} className="text-xs">
+                              {entry.priority}
+                            </Badge>
+                          </div>
+                          
+                          <div className="text-lg font-bold text-accent">
+                            ${entry.amount?.toLocaleString() || '0'}
+                          </div>
+                          
+                          <div className="flex gap-1">
+                            <Button size="sm" variant="outline" className="flex-1 p-1">
+                              <Phone className="w-3 h-3" />
+                            </Button>
+                            <Button size="sm" variant="outline" className="flex-1 p-1">
+                              <Mail className="w-3 h-3" />
+                            </Button>
+                            <Button size="sm" variant="outline" className="flex-1 p-1">
+                              <Calendar className="w-3 h-3" />
+                            </Button>
+                          </div>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  ))}
+                  
+                  {/* Show more indicator */}
+                  {stage.count > stage.entries.length && (
+                    <Card className="shadow-soft border-dashed">
+                      <CardContent className="p-4 text-center">
+                        <div className="text-sm text-muted-foreground">
+                          +{stage.count - stage.entries.length} more entries
+                        </div>
+                        <Button variant="ghost" size="sm" className="mt-2">
+                          View All
+                        </Button>
+                      </CardContent>
+                    </Card>
+                  )}
                 </div>
               </div>
             ))}
           </div>
-        </CardContent>
-      </Card>
-
-      {/* Loan Close Performance */}
-      <Card className="shadow-soft">
-        <CardHeader>
-          <CardTitle>Loan Close Performance</CardTitle>
-          <p className="text-sm text-muted-foreground">Monthly closed loans vs targets and close percentage</p>
-        </CardHeader>
-        <CardContent>
-          <ChartContainer config={chartConfig} className="h-[350px]">
-            <LineChart data={loanCloseData}>
-              <XAxis 
-                dataKey="month" 
-                tickLine={false}
-                axisLine={false}
-                className="text-muted-foreground"
-              />
-              <YAxis 
-                yAxisId="left"
-                tickLine={false}
-                axisLine={false}
-                className="text-muted-foreground"
-              />
-              <YAxis 
-                yAxisId="right"
-                orientation="right"
-                tickLine={false}
-                axisLine={false}
-                className="text-muted-foreground"
-                tickFormatter={(value) => `${value}%`}
-              />
-              <ChartTooltip 
-                content={
-                  <ChartTooltipContent 
-                    labelFormatter={(label) => `${label} 2024`}
-                    formatter={(value, name) => [
-                      name === "closePercentage" ? `${value}%` : value,
-                      name === "closedLoans" ? "Closed" : 
-                      name === "targetLoans" ? "Target" : "Close %"
-                    ]}
-                  />
-                }
-              />
-              <Line
-                yAxisId="left"
-                type="monotone"
-                dataKey="closedLoans"
-                stroke="var(--color-closedLoans)"
-                strokeWidth={3}
-                dot={{ fill: "var(--color-closedLoans)", strokeWidth: 2, r: 6 }}
-                activeDot={{ r: 8, stroke: "var(--color-closedLoans)", strokeWidth: 2 }}
-              />
-              <Line
-                yAxisId="left"
-                type="monotone"
-                dataKey="targetLoans"
-                stroke="var(--color-targetLoans)"
-                strokeWidth={2}
-                strokeDasharray="5 5"
-                dot={{ fill: "var(--color-targetLoans)", strokeWidth: 2, r: 4 }}
-              />
-              <Line
-                yAxisId="right"
-                type="monotone"
-                dataKey="closePercentage"
-                stroke="var(--color-closePercentage)"
-                strokeWidth={2}
-                dot={{ fill: "var(--color-closePercentage)", strokeWidth: 2, r: 4 }}
-                activeDot={{ r: 6, stroke: "var(--color-closePercentage)", strokeWidth: 2 }}
-              />
-            </LineChart>
-          </ChartContainer>
-        </CardContent>
-      </Card>
-
-      {/* Pipeline Stages */}
-      <div className="grid grid-cols-1 lg:grid-cols-6 gap-6">
-        {pipelineData.map((stage, index) => (
-          <div key={stage.name} className="space-y-4">
-            {/* Stage Header */}
-            <Card className="shadow-soft">
-              <CardHeader className="pb-3">
-                <CardTitle className="text-lg">{stage.name}</CardTitle>
-                <div className="space-y-1">
-                  <div className="flex items-center gap-2 text-sm">
-                    <Users className="w-4 h-4 text-primary" />
-                    <span className="font-medium">{stage.count} entries</span>
-                  </div>
-                  <div className="flex items-center gap-2 text-sm">
-                    <DollarSign className="w-4 h-4 text-accent" />
-                    <span className="font-medium text-accent">
-                      ${stage.value.toLocaleString()}
-                    </span>
-                  </div>
-                </div>
-              </CardHeader>
-            </Card>
-
-            {/* Stage Entries */}
-            <div className="space-y-3">
-              {stage.entries.map((entry, entryIndex) => (
-                <Card key={entryIndex} className="shadow-soft hover:shadow-medium transition-shadow cursor-pointer">
-                  <CardContent className="p-4">
-                    <div className="space-y-3">
-                      <div className="flex justify-between items-start">
-                        <div>
-                          <div className="font-medium text-foreground">
-                            {entry.lead?.name || entry.client?.name || 'Unknown'}
-                          </div>
-                          <div className="text-sm text-muted-foreground">
-                            {new Date(entry.last_contact).toLocaleDateString()}
-                          </div>
-                        </div>
-                        <Badge variant={getPriorityColor(entry.priority)} className="text-xs">
-                          {entry.priority}
-                        </Badge>
-                      </div>
-                      
-                      <div className="text-lg font-bold text-accent">
-                        ${entry.amount?.toLocaleString() || '0'}
-                      </div>
-                      
-                      <div className="flex gap-1">
-                        <Button size="sm" variant="outline" className="flex-1 p-1">
-                          <Phone className="w-3 h-3" />
-                        </Button>
-                        <Button size="sm" variant="outline" className="flex-1 p-1">
-                          <Mail className="w-3 h-3" />
-                        </Button>
-                        <Button size="sm" variant="outline" className="flex-1 p-1">
-                          <Calendar className="w-3 h-3" />
-                        </Button>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-              ))}
-              
-              {/* Show more indicator */}
-              {stage.count > stage.entries.length && (
-                <Card className="shadow-soft border-dashed">
-                  <CardContent className="p-4 text-center">
-                    <div className="text-sm text-muted-foreground">
-                      +{stage.count - stage.entries.length} more entries
-                    </div>
-                    <Button variant="ghost" size="sm" className="mt-2">
-                      View All
-                    </Button>
-                  </CardContent>
-                </Card>
-              )}
-            </div>
-          </div>
-        ))}
-        </div>
         </TabsContent>
       </Tabs>
       </div>
