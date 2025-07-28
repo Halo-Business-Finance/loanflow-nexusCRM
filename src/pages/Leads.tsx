@@ -609,22 +609,22 @@ export default function Leads() {
                         <span className="font-medium text-foreground">{lead.business_name}</span>
                       </div>
                     )}
-                    <div className="flex items-center gap-2 text-sm">
-                      <Mail className="w-4 h-4 text-muted-foreground" />
-                      <span className="text-muted-foreground">{lead.email}</span>
-                    </div>
-                    {lead.phone && (
-                      <div className="flex items-center gap-2 text-sm">
-                        <Phone className="w-4 h-4 text-muted-foreground" />
-                        <span className="text-muted-foreground">{formatPhoneNumber(lead.phone)}</span>
-                      </div>
-                    )}
-                     {lead.address && (
+                     <div className="flex items-center gap-2 text-sm">
+                       <Mail className="w-4 h-4 text-white" />
+                       <span className="text-white">{lead.email}</span>
+                     </div>
+                     {lead.phone && (
                        <div className="flex items-center gap-2 text-sm">
-                         <MapPin className="w-4 h-4 text-muted-foreground" />
-                         <span className="text-muted-foreground">{lead.address}</span>
+                         <Phone className="w-4 h-4 text-white" />
+                         <span className="text-white">{formatPhoneNumber(lead.phone)}</span>
                        </div>
                      )}
+                      {lead.address && (
+                        <div className="flex items-center gap-2 text-sm">
+                          <MapPin className="w-4 h-4 text-white" />
+                          <span className="text-white">{lead.address}</span>
+                        </div>
+                      )}
                     {lead.loan_amount && (
                       <div className="flex items-center gap-2 text-sm">
                         <DollarSign className="w-4 h-4 text-muted-foreground" />
@@ -642,11 +642,11 @@ export default function Leads() {
                     <Badge variant={getStageColor(lead.stage)}>
                       {lead.stage}
                     </Badge>
-                    {lead.credit_score && (
-                      <div className="text-sm text-muted-foreground">
-                        Credit: {lead.credit_score}
-                      </div>
-                    )}
+                     {lead.credit_score && (
+                       <div className="text-sm text-white">
+                         Credit: {lead.credit_score}
+                       </div>
+                     )}
                   </div>
                   
                   <div className="flex gap-2 pt-2">
@@ -747,15 +747,15 @@ export default function Leads() {
                                {lead.business_name && (
                                  <div className="text-sm text-primary font-medium">{lead.business_name}</div>
                                )}
-                               <div className="text-sm text-muted-foreground">{lead.address}</div>
+                               <div className="text-sm text-white">{lead.address}</div>
                              </div>
                           </div>
                         </td>
                         <td className="p-4">
-                          <div className="text-sm">
-                            <div>{lead.email}</div>
-                            <div className="text-muted-foreground">{lead.phone ? formatPhoneNumber(lead.phone) : ''}</div>
-                          </div>
+                           <div className="text-sm">
+                             <div className="text-white">{lead.email}</div>
+                             <div className="text-white">{lead.phone ? formatPhoneNumber(lead.phone) : ''}</div>
+                           </div>
                         </td>
                         <td className="p-4 font-medium">
                           {lead.loan_amount ? `$${lead.loan_amount.toLocaleString()}` : '-'}
