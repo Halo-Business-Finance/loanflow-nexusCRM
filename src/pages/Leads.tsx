@@ -352,7 +352,7 @@ export default function Leads() {
       <div className="flex justify-between items-center">
         <div>
           <h1 className="text-3xl font-bold text-foreground">Leads Management</h1>
-          <p className="text-muted-foreground">Track and manage your loan prospects</p>
+          <p className="text-white">Track and manage your loan prospects</p>
         </div>
         <Dialog open={showAddDialog} onOpenChange={setShowAddDialog}>
           <DialogTrigger asChild>
@@ -536,7 +536,7 @@ export default function Leads() {
         <CardContent className="pt-6">
           <div className="flex flex-col md:flex-row gap-4">
             <div className="flex-1 relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-white w-4 h-4" />
               <Input
                 placeholder="Search leads by name or email..."
                 value={searchTerm}
@@ -593,7 +593,7 @@ export default function Leads() {
                             <Badge variant="default" className="text-xs">Client</Badge>
                           )}
                         </CardTitle>
-                        <p className="text-sm text-muted-foreground">{new Date(lead.last_contact).toLocaleDateString()}</p>
+                        <p className="text-sm text-white">{new Date(lead.last_contact).toLocaleDateString()}</p>
                       </div>
                     </div>
                     <Badge variant={getPriorityColor(lead.priority)}>
@@ -690,7 +690,7 @@ export default function Leads() {
                           </DialogHeader>
                           <div className="space-y-4">
                             <p>Are you sure you want to convert <strong>{lead.name}</strong> to a client?</p>
-                            <p className="text-sm text-muted-foreground">
+                            <p className="text-sm text-white">
                               This will create a new client record and add them to your pipeline.
                             </p>
                           </div>
@@ -795,7 +795,7 @@ export default function Leads() {
                                   </DialogHeader>
                                   <div className="space-y-4">
                                     <p>Are you sure you want to convert <strong>{lead.name}</strong> to a client?</p>
-                                    <p className="text-sm text-muted-foreground">
+                                    <p className="text-sm text-white">
                                       This will create a new client record and add them to your pipeline.
                                     </p>
                                   </div>
