@@ -382,9 +382,10 @@ export default function Users() {
                     <SelectTrigger>
                       <SelectValue />
                     </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="agent">Loan Originator (Agent)</SelectItem>
+                    <SelectContent className="bg-background border shadow-lg z-50">
+                      <SelectItem value="admin">Administrator</SelectItem>
                       <SelectItem value="manager">Manager</SelectItem>
+                      <SelectItem value="agent">Loan Originator (Agent)</SelectItem>
                       <SelectItem value="viewer">Viewer</SelectItem>
                     </SelectContent>
                   </Select>
@@ -543,9 +544,10 @@ export default function Users() {
                     <SelectTrigger>
                       <SelectValue />
                     </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="agent">Loan Originator (Agent)</SelectItem>
+                    <SelectContent className="bg-background border shadow-lg z-50">
+                      <SelectItem value="admin">Administrator</SelectItem>
                       <SelectItem value="manager">Manager</SelectItem>
+                      <SelectItem value="agent">Loan Originator (Agent)</SelectItem>
                       <SelectItem value="viewer">Viewer</SelectItem>
                     </SelectContent>
                   </Select>
