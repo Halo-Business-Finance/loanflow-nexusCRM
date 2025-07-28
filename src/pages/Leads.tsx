@@ -35,7 +35,7 @@ interface Lead {
   is_converted_to_client: boolean
 }
 
-const stages = ["All", "Initial Contact", "Qualified", "Application", "Pre-approval", "Documentation", "Closing"]
+const stages = ["All", "New Lead", "Initial Contact", "Qualified", "Application", "Pre-approval", "Documentation", "Closing", "Archive"]
 const priorities = ["All", "High", "Medium", "Low"]
 const loanTypes = ["SBA 7(a) Loan", "SBA 504 Loan", "Bridge Loan", "Conventional Loan", "Equipment Financing", "USDA B&I Loan", "Working Capital Loan", "Line of Credit", "Land Loan", "Factoring"]
 
@@ -492,12 +492,14 @@ export default function Leads() {
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
+                    <SelectItem value="New Lead">New Lead</SelectItem>
                     <SelectItem value="Initial Contact">Initial Contact</SelectItem>
                     <SelectItem value="Qualified">Qualified</SelectItem>
                     <SelectItem value="Application">Application</SelectItem>
                     <SelectItem value="Pre-approval">Pre-approval</SelectItem>
                     <SelectItem value="Documentation">Documentation</SelectItem>
                     <SelectItem value="Closing">Closing</SelectItem>
+                    <SelectItem value="Archive">Archive</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -976,14 +978,16 @@ export default function Leads() {
                 <SelectTrigger>
                   <SelectValue />
                 </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="Initial Contact">Initial Contact</SelectItem>
-                  <SelectItem value="Qualified">Qualified</SelectItem>
-                  <SelectItem value="Application">Application</SelectItem>
-                  <SelectItem value="Pre-approval">Pre-approval</SelectItem>
-                  <SelectItem value="Documentation">Documentation</SelectItem>
-                  <SelectItem value="Closing">Closing</SelectItem>
-                </SelectContent>
+                 <SelectContent>
+                   <SelectItem value="New Lead">New Lead</SelectItem>
+                   <SelectItem value="Initial Contact">Initial Contact</SelectItem>
+                   <SelectItem value="Qualified">Qualified</SelectItem>
+                   <SelectItem value="Application">Application</SelectItem>
+                   <SelectItem value="Pre-approval">Pre-approval</SelectItem>
+                   <SelectItem value="Documentation">Documentation</SelectItem>
+                   <SelectItem value="Closing">Closing</SelectItem>
+                   <SelectItem value="Archive">Archive</SelectItem>
+                 </SelectContent>
               </Select>
             </div>
           </div>

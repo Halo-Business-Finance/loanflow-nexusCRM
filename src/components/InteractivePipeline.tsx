@@ -40,13 +40,15 @@ interface StageData {
 }
 
 const stages = [
+  "New Lead",
   "Initial Contact",
   "Qualification", 
   "Proposal",
   "Negotiation",
   "Closing",
   "Won",
-  "Lost"
+  "Lost",
+  "Archive"
 ];
 
 const getPriorityColor = (priority: string) => {
