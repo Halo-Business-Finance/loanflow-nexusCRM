@@ -28,6 +28,20 @@ interface Client {
   total_loan_value: number
   join_date: string
   last_activity: string
+  business_name?: string
+  business_address?: string
+  owns_property?: boolean
+  property_payment_amount?: number
+  year_established?: number
+  credit_score?: number
+  net_operating_income?: number
+  bank_lender_name?: string
+  annual_revenue?: number
+  existing_loan_amount?: number
+  notes?: string
+  call_notes?: string
+  priority?: string
+  income?: number
 }
 
 interface Loan {

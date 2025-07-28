@@ -65,6 +65,7 @@ interface Lead {
   call_notes?: string
   last_contact: string
   created_at: string
+  income?: number
   is_converted_to_client: boolean
 }
 
@@ -78,6 +79,20 @@ interface Client {
   total_loans: number
   total_loan_value: number
   join_date: string
+  business_name?: string
+  business_address?: string
+  owns_property?: boolean
+  property_payment_amount?: number
+  year_established?: number
+  credit_score?: number
+  net_operating_income?: number
+  bank_lender_name?: string
+  annual_revenue?: number
+  existing_loan_amount?: number
+  notes?: string
+  call_notes?: string
+  priority?: string
+  income?: number
 }
 
 export default function LeadDetail() {
@@ -378,7 +393,22 @@ export default function LeadDetail() {
         user_id: user.id,
         lead_id: lead.id,
         join_date: new Date().toISOString(),
-        last_activity: new Date().toISOString()
+        last_activity: new Date().toISOString(),
+        // Transfer all business and financial information from lead
+        business_name: editableFields.business_name || null,
+        business_address: editableFields.business_address || null,
+        owns_property: editableFields.owns_property || false,
+        property_payment_amount: editableFields.property_payment_amount ? parseFloat(editableFields.property_payment_amount) : null,
+        year_established: editableFields.year_established ? parseInt(editableFields.year_established) : null,
+        credit_score: editableFields.credit_score ? parseInt(editableFields.credit_score) : null,
+        net_operating_income: editableFields.net_operating_income ? parseFloat(editableFields.net_operating_income) : null,
+        bank_lender_name: editableFields.bank_lender_name || null,
+        annual_revenue: editableFields.annual_revenue ? parseFloat(editableFields.annual_revenue) : null,
+        existing_loan_amount: editableFields.existing_loan_amount ? parseFloat(editableFields.existing_loan_amount) : null,
+        notes: generalNotes || lead.notes || null,
+        call_notes: callNotes || lead.call_notes || null,
+        priority: editableFields.priority || 'medium',
+        income: lead.income || null
       }
 
       const { data: newClient, error: clientError } = await supabase

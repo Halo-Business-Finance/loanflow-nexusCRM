@@ -97,52 +97,94 @@ export type Database = {
       }
       clients: {
         Row: {
+          annual_revenue: number | null
+          bank_lender_name: string | null
+          business_address: string | null
+          business_name: string | null
+          call_notes: string | null
           created_at: string
+          credit_score: number | null
           email: string
+          existing_loan_amount: number | null
           id: string
+          income: number | null
           join_date: string | null
           last_activity: string | null
           lead_id: string | null
           location: string | null
           name: string
+          net_operating_income: number | null
+          notes: string | null
+          owns_property: boolean | null
           phone: string | null
+          priority: string | null
+          property_payment_amount: number | null
           status: string
           total_loan_value: number | null
           total_loans: number | null
           updated_at: string
           user_id: string
+          year_established: number | null
         }
         Insert: {
+          annual_revenue?: number | null
+          bank_lender_name?: string | null
+          business_address?: string | null
+          business_name?: string | null
+          call_notes?: string | null
           created_at?: string
+          credit_score?: number | null
           email: string
+          existing_loan_amount?: number | null
           id?: string
+          income?: number | null
           join_date?: string | null
           last_activity?: string | null
           lead_id?: string | null
           location?: string | null
           name: string
+          net_operating_income?: number | null
+          notes?: string | null
+          owns_property?: boolean | null
           phone?: string | null
+          priority?: string | null
+          property_payment_amount?: number | null
           status?: string
           total_loan_value?: number | null
           total_loans?: number | null
           updated_at?: string
           user_id: string
+          year_established?: number | null
         }
         Update: {
+          annual_revenue?: number | null
+          bank_lender_name?: string | null
+          business_address?: string | null
+          business_name?: string | null
+          call_notes?: string | null
           created_at?: string
+          credit_score?: number | null
           email?: string
+          existing_loan_amount?: number | null
           id?: string
+          income?: number | null
           join_date?: string | null
           last_activity?: string | null
           lead_id?: string | null
           location?: string | null
           name?: string
+          net_operating_income?: number | null
+          notes?: string | null
+          owns_property?: boolean | null
           phone?: string | null
+          priority?: string | null
+          property_payment_amount?: number | null
           status?: string
           total_loan_value?: number | null
           total_loans?: number | null
           updated_at?: string
           user_id?: string
+          year_established?: number | null
         }
         Relationships: [
           {
