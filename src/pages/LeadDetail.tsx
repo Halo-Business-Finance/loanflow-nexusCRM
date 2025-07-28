@@ -8,6 +8,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog"
 import { Badge } from "@/components/ui/badge"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Switch } from "@/components/ui/switch"
@@ -36,7 +37,8 @@ import {
   XCircle,
   Target,
   FileText,
-  Bell
+  Bell,
+  Trash2
 } from "lucide-react"
 
 interface Lead {
@@ -456,6 +458,34 @@ export default function LeadDetail() {
     }
   }
 
+  const deleteLead = async () => {
+    if (!lead) return
+
+    try {
+      const { error } = await supabase
+        .from('leads')
+        .delete()
+        .eq('id', lead.id)
+
+      if (error) throw error
+
+      toast({
+        title: "Success!",
+        description: `${lead.name} has been deleted successfully.`,
+      })
+
+      // Navigate back to leads page
+      navigate('/leads')
+    } catch (error) {
+      console.error('Error deleting lead:', error)
+      toast({
+        title: "Error",
+        description: "Failed to delete lead",
+        variant: "destructive",
+      })
+    }
+  }
+
   const getPriorityColor = (priority: string) => {
     switch (priority.toLowerCase()) {
       case 'high': return 'destructive'
@@ -537,6 +567,31 @@ export default function LeadDetail() {
                 Save Changes
               </Button>
             )}
+            <AlertDialog>
+              <AlertDialogTrigger asChild>
+                <Button variant="destructive">
+                  <Trash2 className="w-4 h-4 mr-2" />
+                  Delete Lead
+                </Button>
+              </AlertDialogTrigger>
+              <AlertDialogContent>
+                <AlertDialogHeader>
+                  <AlertDialogTitle>Delete Lead</AlertDialogTitle>
+                  <AlertDialogDescription>
+                    Are you sure you want to delete <strong>{lead.name}</strong>? This action cannot be undone and you will be redirected back to the leads page.
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                  <AlertDialogCancel>Cancel</AlertDialogCancel>
+                  <AlertDialogAction
+                    onClick={deleteLead}
+                    className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                  >
+                    Delete Lead
+                  </AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
           </div>
         </div>
 
