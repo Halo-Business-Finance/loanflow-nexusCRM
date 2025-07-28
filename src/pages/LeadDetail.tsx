@@ -32,7 +32,8 @@ import {
   UserCheck,
   Home,
   CheckCircle,
-  XCircle
+  XCircle,
+  Target
 } from "lucide-react"
 
 interface Lead {
@@ -712,6 +713,30 @@ export default function LeadDetail() {
                       <p className="font-medium" style={{ color: 'white' }}>
                         {formatCurrency(lead.income)}
                       </p>
+                    )}
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-3">
+                  <Target className="w-4 h-4" style={{ color: 'white' }} />
+                  <div className="flex-1">
+                    <p className="text-sm" style={{ color: 'white' }}>Loan Stage</p>
+                    {isEditing ? (
+                      <Select value={editableFields.stage} onValueChange={(value) => setEditableFields({...editableFields, stage: value})}>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select stage" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="Initial Contact">Initial Contact</SelectItem>
+                          <SelectItem value="Qualified">Qualified</SelectItem>
+                          <SelectItem value="Application">Application</SelectItem>
+                          <SelectItem value="Pre-approval">Pre-approval</SelectItem>
+                          <SelectItem value="Documentation">Documentation</SelectItem>
+                          <SelectItem value="Closing">Closing</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    ) : (
+                      <p className="font-medium" style={{ color: 'white' }}>{lead.stage || 'N/A'}</p>
                     )}
                   </div>
                 </div>
