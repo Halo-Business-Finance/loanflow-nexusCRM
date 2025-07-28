@@ -29,6 +29,8 @@ import { LineChart, Line, XAxis, YAxis, ResponsiveContainer } from "recharts"
 import { useToast } from "@/hooks/use-toast"
 import { useNavigate } from "react-router-dom"
 import { useAuth } from "@/components/auth/AuthProvider"
+import { PhoneDialer } from "@/components/PhoneDialer"
+import { EmailComposer } from "@/components/EmailComposer"
 
 // Initial metrics structure - will be updated with real data
 const initialMetrics = [
