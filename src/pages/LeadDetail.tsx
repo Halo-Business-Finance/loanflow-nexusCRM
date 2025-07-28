@@ -621,12 +621,12 @@ export default function LeadDetail() {
         </div>
 
         <div className="grid grid-cols-1 gap-6">
-          {/* Financial Information */}
+          {/* Loan Information */}
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-2" style={{ color: 'white' }}>
                 <DollarSign className="w-5 h-5" />
-                Financial Information
+                Loan Information
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
