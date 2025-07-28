@@ -249,12 +249,16 @@ export default function Dashboard() {
   }
 
   const calculateMetrics = (leadsData: Lead[], clientsData: any[], pipelineData: PipelineEntry[]) => {
-    // Calculate total pipeline value
-    const totalPipelineValue = leadsData.reduce((sum, lead) => {
-      return sum + (lead.loan_amount || 0)
-    }, 0) + pipelineData.reduce((sum, entry) => {
+    // Calculate total pipeline value (only from non-converted leads + pipeline entries)
+    const nonConvertedLeadsValue = leadsData.reduce((sum, lead) => {
+      return sum + (lead.is_converted_to_client ? 0 : (lead.loan_amount || 0))
+    }, 0)
+    
+    const pipelineValue = pipelineData.reduce((sum, entry) => {
       return sum + (entry.amount || 0)
     }, 0)
+    
+    const totalPipelineValue = nonConvertedLeadsValue + pipelineValue
 
     // Calculate applications this month
     const currentMonth = new Date().getMonth()
