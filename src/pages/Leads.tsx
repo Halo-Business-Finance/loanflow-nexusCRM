@@ -36,6 +36,21 @@ const stages = ["All", "Initial Contact", "Qualified", "Application", "Pre-appro
 const priorities = ["All", "High", "Medium", "Low"]
 const loanTypes = ["Mortgage", "Personal Loan", "Auto Loan", "Business Loan", "Home Equity", "Student Loan", "Credit Line"]
 
+// Phone number formatting function
+const formatPhoneNumber = (value: string) => {
+  // Remove all non-digits
+  const phoneNumber = value.replace(/\D/g, '')
+  
+  // Format based on length
+  if (phoneNumber.length < 4) {
+    return phoneNumber
+  } else if (phoneNumber.length < 7) {
+    return `(${phoneNumber.slice(0, 3)}) ${phoneNumber.slice(3)}`
+  } else {
+    return `(${phoneNumber.slice(0, 3)}) ${phoneNumber.slice(3, 6)}-${phoneNumber.slice(6, 10)}`
+  }
+}
+
 export default function Leads() {
   const { user } = useAuth()
   const { toast } = useToast()
@@ -382,8 +397,12 @@ export default function Leads() {
                   <Input
                     id="phone"
                     value={newLead.phone}
-                    onChange={(e) => setNewLead(prev => ({ ...prev, phone: e.target.value }))}
+                    onChange={(e) => {
+                      const formatted = formatPhoneNumber(e.target.value)
+                      setNewLead(prev => ({ ...prev, phone: formatted }))
+                    }}
                     placeholder="(555) 123-4567"
+                    maxLength={14}
                   />
                 </div>
                  <div>
@@ -825,8 +844,12 @@ export default function Leads() {
                 <Input
                   id="edit-phone"
                   value={editLead.phone}
-                  onChange={(e) => setEditLead(prev => ({ ...prev, phone: e.target.value }))}
+                  onChange={(e) => {
+                    const formatted = formatPhoneNumber(e.target.value)
+                    setEditLead(prev => ({ ...prev, phone: formatted }))
+                  }}
                   placeholder="(555) 123-4567"
+                  maxLength={14}
                 />
               </div>
                <div>
