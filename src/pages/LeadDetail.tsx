@@ -415,7 +415,13 @@ export default function LeadDetail() {
                         placeholder="Enter email"
                       />
                     ) : (
-                      <p className="font-medium" style={{ color: 'white' }}>{lead.email}</p>
+                      <EmailComposer 
+                        trigger={
+                          <button className="font-medium hover:text-primary transition-colors text-left" style={{ color: 'white' }}>
+                            {lead.email}
+                          </button>
+                        }
+                      />
                     )}
                   </div>
                 </div>
@@ -431,7 +437,17 @@ export default function LeadDetail() {
                         placeholder="Enter phone number"
                       />
                     ) : (
-                      <p className="font-medium" style={{ color: 'white' }}>{lead.phone || 'N/A'}</p>
+                      lead.phone ? (
+                        <PhoneDialer 
+                          trigger={
+                            <button className="font-medium hover:text-primary transition-colors text-left" style={{ color: 'white' }}>
+                              {lead.phone}
+                            </button>
+                          }
+                        />
+                      ) : (
+                        <p className="font-medium" style={{ color: 'white' }}>N/A</p>
+                      )
                     )}
                   </div>
                 </div>
