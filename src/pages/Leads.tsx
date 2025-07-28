@@ -719,14 +719,14 @@ export default function Leads() {
                 <table className="w-full">
                   <thead>
                     <tr className="border-b bg-muted/30">
-                      <th className="text-left p-4 font-medium">Name</th>
-                      <th className="text-left p-4 font-medium">Contact</th>
-                      <th className="text-left p-4 font-medium">Loan Amount</th>
-                      <th className="text-left p-4 font-medium">Loan Type</th>
-                      <th className="text-left p-4 font-medium">Stage</th>
-                      <th className="text-left p-4 font-medium">Priority</th>
-                      <th className="text-left p-4 font-medium">Credit Score</th>
-                      <th className="text-left p-4 font-medium">Actions</th>
+                      <th className="text-left p-4 font-medium text-white">Name</th>
+                      <th className="text-left p-4 font-medium text-white">Contact</th>
+                      <th className="text-left p-4 font-medium text-white">Loan Amount</th>
+                      <th className="text-left p-4 font-medium text-white">Loan Type</th>
+                      <th className="text-left p-4 font-medium text-white">Stage</th>
+                      <th className="text-left p-4 font-medium text-white">Priority</th>
+                      <th className="text-left p-4 font-medium text-white">Credit Score</th>
+                      <th className="text-left p-4 font-medium text-white">Actions</th>
                     </tr>
                   </thead>
                   <tbody>
