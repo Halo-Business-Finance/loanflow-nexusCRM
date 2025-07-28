@@ -73,6 +73,7 @@ interface Lead {
   created_at: string;
   address?: string;
   is_converted_to_client?: boolean;
+  last_contact?: string;
 }
 
 interface PipelineEntry {
@@ -398,10 +399,16 @@ export default function Dashboard() {
     stage.name.toLowerCase().includes(pipelineFilter.toLowerCase())
   )
 
-  const filteredLeads = recentLeads.filter(lead =>
+  const filteredLeads = leads.filter(lead =>
     lead.name.toLowerCase().includes(leadsFilter.toLowerCase()) ||
     lead.stage.toLowerCase().includes(leadsFilter.toLowerCase())
-  )
+  ).map(lead => ({
+    name: lead.name,
+    amount: lead.loan_amount ? `$${Number(lead.loan_amount).toLocaleString()}` : 'N/A',
+    stage: lead.stage,
+    lastContact: lead.last_contact ? new Date(lead.last_contact).toLocaleDateString() : 'N/A',
+    priority: lead.priority
+  }))
 
   const handlePipelineStageClick = (stage: typeof pipelineStages[0]) => {
     // Navigate to leads page filtered by this stage
