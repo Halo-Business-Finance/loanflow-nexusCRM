@@ -31,6 +31,7 @@ const navigationItems = [
 
 const settingsItems = [
   { title: "Settings", url: "/settings", icon: Settings },
+  { title: "Users", url: "/users", icon: UserCheck },
   { title: "Security", url: "/security", icon: Shield },
 ]
 
@@ -81,8 +82,8 @@ export function AppSidebar() {
           <SidebarGroupContent>
             <SidebarMenu>
               {settingsItems.map((item) => {
-                // Only show Security to admins
-                if (item.title === "Security" && !hasRole('admin')) {
+                // Only show Security and Users to admins
+                if ((item.title === "Security" || item.title === "Users") && !hasRole('admin')) {
                   return null;
                 }
                 return (
