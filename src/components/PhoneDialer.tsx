@@ -7,6 +7,21 @@ import { useToast } from "@/hooks/use-toast"
 import { supabase } from "@/integrations/supabase/client"
 import { Phone, PhoneCall } from "lucide-react"
 
+// Phone number formatting function
+const formatPhoneNumber = (value: string) => {
+  // Remove all non-digits
+  const phoneNumber = value.replace(/\D/g, '')
+  
+  // Format based on length
+  if (phoneNumber.length < 4) {
+    return phoneNumber
+  } else if (phoneNumber.length < 7) {
+    return `(${phoneNumber.slice(0, 3)}) ${phoneNumber.slice(3)}`
+  } else {
+    return `(${phoneNumber.slice(0, 3)}) ${phoneNumber.slice(3, 6)}-${phoneNumber.slice(6, 10)}`
+  }
+}
+
 interface PhoneDialerProps {
   trigger?: React.ReactNode
 }
@@ -90,10 +105,14 @@ export function PhoneDialer({ trigger }: PhoneDialerProps) {
               id="phone"
               type="tel"
               value={phoneNumber}
-              onChange={(e) => setPhoneNumber(e.target.value)}
+              onChange={(e) => {
+                const formatted = formatPhoneNumber(e.target.value)
+                setPhoneNumber(formatted)
+              }}
               onKeyPress={handleKeyPress}
-              placeholder="Enter phone number"
+              placeholder="(555) 123-4567"
               className="text-lg"
+              maxLength={14}
             />
           </div>
 

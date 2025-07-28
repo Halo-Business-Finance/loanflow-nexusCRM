@@ -20,6 +20,21 @@ import {
   Upload
 } from "lucide-react"
 
+// Phone number formatting function
+const formatPhoneNumber = (value: string) => {
+  // Remove all non-digits
+  const phoneNumber = value.replace(/\D/g, '')
+  
+  // Format based on length
+  if (phoneNumber.length < 4) {
+    return phoneNumber
+  } else if (phoneNumber.length < 7) {
+    return `(${phoneNumber.slice(0, 3)}) ${phoneNumber.slice(3)}`
+  } else {
+    return `(${phoneNumber.slice(0, 3)}) ${phoneNumber.slice(3, 6)}-${phoneNumber.slice(6, 10)}`
+  }
+}
+
 export default function Settings() {
   return (
     <Layout>
@@ -74,7 +89,7 @@ export default function Settings() {
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="phone">Phone</Label>
-                    <Input id="phone" defaultValue="(555) 123-4567" />
+                    <Input id="phone" defaultValue="(555) 123-4567" placeholder="(555) 123-4567" />
                   </div>
                 </div>
 

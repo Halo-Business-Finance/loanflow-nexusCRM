@@ -25,6 +25,21 @@ import {
   User
 } from "lucide-react"
 
+// Phone number formatting function
+const formatPhoneNumber = (value: string) => {
+  // Remove all non-digits
+  const phoneNumber = value.replace(/\D/g, '')
+  
+  // Format based on length
+  if (phoneNumber.length < 4) {
+    return phoneNumber
+  } else if (phoneNumber.length < 7) {
+    return `(${phoneNumber.slice(0, 3)}) ${phoneNumber.slice(3)}`
+  } else {
+    return `(${phoneNumber.slice(0, 3)}) ${phoneNumber.slice(3, 6)}-${phoneNumber.slice(6, 10)}`
+  }
+}
+
 interface UserProfile {
   id: string
   email: string
@@ -350,7 +365,12 @@ export default function Users() {
                   <Input
                     id="phone"
                     value={newUser.phone_number}
-                    onChange={(e) => setNewUser({...newUser, phone_number: e.target.value})}
+                    onChange={(e) => {
+                      const formatted = formatPhoneNumber(e.target.value)
+                      setNewUser({...newUser, phone_number: formatted})
+                    }}
+                    placeholder="(555) 123-4567"
+                    maxLength={14}
                   />
                 </div>
                 
@@ -499,7 +519,12 @@ export default function Users() {
                   <Input
                     id="editPhone"
                     value={editingUser.phone_number || ''}
-                    onChange={(e) => setEditingUser({...editingUser, phone_number: e.target.value})}
+                    onChange={(e) => {
+                      const formatted = formatPhoneNumber(e.target.value)
+                      setEditingUser({...editingUser, phone_number: formatted})
+                    }}
+                    placeholder="(555) 123-4567"
+                    maxLength={14}
                   />
                 </div>
                 
