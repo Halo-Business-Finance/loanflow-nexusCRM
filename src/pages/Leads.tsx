@@ -587,7 +587,7 @@ export default function Leads() {
                         <User className="w-5 h-5 text-primary" />
                       </div>
                       <div>
-                        <CardTitle className="text-lg flex items-center gap-2">
+                        <CardTitle className="text-lg flex items-center gap-2 text-white">
                           {lead.name}
                           {lead.is_converted_to_client && (
                             <Badge variant="default" className="text-xs">Client</Badge>
