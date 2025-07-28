@@ -252,6 +252,7 @@ export type Database = {
       }
       leads: {
         Row: {
+          annual_revenue: number | null
           business_name: string | null
           call_notes: string | null
           converted_at: string | null
@@ -274,6 +275,7 @@ export type Database = {
           user_id: string
         }
         Insert: {
+          annual_revenue?: number | null
           business_name?: string | null
           call_notes?: string | null
           converted_at?: string | null
@@ -296,6 +298,7 @@ export type Database = {
           user_id: string
         }
         Update: {
+          annual_revenue?: number | null
           business_name?: string | null
           call_notes?: string | null
           converted_at?: string | null

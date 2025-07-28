@@ -39,6 +39,7 @@ interface Lead {
   priority: string
   credit_score?: number
   income?: number
+  annual_revenue?: number
   notes?: string
   call_notes?: string
   last_contact: string
@@ -355,6 +356,18 @@ export default function LeadDetail() {
                     <p className="text-sm" style={{ color: 'white' }}>Annual Income</p>
                     <p className="font-medium" style={{ color: 'white' }}>
                       ${lead.income.toLocaleString()}
+                    </p>
+                  </div>
+                </div>
+              )}
+
+              {lead.annual_revenue && (
+                <div className="flex items-center gap-3">
+                  <DollarSign className="w-4 h-4" style={{ color: 'white' }} />
+                  <div>
+                    <p className="text-sm" style={{ color: 'white' }}>Annual Revenue</p>
+                    <p className="font-medium" style={{ color: 'white' }}>
+                      ${lead.annual_revenue.toLocaleString()}
                     </p>
                   </div>
                 </div>
