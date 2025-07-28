@@ -6,9 +6,11 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Progress } from "@/components/ui/progress"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { DollarSign, Users, Phone, Mail, Calendar } from "lucide-react"
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart"
 import { LineChart, Line, XAxis, YAxis, ResponsiveContainer } from "recharts"
+import InteractivePipeline from "@/components/InteractivePipeline"
 
 interface PipelineEntry {
   id: string
@@ -164,6 +166,18 @@ export default function Pipeline() {
           </div>
         </div>
       </div>
+
+      <Tabs defaultValue="interactive" className="w-full">
+        <TabsList>
+          <TabsTrigger value="interactive">Interactive View</TabsTrigger>
+          <TabsTrigger value="analytics">Analytics View</TabsTrigger>
+        </TabsList>
+        
+        <TabsContent value="interactive" className="space-y-6">
+          <InteractivePipeline />
+        </TabsContent>
+        
+        <TabsContent value="analytics" className="space-y-6">
 
       {/* Conversion Rates */}
       <Card className="shadow-soft">
@@ -339,7 +353,9 @@ export default function Pipeline() {
             </div>
           </div>
         ))}
-      </div>
+        </div>
+        </TabsContent>
+      </Tabs>
       </div>
     </Layout>
   )
