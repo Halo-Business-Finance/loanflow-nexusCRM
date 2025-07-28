@@ -54,6 +54,7 @@ interface Lead {
   annual_revenue?: number
   interest_rate?: number
   maturity_date?: string
+  existing_loan_amount?: number
   notes?: string
   call_notes?: string
   last_contact: string
@@ -102,7 +103,8 @@ export default function LeadDetail() {
     income: "",
     annual_revenue: "",
     interest_rate: "",
-    maturity_date: ""
+    maturity_date: "",
+    existing_loan_amount: ""
   })
 
   useEffect(() => {
@@ -149,7 +151,8 @@ export default function LeadDetail() {
         income: data.income?.toString() || "",
         annual_revenue: data.annual_revenue?.toString() || "",
         interest_rate: data.interest_rate?.toString() || "",
-        maturity_date: data.maturity_date || ""
+        maturity_date: data.maturity_date || "",
+        existing_loan_amount: data.existing_loan_amount?.toString() || ""
       })
       
       // If lead is converted, fetch client data
@@ -272,7 +275,8 @@ export default function LeadDetail() {
         income: editableFields.income ? parseFloat(editableFields.income) : null,
         annual_revenue: editableFields.annual_revenue ? parseFloat(editableFields.annual_revenue) : null,
         interest_rate: editableFields.interest_rate ? parseFloat(editableFields.interest_rate) : null,
-        maturity_date: editableFields.maturity_date || null
+        maturity_date: editableFields.maturity_date || null,
+        existing_loan_amount: editableFields.existing_loan_amount ? parseFloat(editableFields.existing_loan_amount) : null
       }
 
       const { error } = await supabase
@@ -642,6 +646,25 @@ export default function LeadDetail() {
                         ) : (
                           <p className="font-medium" style={{ color: 'white' }}>
                             {lead.maturity_date ? new Date(lead.maturity_date).toLocaleDateString() : 'N/A'}
+                          </p>
+                        )}
+                      </div>
+                    </div>
+
+                    <div className="flex items-center gap-3">
+                      <DollarSign className="w-4 h-4" style={{ color: 'white' }} />
+                      <div className="flex-1">
+                        <p className="text-sm" style={{ color: 'white' }}>Existing Loan Amount</p>
+                        {isEditing ? (
+                          <Input
+                            type="number"
+                            value={editableFields.existing_loan_amount}
+                            onChange={(e) => setEditableFields({...editableFields, existing_loan_amount: e.target.value})}
+                            placeholder="Enter existing loan amount"
+                          />
+                        ) : (
+                          <p className="font-medium" style={{ color: 'white' }}>
+                            {lead.existing_loan_amount ? formatCurrency(lead.existing_loan_amount) : 'N/A'}
                           </p>
                         )}
                       </div>

@@ -260,6 +260,7 @@ export type Database = {
           created_at: string
           credit_score: number | null
           email: string
+          existing_loan_amount: number | null
           id: string
           income: number | null
           interest_rate: number | null
@@ -287,6 +288,7 @@ export type Database = {
           created_at?: string
           credit_score?: number | null
           email: string
+          existing_loan_amount?: number | null
           id?: string
           income?: number | null
           interest_rate?: number | null
@@ -314,6 +316,7 @@ export type Database = {
           created_at?: string
           credit_score?: number | null
           email?: string
+          existing_loan_amount?: number | null
           id?: string
           income?: number | null
           interest_rate?: number | null
