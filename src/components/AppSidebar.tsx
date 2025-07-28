@@ -1,5 +1,5 @@
-import { BarChart3, Users, UserCheck, FileText, Settings, Home, Target, Calendar, Phone, Mail, Shield, LogOut, BookOpen } from "lucide-react"
-import { NavLink, useLocation } from "react-router-dom"
+import { BarChart3, Users, UserCheck, FileText, Settings, Home, Target, Calendar, Phone, Mail, Shield, LogOut, BookOpen, User } from "lucide-react"
+import { NavLink, useLocation, useNavigate } from "react-router-dom"
 import { Button } from "@/components/ui/button"
 import { RingCentralSetup } from "@/components/RingCentralSetup"
 import { PhoneDialer } from "@/components/PhoneDialer"
@@ -39,6 +39,7 @@ const settingsItems = [
 export function AppSidebar() {
   const { state } = useSidebar()
   const location = useLocation()
+  const navigate = useNavigate()
   const currentPath = location.pathname
   const { signOut, user, userRole, hasRole } = useAuth()
 
@@ -46,16 +47,44 @@ export function AppSidebar() {
   const getNavClass = ({ isActive }: { isActive: boolean }) =>
     isActive ? "bg-primary text-primary-foreground" : "hover:bg-accent hover:text-accent-foreground"
 
+  const handleUserIconClick = () => {
+    if (user) {
+      // If logged in, show user menu or go to profile
+      // For now, we'll navigate to settings
+      navigate('/settings')
+    } else {
+      // If not logged in, go to auth page
+      navigate('/auth')
+    }
+  }
+
   return (
     <Sidebar className={state === "collapsed" ? "w-16" : "w-64"} collapsible="icon">
       <SidebarContent className="bg-card border-r">
         <div className="p-4">
           <div className="flex items-center gap-2">
-            <div className="w-8 h-8 bg-gradient-primary rounded-lg flex items-center justify-center">
-              <UserCheck className="w-4 h-4 text-white" />
-            </div>
+            <Button
+              variant="ghost"
+              size="sm"
+              className="w-8 h-8 p-0 bg-gradient-primary rounded-lg hover:bg-gradient-primary/80"
+              onClick={handleUserIconClick}
+              title={user ? `Signed in as ${user.email}` : "Click to sign in"}
+            >
+              {user ? (
+                <UserCheck className="w-4 h-4 text-white" />
+              ) : (
+                <User className="w-4 h-4 text-white" />
+              )}
+            </Button>
             {state !== "collapsed" && (
-              <span className="font-bold text-lg text-foreground">LoanFlow</span>
+              <div className="flex flex-col">
+                <span className="font-bold text-lg text-foreground">LoanFlow</span>
+                {user && (
+                  <span className="text-xs text-muted-foreground truncate max-w-[140px]">
+                    {user.email}
+                  </span>
+                )}
+              </div>
             )}
           </div>
         </div>

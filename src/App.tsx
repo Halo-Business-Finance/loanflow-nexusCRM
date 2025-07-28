@@ -33,27 +33,35 @@ function AuthenticatedApp() {
     );
   }
 
-  if (!user) {
-    return <AuthPage />;
-  }
-
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={<Index />} />
-        <Route path="/leads" element={<Leads />} />
-        <Route path="/leads/:id" element={<LeadDetail />} />
-        <Route path="/clients" element={<Clients />} />
-        <Route path="/pipeline" element={<Pipeline />} />
-        <Route path="/documents" element={<Documents />} />
-        <Route path="/activities" element={<Activities />} />
-        <Route path="/reports" element={<Reports />} />
-        <Route path="/settings" element={<Settings />} />
-        <Route path="/users" element={<Users />} />
-        <Route path="/security" element={<SecurityDashboard />} />
-        <Route path="/resources" element={<Resources />} />
-        {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-        <Route path="*" element={<NotFound />} />
+        {/* Public route for authentication */}
+        <Route path="/auth" element={<AuthPage />} />
+        
+        {/* Protected routes - require authentication */}
+        {user ? (
+          <>
+            <Route path="/" element={<Index />} />
+            <Route path="/leads" element={<Leads />} />
+            <Route path="/leads/:id" element={<LeadDetail />} />
+            <Route path="/clients" element={<Clients />} />
+            <Route path="/pipeline" element={<Pipeline />} />
+            <Route path="/documents" element={<Documents />} />
+            <Route path="/activities" element={<Activities />} />
+            <Route path="/reports" element={<Reports />} />
+            <Route path="/settings" element={<Settings />} />
+            <Route path="/users" element={<Users />} />
+            <Route path="/security" element={<SecurityDashboard />} />
+            <Route path="/resources" element={<Resources />} />
+            <Route path="*" element={<NotFound />} />
+          </>
+        ) : (
+          <>
+            {/* Redirect all other routes to auth when not logged in */}
+            <Route path="*" element={<AuthPage />} />
+          </>
+        )}
       </Routes>
     </BrowserRouter>
   );
