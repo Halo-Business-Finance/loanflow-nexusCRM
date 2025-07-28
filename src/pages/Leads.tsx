@@ -13,7 +13,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, Dialog
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { useToast } from "@/hooks/use-toast"
-import { Search, Plus, Filter, Phone, Mail, User, MapPin, DollarSign, ArrowRight } from "lucide-react"
+import { Search, Plus, Filter, Phone, Mail, User, MapPin, DollarSign, ArrowRight, Building } from "lucide-react"
 
 interface Lead {
   id: string
@@ -603,6 +603,12 @@ export default function Leads() {
                 </CardHeader>
                 <CardContent className="space-y-3">
                   <div className="space-y-2">
+                    {lead.business_name && (
+                      <div className="flex items-center gap-2 text-sm">
+                        <Building className="w-4 h-4 text-muted-foreground" />
+                        <span className="font-medium text-foreground">{lead.business_name}</span>
+                      </div>
+                    )}
                     <div className="flex items-center gap-2 text-sm">
                       <Mail className="w-4 h-4 text-muted-foreground" />
                       <span className="text-muted-foreground">{lead.email}</span>
@@ -731,15 +737,18 @@ export default function Leads() {
                             <div className="w-8 h-8 bg-primary/10 rounded-full flex items-center justify-center">
                               <User className="w-4 h-4 text-primary" />
                             </div>
-                            <div>
-                              <div className="font-medium flex items-center gap-2">
-                                {lead.name}
-                                {lead.is_converted_to_client && (
-                                  <Badge variant="default" className="text-xs">Client</Badge>
-                                )}
-                              </div>
-                              <div className="text-sm text-muted-foreground">{lead.address}</div>
-                            </div>
+                             <div>
+                               <div className="font-medium flex items-center gap-2">
+                                 {lead.name}
+                                 {lead.is_converted_to_client && (
+                                   <Badge variant="default" className="text-xs">Client</Badge>
+                                 )}
+                               </div>
+                               {lead.business_name && (
+                                 <div className="text-sm text-primary font-medium">{lead.business_name}</div>
+                               )}
+                               <div className="text-sm text-muted-foreground">{lead.address}</div>
+                             </div>
                           </div>
                         </td>
                         <td className="p-4">
