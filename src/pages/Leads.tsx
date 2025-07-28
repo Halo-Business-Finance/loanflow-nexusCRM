@@ -16,7 +16,8 @@ import { Textarea } from "@/components/ui/textarea"
 import { useToast } from "@/hooks/use-toast"
 import { PhoneDialer } from "@/components/PhoneDialer"
 import { EmailComposer } from "@/components/EmailComposer"
-import { Search, Plus, Filter, Phone, Mail, User, MapPin, DollarSign, ArrowRight, Building } from "lucide-react"
+import { Search, Plus, Filter, Phone, Mail, User, MapPin, DollarSign, ArrowRight, Building, Trash2 } from "lucide-react"
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog"
 
 interface Lead {
   id: string
@@ -56,7 +57,7 @@ const formatPhoneNumber = (value: string) => {
 
 export default function Leads() {
   const navigate = useNavigate()
-  const { user } = useAuth()
+  const { user, hasRole } = useAuth()
   const { toast } = useToast()
   const [leads, setLeads] = useState<Lead[]>([])
   const [loading, setLoading] = useState(true)
@@ -297,6 +298,31 @@ export default function Leads() {
       toast({
         title: "Error",
         description: "Failed to update lead",
+        variant: "destructive",
+      })
+    }
+  }
+
+  const deleteLead = async (leadId: string, leadName: string) => {
+    try {
+      const { error } = await supabase
+        .from('leads')
+        .delete()
+        .eq('id', leadId)
+
+      if (error) throw error
+
+      toast({
+        title: "Success!",
+        description: `${leadName} has been deleted successfully.`,
+      })
+
+      fetchLeads() // Refresh the leads list
+    } catch (error) {
+      console.error('Error deleting lead:', error)
+      toast({
+        title: "Error",
+        description: "Failed to delete lead",
         variant: "destructive",
       })
     }
@@ -683,6 +709,17 @@ export default function Leads() {
                         </Button>
                       }
                     />
+                    <Button 
+                      size="sm" 
+                      variant="outline" 
+                      className="flex-1"
+                      onClick={(e) => {
+                        e.stopPropagation()
+                        openEditDialog(lead)
+                      }}
+                    >
+                      Edit
+                    </Button>
                     {!lead.is_converted_to_client && (
                       <Dialog>
                         <DialogTrigger asChild>
@@ -719,6 +756,36 @@ export default function Leads() {
                           </DialogFooter>
                         </DialogContent>
                       </Dialog>
+                    )}
+                    {hasRole('admin') && (
+                      <AlertDialog>
+                        <AlertDialogTrigger asChild>
+                          <Button 
+                            size="sm" 
+                            variant="destructive" 
+                            onClick={(e) => e.stopPropagation()}
+                          >
+                            <Trash2 className="w-3 h-3" />
+                          </Button>
+                        </AlertDialogTrigger>
+                        <AlertDialogContent>
+                          <AlertDialogHeader>
+                            <AlertDialogTitle>Delete Lead</AlertDialogTitle>
+                            <AlertDialogDescription>
+                              Are you sure you want to delete <strong>{lead.name}</strong>? This action cannot be undone.
+                            </AlertDialogDescription>
+                          </AlertDialogHeader>
+                          <AlertDialogFooter>
+                            <AlertDialogCancel>Cancel</AlertDialogCancel>
+                            <AlertDialogAction
+                              onClick={() => deleteLead(lead.id, lead.name)}
+                              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                            >
+                              Delete
+                            </AlertDialogAction>
+                          </AlertDialogFooter>
+                        </AlertDialogContent>
+                      </AlertDialog>
                     )}
                   </div>
                 </CardContent>
@@ -804,33 +871,59 @@ export default function Leads() {
                                    <Mail className="w-3 h-3" />
                                  </Button>
                                }
-                             />
-                            {!lead.is_converted_to_client && (
-                              <Dialog>
-                                <DialogTrigger asChild>
-                                  <Button size="sm" variant="default">
-                                    <ArrowRight className="w-3 h-3" />
-                                  </Button>
-                                </DialogTrigger>
-                                <DialogContent>
-                                  <DialogHeader>
-                                    <DialogTitle>Convert Lead to Client</DialogTitle>
-                                  </DialogHeader>
-                                  <div className="space-y-4">
-                                    <p>Are you sure you want to convert <strong>{lead.name}</strong> to a client?</p>
-                                    <p className="text-sm text-white">
-                                      This will create a new client record and add them to your pipeline.
-                                    </p>
-                                  </div>
-                                  <DialogFooter>
-                                    <Button variant="outline">Cancel</Button>
-                                    <Button onClick={() => convertToClient(lead)}>
-                                      Convert to Client
-                                    </Button>
-                                  </DialogFooter>
-                                </DialogContent>
-                              </Dialog>
-                            )}
+                              />
+                             {!lead.is_converted_to_client && (
+                               <Dialog>
+                                 <DialogTrigger asChild>
+                                   <Button size="sm" variant="default">
+                                     <ArrowRight className="w-3 h-3" />
+                                   </Button>
+                                 </DialogTrigger>
+                                 <DialogContent>
+                                   <DialogHeader>
+                                     <DialogTitle>Convert Lead to Client</DialogTitle>
+                                   </DialogHeader>
+                                   <div className="space-y-4">
+                                     <p>Are you sure you want to convert <strong>{lead.name}</strong> to a client?</p>
+                                     <p className="text-sm text-white">
+                                       This will create a new client record and add them to your pipeline.
+                                     </p>
+                                   </div>
+                                   <DialogFooter>
+                                     <Button variant="outline">Cancel</Button>
+                                     <Button onClick={() => convertToClient(lead)}>
+                                       Convert to Client
+                                     </Button>
+                                   </DialogFooter>
+                                 </DialogContent>
+                               </Dialog>
+                             )}
+                             {hasRole('admin') && (
+                               <AlertDialog>
+                                 <AlertDialogTrigger asChild>
+                                   <Button size="sm" variant="destructive">
+                                     <Trash2 className="w-3 h-3" />
+                                   </Button>
+                                 </AlertDialogTrigger>
+                                 <AlertDialogContent>
+                                   <AlertDialogHeader>
+                                     <AlertDialogTitle>Delete Lead</AlertDialogTitle>
+                                     <AlertDialogDescription>
+                                       Are you sure you want to delete <strong>{lead.name}</strong>? This action cannot be undone.
+                                     </AlertDialogDescription>
+                                   </AlertDialogHeader>
+                                   <AlertDialogFooter>
+                                     <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                     <AlertDialogAction
+                                       onClick={() => deleteLead(lead.id, lead.name)}
+                                       className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                                     >
+                                       Delete
+                                     </AlertDialogAction>
+                                   </AlertDialogFooter>
+                                 </AlertDialogContent>
+                               </AlertDialog>
+                             )}
                           </div>
                         </td>
                       </tr>

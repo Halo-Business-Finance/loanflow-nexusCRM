@@ -7,7 +7,9 @@ import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { Search, Phone, Mail, MapPin, Calendar, DollarSign, Filter, ChevronDown, ChevronUp } from "lucide-react"
+import { Search, Phone, Mail, MapPin, Calendar, DollarSign, Filter, ChevronDown, ChevronUp, Trash2 } from "lucide-react"
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog"
+import { useToast } from "@/hooks/use-toast"
 import { LoanManager } from "@/components/LoanManager"
 import { PhoneDialer } from "@/components/PhoneDialer"
 import { EmailComposer } from "@/components/EmailComposer"
@@ -41,7 +43,8 @@ interface Loan {
 }
 
 export default function Clients() {
-  const { user } = useAuth()
+  const { user, hasRole } = useAuth()
+  const { toast } = useToast()
   const [clients, setClients] = useState<Client[]>([])
   const [clientLoans, setClientLoans] = useState<{ [key: string]: Loan[] }>({})
   const [loading, setLoading] = useState(true)
@@ -101,6 +104,48 @@ export default function Clients() {
 
   const handleLoansUpdate = () => {
     fetchClients() // This will refetch both clients and loans
+  }
+
+  const deleteClient = async (clientId: string, clientName: string) => {
+    try {
+      // First delete associated loans
+      const { error: loansError } = await supabase
+        .from('loans')
+        .delete()
+        .eq('client_id', clientId)
+
+      if (loansError) throw loansError
+
+      // Delete pipeline entries
+      const { error: pipelineError } = await supabase
+        .from('pipeline_entries')
+        .delete()
+        .eq('client_id', clientId)
+
+      if (pipelineError) throw pipelineError
+
+      // Finally delete the client
+      const { error: clientError } = await supabase
+        .from('clients')
+        .delete()
+        .eq('id', clientId)
+
+      if (clientError) throw clientError
+
+      toast({
+        title: "Success!",
+        description: `${clientName} and all associated data have been deleted successfully.`,
+      })
+
+      fetchClients() // Refresh the clients list
+    } catch (error) {
+      console.error('Error deleting client:', error)
+      toast({
+        title: "Error",
+        description: "Failed to delete client",
+        variant: "destructive",
+      })
+    }
   }
 
   const filteredClients = clients.filter(client =>
@@ -321,6 +366,32 @@ export default function Clients() {
                           </>
                         )}
                       </Button>
+                      {hasRole('admin') && (
+                        <AlertDialog>
+                          <AlertDialogTrigger asChild>
+                            <Button size="sm" variant="destructive">
+                              <Trash2 className="h-4 w-4" />
+                            </Button>
+                          </AlertDialogTrigger>
+                          <AlertDialogContent>
+                            <AlertDialogHeader>
+                              <AlertDialogTitle>Delete Client</AlertDialogTitle>
+                              <AlertDialogDescription>
+                                Are you sure you want to delete <strong>{client.name}</strong>? This will also delete all associated loans and pipeline entries. This action cannot be undone.
+                              </AlertDialogDescription>
+                            </AlertDialogHeader>
+                            <AlertDialogFooter>
+                              <AlertDialogCancel>Cancel</AlertDialogCancel>
+                              <AlertDialogAction
+                                onClick={() => deleteClient(client.id, client.name)}
+                                className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                              >
+                                Delete
+                              </AlertDialogAction>
+                            </AlertDialogFooter>
+                          </AlertDialogContent>
+                        </AlertDialog>
+                      )}
                     </div>
                   </div>
 
