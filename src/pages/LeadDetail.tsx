@@ -124,13 +124,7 @@ export default function LeadDetail() {
 
       if (error) throw error
       
-      // Map location to address for consistency
-      const mappedLead = {
-        ...data,
-        address: data.location
-      }
-      
-      setLead(mappedLead)
+      setLead(data)
       setCallNotes(data.call_notes || "")
       setGeneralNotes(data.notes || "")
       

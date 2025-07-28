@@ -23,7 +23,7 @@ interface Lead {
   name: string
   email: string
   phone?: string
-  address?: string
+  location?: string
   business_name?: string
   loan_amount?: number
   loan_type?: string
@@ -71,7 +71,7 @@ export default function Leads() {
     name: "",
     email: "",
     phone: "",
-    address: "",
+    location: "",
     business_name: "",
     loan_amount: "",
     loan_type: "SBA 7(a) Loan",
@@ -86,7 +86,7 @@ export default function Leads() {
     name: "",
     email: "",
     phone: "",
-    address: "",
+    location: "",
     business_name: "",
     loan_amount: "",
     loan_type: "SBA 7(a) Loan",
@@ -113,13 +113,7 @@ export default function Leads() {
 
       if (error) throw error
       
-      // Map location field to address for consistency with the interface
-      const mappedData = data?.map(lead => ({
-        ...lead,
-        address: lead.location
-      })) || []
-      
-      setLeads(mappedData)
+      setLeads(data || [])
     } catch (error) {
       console.error('Error fetching leads:', error)
       toast({
@@ -143,7 +137,7 @@ export default function Leads() {
           name: lead.name,
           email: lead.email,
           phone: lead.phone,
-          address: lead.address,
+          location: lead.location,
           status: 'Active',
           total_loans: 0,
           total_loan_value: 0
@@ -204,7 +198,7 @@ export default function Leads() {
           name: newLead.name,
           email: newLead.email,
           phone: newLead.phone || null,
-          location: newLead.address || null, // Map address to location
+          location: newLead.location || null,
           business_name: newLead.business_name || null,
           loan_amount: newLead.loan_amount ? parseFloat(newLead.loan_amount) : null,
           loan_type: newLead.loan_type || null,
@@ -227,7 +221,7 @@ export default function Leads() {
         name: "",
         email: "",
         phone: "",
-        address: "",
+        location: "",
         business_name: "",
         loan_amount: "",
         loan_type: "SBA 7(a) Loan",
@@ -255,7 +249,7 @@ export default function Leads() {
       name: lead.name,
       email: lead.email,
       phone: formatPhoneNumber(lead.phone || ""),
-      address: lead.address || "",
+      location: lead.location || "",
       business_name: lead.business_name || "",
       loan_amount: lead.loan_amount?.toString() || "",
       loan_type: lead.loan_type || "SBA 7(a) Loan",
@@ -278,7 +272,7 @@ export default function Leads() {
           name: editLead.name,
           email: editLead.email,
           phone: editLead.phone || null,
-          location: editLead.address || null,
+          location: editLead.location || null,
           business_name: editLead.business_name || null,
           loan_amount: editLead.loan_amount ? parseFloat(editLead.loan_amount) : null,
           loan_type: editLead.loan_type || null,
@@ -417,11 +411,11 @@ export default function Leads() {
                   />
                 </div>
                  <div>
-                   <Label htmlFor="address">Full Address</Label>
+                   <Label htmlFor="location">Full Address</Label>
                    <Input
-                     id="address"
-                     value={newLead.address}
-                     onChange={(e) => setNewLead(prev => ({ ...prev, address: e.target.value }))}
+                     id="location"
+                     value={newLead.location}
+                     onChange={(e) => setNewLead(prev => ({ ...prev, location: e.target.value }))}
                      placeholder="123 Main St, City, State, ZIP"
                    />
                  </div>
@@ -631,10 +625,10 @@ export default function Leads() {
                          }
                        />
                      )}
-                      {lead.address && (
+                      {lead.location && (
                         <div className="flex items-center gap-2 text-sm">
                           <MapPin className="w-4 h-4 text-white" />
-                          <span style={{ color: 'white' }}>{lead.address}</span>
+                          <span style={{ color: 'white' }}>{lead.location}</span>
                         </div>
                       )}
                     {lead.loan_amount && (
@@ -767,7 +761,7 @@ export default function Leads() {
                                {lead.business_name && (
                                  <div className="text-sm text-white font-medium">{lead.business_name}</div>
                                )}
-                               <div className="text-sm text-white">{lead.address}</div>
+                               <div className="text-sm text-white">{lead.location}</div>
                              </div>
                           </div>
                         </td>
@@ -902,12 +896,12 @@ export default function Leads() {
                 />
               </div>
                <div>
-                 <Label htmlFor="edit-address">Full Address</Label>
-                 <Input
-                   id="edit-address"
-                   value={editLead.address}
-                   onChange={(e) => setEditLead(prev => ({ ...prev, address: e.target.value }))}
-                   placeholder="123 Main St, City, State, ZIP"
+                  <Label htmlFor="edit-location">Full Address</Label>
+                  <Input
+                    id="edit-location"
+                    value={editLead.location}
+                    onChange={(e) => setEditLead(prev => ({ ...prev, location: e.target.value }))}
+                    placeholder="123 Main St, City, State, ZIP"
                  />
                </div>
             </div>
