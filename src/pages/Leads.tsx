@@ -8,6 +8,7 @@ import { Input } from "@/components/ui/input"
 import { Badge } from "@/components/ui/badge"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { AddressAutocomplete } from "@/components/ui/address-autocomplete"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter } from "@/components/ui/dialog"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
@@ -377,15 +378,19 @@ export default function Leads() {
                     placeholder="(555) 123-4567"
                   />
                 </div>
-                <div>
-                  <Label htmlFor="address">Full Address</Label>
-                  <Input
-                    id="address"
-                    value={newLead.address}
-                    onChange={(e) => setNewLead(prev => ({ ...prev, address: e.target.value }))}
-                    placeholder="123 Main St, City, State, ZIP"
-                  />
-                </div>
+                 <div>
+                   <Label htmlFor="address">Full Address</Label>
+                   <AddressAutocomplete
+                     id="address"
+                     value={newLead.address}
+                     onChange={(value) => setNewLead(prev => ({ ...prev, address: value }))}
+                     placeholder="123 Main St, City, State, ZIP"
+                     onPlaceSelected={(place) => {
+                       console.log('Selected place:', place)
+                       // You can extract additional data from the place object if needed
+                     }}
+                   />
+                 </div>
               </div>
 
               <div className="grid grid-cols-2 gap-4">
@@ -800,15 +805,18 @@ export default function Leads() {
                   placeholder="(555) 123-4567"
                 />
               </div>
-              <div>
-                <Label htmlFor="edit-address">Full Address</Label>
-                <Input
-                  id="edit-address"
-                  value={editLead.address}
-                  onChange={(e) => setEditLead(prev => ({ ...prev, address: e.target.value }))}
-                  placeholder="123 Main St, City, State, ZIP"
-                />
-              </div>
+               <div>
+                 <Label htmlFor="edit-address">Full Address</Label>
+                 <AddressAutocomplete
+                   id="edit-address"
+                   value={editLead.address}
+                   onChange={(value) => setEditLead(prev => ({ ...prev, address: value }))}
+                   placeholder="123 Main St, City, State, ZIP"
+                   onPlaceSelected={(place) => {
+                     console.log('Selected place:', place)
+                   }}
+                 />
+               </div>
             </div>
 
             <div className="grid grid-cols-2 gap-4">
