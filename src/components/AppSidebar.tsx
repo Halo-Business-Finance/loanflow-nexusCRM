@@ -61,33 +61,6 @@ export function AppSidebar() {
   return (
     <Sidebar className={state === "collapsed" ? "w-16" : "w-64"} collapsible="icon">
       <SidebarContent className="bg-card border-r">
-        <div className="p-4">
-          <div className="flex items-center gap-2">
-            <Button
-              variant="ghost"
-              size="sm"
-              className="w-8 h-8 p-0 bg-gradient-primary rounded-lg hover:bg-gradient-primary/80"
-              onClick={handleUserIconClick}
-              title={user ? `Signed in as ${user.email}` : "Click to sign in"}
-            >
-              {user ? (
-                <UserCheck className="w-4 h-4 text-white" />
-              ) : (
-                <User className="w-4 h-4 text-white" />
-              )}
-            </Button>
-            {state !== "collapsed" && (
-              <div className="flex flex-col">
-                <span className="font-bold text-lg text-foreground">LoanFlow</span>
-                {user && (
-                  <span className="text-xs text-muted-foreground truncate max-w-[140px]">
-                    {user.email}
-                  </span>
-                )}
-              </div>
-            )}
-          </div>
-        </div>
 
         <SidebarGroup>
           <SidebarGroupLabel>Navigation</SidebarGroupLabel>
@@ -172,14 +145,40 @@ export function AppSidebar() {
           </SidebarGroupContent>
         </SidebarGroup>
 
-        {/* User Info and Logout */}
-        <div className="mt-auto p-4 border-t">
-          {state !== "collapsed" && (
+        {/* LoanFlow Branding and User Info */}
+        <div className="mt-auto p-4 border-t space-y-4">
+          <div className="flex items-center gap-2">
+            <Button
+              variant="ghost"
+              size="sm"
+              className="w-8 h-8 p-0 bg-gradient-primary rounded-lg hover:bg-gradient-primary/80"
+              onClick={handleUserIconClick}
+              title={user ? `Signed in as ${user.email}` : "Click to sign in"}
+            >
+              {user ? (
+                <UserCheck className="w-4 h-4 text-white" />
+              ) : (
+                <User className="w-4 h-4 text-white" />
+              )}
+            </Button>
+            {state !== "collapsed" && (
+              <div className="flex flex-col">
+                <span className="font-bold text-lg text-foreground">LoanFlow</span>
+                {user && (
+                  <span className="text-xs text-muted-foreground truncate max-w-[140px]">
+                    {user.email}
+                  </span>
+                )}
+              </div>
+            )}
+          </div>
+          
+          {state !== "collapsed" && user && (
             <div className="mb-3">
-              <p className="text-sm font-medium">{user?.email}</p>
               <p className="text-xs text-muted-foreground capitalize">{userRole} User</p>
             </div>
           )}
+          
           <Button 
             variant="outline" 
             size="sm" 
