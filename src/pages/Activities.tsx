@@ -158,7 +158,7 @@ export default function Activities() {
               <CardTitle className="text-sm font-medium">Calls Made</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold text-accent">{activityStats.calls}</div>
+              <div className="text-2xl font-bold text-white">{activityStats.calls}</div>
             </CardContent>
           </Card>
           <Card className="shadow-soft">
@@ -166,7 +166,7 @@ export default function Activities() {
               <CardTitle className="text-sm font-medium">Emails Sent</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold text-primary">{activityStats.emails}</div>
+              <div className="text-2xl font-bold text-white">{activityStats.emails}</div>
             </CardContent>
           </Card>
         </div>
