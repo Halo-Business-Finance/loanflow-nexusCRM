@@ -108,7 +108,14 @@ export default function Leads() {
         .order('created_at', { ascending: false })
 
       if (error) throw error
-      setLeads(data || [])
+      
+      // Map location field to address for consistency with the interface
+      const mappedData = data?.map(lead => ({
+        ...lead,
+        address: lead.location
+      })) || []
+      
+      setLeads(mappedData)
     } catch (error) {
       console.error('Error fetching leads:', error)
       toast({
@@ -193,7 +200,7 @@ export default function Leads() {
           name: newLead.name,
           email: newLead.email,
           phone: newLead.phone || null,
-          address: newLead.address || null,
+          location: newLead.address || null, // Map address to location
           business_name: newLead.business_name || null,
           loan_amount: newLead.loan_amount ? parseFloat(newLead.loan_amount) : null,
           loan_type: newLead.loan_type || null,
