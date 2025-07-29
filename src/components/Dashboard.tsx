@@ -326,6 +326,7 @@ export default function Dashboard() {
   }
 
   const formatDateTime = (date: Date) => {
+    console.log('formatDateTime called with:', date)
     const options: Intl.DateTimeFormatOptions = {
       weekday: 'long',
       year: 'numeric',
@@ -335,7 +336,9 @@ export default function Dashboard() {
       minute: '2-digit',
       second: '2-digit'
     }
-    return date.toLocaleDateString('en-US', options)
+    const formattedTime = date.toLocaleDateString('en-US', options)
+    console.log('Formatted time result:', formattedTime)
+    return formattedTime
   }
 
   const handleMetricClick = (metric: typeof metrics[0]) => {
@@ -431,7 +434,7 @@ export default function Dashboard() {
         <div>
           <h1 className="text-3xl font-bold text-foreground">Dashboard</h1>
           <p className="text-muted-foreground">Welcome back! Here's your performance overview.</p>
-          <p className="text-sm text-muted-foreground mt-1">{formatDateTime(currentDateTime)}</p>
+          <p className="text-sm text-foreground mt-1 border border-red-500 bg-yellow-200 p-2">{formatDateTime(currentDateTime)}</p>
         </div>
         <div className="flex gap-2">
           <Button 
