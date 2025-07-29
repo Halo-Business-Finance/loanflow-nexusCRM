@@ -6,7 +6,7 @@ import { useNavigate } from "react-router-dom"
 import { Button } from "@/components/ui/button"
 import { NotificationBell } from "@/components/NotificationBell"
 import { GlobalSearch } from "@/components/GlobalSearch"
-import { QuickActions } from "@/components/QuickActions"
+import { QuickActionsImproved } from "@/components/QuickActionsImproved"
 
 interface LayoutProps {
   children: ReactNode
@@ -86,7 +86,7 @@ export default function Layout({ children }: LayoutProps) {
         </div>
         
         {/* Quick Actions */}
-        <QuickActions />
+        <QuickActionsImproved />
       </div>
     </SidebarProvider>
   )

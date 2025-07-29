@@ -16,6 +16,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { Switch } from "@/components/ui/switch"
 import { Separator } from "@/components/ui/separator"
 import { useToast } from "@/hooks/use-toast"
+import { ActionReminder } from "@/components/ActionReminder"
 import { PhoneDialer } from "@/components/PhoneDialer"
 import { EmailComposer } from "@/components/EmailComposer"
 import { formatNumber, formatCurrency } from "@/lib/utils"
@@ -124,6 +125,7 @@ export default function LeadDetail() {
   const [notificationTitle, setNotificationTitle] = useState("")
   const [notificationMessage, setNotificationMessage] = useState("")
   const [followUpDate, setFollowUpDate] = useState<Date | undefined>()
+  const [showReminderDialog, setShowReminderDialog] = useState(false)
   const [editableFields, setEditableFields] = useState({
     name: "",
     email: "",
@@ -1659,63 +1661,16 @@ export default function LeadDetail() {
 
             {/* Action Reminders */}
             <div className="space-y-4">
-              <Label style={{ color: 'white' }}>Create Action Reminder</Label>
-              
-              <div className="space-y-3">
-                <Popover>
-                  <PopoverTrigger asChild>
-                    <Button
-                      variant="outline"
-                      className="w-full justify-between"
-                    >
-                      {followUpDate ? format(followUpDate, 'PPP') : 'Select follow-up date'}
-                      <Calendar className="w-4 h-4" />
-                    </Button>
-                  </PopoverTrigger>
-                  <PopoverContent className="w-auto p-0" align="start">
-                    <CalendarComponent
-                      mode="single"
-                      selected={followUpDate}
-                      onSelect={setFollowUpDate}
-                      disabled={(date) => date < new Date()}
-                      initialFocus
-                      className="p-3 pointer-events-auto"
-                    />
-                  </PopoverContent>
-                </Popover>
-
-                <div className="flex gap-2">
-                  <Button 
-                    onClick={createCallReminder} 
-                    disabled={!followUpDate}
-                    variant="outline"
-                    size="sm"
-                    className="flex-1"
-                  >
-                    <Phone className="w-4 h-4 mr-2" />
-                    Call Reminder
-                  </Button>
-                  <Button 
-                    onClick={createEmailReminder} 
-                    disabled={!followUpDate}
-                    variant="outline"
-                    size="sm"
-                    className="flex-1"
-                  >
-                    <Mail className="w-4 h-4 mr-2" />
-                    Email Reminder
-                  </Button>
-                  <Button 
-                    onClick={createFollowUpReminder} 
-                    disabled={!followUpDate}
-                    variant="outline"
-                    size="sm"
-                    className="flex-1"
-                  >
-                    <Bell className="w-4 h-4 mr-2" />
-                    Follow-up
-                  </Button>
-                </div>
+              <div className="flex items-center justify-between">
+                <Label style={{ color: 'white' }} className="text-base font-semibold">Action Reminders</Label>
+                <Button
+                  onClick={() => setShowReminderDialog(true)}
+                  size="sm"
+                  className="bg-gradient-to-r from-primary to-primary/80"
+                >
+                  <Bell className="w-4 h-4 mr-2" />
+                  Create Reminder
+                </Button>
               </div>
             </div>
           </CardContent>
@@ -1761,6 +1716,17 @@ export default function LeadDetail() {
           </CardContent>
         </Card>
       </div>
+
+      {/* Action Reminder Dialog */}
+      {lead && (
+        <ActionReminder
+          entityId={lead.id}
+          entityName={lead.name}
+          entityType="lead"
+          isOpen={showReminderDialog}
+          onClose={() => setShowReminderDialog(false)}
+        />
+      )}
     </Layout>
   )
 }

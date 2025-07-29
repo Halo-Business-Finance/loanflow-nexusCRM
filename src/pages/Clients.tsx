@@ -13,6 +13,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Search, Phone, Mail, MapPin, Calendar, DollarSign, Filter, ChevronDown, ChevronUp, Trash2, Bell, MessageSquare, ShoppingCart } from "lucide-react"
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog"
 import { useToast } from "@/hooks/use-toast"
+import { ActionReminder } from "@/components/ActionReminder"
 import { LoanManager } from "@/components/LoanManager"
 import LoanRequestManager from "@/components/LoanRequestManager"
 import { PhoneDialer } from "@/components/PhoneDialer"
@@ -82,6 +83,7 @@ export default function Clients() {
   const [notificationTitle, setNotificationTitle] = useState("")
   const [notificationMessage, setNotificationMessage] = useState("")
   const [followUpDate, setFollowUpDate] = useState<Date | undefined>()
+  const [selectedClientForReminder, setSelectedClientForReminder] = useState<Client | null>(null)
 
   useEffect(() => {
     if (user) {
@@ -538,9 +540,10 @@ export default function Clients() {
                       <Button 
                         size="sm" 
                         variant="outline"
-                        onClick={() => setShowNotificationForm(showNotificationForm === client.id ? null : client.id)}
+                        onClick={() => setSelectedClientForReminder(client)}
                       >
-                        <Bell className="h-4 w-4" />
+                        <Bell className="h-4 w-4 mr-1" />
+                        Reminder
                       </Button>
                       {hasRole('admin') && (
                         <AlertDialog>
@@ -591,81 +594,6 @@ export default function Clients() {
                     </div>
                   )}
 
-                  {/* Action Reminders */}
-                  {showNotificationForm === client.id && (
-                    <div className="mt-6 pt-6 border-t space-y-4">
-                      <div className="flex items-center gap-2">
-                        <MessageSquare className="h-5 w-5" />
-                        <h3 className="font-semibold">Create Action Reminder for {client.name}</h3>
-                      </div>
-                      
-                      <div className="space-y-3">
-                        <Popover>
-                          <PopoverTrigger asChild>
-                            <Button
-                              variant="outline"
-                              className="w-full justify-between"
-                            >
-                              {followUpDate ? format(followUpDate, 'PPP') : 'Select follow-up date'}
-                              <Calendar className="w-4 h-4" />
-                            </Button>
-                          </PopoverTrigger>
-                          <PopoverContent className="w-auto p-0" align="start">
-                            <CalendarComponent
-                              mode="single"
-                              selected={followUpDate}
-                              onSelect={setFollowUpDate}
-                              disabled={(date) => date < new Date()}
-                              initialFocus
-                              className="p-3 pointer-events-auto"
-                            />
-                          </PopoverContent>
-                        </Popover>
-
-                        <div className="flex gap-2">
-                          <Button 
-                            onClick={() => createCallReminder(client.id, client.name)} 
-                            disabled={!followUpDate}
-                            size="sm"
-                            variant="outline"
-                            className="flex-1"
-                          >
-                            <Phone className="w-4 h-4 mr-2" />
-                            Call Reminder
-                          </Button>
-                          <Button 
-                            onClick={() => createEmailReminder(client.id, client.name)} 
-                            disabled={!followUpDate}
-                            size="sm"
-                            variant="outline"
-                            className="flex-1"
-                          >
-                            <Mail className="w-4 h-4 mr-2" />
-                            Email Reminder
-                          </Button>
-                          <Button 
-                            onClick={() => createFollowUpReminder(client.id, client.name)} 
-                            disabled={!followUpDate}
-                            size="sm"
-                            variant="outline"
-                            className="flex-1"
-                          >
-                            <Bell className="w-4 h-4 mr-2" />
-                            Follow-up
-                          </Button>
-                        </div>
-                        
-                        <Button 
-                          variant="outline" 
-                          onClick={() => setShowNotificationForm(null)}
-                          size="sm"
-                          className="w-full"
-                        >
-                          Cancel
-                        </Button>
-                      </div>
-                    </div>
-                  )}
                 </CardContent>
               </Card>
             )
@@ -682,6 +610,17 @@ export default function Clients() {
           )}
         </div>
       </div>
+
+      {/* Action Reminder Dialog */}
+      {selectedClientForReminder && (
+        <ActionReminder
+          entityId={selectedClientForReminder.id}
+          entityName={selectedClientForReminder.name}
+          entityType="client"
+          isOpen={!!selectedClientForReminder}
+          onClose={() => setSelectedClientForReminder(null)}
+        />
+      )}
     </Layout>
   )
 }
