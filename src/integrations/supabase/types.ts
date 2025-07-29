@@ -1488,6 +1488,84 @@ export type Database = {
         }
         Relationships: []
       }
+      loan_requests: {
+        Row: {
+          approved_at: string | null
+          client_id: string | null
+          created_at: string
+          documents: Json | null
+          funded_at: string | null
+          id: string
+          interest_rate: number | null
+          lead_id: string | null
+          loan_amount: number
+          loan_term_months: number | null
+          loan_type: string
+          notes: string | null
+          priority: string
+          purpose: string | null
+          status: string
+          submitted_at: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          approved_at?: string | null
+          client_id?: string | null
+          created_at?: string
+          documents?: Json | null
+          funded_at?: string | null
+          id?: string
+          interest_rate?: number | null
+          lead_id?: string | null
+          loan_amount: number
+          loan_term_months?: number | null
+          loan_type?: string
+          notes?: string | null
+          priority?: string
+          purpose?: string | null
+          status?: string
+          submitted_at?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          approved_at?: string | null
+          client_id?: string | null
+          created_at?: string
+          documents?: Json | null
+          funded_at?: string | null
+          id?: string
+          interest_rate?: number | null
+          lead_id?: string | null
+          loan_amount?: number
+          loan_term_months?: number | null
+          loan_type?: string
+          notes?: string | null
+          priority?: string
+          purpose?: string | null
+          status?: string
+          submitted_at?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "loan_requests_client_id_fkey"
+            columns: ["client_id"]
+            isOneToOne: false
+            referencedRelation: "clients"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "loan_requests_lead_id_fkey"
+            columns: ["lead_id"]
+            isOneToOne: false
+            referencedRelation: "leads"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       loans: {
         Row: {
           client_id: string | null
