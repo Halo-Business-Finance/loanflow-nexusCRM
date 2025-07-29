@@ -52,7 +52,9 @@ export default function Settings() {
     last_name: '',
     email: '',
     phone_number: '',
-    job_title: ''
+    job_title: '',
+    language: 'en-US',
+    timezone: 'America/New_York'
   })
   const [notifications, setNotifications] = useState({
     email_notifications: true,
@@ -90,7 +92,9 @@ export default function Settings() {
           last_name: data.last_name || '',
           email: data.email || user.email || '',
           phone_number: data.phone_number || '',
-          job_title: data.job_title || ''
+          job_title: data.job_title || '',
+          language: data.language || 'en-US',
+          timezone: data.timezone || 'America/New_York'
         })
       } else {
         // Create profile if it doesn't exist
@@ -99,7 +103,9 @@ export default function Settings() {
           last_name: '',
           email: user.email || '',
           phone_number: '',
-          job_title: ''
+          job_title: '',
+          language: 'en-US',
+          timezone: 'America/New_York'
         })
       }
     } catch (error) {
