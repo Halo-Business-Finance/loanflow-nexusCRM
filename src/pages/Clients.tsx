@@ -14,6 +14,7 @@ import { Search, Phone, Mail, MapPin, Calendar, DollarSign, Filter, ChevronDown,
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog"
 import { useToast } from "@/hooks/use-toast"
 import { LoanManager } from "@/components/LoanManager"
+import LoanRequestManager from "@/components/LoanRequestManager"
 import { PhoneDialer } from "@/components/PhoneDialer"
 import { EmailComposer } from "@/components/EmailComposer"
 import { formatNumber, formatCurrency } from "@/lib/utils"
@@ -67,6 +68,8 @@ export default function Clients() {
   const { createNotification } = useNotifications()
   const [clients, setClients] = useState<Client[]>([])
   const [clientLoans, setClientLoans] = useState<{ [key: string]: Loan[] }>({})
+  const [loans, setLoans] = useState<Loan[]>([])
+  const [loanRequests, setLoanRequests] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
   const [searchTerm, setSearchTerm] = useState("")
   const [expandedClient, setExpandedClient] = useState<string | null>(null)
@@ -566,12 +569,20 @@ export default function Clients() {
                   {/* Expanded Loan Section */}
                   {isExpanded && (
                     <div className="mt-6 pt-6 border-t">
-                      <LoanManager
+                      <LoanRequestManager
                         clientId={client.id}
-                        clientName={client.name}
-                        loans={loans}
-                        onLoansUpdate={handleLoansUpdate}
+                        loanRequests={loanRequests.filter(req => req.client_id === client.id)}
+                        onLoanRequestsUpdate={setLoanRequests}
                       />
+                      
+                      <div className="mt-6">
+                        <LoanManager
+                          clientId={client.id}
+                          clientName={client.name}
+                          loans={loans}
+                          onLoansUpdate={handleLoansUpdate}
+                        />
+                      </div>
                     </div>
                   )}
 
