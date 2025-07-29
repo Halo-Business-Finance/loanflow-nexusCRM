@@ -258,15 +258,24 @@ export default function Dashboard() {
   }
 
   const calculateMetrics = (leadsData: Lead[], clientsData: any[], pipelineData: PipelineEntry[]) => {
-    // Calculate total pipeline value (only from non-converted leads + pipeline entries)
+    // Calculate total pipeline value avoiding double-counting
+    // 1. Count non-converted leads that don't have pipeline entries
     const nonConvertedLeadsValue = leadsData.reduce((sum, lead) => {
-      return sum + (lead.is_converted_to_client ? 0 : (lead.loan_amount || 0))
+      if (lead.is_converted_to_client) return sum // Skip converted leads
+      
+      // Check if this lead has a corresponding pipeline entry
+      const hasPipelineEntry = pipelineData.some(entry => entry.lead_id === lead.id)
+      if (hasPipelineEntry) return sum // Skip if pipeline entry exists
+      
+      return sum + (lead.loan_amount || 0)
     }, 0)
     
+    // 2. Count all pipeline entries (these represent active deals in the pipeline)
     const pipelineValue = pipelineData.reduce((sum, entry) => {
       return sum + (entry.amount || 0)
     }, 0)
     
+    // Total is the sum without double-counting
     const totalPipelineValue = nonConvertedLeadsValue + pipelineValue
 
     // Calculate applications this month
