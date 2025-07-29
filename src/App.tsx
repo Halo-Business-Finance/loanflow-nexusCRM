@@ -23,6 +23,8 @@ import Settings from "./pages/Settings";
 import Users from "./pages/Users";
 import Resources from "./pages/Resources";
 import Enterprise from "./pages/Enterprise";
+import Integrations from "./pages/Integrations";
+import AITools from "./pages/AITools";
 import NotFound from "./pages/NotFound";
 import { useKeyboardShortcuts } from "@/hooks/useKeyboardShortcuts";
 
@@ -68,6 +70,8 @@ function AuthenticatedApp() {
             <Route path="/security" element={<SecurityDashboard />} errorElement={<RouteErrorBoundary />} />
             <Route path="/security-center" element={<SecurityManager />} errorElement={<RouteErrorBoundary />} />
             <Route path="/enterprise" element={<Enterprise />} errorElement={<RouteErrorBoundary />} />
+            <Route path="/integrations" element={<Integrations />} errorElement={<RouteErrorBoundary />} />
+            <Route path="/ai-tools" element={<AITools />} errorElement={<RouteErrorBoundary />} />
             <Route path="/resources" element={<Resources />} errorElement={<RouteErrorBoundary />} />
             <Route path="*" element={<NotFound />} errorElement={<RouteErrorBoundary />} />
           </>

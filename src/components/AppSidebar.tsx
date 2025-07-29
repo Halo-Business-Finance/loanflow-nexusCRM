@@ -1,4 +1,4 @@
-import { BarChart3, Users, UserCheck, FileText, Settings, Home, Target, Calendar, Phone, Mail, Shield, LogOut, BookOpen, User, Lock, Building2 } from "lucide-react"
+import { BarChart3, Users, UserCheck, FileText, Settings, Home, Target, Calendar, Phone, Mail, Shield, LogOut, BookOpen, User, Lock, Building2, Zap } from "lucide-react"
 import { NavLink, useLocation, useNavigate } from "react-router-dom"
 import { Button } from "@/components/ui/button"
 import { RingCentralSetup } from "@/components/RingCentralSetup"
@@ -27,6 +27,8 @@ const navigationItems = [
   { title: "Documents", url: "/documents", icon: FileText },
   { title: "Activities", url: "/activities", icon: Calendar },
   { title: "Reports", url: "/reports", icon: BarChart3 },
+  { title: "Integrations", url: "/integrations", icon: Zap },
+  { title: "AI Tools", url: "/ai-tools", icon: Target },
   { title: "Resources", url: "/resources", icon: BookOpen },
 ]
 
