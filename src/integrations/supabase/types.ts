@@ -349,10 +349,14 @@ export type Database = {
           existing_loan_amount: number | null
           id: string
           income: number | null
+          interest_rate: number | null
           join_date: string | null
           last_activity: string | null
           lead_id: string | null
+          loan_amount: number | null
+          loan_type: string | null
           location: string | null
+          maturity_date: string | null
           monthly_processing_volume: number | null
           name: string
           net_operating_income: number | null
@@ -363,6 +367,7 @@ export type Database = {
           priority: string | null
           processor_name: string | null
           property_payment_amount: number | null
+          stage: string | null
           status: string
           total_loan_value: number | null
           total_loans: number | null
@@ -384,10 +389,14 @@ export type Database = {
           existing_loan_amount?: number | null
           id?: string
           income?: number | null
+          interest_rate?: number | null
           join_date?: string | null
           last_activity?: string | null
           lead_id?: string | null
+          loan_amount?: number | null
+          loan_type?: string | null
           location?: string | null
+          maturity_date?: string | null
           monthly_processing_volume?: number | null
           name: string
           net_operating_income?: number | null
@@ -398,6 +407,7 @@ export type Database = {
           priority?: string | null
           processor_name?: string | null
           property_payment_amount?: number | null
+          stage?: string | null
           status?: string
           total_loan_value?: number | null
           total_loans?: number | null
@@ -419,10 +429,14 @@ export type Database = {
           existing_loan_amount?: number | null
           id?: string
           income?: number | null
+          interest_rate?: number | null
           join_date?: string | null
           last_activity?: string | null
           lead_id?: string | null
+          loan_amount?: number | null
+          loan_type?: string | null
           location?: string | null
+          maturity_date?: string | null
           monthly_processing_volume?: number | null
           name?: string
           net_operating_income?: number | null
@@ -433,6 +447,7 @@ export type Database = {
           priority?: string | null
           processor_name?: string | null
           property_payment_amount?: number | null
+          stage?: string | null
           status?: string
           total_loan_value?: number | null
           total_loans?: number | null
