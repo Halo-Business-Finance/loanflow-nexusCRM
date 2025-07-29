@@ -1195,6 +1195,44 @@ export default function LeadDetail() {
                     </div>
                   </div>
 
+                  <div className="flex items-center gap-3">
+                    <DollarSign className="w-4 h-4" style={{ color: 'white' }} />
+                    <div className="flex-1">
+                      <p className="text-sm" style={{ color: 'white' }}>Interest Rate</p>
+                      {isEditing ? (
+                        <Input
+                          type="number"
+                          step="0.01"
+                          value={editableFields.interest_rate}
+                          onChange={(e) => setEditableFields({...editableFields, interest_rate: e.target.value})}
+                          placeholder="Enter interest rate (%)"
+                        />
+                      ) : (
+                        <p className="font-medium" style={{ color: 'white' }}>
+                          {lead.interest_rate ? `${lead.interest_rate}%` : 'N/A'}
+                        </p>
+                      )}
+                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-3">
+                    <Calendar className="w-4 h-4" style={{ color: 'white' }} />
+                    <div className="flex-1">
+                      <p className="text-sm" style={{ color: 'white' }}>Maturity Date</p>
+                      {isEditing ? (
+                        <Input
+                          type="date"
+                          value={editableFields.maturity_date}
+                          onChange={(e) => setEditableFields({...editableFields, maturity_date: e.target.value})}
+                        />
+                      ) : (
+                        <p className="font-medium" style={{ color: 'white' }}>
+                          {lead.maturity_date ? new Date(lead.maturity_date).toLocaleDateString() : 'N/A'}
+                        </p>
+                      )}
+                    </div>
+                  </div>
+
                 </div>
 
                 {/* Right Column */}
