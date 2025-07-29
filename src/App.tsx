@@ -15,6 +15,7 @@ import Leads from "./pages/Leads";
 import LeadDetail from "./pages/LeadDetail";
 import Pipeline from "./pages/Pipeline";
 import Clients from "./pages/Clients";
+import ClientDetail from "./pages/ClientDetail";
 import Documents from "./pages/Documents";
 import Activities from "./pages/Activities";
 import Reports from "./pages/Reports";
@@ -56,6 +57,7 @@ function AuthenticatedApp() {
             <Route path="/leads" element={<Leads />} errorElement={<RouteErrorBoundary />} />
             <Route path="/leads/:id" element={<LeadDetail />} errorElement={<RouteErrorBoundary />} />
             <Route path="/clients" element={<Clients />} errorElement={<RouteErrorBoundary />} />
+            <Route path="/clients/:id" element={<ClientDetail />} errorElement={<RouteErrorBoundary />} />
             <Route path="/pipeline" element={<Pipeline />} errorElement={<RouteErrorBoundary />} />
             <Route path="/documents" element={<Documents />} errorElement={<RouteErrorBoundary />} />
             <Route path="/activities" element={<Activities />} errorElement={<RouteErrorBoundary />} />

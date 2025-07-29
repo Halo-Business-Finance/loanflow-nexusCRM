@@ -448,7 +448,12 @@ export default function Clients() {
                       
                       <div className="space-y-2">
                         <div>
-                          <h3 className="font-semibold text-foreground">{client.name}</h3>
+                          <button 
+                            onClick={() => navigate(`/clients/${client.id}`)}
+                            className="hover:underline cursor-pointer"
+                          >
+                            <h3 className="font-semibold text-foreground hover:text-primary transition-colors">{client.name}</h3>
+                          </button>
                           <p className="text-sm text-muted-foreground">
                             Client since {new Date(client.join_date).toLocaleDateString()}
                           </p>
