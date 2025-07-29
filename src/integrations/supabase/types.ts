@@ -225,6 +225,115 @@ export type Database = {
         }
         Relationships: []
       }
+      case_comments: {
+        Row: {
+          attachments: Json | null
+          case_id: string
+          comment_text: string
+          comment_type: string
+          created_at: string
+          id: string
+          is_internal: boolean
+          user_id: string
+        }
+        Insert: {
+          attachments?: Json | null
+          case_id: string
+          comment_text: string
+          comment_type?: string
+          created_at?: string
+          id?: string
+          is_internal?: boolean
+          user_id: string
+        }
+        Update: {
+          attachments?: Json | null
+          case_id?: string
+          comment_text?: string
+          comment_type?: string
+          created_at?: string
+          id?: string
+          is_internal?: boolean
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "case_comments_case_id_fkey"
+            columns: ["case_id"]
+            isOneToOne: false
+            referencedRelation: "cases"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      cases: {
+        Row: {
+          case_number: string
+          case_type: string
+          client_id: string
+          created_at: string
+          customer_satisfaction_score: number | null
+          description: string
+          due_date: string | null
+          escalated_to: string | null
+          escalation_reason: string | null
+          id: string
+          priority: string
+          resolution: string | null
+          resolution_date: string | null
+          status: string
+          subject: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          case_number: string
+          case_type?: string
+          client_id: string
+          created_at?: string
+          customer_satisfaction_score?: number | null
+          description: string
+          due_date?: string | null
+          escalated_to?: string | null
+          escalation_reason?: string | null
+          id?: string
+          priority?: string
+          resolution?: string | null
+          resolution_date?: string | null
+          status?: string
+          subject: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          case_number?: string
+          case_type?: string
+          client_id?: string
+          created_at?: string
+          customer_satisfaction_score?: number | null
+          description?: string
+          due_date?: string | null
+          escalated_to?: string | null
+          escalation_reason?: string | null
+          id?: string
+          priority?: string
+          resolution?: string | null
+          resolution_date?: string | null
+          status?: string
+          subject?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "cases_client_id_fkey"
+            columns: ["client_id"]
+            isOneToOne: false
+            referencedRelation: "clients"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       clients: {
         Row: {
           annual_revenue: number | null
@@ -325,6 +434,132 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      communities: {
+        Row: {
+          community_type: string
+          created_at: string
+          description: string | null
+          id: string
+          is_active: boolean
+          name: string
+          settings: Json | null
+          updated_at: string
+        }
+        Insert: {
+          community_type?: string
+          created_at?: string
+          description?: string | null
+          id?: string
+          is_active?: boolean
+          name: string
+          settings?: Json | null
+          updated_at?: string
+        }
+        Update: {
+          community_type?: string
+          created_at?: string
+          description?: string | null
+          id?: string
+          is_active?: boolean
+          name?: string
+          settings?: Json | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      community_members: {
+        Row: {
+          client_id: string | null
+          community_id: string
+          created_at: string
+          id: string
+          joined_at: string | null
+          last_activity: string | null
+          role: string
+          status: string
+          user_id: string | null
+        }
+        Insert: {
+          client_id?: string | null
+          community_id: string
+          created_at?: string
+          id?: string
+          joined_at?: string | null
+          last_activity?: string | null
+          role?: string
+          status?: string
+          user_id?: string | null
+        }
+        Update: {
+          client_id?: string | null
+          community_id?: string
+          created_at?: string
+          id?: string
+          joined_at?: string | null
+          last_activity?: string | null
+          role?: string
+          status?: string
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "community_members_client_id_fkey"
+            columns: ["client_id"]
+            isOneToOne: false
+            referencedRelation: "clients"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "community_members_community_id_fkey"
+            columns: ["community_id"]
+            isOneToOne: false
+            referencedRelation: "communities"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      compliance_reports: {
+        Row: {
+          completed_at: string | null
+          created_at: string
+          date_range_end: string
+          date_range_start: string
+          file_path: string | null
+          filters: Json | null
+          generated_by: string
+          id: string
+          report_data: Json
+          report_type: string
+          status: string
+        }
+        Insert: {
+          completed_at?: string | null
+          created_at?: string
+          date_range_end: string
+          date_range_start: string
+          file_path?: string | null
+          filters?: Json | null
+          generated_by: string
+          id?: string
+          report_data: Json
+          report_type: string
+          status?: string
+        }
+        Update: {
+          completed_at?: string | null
+          created_at?: string
+          date_range_end?: string
+          date_range_start?: string
+          file_path?: string | null
+          filters?: Json | null
+          generated_by?: string
+          id?: string
+          report_data?: Json
+          report_type?: string
+          status?: string
+        }
+        Relationships: []
       }
       custom_fields: {
         Row: {
@@ -450,6 +685,69 @@ export type Database = {
           },
         ]
       }
+      data_import_jobs: {
+        Row: {
+          completed_at: string | null
+          created_at: string
+          data_type: string
+          error_log: Json | null
+          failed_records: number | null
+          file_format: string
+          file_path: string | null
+          id: string
+          job_name: string
+          job_type: string
+          mapping_configuration: Json | null
+          processed_records: number | null
+          progress_percentage: number | null
+          started_at: string | null
+          status: string
+          successful_records: number | null
+          total_records: number | null
+          user_id: string
+        }
+        Insert: {
+          completed_at?: string | null
+          created_at?: string
+          data_type: string
+          error_log?: Json | null
+          failed_records?: number | null
+          file_format: string
+          file_path?: string | null
+          id?: string
+          job_name: string
+          job_type: string
+          mapping_configuration?: Json | null
+          processed_records?: number | null
+          progress_percentage?: number | null
+          started_at?: string | null
+          status?: string
+          successful_records?: number | null
+          total_records?: number | null
+          user_id: string
+        }
+        Update: {
+          completed_at?: string | null
+          created_at?: string
+          data_type?: string
+          error_log?: Json | null
+          failed_records?: number | null
+          file_format?: string
+          file_path?: string | null
+          id?: string
+          job_name?: string
+          job_type?: string
+          mapping_configuration?: Json | null
+          processed_records?: number | null
+          progress_percentage?: number | null
+          started_at?: string | null
+          status?: string
+          successful_records?: number | null
+          total_records?: number | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       email_accounts: {
         Row: {
           access_token: string
@@ -489,6 +787,236 @@ export type Database = {
         }
         Relationships: []
       }
+      email_campaign_recipients: {
+        Row: {
+          campaign_id: string
+          clicked_at: string | null
+          client_id: string | null
+          created_at: string
+          email_address: string
+          id: string
+          lead_id: string | null
+          opened_at: string | null
+          sent_at: string | null
+          status: string
+        }
+        Insert: {
+          campaign_id: string
+          clicked_at?: string | null
+          client_id?: string | null
+          created_at?: string
+          email_address: string
+          id?: string
+          lead_id?: string | null
+          opened_at?: string | null
+          sent_at?: string | null
+          status?: string
+        }
+        Update: {
+          campaign_id?: string
+          clicked_at?: string | null
+          client_id?: string | null
+          created_at?: string
+          email_address?: string
+          id?: string
+          lead_id?: string | null
+          opened_at?: string | null
+          sent_at?: string | null
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "email_campaign_recipients_campaign_id_fkey"
+            columns: ["campaign_id"]
+            isOneToOne: false
+            referencedRelation: "email_campaigns"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "email_campaign_recipients_client_id_fkey"
+            columns: ["client_id"]
+            isOneToOne: false
+            referencedRelation: "clients"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "email_campaign_recipients_lead_id_fkey"
+            columns: ["lead_id"]
+            isOneToOne: false
+            referencedRelation: "leads"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      email_campaigns: {
+        Row: {
+          campaign_type: string
+          created_at: string
+          description: string | null
+          email_template: string | null
+          id: string
+          name: string
+          performance_metrics: Json | null
+          send_schedule: Json | null
+          status: string
+          subject_line: string | null
+          target_audience: Json | null
+          trigger_conditions: Json | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          campaign_type?: string
+          created_at?: string
+          description?: string | null
+          email_template?: string | null
+          id?: string
+          name: string
+          performance_metrics?: Json | null
+          send_schedule?: Json | null
+          status?: string
+          subject_line?: string | null
+          target_audience?: Json | null
+          trigger_conditions?: Json | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          campaign_type?: string
+          created_at?: string
+          description?: string | null
+          email_template?: string | null
+          id?: string
+          name?: string
+          performance_metrics?: Json | null
+          send_schedule?: Json | null
+          status?: string
+          subject_line?: string | null
+          target_audience?: Json | null
+          trigger_conditions?: Json | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      event_attendees: {
+        Row: {
+          attendance_date: string | null
+          client_id: string | null
+          created_at: string
+          email: string
+          event_id: string
+          id: string
+          lead_id: string | null
+          name: string
+          notes: string | null
+          registration_date: string | null
+          registration_status: string
+        }
+        Insert: {
+          attendance_date?: string | null
+          client_id?: string | null
+          created_at?: string
+          email: string
+          event_id: string
+          id?: string
+          lead_id?: string | null
+          name: string
+          notes?: string | null
+          registration_date?: string | null
+          registration_status?: string
+        }
+        Update: {
+          attendance_date?: string | null
+          client_id?: string | null
+          created_at?: string
+          email?: string
+          event_id?: string
+          id?: string
+          lead_id?: string | null
+          name?: string
+          notes?: string | null
+          registration_date?: string | null
+          registration_status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "event_attendees_client_id_fkey"
+            columns: ["client_id"]
+            isOneToOne: false
+            referencedRelation: "clients"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "event_attendees_event_id_fkey"
+            columns: ["event_id"]
+            isOneToOne: false
+            referencedRelation: "events"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "event_attendees_lead_id_fkey"
+            columns: ["lead_id"]
+            isOneToOne: false
+            referencedRelation: "leads"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      events: {
+        Row: {
+          created_at: string
+          description: string | null
+          end_date: string
+          event_data: Json | null
+          event_type: string
+          id: string
+          location: string | null
+          max_attendees: number | null
+          name: string
+          registration_required: boolean | null
+          start_date: string
+          status: string
+          updated_at: string
+          user_id: string
+          virtual_link: string | null
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          end_date: string
+          event_data?: Json | null
+          event_type?: string
+          id?: string
+          location?: string | null
+          max_attendees?: number | null
+          name: string
+          registration_required?: boolean | null
+          start_date: string
+          status?: string
+          updated_at?: string
+          user_id: string
+          virtual_link?: string | null
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          end_date?: string
+          event_data?: Json | null
+          event_type?: string
+          id?: string
+          location?: string | null
+          max_attendees?: number | null
+          name?: string
+          registration_required?: boolean | null
+          start_date?: string
+          status?: string
+          updated_at?: string
+          user_id?: string
+          virtual_link?: string | null
+        }
+        Relationships: []
+      }
       failed_login_attempts: {
         Row: {
           attempt_time: string
@@ -513,6 +1041,39 @@ export type Database = {
           id?: string
           ip_address?: unknown | null
           user_agent?: string | null
+        }
+        Relationships: []
+      }
+      field_level_security: {
+        Row: {
+          created_at: string
+          field_name: string
+          id: string
+          is_active: boolean
+          role_restrictions: Json
+          table_name: string
+          updated_at: string
+          user_restrictions: Json | null
+        }
+        Insert: {
+          created_at?: string
+          field_name: string
+          id?: string
+          is_active?: boolean
+          role_restrictions?: Json
+          table_name: string
+          updated_at?: string
+          user_restrictions?: Json | null
+        }
+        Update: {
+          created_at?: string
+          field_name?: string
+          id?: string
+          is_active?: boolean
+          role_restrictions?: Json
+          table_name?: string
+          updated_at?: string
+          user_restrictions?: Json | null
         }
         Relationships: []
       }
@@ -639,6 +1200,159 @@ export type Database = {
           is_allowed?: boolean
           reason?: string | null
           updated_at?: string
+        }
+        Relationships: []
+      }
+      knowledge_articles: {
+        Row: {
+          category: string
+          content: string
+          created_at: string
+          helpful_count: number | null
+          id: string
+          last_reviewed: string | null
+          not_helpful_count: number | null
+          reviewed_by: string | null
+          status: string
+          summary: string | null
+          tags: string[] | null
+          title: string
+          updated_at: string
+          user_id: string
+          view_count: number | null
+          visibility: string
+        }
+        Insert: {
+          category: string
+          content: string
+          created_at?: string
+          helpful_count?: number | null
+          id?: string
+          last_reviewed?: string | null
+          not_helpful_count?: number | null
+          reviewed_by?: string | null
+          status?: string
+          summary?: string | null
+          tags?: string[] | null
+          title: string
+          updated_at?: string
+          user_id: string
+          view_count?: number | null
+          visibility?: string
+        }
+        Update: {
+          category?: string
+          content?: string
+          created_at?: string
+          helpful_count?: number | null
+          id?: string
+          last_reviewed?: string | null
+          not_helpful_count?: number | null
+          reviewed_by?: string | null
+          status?: string
+          summary?: string | null
+          tags?: string[] | null
+          title?: string
+          updated_at?: string
+          user_id?: string
+          view_count?: number | null
+          visibility?: string
+        }
+        Relationships: []
+      }
+      lead_scores: {
+        Row: {
+          behavioral_score: number
+          created_at: string
+          demographic_score: number
+          id: string
+          last_calculated: string
+          lead_id: string
+          score_category: string
+          score_history: Json | null
+          scoring_model_id: string
+          total_score: number
+          updated_at: string
+        }
+        Insert: {
+          behavioral_score?: number
+          created_at?: string
+          demographic_score?: number
+          id?: string
+          last_calculated?: string
+          lead_id: string
+          score_category?: string
+          score_history?: Json | null
+          scoring_model_id: string
+          total_score?: number
+          updated_at?: string
+        }
+        Update: {
+          behavioral_score?: number
+          created_at?: string
+          demographic_score?: number
+          id?: string
+          last_calculated?: string
+          lead_id?: string
+          score_category?: string
+          score_history?: Json | null
+          scoring_model_id?: string
+          total_score?: number
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "lead_scores_lead_id_fkey"
+            columns: ["lead_id"]
+            isOneToOne: false
+            referencedRelation: "leads"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "lead_scores_scoring_model_id_fkey"
+            columns: ["scoring_model_id"]
+            isOneToOne: false
+            referencedRelation: "lead_scoring_models"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      lead_scoring_models: {
+        Row: {
+          behavioral_rules: Json
+          created_at: string
+          demographic_rules: Json
+          description: string | null
+          id: string
+          is_active: boolean
+          name: string
+          score_thresholds: Json
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          behavioral_rules?: Json
+          created_at?: string
+          demographic_rules?: Json
+          description?: string | null
+          id?: string
+          is_active?: boolean
+          name: string
+          score_thresholds?: Json
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          behavioral_rules?: Json
+          created_at?: string
+          demographic_rules?: Json
+          description?: string | null
+          id?: string
+          is_active?: boolean
+          name?: string
+          score_thresholds?: Json
+          updated_at?: string
+          user_id?: string
         }
         Relationships: []
       }
@@ -1161,6 +1875,87 @@ export type Database = {
           severity?: string
           user_agent?: string | null
           user_id?: string | null
+        }
+        Relationships: []
+      }
+      social_media_profiles: {
+        Row: {
+          client_id: string | null
+          created_at: string
+          id: string
+          last_updated: string | null
+          lead_id: string | null
+          platform: string
+          profile_data: Json | null
+          profile_url: string | null
+        }
+        Insert: {
+          client_id?: string | null
+          created_at?: string
+          id?: string
+          last_updated?: string | null
+          lead_id?: string | null
+          platform: string
+          profile_data?: Json | null
+          profile_url?: string | null
+        }
+        Update: {
+          client_id?: string | null
+          created_at?: string
+          id?: string
+          last_updated?: string | null
+          lead_id?: string | null
+          platform?: string
+          profile_data?: Json | null
+          profile_url?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "social_media_profiles_client_id_fkey"
+            columns: ["client_id"]
+            isOneToOne: false
+            referencedRelation: "clients"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "social_media_profiles_lead_id_fkey"
+            columns: ["lead_id"]
+            isOneToOne: false
+            referencedRelation: "leads"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      sso_configurations: {
+        Row: {
+          configuration: Json
+          created_at: string
+          domain_restrictions: string[] | null
+          id: string
+          is_active: boolean
+          provider_name: string
+          provider_type: string
+          updated_at: string
+        }
+        Insert: {
+          configuration: Json
+          created_at?: string
+          domain_restrictions?: string[] | null
+          id?: string
+          is_active?: boolean
+          provider_name: string
+          provider_type: string
+          updated_at?: string
+        }
+        Update: {
+          configuration?: Json
+          created_at?: string
+          domain_restrictions?: string[] | null
+          id?: string
+          is_active?: boolean
+          provider_name?: string
+          provider_type?: string
+          updated_at?: string
         }
         Relationships: []
       }
