@@ -23,9 +23,13 @@ import { useKeyboardShortcuts } from "@/hooks/useKeyboardShortcuts";
 
 const queryClient = new QueryClient();
 
+function KeyboardShortcutsProvider() {
+  useKeyboardShortcuts();
+  return null;
+}
+
 function AuthenticatedApp() {
   const { user, loading } = useAuth();
-  useKeyboardShortcuts();
 
   if (loading) {
     return (
@@ -37,6 +41,7 @@ function AuthenticatedApp() {
 
   return (
     <BrowserRouter>
+      <KeyboardShortcutsProvider />
       <Routes>
         {/* Public route for authentication */}
         <Route path="/auth" element={<AuthPage />} />
