@@ -281,7 +281,7 @@ export default function LeadDetail() {
         ? `${profile.first_name} ${profile.last_name}`.trim() 
         : user.email?.split('@')[0] || 'Unknown User'
 
-      const updatedNotes = callNotes + (newCallNote ? `\n\n[${new Date().toLocaleString()}] ${userName}: ${newCallNote}` : "")
+      const updatedNotes = callNotes + (newCallNote ? `\n\n${userName} [${new Date().toLocaleString()}]: ${newCallNote}` : "")
       
       const { error } = await supabase
         .from('leads')
