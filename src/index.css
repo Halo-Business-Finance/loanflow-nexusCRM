@@ -111,9 +111,16 @@ All colors MUST be HSL.
 @layer base {
   * {
     @apply border-border;
+    color: white !important;
   }
 
   body {
     @apply bg-background text-foreground;
+    color: white !important;
+  }
+  
+  /* Force all text elements to be white */
+  h1, h2, h3, h4, h5, h6, p, span, div, td, th, li, a, label, input, textarea, select {
+    color: white !important;
   }
 }

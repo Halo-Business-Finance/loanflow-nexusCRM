@@ -48,7 +48,7 @@ export function AppSidebar() {
 
   const isActive = (path: string) => currentPath === path
   const getNavClass = ({ isActive }: { isActive: boolean }) =>
-    isActive ? "bg-primary text-primary-foreground" : "hover:bg-accent hover:text-accent-foreground text-[hsl(var(--navy))]"
+    isActive ? "bg-primary text-primary-foreground" : "hover:bg-accent hover:text-accent-foreground"
 
   const handleUserIconClick = () => {
     if (user) {
@@ -73,8 +73,8 @@ export function AppSidebar() {
                 <SidebarMenuItem key={item.title}>
                   <SidebarMenuButton asChild>
                     <NavLink to={item.url} end className={getNavClass}>
-                      <item.icon className="w-4 h-4 text-[hsl(var(--navy))]" />
-                      {state !== "collapsed" && <span className="text-[hsl(var(--navy))]">{item.title}</span>}
+                      <item.icon className="w-4 h-4" />
+                      {state !== "collapsed" && <span>{item.title}</span>}
                     </NavLink>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
@@ -96,8 +96,8 @@ export function AppSidebar() {
                   <SidebarMenuItem key={item.title}>
                     <SidebarMenuButton asChild>
                       <NavLink to={item.url} className={getNavClass}>
-                        <item.icon className="w-4 h-4 text-[hsl(var(--navy))]" />
-                        {state !== "collapsed" && <span className="text-[hsl(var(--navy))]">{item.title}</span>}
+                        <item.icon className="w-4 h-4" />
+                        {state !== "collapsed" && <span>{item.title}</span>}
                       </NavLink>
                     </SidebarMenuButton>
                   </SidebarMenuItem>
