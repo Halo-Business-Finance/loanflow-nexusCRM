@@ -593,123 +593,166 @@ export default function Users() {
           </CardContent>
         </Card>
 
-        {/* Users Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filteredUsers.map((user) => (
-            <Card key={user.id} className="hover:shadow-md transition-shadow">
-              <CardHeader className="pb-4">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-3">
-                    <Avatar>
-                      <AvatarFallback>
-                        {user.first_name?.[0]}{user.last_name?.[0]}
-                      </AvatarFallback>
-                    </Avatar>
-                    <div>
-                      <h3 className="font-semibold">{user.first_name} {user.last_name}</h3>
-                      <p className="text-sm text-muted-foreground">{user.email}</p>
-                    </div>
-                  </div>
-                  <Badge variant={getRoleBadgeVariant(user.role)}>
-                    {user.role}
-                  </Badge>
-                </div>
-              </CardHeader>
-              
-              <CardContent className="space-y-4">
-                <div className="space-y-2">
-                  {user.phone_number && (
-                    <PhoneDialer 
-                      trigger={
-                        <button className="flex items-center gap-2 text-sm text-muted-foreground hover:text-primary transition-colors">
-                          <Phone className="h-4 w-4" />
-                          {user.phone_number}
-                        </button>
-                      }
-                    />
-                  )}
-                  <div className="flex items-center gap-2 text-sm">
-                    <Calendar className="h-4 w-4 text-muted-foreground" />
-                    Joined {new Date(user.created_at).toLocaleDateString()}
-                  </div>
-                  <div className="flex items-center gap-2 text-sm">
-                    <User className="h-4 w-4 text-muted-foreground" />
-                    Status: {user.is_active ? 'Active' : 'Inactive'}
-                  </div>
-                </div>
-                
-                <Separator />
-                
-                <div className="space-y-2">
-                  <div className="flex gap-2">
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      className="flex-1"
-                      onClick={() => {
-                        setEditingUser(user)
-                        setShowEditDialog(true)
-                      }}
-                    >
-                      <Edit className="h-4 w-4 mr-1" />
-                      Edit
-                    </Button>
-                    <Button
-                      variant="secondary"
-                      size="sm"
-                      onClick={() => {
-                        setPasswordChangeUser(user)
-                        setShowPasswordDialog(true)
-                      }}
-                    >
-                      <Key className="h-4 w-4" />
-                    </Button>
-                  </div>
-                  <div className="flex gap-2">
-                    <Button
-                      variant={user.is_active ? "destructive" : "default"}
-                      size="sm"
-                      className="flex-1"
-                      onClick={() => toggleUserStatus(user.id, user.is_active)}
-                    >
-                      {user.is_active ? 'Deactivate' : 'Activate'}
-                    </Button>
-                    {user.email !== currentUser?.email && ( // Prevent self-deletion
-                      <AlertDialog>
-                        <AlertDialogTrigger asChild>
-                          <Button variant="destructive" size="sm">
-                            <Trash2 className="h-4 w-4" />
+        {/* Users Table */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <UsersIcon className="h-5 w-5" />
+              Team Members
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="overflow-x-auto">
+              <table className="w-full">
+                <thead>
+                  <tr className="border-b border-border">
+                    <th className="text-left py-3 px-4 font-medium text-muted-foreground">User</th>
+                    <th className="text-left py-3 px-4 font-medium text-muted-foreground">Contact</th>
+                    <th className="text-left py-3 px-4 font-medium text-muted-foreground">Role</th>
+                    <th className="text-left py-3 px-4 font-medium text-muted-foreground">Status</th>
+                    <th className="text-right py-3 px-4 font-medium text-muted-foreground">Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {filteredUsers.map((user) => (
+                    <tr key={user.id} className="border-b border-border hover:bg-muted/50 transition-colors">
+                      {/* User Column */}
+                      <td className="py-4 px-4">
+                        <div className="flex items-center gap-3">
+                          <Avatar className="h-10 w-10">
+                            <AvatarFallback className="bg-primary/10 text-primary font-medium">
+                              {user.first_name?.[0]}{user.last_name?.[0]}
+                            </AvatarFallback>
+                          </Avatar>
+                          <div>
+                            <p className="font-medium text-foreground">
+                              {user.first_name} {user.last_name}
+                            </p>
+                            <p className="text-sm text-muted-foreground">{user.email}</p>
+                          </div>
+                        </div>
+                      </td>
+
+                      {/* Contact Column */}
+                      <td className="py-4 px-4">
+                        <div className="space-y-1">
+                          {user.phone_number ? (
+                            <PhoneDialer 
+                              trigger={
+                                <button className="flex items-center gap-2 text-sm text-muted-foreground hover:text-primary transition-colors">
+                                  <Phone className="h-4 w-4" />
+                                  {user.phone_number}
+                                </button>
+                              }
+                            />
+                          ) : (
+                            <span className="text-sm text-muted-foreground">No phone</span>
+                          )}
+                          <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                            <Calendar className="h-4 w-4" />
+                            {new Date(user.created_at).toLocaleDateString()}
+                          </div>
+                        </div>
+                      </td>
+
+                      {/* Role Column */}
+                      <td className="py-4 px-4">
+                        <Badge variant={getRoleBadgeVariant(user.role)} className="capitalize">
+                          {user.role === 'super_admin' ? 'Super Admin' : 
+                           user.role === 'admin' ? 'Admin' :
+                           user.role === 'manager' ? 'Manager' :
+                           user.role === 'agent' ? 'Agent' : 'Viewer'}
+                        </Badge>
+                      </td>
+
+                      {/* Status Column */}
+                      <td className="py-4 px-4">
+                        <div className="flex items-center gap-2">
+                          <div className={`h-2 w-2 rounded-full ${user.is_active ? 'bg-green-500' : 'bg-red-500'}`} />
+                          <span className={`text-sm font-medium ${user.is_active ? 'text-green-700' : 'text-red-700'}`}>
+                            {user.is_active ? 'Active' : 'Inactive'}
+                          </span>
+                        </div>
+                      </td>
+
+                      {/* Actions Column */}
+                      <td className="py-4 px-4">
+                        <div className="flex items-center justify-end gap-2">
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => {
+                              setEditingUser(user)
+                              setShowEditDialog(true)
+                            }}
+                            className="h-8 w-8 p-0"
+                          >
+                            <Edit className="h-4 w-4" />
                           </Button>
-                        </AlertDialogTrigger>
-                        <AlertDialogContent>
-                          <AlertDialogHeader>
-                            <AlertDialogTitle>Delete User</AlertDialogTitle>
-                            <AlertDialogDescription>
-                              Are you sure you want to delete <strong>{user.first_name} {user.last_name}</strong> ({user.email})? 
-                              This will remove all their data including profile, roles, sessions, and notifications. This action cannot be undone.
-                            </AlertDialogDescription>
-                          </AlertDialogHeader>
-                          <AlertDialogFooter>
-                            <AlertDialogCancel>Cancel</AlertDialogCancel>
-                            <AlertDialogAction
-                              onClick={() => {
-                                console.log('Delete confirmation clicked for:', user.id, user.email)
-                                deleteUser(user.id, user.email)
-                              }}
-                              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-                            >
-                              Delete User
-                            </AlertDialogAction>
-                          </AlertDialogFooter>
-                        </AlertDialogContent>
-                      </AlertDialog>
-                    )}
-                  </div>
+                          
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => {
+                              setPasswordChangeUser(user)
+                              setShowPasswordDialog(true)
+                            }}
+                            className="h-8 w-8 p-0"
+                          >
+                            <Key className="h-4 w-4" />
+                          </Button>
+
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => toggleUserStatus(user.id, user.is_active)}
+                            className={`h-8 w-8 p-0 ${user.is_active ? 'text-red-600 hover:text-red-700' : 'text-green-600 hover:text-green-700'}`}
+                          >
+                            {user.is_active ? <Shield className="h-4 w-4" /> : <User className="h-4 w-4" />}
+                          </Button>
+
+                          {user.email !== currentUser?.email && (
+                            <AlertDialog>
+                              <AlertDialogTrigger asChild>
+                                <Button variant="ghost" size="sm" className="h-8 w-8 p-0 text-red-600 hover:text-red-700">
+                                  <Trash2 className="h-4 w-4" />
+                                </Button>
+                              </AlertDialogTrigger>
+                              <AlertDialogContent>
+                                <AlertDialogHeader>
+                                  <AlertDialogTitle>Delete User</AlertDialogTitle>
+                                  <AlertDialogDescription>
+                                    Are you sure you want to delete <strong>{user.first_name} {user.last_name}</strong> ({user.email})? 
+                                    This will remove all their data including profile, roles, sessions, and notifications. This action cannot be undone.
+                                  </AlertDialogDescription>
+                                </AlertDialogHeader>
+                                <AlertDialogFooter>
+                                  <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                  <AlertDialogAction
+                                    onClick={() => deleteUser(user.id, user.email)}
+                                    className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                                  >
+                                    Delete User
+                                  </AlertDialogAction>
+                                </AlertDialogFooter>
+                              </AlertDialogContent>
+                            </AlertDialog>
+                          )}
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+              
+              {filteredUsers.length === 0 && (
+                <div className="text-center py-8">
+                  <p className="text-muted-foreground">No users found matching your search.</p>
                 </div>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
+              )}
+            </div>
+          </CardContent>
+        </Card>
 
         {/* Edit User Dialog */}
         <Dialog open={showEditDialog} onOpenChange={setShowEditDialog}>
