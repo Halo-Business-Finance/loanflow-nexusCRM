@@ -28,6 +28,7 @@ import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/
 import { LineChart, Line, XAxis, YAxis, ResponsiveContainer } from "recharts"
 import { useToast } from "@/hooks/use-toast"
 import { useNavigate } from "react-router-dom"
+import { TodaysTasks } from "@/components/TodaysTasks"
 import { useAuth } from "@/components/auth/AuthProvider"
 import { PhoneDialer } from "@/components/PhoneDialer"
 import { EmailComposer } from "@/components/EmailComposer"
@@ -516,42 +517,8 @@ export default function Dashboard() {
           </CardContent>
         </Card>
 
-        {/* Today's Activities */}
-        <Card className="shadow-soft">
-          <CardHeader>
-            <CardTitle>Today's Activities</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
-              {todayActivities.map((activity, index) => (
-                <div 
-                  key={index} 
-                  className="flex items-start gap-3 p-3 rounded-lg bg-muted/50 hover:bg-muted/70 transition-colors cursor-pointer"
-                  onClick={() => handleActivityClick(activity)}
-                >
-                  {activity.type === 'call' && <Phone className="w-4 h-4 text-white mt-0.5" />}
-                  {activity.type === 'email' && <Mail className="w-4 h-4 text-white mt-0.5" />}
-                  {activity.type === 'meeting' && <Calendar className="w-4 h-4 text-white mt-0.5" />}
-                  <div className="flex-1 space-y-1">
-                    <p className="text-sm font-medium text-foreground">{activity.title}</p>
-                    <div className="flex items-center gap-2">
-                      <Clock className="w-3 h-3 text-muted-foreground" />
-                      <span className="text-xs text-muted-foreground">{activity.time}</span>
-                      <Badge 
-                        variant={activity.priority === 'high' ? 'destructive' : 
-                                activity.priority === 'medium' ? 'default' : 'secondary'}
-                        className="text-xs"
-                      >
-                        {activity.priority}
-                      </Badge>
-                    </div>
-                  </div>
-                  <ChevronRight className="h-4 w-4 text-muted-foreground" />
-                </div>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
+        {/* Today's Tasks */}
+        <TodaysTasks />
       </div>
 
       {/* Loan Close Performance */}

@@ -19,11 +19,13 @@ import Settings from "./pages/Settings";
 import Users from "./pages/Users";
 import Resources from "./pages/Resources";
 import NotFound from "./pages/NotFound";
+import { useKeyboardShortcuts } from "@/hooks/useKeyboardShortcuts";
 
 const queryClient = new QueryClient();
 
 function AuthenticatedApp() {
   const { user, loading } = useAuth();
+  useKeyboardShortcuts();
 
   if (loading) {
     return (
