@@ -1,5 +1,6 @@
 import React from "react";
 import { Toaster } from "@/components/ui/toaster";
+import { ThemeProvider } from "next-themes";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
@@ -88,15 +89,17 @@ function AuthenticatedApp() {
 const App = () => (
   <AsyncErrorBoundary>
     <QueryClientProvider client={queryClient}>
-      <GeoSecurityCheck>
-        <AuthProvider>
-          <TooltipProvider>
-            <Toaster />
-            <Sonner />
-            <AuthenticatedApp />
-          </TooltipProvider>
-        </AuthProvider>
-      </GeoSecurityCheck>
+      <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+        <GeoSecurityCheck>
+          <AuthProvider>
+            <TooltipProvider>
+              <Toaster />
+              <Sonner />
+              <AuthenticatedApp />
+            </TooltipProvider>
+          </AuthProvider>
+        </GeoSecurityCheck>
+      </ThemeProvider>
     </QueryClientProvider>
   </AsyncErrorBoundary>
 );

@@ -28,6 +28,7 @@ import {
 import { supabase } from "@/integrations/supabase/client"
 import { useAuth } from "@/components/auth/AuthProvider"
 import { useToast } from "@/hooks/use-toast"
+import { useTheme } from "next-themes"
 
 // Phone number formatting function
 const formatPhoneNumber = (value: string) => {
@@ -47,6 +48,7 @@ const formatPhoneNumber = (value: string) => {
 export default function Settings() {
   const { user } = useAuth()
   const { toast } = useToast()
+  const { theme, setTheme } = useTheme()
   const [loading, setLoading] = useState(false)
   const [profile, setProfile] = useState({
     first_name: '',
@@ -554,14 +556,30 @@ export default function Settings() {
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
-                <div className="flex items-center justify-between">
-                  <div className="space-y-1">
-                    <Label>Dark Mode</Label>
-                    <p className="text-xs text-muted-foreground">
-                      Toggle dark theme
-                    </p>
-                  </div>
-                  <Switch />
+                <div className="space-y-2">
+                  <Label>Theme</Label>
+                  <Select 
+                    value={theme} 
+                    onValueChange={(value) => {
+                      setTheme(value)
+                      toast({
+                        title: "Theme Updated",
+                        description: `Theme changed to ${value === 'system' ? 'system default' : value}`
+                      })
+                    }}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select theme" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="light">Light</SelectItem>
+                      <SelectItem value="dark">Dark</SelectItem>
+                      <SelectItem value="system">System</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  <p className="text-xs text-muted-foreground">
+                    Choose your preferred theme or use system default
+                  </p>
                 </div>
 
                 <Separator />
