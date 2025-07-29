@@ -11,6 +11,8 @@ import { Textarea } from "@/components/ui/textarea"
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog"
 import { Badge } from "@/components/ui/badge"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { Calendar as CalendarComponent } from "@/components/ui/calendar"
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import { Switch } from "@/components/ui/switch"
 import { Separator } from "@/components/ui/separator"
 import { useToast } from "@/hooks/use-toast"
@@ -18,6 +20,7 @@ import { PhoneDialer } from "@/components/PhoneDialer"
 import { EmailComposer } from "@/components/EmailComposer"
 import { formatNumber, formatCurrency } from "@/lib/utils"
 import { useNotifications } from "@/hooks/useNotifications"
+import { format } from "date-fns"
 import { 
   ArrowLeft, 
   User, 
@@ -38,7 +41,8 @@ import {
   Target,
   FileText,
   Bell,
-  Trash2
+  Trash2,
+  ChevronDown
 } from "lucide-react"
 
 interface Lead {
@@ -113,6 +117,7 @@ export default function LeadDetail() {
   const [generalNotes, setGeneralNotes] = useState("")
   const [notificationTitle, setNotificationTitle] = useState("")
   const [notificationMessage, setNotificationMessage] = useState("")
+  const [followUpDate, setFollowUpDate] = useState<Date | undefined>()
   const [editableFields, setEditableFields] = useState({
     name: "",
     email: "",
@@ -274,6 +279,108 @@ export default function LeadDetail() {
       toast({
         title: "Error",
         description: "Failed to save general notes",
+        variant: "destructive",
+      })
+    }
+  }
+
+  const createCallReminder = async () => {
+    if (!followUpDate) {
+      toast({
+        title: "Error",
+        description: "Please select a follow-up date",
+        variant: "destructive",
+      })
+      return
+    }
+
+    try {
+      await createNotification({
+        title: "Call Reminder",
+        message: `Schedule a call with ${lead?.name || client?.name} on ${format(followUpDate, 'PPP')}`,
+        type: 'call_reminder',
+        leadId: lead?.id,
+        clientId: client?.id,
+      })
+
+      setFollowUpDate(undefined)
+      toast({
+        title: "Success",
+        description: "Call reminder created successfully",
+      })
+    } catch (error) {
+      console.error('Error creating call reminder:', error)
+      toast({
+        title: "Error",
+        description: "Failed to create call reminder",
+        variant: "destructive",
+      })
+    }
+  }
+
+  const createEmailReminder = async () => {
+    if (!followUpDate) {
+      toast({
+        title: "Error",
+        description: "Please select a follow-up date",
+        variant: "destructive",
+      })
+      return
+    }
+
+    try {
+      await createNotification({
+        title: "Email Reminder",
+        message: `Send follow-up email to ${lead?.name || client?.name} on ${format(followUpDate, 'PPP')}`,
+        type: 'email_reminder',
+        leadId: lead?.id,
+        clientId: client?.id,
+      })
+
+      setFollowUpDate(undefined)
+      toast({
+        title: "Success",
+        description: "Email reminder created successfully",
+      })
+    } catch (error) {
+      console.error('Error creating email reminder:', error)
+      toast({
+        title: "Error",
+        description: "Failed to create email reminder",
+        variant: "destructive",
+      })
+    }
+  }
+
+  const createFollowUpReminder = async () => {
+    if (!followUpDate) {
+      toast({
+        title: "Error",
+        description: "Please select a follow-up date",
+        variant: "destructive",
+      })
+      return
+    }
+
+    try {
+      await createNotification({
+        title: "Follow-up Reminder",
+        message: `Follow up with ${lead?.name || client?.name} on ${format(followUpDate, 'PPP')}`,
+        type: 'follow_up_reminder',
+        leadId: lead?.id,
+        clientId: client?.id,
+      })
+
+      setFollowUpDate(undefined)
+      toast({
+        title: "Success",
+        description: "Follow-up reminder created successfully",
+      })
+    } catch (error) {
+      console.error('Error creating follow-up reminder:', error)
+      toast({
+        title: "Error",
+        description: "Failed to create follow-up reminder",
         variant: "destructive",
       })
     }
@@ -1269,28 +1376,66 @@ export default function LeadDetail() {
 
             <Separator />
 
-            {/* Create Notification */}
-            <div className="space-y-2">
-              <Label style={{ color: 'white' }}>Create Notification</Label>
-              <Input
-                placeholder="Notification title..."
-                value={notificationTitle}
-                onChange={(e) => setNotificationTitle(e.target.value)}
-              />
-              <Textarea
-                placeholder="Notification message..."
-                value={notificationMessage}
-                onChange={(e) => setNotificationMessage(e.target.value)}
-                rows={3}
-              />
-              <Button 
-                onClick={saveNotification} 
-                disabled={!notificationTitle.trim() || !notificationMessage.trim()}
-                variant="outline"
-              >
-                <Bell className="w-4 h-4 mr-2" />
-                Create Notification
-              </Button>
+            {/* Action Reminders */}
+            <div className="space-y-4">
+              <Label style={{ color: 'white' }}>Create Action Reminder</Label>
+              
+              <div className="space-y-3">
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <Button
+                      variant="outline"
+                      className="w-full justify-between"
+                    >
+                      {followUpDate ? format(followUpDate, 'PPP') : 'Select follow-up date'}
+                      <Calendar className="w-4 h-4" />
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-auto p-0" align="start">
+                    <CalendarComponent
+                      mode="single"
+                      selected={followUpDate}
+                      onSelect={setFollowUpDate}
+                      disabled={(date) => date < new Date()}
+                      initialFocus
+                      className="p-3 pointer-events-auto"
+                    />
+                  </PopoverContent>
+                </Popover>
+
+                <div className="flex gap-2">
+                  <Button 
+                    onClick={createCallReminder} 
+                    disabled={!followUpDate}
+                    variant="outline"
+                    size="sm"
+                    className="flex-1"
+                  >
+                    <Phone className="w-4 h-4 mr-2" />
+                    Call Reminder
+                  </Button>
+                  <Button 
+                    onClick={createEmailReminder} 
+                    disabled={!followUpDate}
+                    variant="outline"
+                    size="sm"
+                    className="flex-1"
+                  >
+                    <Mail className="w-4 h-4 mr-2" />
+                    Email Reminder
+                  </Button>
+                  <Button 
+                    onClick={createFollowUpReminder} 
+                    disabled={!followUpDate}
+                    variant="outline"
+                    size="sm"
+                    className="flex-1"
+                  >
+                    <Bell className="w-4 h-4 mr-2" />
+                    Follow-up
+                  </Button>
+                </div>
+              </div>
             </div>
           </CardContent>
         </Card>
