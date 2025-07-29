@@ -2866,10 +2866,12 @@ export type Database = {
         Returns: Database["public"]["Enums"]["user_role"]
       }
       has_role: {
-        Args: {
-          required_role: Database["public"]["Enums"]["user_role"]
-          user_id?: string
-        }
+        Args:
+          | {
+              required_role: Database["public"]["Enums"]["user_role"]
+              user_id?: string
+            }
+          | { required_role: string; user_id?: string }
         Returns: boolean
       }
       is_account_locked: {
