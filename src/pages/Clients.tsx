@@ -2,6 +2,7 @@ import { useState, useEffect } from "react"
 import { supabase } from "@/integrations/supabase/client"
 import { useAuth } from "@/components/auth/AuthProvider"
 import Layout from "@/components/Layout"
+import { useNavigate } from "react-router-dom"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
@@ -69,6 +70,7 @@ interface Loan {
 }
 
 export default function Clients() {
+  const navigate = useNavigate()
   const { user, hasRole } = useAuth()
   const { toast } = useToast()
   const { createNotification } = useNotifications()
@@ -506,20 +508,6 @@ export default function Clients() {
                     </div>
                     
                     <div className="flex gap-2">
-                      <PhoneDialer 
-                        trigger={
-                          <Button size="sm" variant="outline">
-                            <Phone className="h-4 w-4" />
-                          </Button>
-                        }
-                      />
-                      <EmailComposer 
-                        trigger={
-                          <Button size="sm" variant="outline">
-                            <Mail className="h-4 w-4" />
-                          </Button>
-                        }
-                      />
                       <Button 
                         size="sm" 
                         variant="outline"
@@ -537,28 +525,36 @@ export default function Clients() {
                           </>
                         )}
                       </Button>
-                      {/* Quick Action Buttons */}
-                      <Button
-                        size="sm"
-                        variant="outline"
-                        className="h-8 px-3 text-xs bg-gradient-to-r from-blue-500/10 to-blue-500/5 hover:from-blue-500/20 hover:to-blue-500/10 border-blue-500/20"
-                      >
-                        <Phone className="w-3 h-3 mr-1" />
-                        Call
-                      </Button>
-                      <Button
-                        size="sm"
-                        variant="outline"
-                        className="h-8 px-3 text-xs bg-gradient-to-r from-green-500/10 to-green-500/5 hover:from-green-500/20 hover:to-green-500/10 border-green-500/20"
-                      >
-                        <Mail className="w-3 h-3 mr-1" />
-                        Email
-                      </Button>
+                       {/* Quick Action Buttons */}
+                      <PhoneDialer 
+                        trigger={
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            className="h-8 px-3 text-xs bg-gradient-to-r from-blue-500/10 to-blue-500/5 hover:from-blue-500/20 hover:to-blue-500/10 border-blue-500/20"
+                          >
+                            <Phone className="w-3 h-3 mr-1" />
+                            Call
+                          </Button>
+                        }
+                      />
+                      <EmailComposer 
+                        trigger={
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            className="h-8 px-3 text-xs bg-gradient-to-r from-green-500/10 to-green-500/5 hover:from-green-500/20 hover:to-green-500/10 border-green-500/20"
+                          >
+                            <Mail className="w-3 h-3 mr-1" />
+                            Email
+                          </Button>
+                        }
+                      />
                       <Button
                         size="sm"
                         variant="outline"
                         className="h-8 px-3 text-xs bg-gradient-to-r from-orange-500/10 to-orange-500/5 hover:from-orange-500/20 hover:to-orange-500/10 border-orange-500/20"
-                        onClick={() => window.location.href = '/documents'}
+                        onClick={() => navigate('/documents')}
                       >
                         <FileText className="w-3 h-3 mr-1" />
                         Documents

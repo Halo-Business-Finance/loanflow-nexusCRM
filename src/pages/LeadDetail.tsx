@@ -719,22 +719,30 @@ export default function LeadDetail() {
           </div>
           <div className="flex gap-2">
             {/* Quick Action Buttons */}
-            <Button
-              size="sm"
-              variant="outline"
-              className="h-9 px-3 text-xs bg-gradient-to-r from-blue-500/10 to-blue-500/5 hover:from-blue-500/20 hover:to-blue-500/10 border-blue-500/20"
-            >
-              <PhoneIcon className="w-3 h-3 mr-1" />
-              Call
-            </Button>
-            <Button
-              size="sm"
-              variant="outline"
-              className="h-9 px-3 text-xs bg-gradient-to-r from-green-500/10 to-green-500/5 hover:from-green-500/20 hover:to-green-500/10 border-green-500/20"
-            >
-              <Mail className="w-3 h-3 mr-1" />
-              Email
-            </Button>
+            <PhoneDialer 
+              trigger={
+                <Button
+                  size="sm"
+                  variant="outline"
+                  className="h-9 px-3 text-xs bg-gradient-to-r from-blue-500/10 to-blue-500/5 hover:from-blue-500/20 hover:to-blue-500/10 border-blue-500/20"
+                >
+                  <PhoneIcon className="w-3 h-3 mr-1" />
+                  Call
+                </Button>
+              }
+            />
+            <EmailComposer 
+              trigger={
+                <Button
+                  size="sm"
+                  variant="outline"
+                  className="h-9 px-3 text-xs bg-gradient-to-r from-green-500/10 to-green-500/5 hover:from-green-500/20 hover:to-green-500/10 border-green-500/20"
+                >
+                  <Mail className="w-3 h-3 mr-1" />
+                  Email
+                </Button>
+              }
+            />
             <Button
               size="sm"
               variant="outline"
