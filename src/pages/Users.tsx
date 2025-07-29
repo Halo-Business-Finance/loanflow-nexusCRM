@@ -620,7 +620,7 @@ export default function Users() {
                       <td className="py-4 px-4">
                         <div className="flex items-center gap-3">
                           <Avatar className="h-10 w-10">
-                            <AvatarFallback className="bg-primary/10 text-primary font-medium">
+                            <AvatarFallback className="bg-primary/10 text-white font-medium">
                               {user.first_name?.[0]}{user.last_name?.[0]}
                             </AvatarFallback>
                           </Avatar>
