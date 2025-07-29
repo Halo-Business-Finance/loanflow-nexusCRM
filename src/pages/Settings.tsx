@@ -99,6 +99,14 @@ export default function Settings() {
           language: (data as any).language || 'en-US',
           timezone: (data as any).timezone || 'America/New_York'
         })
+        
+        // Load notification settings
+        setNotifications({
+          email_notifications: (data as any).email_notifications ?? true,
+          new_application_alerts: (data as any).new_application_alerts ?? true,
+          status_change_notifications: (data as any).status_change_notifications ?? true,
+          daily_summary_reports: (data as any).daily_summary_reports ?? false
+        })
       } else {
         // Create profile if it doesn't exist
         setProfile({
@@ -165,17 +173,43 @@ export default function Settings() {
     }))
   }
 
-  const handleNotificationChange = (field: string, value: boolean) => {
+  const handleNotificationChange = async (field: string, value: boolean) => {
     setNotifications(prev => ({
       ...prev,
       [field]: value
     }))
     
-    // Optionally save to database or show a toast
-    toast({
-      title: "Notification Updated",
-      description: `${field.replace(/_/g, ' ')} ${value ? 'enabled' : 'disabled'}`
-    })
+    // Save to database
+    if (user) {
+      try {
+        const { error } = await supabase
+          .from('profiles')
+          .upsert({
+            id: user.id,
+            [field]: value,
+            updated_at: new Date().toISOString()
+          })
+        
+        if (error) throw error
+        
+        toast({
+          title: "Notification Updated",
+          description: `${field.replace(/_/g, ' ')} ${value ? 'enabled' : 'disabled'}`
+        })
+      } catch (error) {
+        console.error('Error saving notification setting:', error)
+        // Revert the state change if save failed
+        setNotifications(prev => ({
+          ...prev,
+          [field]: !value
+        }))
+        toast({
+          title: "Error",
+          description: "Failed to update notification setting",
+          variant: "destructive"
+        })
+      }
+    }
   }
 
   const setupMFA = async () => {
