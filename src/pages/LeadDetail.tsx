@@ -813,9 +813,9 @@ export default function LeadDetail() {
             <CardContent className="space-y-4">
               <div className="grid grid-cols-1 gap-4">
                 <div className="flex items-center gap-3">
-                  <User className="w-4 h-4" style={{ color: 'white' }} />
+                  <User className="w-4 h-4 text-muted-foreground" />
                   <div className="flex-1">
-                    <p className="text-sm" style={{ color: 'white' }}>Full Name</p>
+                    <p className="text-sm text-muted-foreground">Full Name</p>
                     {isEditing ? (
                       <Input
                         value={editableFields.name}
@@ -830,9 +830,9 @@ export default function LeadDetail() {
 
 
                 <div className="flex items-center gap-3">
-                  <Mail className="w-4 h-4" style={{ color: 'white' }} />
+                  <Mail className="w-4 h-4 text-muted-foreground" />
                   <div className="flex-1">
-                    <p className="text-sm" style={{ color: 'white' }}>Email</p>
+                    <p className="text-sm text-muted-foreground">Email</p>
                     {isEditing ? (
                       <Input
                         type="email"
@@ -853,9 +853,9 @@ export default function LeadDetail() {
                 </div>
 
                 <div className="flex items-center gap-3">
-                  <Phone className="w-4 h-4" style={{ color: 'white' }} />
+                  <Phone className="w-4 h-4 text-muted-foreground" />
                   <div className="flex-1">
-                    <p className="text-sm" style={{ color: 'white' }}>Phone</p>
+                    <p className="text-sm text-muted-foreground">Phone</p>
                     {isEditing ? (
                       <Input
                         value={editableFields.phone}
@@ -985,9 +985,9 @@ export default function LeadDetail() {
                 {/* Left Column */}
                 <div className="space-y-4">
                   <div className="flex items-center gap-3">
-                    <Building className="w-4 h-4" style={{ color: 'white' }} />
+                    <Building className="w-4 h-4 text-muted-foreground" />
                     <div className="flex-1">
-                      <p className="text-sm" style={{ color: 'white' }}>Business Name</p>
+                      <p className="text-sm text-muted-foreground">Business Name</p>
                       {isEditing ? (
                         <Input
                           value={editableFields.business_name}
@@ -995,15 +995,15 @@ export default function LeadDetail() {
                           placeholder="Enter business name"
                         />
                       ) : (
-                        <p className="font-medium" style={{ color: 'white' }}>{lead.business_name || 'N/A'}</p>
+                        <p className="font-medium text-foreground">{lead.business_name || 'N/A'}</p>
                       )}
                     </div>
                   </div>
 
                   <div className="flex items-center gap-3">
-                    <Home className="w-4 h-4" style={{ color: 'white' }} />
+                    <Home className="w-4 h-4 text-muted-foreground" />
                     <div className="flex-1">
-                      <p className="text-sm" style={{ color: 'white' }}>Business Address</p>
+                      <p className="text-sm text-muted-foreground">Business Address</p>
                       {isEditing ? (
                         <Textarea
                           value={editableFields.business_address}
@@ -1012,15 +1012,15 @@ export default function LeadDetail() {
                           rows={2}
                         />
                       ) : (
-                        <p className="font-medium" style={{ color: 'white' }}>{lead.business_address || 'N/A'}</p>
+                        <p className="font-medium text-foreground">{lead.business_address || 'N/A'}</p>
                       )}
                     </div>
                   </div>
 
                   <div className="flex items-center gap-3">
-                    <Calendar className="w-4 h-4" style={{ color: 'white' }} />
+                    <Calendar className="w-4 h-4 text-muted-foreground" />
                     <div className="flex-1">
-                      <p className="text-sm" style={{ color: 'white' }}>Year Established</p>
+                      <p className="text-sm text-muted-foreground">Year Established</p>
                       {isEditing ? (
                         <Input
                           type="number"
@@ -1031,7 +1031,7 @@ export default function LeadDetail() {
                           max={new Date().getFullYear()}
                         />
                       ) : (
-                        <p className="font-medium" style={{ color: 'white' }}>
+                        <p className="font-medium text-foreground">
                           {(lead as any).year_established || 'N/A'}
                         </p>
                       )}
@@ -1039,9 +1039,9 @@ export default function LeadDetail() {
                   </div>
 
                   <div className="flex items-center gap-3">
-                    <DollarSign className="w-4 h-4" style={{ color: 'white' }} />
+                    <DollarSign className="w-4 h-4 text-muted-foreground" />
                     <div className="flex-1">
-                      <p className="text-sm" style={{ color: 'white' }}>Annual Revenue</p>
+                      <p className="text-sm text-muted-foreground">Annual Revenue</p>
                       {isEditing ? (
                         <Input
                           type="number"
@@ -1050,7 +1050,7 @@ export default function LeadDetail() {
                           placeholder="Enter annual revenue"
                         />
                       ) : (
-                        <p className="font-medium" style={{ color: 'white' }}>
+                        <p className="font-medium text-foreground">
                           {formatCurrency(lead.annual_revenue)}
                         </p>
                       )}
@@ -1062,7 +1062,7 @@ export default function LeadDetail() {
                 <div className="space-y-4">
                   <div className="flex items-center gap-3">
                     <div className="flex-1">
-                      <p className="text-sm" style={{ color: 'white' }}>Property Ownership</p>
+                      <p className="text-sm text-muted-foreground">Property Ownership</p>
                       {isEditing ? (
                         <div className="flex items-center gap-2 mt-2">
                           <Switch
@@ -1205,7 +1205,7 @@ export default function LeadDetail() {
           {/* POS Information */}
           <Card>
             <CardHeader>
-              <CardTitle className="flex items-center gap-2" style={{ color: 'white' }}>
+              <CardTitle className="flex items-center gap-2 text-foreground">
                 <ShoppingCart className="w-5 h-5" />
                 POS Information
               </CardTitle>
