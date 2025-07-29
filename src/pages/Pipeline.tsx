@@ -10,6 +10,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { DollarSign, Users, Phone, Mail, Calendar } from "lucide-react"
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart"
 import { LineChart, Line, XAxis, YAxis, ResponsiveContainer, BarChart, Bar, PieChart, Pie, Cell, AreaChart, Area } from "recharts"
+import { InteractivePipeline } from "@/components/InteractivePipeline"
 
 
 interface PipelineEntry {
@@ -198,11 +199,16 @@ export default function Pipeline() {
         </div>
       </div>
 
-      <Tabs defaultValue="performance" className="w-full">
+      <Tabs defaultValue="interactive" className="w-full">
         <TabsList>
+          <TabsTrigger value="interactive">Interactive Pipeline</TabsTrigger>
           <TabsTrigger value="performance">Performance Dashboard</TabsTrigger>
           <TabsTrigger value="analytics">Detailed Analytics</TabsTrigger>
         </TabsList>
+        
+        <TabsContent value="interactive" className="space-y-6">
+          <InteractivePipeline />
+        </TabsContent>
         
         <TabsContent value="performance" className="space-y-6">
           {/* Pipeline Value Trend */}
