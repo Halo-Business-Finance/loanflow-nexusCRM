@@ -10,7 +10,7 @@ import { Textarea } from "@/components/ui/textarea"
 import { Calendar as CalendarComponent } from "@/components/ui/calendar"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { Search, Phone, Mail, MapPin, Calendar, DollarSign, Filter, ChevronDown, ChevronUp, Trash2, Bell, MessageSquare } from "lucide-react"
+import { Search, Phone, Mail, MapPin, Calendar, DollarSign, Filter, ChevronDown, ChevronUp, Trash2, Bell, MessageSquare, ShoppingCart } from "lucide-react"
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog"
 import { useToast } from "@/hooks/use-toast"
 import { LoanManager } from "@/components/LoanManager"
@@ -46,6 +46,11 @@ interface Client {
   call_notes?: string
   priority?: string
   income?: number
+  pos_system?: string
+  monthly_processing_volume?: number
+  average_transaction_size?: number
+  processor_name?: string
+  current_processing_rate?: number
 }
 
 interface Loan {

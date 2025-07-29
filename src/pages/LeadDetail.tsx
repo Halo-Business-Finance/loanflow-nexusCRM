@@ -563,7 +563,13 @@ export default function LeadDetail() {
         notes: generalNotes || lead.notes || null,
         call_notes: callNotes || lead.call_notes || null,
         priority: editableFields.priority || 'medium',
-        income: lead.income || null
+        income: lead.income || null,
+        // POS Information fields
+        pos_system: editableFields.pos_system || null,
+        monthly_processing_volume: editableFields.monthly_processing_volume ? parseFloat(editableFields.monthly_processing_volume) : null,
+        average_transaction_size: editableFields.average_transaction_size ? parseFloat(editableFields.average_transaction_size) : null,
+        processor_name: editableFields.processor_name || null,
+        current_processing_rate: editableFields.current_processing_rate ? parseFloat(editableFields.current_processing_rate) : null
       }
 
       const { data: newClient, error: clientError } = await supabase
