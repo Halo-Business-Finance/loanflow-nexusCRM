@@ -155,6 +155,27 @@ export default function Integrations() {
     })
   }
 
+  const handleAIToolAction = (toolId: string, status: string) => {
+    const tool = aiTools.find(t => t.id === toolId)
+    if (!tool) return
+
+    if (status === "active") {
+      // Navigate to configuration for active tools
+      toast({
+        title: "Opening Configuration",
+        description: `Configure ${tool.name} settings`,
+      })
+      // You can add navigation logic here, e.g., router.push(`/ai-tools/${toolId}/config`)
+    } else {
+      // Enable the tool
+      toast({
+        title: "AI Tool Enabled",
+        description: `${tool.name} has been enabled successfully`,
+      })
+      // You can add actual enable logic here
+    }
+  }
+
   const getStatusColor = (status: string) => {
     switch (status) {
       case "connected":
@@ -306,6 +327,7 @@ export default function Integrations() {
                     <Button 
                       className="w-full" 
                       variant={tool.status === "active" ? "outline" : "default"}
+                      onClick={() => handleAIToolAction(tool.id, tool.status)}
                     >
                       {tool.status === "active" ? "Configure" : "Enable"}
                     </Button>
