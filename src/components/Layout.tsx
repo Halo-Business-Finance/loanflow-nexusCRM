@@ -3,7 +3,7 @@ import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar"
 import { AppSidebar } from "@/components/AppSidebar"
 import { ReactNode, useState, useEffect } from "react"
 import { Clock, ArrowLeft, ArrowRight } from "lucide-react"
-import loanflowIcon from "@/assets/loanflow-icon.png"
+// Using the uploaded LoanFlow CRM logo
 import { useNavigate } from "react-router-dom"
 import { Button } from "@/components/ui/button"
 import { NotificationBell } from "@/components/NotificationBell"
@@ -70,8 +70,7 @@ export default function Layout({ children }: LayoutProps) {
                 <ArrowRight className="w-4 h-4" />
               </Button>
               <div className="flex items-center gap-2 ml-2">
-                <img src={loanflowIcon} alt="LoanFlow" className="w-8 h-8" />
-                <h1 className="text-xl font-semibold text-foreground">LoanFlow</h1>
+                <img src="/lovable-uploads/20ce0230-d041-4bb4-948d-cfa460751461.png" alt="LoanFlow CRM" className="h-8" />
               </div>
             </div>
             <div className="flex items-center gap-4">
