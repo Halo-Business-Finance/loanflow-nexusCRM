@@ -15,14 +15,6 @@ export function GeoSecurityCheck({ children }: GeoSecurityCheckProps) {
   useEffect(() => {
     const checkGeoSecurity = async () => {
       try {
-        console.log('TEMP: Bypassing geo-security check for debugging')
-        // Temporarily bypass the check
-        setIsAllowed(true)
-        setIsChecking(false)
-        return
-
-        // Original code (commented out for debugging)
-        /*
         console.log('Performing geo-security check...')
         const { data, error } = await supabase.functions.invoke('geo-security')
         
@@ -34,10 +26,9 @@ export function GeoSecurityCheck({ children }: GeoSecurityCheckProps) {
           setIsAllowed(true)
           console.log('Geo-security check passed')
         }
-        */
       } catch (error) {
         console.error('Geo-security check error:', error)
-        // Temporarily allow access on any error
+        // Allow access on error to prevent lockout, but log for review
         setIsAllowed(true)
       } finally {
         setIsChecking(false)
