@@ -267,10 +267,16 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     // Super admin has access to everything
     if (userRole === 'super_admin') return true
     
+    // If checking for super_admin specifically, only super_admin can have it
+    if (role === 'super_admin') return userRole === 'super_admin'
+    
     // Role hierarchy: admin > manager > agent > viewer
     const roleHierarchy = ['viewer', 'agent', 'manager', 'admin']
     const userRoleIndex = roleHierarchy.indexOf(userRole)
     const requiredRoleIndex = roleHierarchy.indexOf(role)
+    
+    // If role not found in hierarchy, deny access (except for super_admin handled above)
+    if (requiredRoleIndex === -1) return false
     
     return userRoleIndex >= requiredRoleIndex
   }
