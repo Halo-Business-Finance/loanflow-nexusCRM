@@ -43,7 +43,8 @@ import {
   FileText,
   Bell,
   Trash2,
-  ChevronDown
+  ChevronDown,
+  ShoppingCart
 } from "lucide-react"
 
 interface Lead {
@@ -1136,6 +1137,119 @@ export default function LeadDetail() {
         </div>
 
         <div className="grid grid-cols-1 gap-6">
+          {/* POS Information */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2" style={{ color: 'white' }}>
+                <ShoppingCart className="w-5 h-5" />
+                POS Information
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {/* Left Column */}
+                <div className="space-y-4">
+                  <div className="flex items-center gap-3">
+                    <ShoppingCart className="w-4 h-4" style={{ color: 'white' }} />
+                    <div className="flex-1">
+                      <p className="text-sm" style={{ color: 'white' }}>POS System</p>
+                      {isEditing ? (
+                        <Input
+                          value={editableFields.pos_system}
+                          onChange={(e) => setEditableFields({...editableFields, pos_system: e.target.value})}
+                          placeholder="Enter POS system name"
+                        />
+                      ) : (
+                        <p className="font-medium" style={{ color: 'white' }}>
+                          {(lead as any).pos_system || 'N/A'}
+                        </p>
+                      )}
+                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-3">
+                    <DollarSign className="w-4 h-4" style={{ color: 'white' }} />
+                    <div className="flex-1">
+                      <p className="text-sm" style={{ color: 'white' }}>Monthly Processing Volume</p>
+                      {isEditing ? (
+                        <Input
+                          type="number"
+                          value={editableFields.monthly_processing_volume}
+                          onChange={(e) => setEditableFields({...editableFields, monthly_processing_volume: e.target.value})}
+                          placeholder="Enter monthly volume"
+                        />
+                      ) : (
+                        <p className="font-medium" style={{ color: 'white' }}>
+                          {formatCurrency((lead as any).monthly_processing_volume)}
+                        </p>
+                      )}
+                    </div>
+                  </div>
+                </div>
+
+                {/* Right Column */}
+                <div className="space-y-4">
+                  <div className="flex items-center gap-3">
+                    <DollarSign className="w-4 h-4" style={{ color: 'white' }} />
+                    <div className="flex-1">
+                      <p className="text-sm" style={{ color: 'white' }}>Average Transaction Size</p>
+                      {isEditing ? (
+                        <Input
+                          type="number"
+                          value={editableFields.average_transaction_size}
+                          onChange={(e) => setEditableFields({...editableFields, average_transaction_size: e.target.value})}
+                          placeholder="Enter average transaction size"
+                        />
+                      ) : (
+                        <p className="font-medium" style={{ color: 'white' }}>
+                          {formatCurrency((lead as any).average_transaction_size)}
+                        </p>
+                      )}
+                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-3">
+                    <Building className="w-4 h-4" style={{ color: 'white' }} />
+                    <div className="flex-1">
+                      <p className="text-sm" style={{ color: 'white' }}>Current Processor</p>
+                      {isEditing ? (
+                        <Input
+                          value={editableFields.processor_name}
+                          onChange={(e) => setEditableFields({...editableFields, processor_name: e.target.value})}
+                          placeholder="Enter processor name"
+                        />
+                      ) : (
+                        <p className="font-medium" style={{ color: 'white' }}>
+                          {(lead as any).processor_name || 'N/A'}
+                        </p>
+                      )}
+                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-3">
+                    <CreditCard className="w-4 h-4" style={{ color: 'white' }} />
+                    <div className="flex-1">
+                      <p className="text-sm" style={{ color: 'white' }}>Current Processing Rate (%)</p>
+                      {isEditing ? (
+                        <Input
+                          type="number"
+                          step="0.01"
+                          value={editableFields.current_processing_rate}
+                          onChange={(e) => setEditableFields({...editableFields, current_processing_rate: e.target.value})}
+                          placeholder="Enter processing rate"
+                        />
+                      ) : (
+                        <p className="font-medium" style={{ color: 'white' }}>
+                          {(lead as any).current_processing_rate ? `${(lead as any).current_processing_rate}%` : 'N/A'}
+                        </p>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
           {/* Loan Information */}
           <Card>
             <CardHeader>
