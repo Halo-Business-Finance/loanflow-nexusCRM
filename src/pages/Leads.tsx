@@ -375,7 +375,7 @@ export default function Leads() {
       <div className="flex justify-between items-center">
         <div>
           <h1 className="text-3xl font-bold text-foreground">Leads Management</h1>
-          <p className="text-white">Track and manage your loan prospects</p>
+          <p className="text-foreground">Track and manage your loan prospects</p>
         </div>
         <Dialog open={showAddDialog} onOpenChange={setShowAddDialog}>
           <DialogTrigger asChild>
@@ -567,7 +567,7 @@ export default function Leads() {
         <CardContent className="pt-6">
           <div className="flex flex-col md:flex-row gap-4">
             <div className="flex-1 relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-white w-4 h-4" />
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
               <Input
                 placeholder="Search leads by name or email..."
                 value={searchTerm}
@@ -610,21 +610,21 @@ export default function Leads() {
         <TabsContent value="grid" className="space-y-4">
           <div className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-2 md:gap-3 lg:gap-4">
             {filteredLeads.map((lead) => (
-              <Card key={lead.id} className={`shadow-soft hover:shadow-medium transition-shadow cursor-pointer text-white ${lead.is_converted_to_client ? 'opacity-60' : ''}`} onClick={() => navigate(`/leads/${lead.id}`)}>
-                <CardHeader className="pb-3 text-white">
+              <Card key={lead.id} className={`shadow-soft hover:shadow-medium transition-shadow cursor-pointer ${lead.is_converted_to_client ? 'opacity-60' : ''}`} onClick={() => navigate(`/leads/${lead.id}`)}>
+                <CardHeader className="pb-3">
                   <div className="flex justify-between items-start">
                     <div className="flex items-center gap-3">
                       <div className="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center">
                         <User className="w-5 h-5 text-primary" />
                       </div>
                       <div>
-                        <CardTitle className="text-lg flex items-center gap-2" style={{ color: 'white' }}>
+                        <CardTitle className="text-lg flex items-center gap-2 text-foreground">
                           {lead.name}
                           {lead.is_converted_to_client && (
                             <Badge variant="default" className="text-xs">Client</Badge>
                           )}
                         </CardTitle>
-                        <p className="text-sm" style={{ color: 'white' }}>{new Date(lead.last_contact).toLocaleDateString()}</p>
+                        <p className="text-sm text-muted-foreground">{new Date(lead.last_contact).toLocaleDateString()}</p>
                       </div>
                     </div>
                     <Badge variant={getPriorityColor(lead.priority)}>
@@ -632,19 +632,19 @@ export default function Leads() {
                     </Badge>
                   </div>
                 </CardHeader>
-                <CardContent className="space-y-3 text-white">
+                <CardContent className="space-y-3">
                   <div className="space-y-2">
                     {lead.business_name && (
                       <div className="flex items-center gap-2 text-sm">
-                        <Building className="w-4 h-4 text-white" />
-                        <span className="font-medium" style={{ color: 'white' }}>{lead.business_name}</span>
+                        <Building className="w-4 h-4 text-muted-foreground" />
+                        <span className="font-medium text-foreground">{lead.business_name}</span>
                       </div>
                     )}
                      <EmailComposer 
                        trigger={
                          <button className="flex items-center gap-2 text-sm hover:text-primary transition-colors">
-                           <Mail className="w-4 h-4 text-white" />
-                           <span style={{ color: 'white' }}>{lead.email}</span>
+                           <Mail className="w-4 h-4 text-muted-foreground" />
+                           <span className="text-foreground">{lead.email}</span>
                          </button>
                        }
                      />
@@ -652,27 +652,27 @@ export default function Leads() {
                        <PhoneDialer 
                          trigger={
                            <button className="flex items-center gap-2 text-sm hover:text-primary transition-colors">
-                             <Phone className="w-4 h-4 text-white" />
-                             <span style={{ color: 'white' }}>{formatPhoneNumber(lead.phone)}</span>
+                             <Phone className="w-4 h-4 text-muted-foreground" />
+                             <span className="text-foreground">{formatPhoneNumber(lead.phone)}</span>
                            </button>
                          }
                        />
                      )}
                       {lead.location && (
                         <div className="flex items-center gap-2 text-sm">
-                          <MapPin className="w-4 h-4 text-white" />
-                          <span style={{ color: 'white' }}>{lead.location}</span>
+                          <MapPin className="w-4 h-4 text-muted-foreground" />
+                          <span className="text-foreground">{lead.location}</span>
                         </div>
                       )}
                     {lead.loan_amount && (
                       <div className="flex items-center gap-2 text-sm">
-                        <DollarSign className="w-4 h-4 text-white" />
-                        <span className="font-medium" style={{ color: 'white' }}>${lead.loan_amount.toLocaleString()}</span>
+                        <DollarSign className="w-4 h-4 text-muted-foreground" />
+                        <span className="font-medium text-foreground">${lead.loan_amount.toLocaleString()}</span>
                       </div>
                     )}
                     {lead.loan_type && (
                       <div className="flex items-center gap-2 text-sm">
-                        <span className="text-xs bg-muted px-2 py-1 rounded font-medium text-white">{lead.loan_type}</span>
+                        <span className="text-xs bg-muted px-2 py-1 rounded font-medium text-foreground">{lead.loan_type}</span>
                       </div>
                     )}
                   </div>
@@ -681,11 +681,11 @@ export default function Leads() {
                     <Badge variant={getStageColor(lead.stage)}>
                       {lead.stage}
                     </Badge>
-                     {lead.credit_score && (
-                       <div className="text-sm text-white">
-                         Credit: {lead.credit_score}
-                       </div>
-                     )}
+                       {lead.credit_score && (
+                        <div className="text-sm text-foreground">
+                          Credit: {lead.credit_score}
+                        </div>
+                      )}
                   </div>
                   
                    <div className="flex gap-1 pt-2 flex-wrap">
@@ -748,7 +748,7 @@ export default function Leads() {
                           </DialogHeader>
                           <div className="space-y-4">
                             <p>Are you sure you want to convert <strong>{lead.name}</strong> to a client?</p>
-                            <p className="text-sm text-white">
+                             <p className="text-sm text-foreground">
                               This will create a new client record and add them to your pipeline.
                             </p>
                           </div>
@@ -807,49 +807,49 @@ export default function Leads() {
                 <table className="w-full">
                   <thead>
                     <tr className="border-b bg-muted/30">
-                      <th className="text-left p-4 font-medium text-white">Name</th>
-                      <th className="text-left p-4 font-medium text-white">Contact</th>
-                      <th className="text-left p-4 font-medium text-white">Loan Amount</th>
-                      <th className="text-left p-4 font-medium text-white">Loan Type</th>
-                      <th className="text-left p-4 font-medium text-white">Stage</th>
-                      <th className="text-left p-4 font-medium text-white">Priority</th>
-                      <th className="text-left p-4 font-medium text-white">Credit Score</th>
-                      <th className="text-left p-4 font-medium text-white">Actions</th>
+                       <th className="text-left p-4 font-medium text-foreground">Name</th>
+                       <th className="text-left p-4 font-medium text-foreground">Contact</th>
+                       <th className="text-left p-4 font-medium text-foreground">Loan Amount</th>
+                       <th className="text-left p-4 font-medium text-foreground">Loan Type</th>
+                       <th className="text-left p-4 font-medium text-foreground">Stage</th>
+                       <th className="text-left p-4 font-medium text-foreground">Priority</th>
+                       <th className="text-left p-4 font-medium text-foreground">Credit Score</th>
+                       <th className="text-left p-4 font-medium text-foreground">Actions</th>
                     </tr>
                   </thead>
                   <tbody>
                     {filteredLeads.map((lead) => (
-                      <tr key={lead.id} className={`border-b hover:bg-muted/20 cursor-pointer text-white ${lead.is_converted_to_client ? 'opacity-60' : ''}`} onClick={() => navigate(`/leads/${lead.id}`)}>
+                      <tr key={lead.id} className={`border-b hover:bg-muted/20 cursor-pointer ${lead.is_converted_to_client ? 'opacity-60' : ''}`} onClick={() => navigate(`/leads/${lead.id}`)}>
                         <td className="p-4">
                           <div className="flex items-center gap-3">
                             <div className="w-8 h-8 bg-primary/10 rounded-full flex items-center justify-center">
                               <User className="w-4 h-4 text-primary" />
                             </div>
                              <div>
-                               <div className="font-medium flex items-center gap-2 text-white">
-                                 {lead.name}
-                                 {lead.is_converted_to_client && (
-                                   <Badge variant="default" className="text-xs">Client</Badge>
-                                 )}
-                               </div>
-                               {lead.business_name && (
-                                 <div className="text-sm text-white font-medium">{lead.business_name}</div>
-                               )}
-                               <div className="text-sm text-white">{lead.location}</div>
+                                <div className="font-medium flex items-center gap-2 text-foreground">
+                                  {lead.name}
+                                  {lead.is_converted_to_client && (
+                                    <Badge variant="default" className="text-xs">Client</Badge>
+                                  )}
+                                </div>
+                                {lead.business_name && (
+                                  <div className="text-sm text-foreground font-medium">{lead.business_name}</div>
+                                )}
+                                <div className="text-sm text-foreground">{lead.location}</div>
                              </div>
                           </div>
                         </td>
                         <td className="p-4">
                            <div className="text-sm">
-                             <div className="text-white">{lead.email}</div>
-                             <div className="text-white">{lead.phone ? formatPhoneNumber(lead.phone) : ''}</div>
+                              <div className="text-foreground">{lead.email}</div>
+                              <div className="text-foreground">{lead.phone ? formatPhoneNumber(lead.phone) : ''}</div>
                            </div>
                         </td>
-                         <td className="p-4 font-medium text-white">
+                         <td className="p-4 font-medium text-foreground">
                            {lead.loan_amount ? `$${lead.loan_amount.toLocaleString()}` : '-'}
                          </td>
                         <td className="p-4">
-                          <span className="text-xs bg-muted px-2 py-1 rounded font-medium text-white">{lead.loan_type || '-'}</span>
+                          <span className="text-xs bg-muted px-2 py-1 rounded font-medium text-foreground">{lead.loan_type || '-'}</span>
                         </td>
                         <td className="p-4">
                           <Badge variant={getStageColor(lead.stage)}>
@@ -861,7 +861,7 @@ export default function Leads() {
                             {lead.priority}
                           </Badge>
                         </td>
-                        <td className="p-4 text-white">{lead.credit_score || '-'}</td>
+                        <td className="p-4 text-foreground">{lead.credit_score || '-'}</td>
                          <td className="p-4">
                            <div className="flex gap-2">
                              <PhoneDialer 
@@ -891,7 +891,7 @@ export default function Leads() {
                                    </DialogHeader>
                                    <div className="space-y-4">
                                      <p>Are you sure you want to convert <strong>{lead.name}</strong> to a client?</p>
-                                     <p className="text-sm text-white">
+                                     <p className="text-sm text-foreground">
                                        This will create a new client record and add them to your pipeline.
                                      </p>
                                    </div>
