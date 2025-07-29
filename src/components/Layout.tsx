@@ -8,6 +8,7 @@ import { useNavigate } from "react-router-dom"
 import { Button } from "@/components/ui/button"
 import { NotificationBell } from "@/components/NotificationBell"
 import { GlobalSearch } from "@/components/GlobalSearch"
+import { ThemeToggle } from "@/components/ThemeToggle"
 
 
 interface LayoutProps {
@@ -77,6 +78,7 @@ export default function Layout({ children }: LayoutProps) {
               <div className="hidden md:block w-80">
                 <GlobalSearch />
               </div>
+              <ThemeToggle />
               <NotificationBell />
             </div>
           </header>
