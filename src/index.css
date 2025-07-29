@@ -8,24 +8,25 @@ All colors MUST be HSL.
 
 @layer base {
   :root {
-    --background: 220 25% 8%;
-    --foreground: 0 0% 100%;
+    /* Light mode colors */
+    --background: 0 0% 98%;
+    --foreground: 220 25% 15%;
 
-    --card: 220 23% 12%;
-    --card-foreground: 0 0% 100%;
+    --card: 0 0% 100%;
+    --card-foreground: 220 25% 15%;
 
-    --popover: 220 23% 12%;
-    --popover-foreground: 0 0% 100%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 220 25% 15%;
 
     --primary: 220 91% 25%;
     --primary-foreground: 0 0% 100%;
     --primary-glow: 220 80% 35%;
 
-    --secondary: 220 25% 18%;
-    --secondary-foreground: 0 0% 100%;
+    --secondary: 220 13% 91%;
+    --secondary-foreground: 220 25% 15%;
 
-    --muted: 220 20% 15%;
-    --muted-foreground: 0 0% 100%;
+    --muted: 220 13% 95%;
+    --muted-foreground: 220 15% 45%;
 
     --accent: 142 76% 36%;
     --accent-foreground: 0 0% 100%;
@@ -36,25 +37,25 @@ All colors MUST be HSL.
     --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 220 25% 20%;
-    --input: 220 25% 20%;
+    --border: 220 13% 91%;
+    --input: 220 13% 91%;
     --ring: 220 91% 25%;
 
     --gradient-primary: linear-gradient(135deg, hsl(220 91% 25%), hsl(220 80% 35%));
-    --gradient-card: linear-gradient(145deg, hsl(220 23% 12%), hsl(220 25% 18%));
-    --shadow-soft: 0 1px 3px 0 hsl(215 25% 27% / 0.1), 0 1px 2px 0 hsl(215 25% 27% / 0.06);
-    --shadow-medium: 0 4px 6px -1px hsl(215 25% 27% / 0.1), 0 2px 4px -1px hsl(215 25% 27% / 0.06);
-    --shadow-large: 0 10px 15px -3px hsl(215 25% 27% / 0.1), 0 4px 6px -2px hsl(215 25% 27% / 0.05);
+    --gradient-card: linear-gradient(145deg, hsl(0 0% 100%), hsl(220 13% 95%));
+    --shadow-soft: 0 1px 3px 0 hsl(220 25% 15% / 0.1), 0 1px 2px 0 hsl(220 25% 15% / 0.06);
+    --shadow-medium: 0 4px 6px -1px hsl(220 25% 15% / 0.1), 0 2px 4px -1px hsl(220 25% 15% / 0.06);
+    --shadow-large: 0 10px 15px -3px hsl(220 25% 15% / 0.1), 0 4px 6px -2px hsl(220 25% 15% / 0.05);
 
     --radius: 0.5rem;
 
-    --sidebar-background: 220 30% 6%;
-    --sidebar-foreground: 0 0% 100%;
+    --sidebar-background: 0 0% 100%;
+    --sidebar-foreground: 220 25% 15%;
     --sidebar-primary: 220 91% 25%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 220 25% 15%;
-    --sidebar-accent-foreground: 0 0% 100%;
-    --sidebar-border: 220 25% 18%;
+    --sidebar-accent: 220 13% 95%;
+    --sidebar-accent-foreground: 220 25% 15%;
+    --sidebar-border: 220 13% 91%;
     --sidebar-ring: 220 91% 25%;
   }
 
@@ -105,16 +106,9 @@ All colors MUST be HSL.
 @layer base {
   * {
     @apply border-border;
-    color: white !important;
   }
 
   body {
     @apply bg-background text-foreground;
-    color: white !important;
-  }
-  
-  /* Force all text elements to be white */
-  h1, h2, h3, h4, h5, h6, p, span, div, td, th, li, a, label, input, textarea, select {
-    color: white !important;
   }
 }
