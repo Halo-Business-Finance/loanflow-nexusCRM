@@ -35,7 +35,7 @@ export function LoginForm({ onToggleMode }: LoginFormProps) {
       <CardHeader className="space-y-1">
         <div className="flex items-center justify-center mb-4">
           <div className="w-12 h-12 bg-gradient-primary rounded-xl flex items-center justify-center">
-            <Shield className="w-6 h-6 text-white" />
+            <Shield className="w-6 h-6 text-primary-foreground" />
           </div>
         </div>
         <CardTitle className="text-2xl text-center">Welcome Back</CardTitle>

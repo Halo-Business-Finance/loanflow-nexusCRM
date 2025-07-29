@@ -13,7 +13,10 @@ export function AsyncErrorBoundary({ children, fallback, onError }: AsyncErrorBo
   useEffect(() => {
     // Handle unhandled promise rejections
     const handleUnhandledRejection = (event: PromiseRejectionEvent) => {
-      console.error('Unhandled promise rejection:', event.reason)
+      // Only log critical errors to reduce noise
+      if (event.reason?.name !== 'AbortError') {
+        console.error('Unhandled promise rejection:', event.reason)
+      }
       
       // Convert promise rejection to Error if it isn't already
       const error = event.reason instanceof Error 
@@ -27,7 +30,10 @@ export function AsyncErrorBoundary({ children, fallback, onError }: AsyncErrorBo
     }
 
     const handleError = (event: ErrorEvent) => {
-      console.error('Unhandled error:', event.error)
+      // Filter out non-critical errors
+      if (!event.error?.message?.includes('ResizeObserver')) {
+        console.error('Unhandled error:', event.error)
+      }
       
       const error = event.error instanceof Error 
         ? event.error 

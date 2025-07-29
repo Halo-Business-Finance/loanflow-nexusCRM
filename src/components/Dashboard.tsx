@@ -218,9 +218,6 @@ export default function Dashboard() {
   }
 
   const calculatePipelineStages = (leadsData: Lead[], pipelineData: PipelineEntry[]) => {
-    console.log('Pipeline calculation - Leads data:', leadsData)
-    console.log('Pipeline calculation - Pipeline data:', pipelineData)
-    
     const stageCounts = {
       "Initial Contact": 0,
       "Qualified": 0, 
@@ -233,7 +230,6 @@ export default function Dashboard() {
     leadsData.forEach(lead => {
       if (stageCounts.hasOwnProperty(lead.stage)) {
         stageCounts[lead.stage as keyof typeof stageCounts]++
-        console.log(`Added lead to ${lead.stage}: ${lead.name} (converted: ${lead.is_converted_to_client})`)
       }
     })
 
@@ -245,13 +241,8 @@ export default function Dashboard() {
       
       if (stageCounts.hasOwnProperty(entry.stage) && !correspondingLead) {
         stageCounts[entry.stage as keyof typeof stageCounts]++
-        console.log(`Added pipeline entry to ${entry.stage} (no corresponding lead)`)
-      } else if (correspondingLead) {
-        console.log(`Skipped pipeline entry for ${entry.stage} - already counted lead ${correspondingLead.name}`)
       }
     })
-
-    console.log('Final stage counts:', stageCounts)
 
     // Calculate total for percentage calculation
     const total = Object.values(stageCounts).reduce((sum, count) => sum + count, 0)
@@ -326,7 +317,6 @@ export default function Dashboard() {
   }
 
   const formatDateTime = (date: Date) => {
-    console.log('formatDateTime called with:', date)
     const options: Intl.DateTimeFormatOptions = {
       weekday: 'long',
       year: 'numeric',
@@ -336,9 +326,7 @@ export default function Dashboard() {
       minute: '2-digit',
       second: '2-digit'
     }
-    const formattedTime = date.toLocaleDateString('en-US', options)
-    console.log('Formatted time result:', formattedTime)
-    return formattedTime
+    return date.toLocaleDateString('en-US', options)
   }
 
   const handleMetricClick = (metric: typeof metrics[0]) => {
@@ -465,7 +453,7 @@ export default function Dashboard() {
                 {metric.title}
               </CardTitle>
               <div className="flex items-center gap-2">
-                <metric.icon className="h-4 w-4 text-white" />
+                <metric.icon className="h-4 w-4 text-primary-foreground" />
                 <ChevronRight className="h-3 w-3 text-muted-foreground" />
               </div>
             </CardHeader>
@@ -624,7 +612,7 @@ export default function Dashboard() {
               >
                 <div className="flex items-center gap-4">
                   <div className="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center">
-                    <Users className="w-5 h-5 text-white" />
+                    <Users className="w-5 h-5 text-primary-foreground" />
                   </div>
                   <div>
                     <p className="font-medium text-foreground">{lead.name}</p>
@@ -664,7 +652,7 @@ export default function Dashboard() {
             <div className="space-y-4">
               <div className="flex items-center gap-4">
                 <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center">
-                  <Users className="w-6 h-6 text-white" />
+                  <Users className="w-6 h-6 text-primary-foreground" />
                 </div>
                 <div>
                   <h3 className="font-semibold text-lg">{selectedLead.name}</h3>

@@ -73,7 +73,7 @@ export function AppSidebar() {
                 <SidebarMenuItem key={item.title}>
                   <SidebarMenuButton asChild>
                     <NavLink to={item.url} end className={getNavClass}>
-                      <item.icon className="w-4 h-4 text-foreground dark:text-white" />
+                      <item.icon className="w-4 h-4 text-sidebar-foreground" />
                       {state !== "collapsed" && <span>{item.title}</span>}
                     </NavLink>
                   </SidebarMenuButton>
@@ -96,7 +96,7 @@ export function AppSidebar() {
                   <SidebarMenuItem key={item.title}>
                     <SidebarMenuButton asChild>
                       <NavLink to={item.url} className={getNavClass}>
-                        <item.icon className="w-4 h-4 text-foreground dark:text-white" />
+                        <item.icon className="w-4 h-4 text-sidebar-foreground" />
                         {state !== "collapsed" && <span>{item.title}</span>}
                       </NavLink>
                     </SidebarMenuButton>
@@ -159,9 +159,9 @@ export function AppSidebar() {
               title={user ? `Signed in as ${user.email}` : "Click to sign in"}
             >
               {user ? (
-                <UserCheck className="w-4 h-4 text-white" />
+                <UserCheck className="w-4 h-4 text-sidebar-foreground" />
               ) : (
-                <User className="w-4 h-4 text-white" />
+                <User className="w-4 h-4 text-sidebar-foreground" />
               )}
             </Button>
             {state !== "collapsed" && (

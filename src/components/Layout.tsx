@@ -29,7 +29,7 @@ export default function Layout({ children }: LayoutProps) {
   useEffect(() => {
     const timer = setInterval(() => {
       setCurrentDateTime(new Date())
-    }, 1000) // Update every second
+    }, 60000) // Update every minute instead of every second
 
     return () => clearInterval(timer)
   }, [])
