@@ -6,6 +6,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider, useAuth } from "@/components/auth/AuthProvider";
 import { AuthPage } from "@/components/auth/AuthPage";
 import { SecurityDashboard } from "@/components/security/SecurityDashboard";
+import { SecurityManager } from "@/components/security/SecurityManager";
 import { GeoSecurityCheck } from "@/components/GeoSecurityCheck";
 import Index from "./pages/Index";
 import Leads from "./pages/Leads";
@@ -60,6 +61,7 @@ function AuthenticatedApp() {
             <Route path="/settings" element={<Settings />} />
             <Route path="/users" element={<Users />} />
             <Route path="/security" element={<SecurityDashboard />} />
+            <Route path="/security-center" element={<SecurityManager />} />
             <Route path="/resources" element={<Resources />} />
             <Route path="*" element={<NotFound />} />
           </>

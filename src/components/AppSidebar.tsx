@@ -1,4 +1,4 @@
-import { BarChart3, Users, UserCheck, FileText, Settings, Home, Target, Calendar, Phone, Mail, Shield, LogOut, BookOpen, User } from "lucide-react"
+import { BarChart3, Users, UserCheck, FileText, Settings, Home, Target, Calendar, Phone, Mail, Shield, LogOut, BookOpen, User, Lock } from "lucide-react"
 import { NavLink, useLocation, useNavigate } from "react-router-dom"
 import { Button } from "@/components/ui/button"
 import { RingCentralSetup } from "@/components/RingCentralSetup"
@@ -34,6 +34,7 @@ const settingsItems = [
   { title: "Settings", url: "/settings", icon: Settings },
   { title: "Users", url: "/users", icon: UserCheck },
   { title: "Security", url: "/security", icon: Shield },
+  { title: "Security Center", url: "/security-center", icon: Lock },
 ]
 
 export function AppSidebar() {
@@ -85,7 +86,7 @@ export function AppSidebar() {
           <SidebarGroupContent>
             <SidebarMenu>
               {settingsItems.map((item) => {
-                // Only show Security and Users to admins
+                // Only show Security and Users to admins, but Security Center is available to all
                 if ((item.title === "Security" || item.title === "Users") && !hasRole('admin')) {
                   return null;
                 }
