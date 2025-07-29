@@ -8,27 +8,27 @@ const resourceCategories = [
     title: "Documentation",
     icon: FileText,
     items: [
-      { name: "User Manual", type: "PDF", url: "#" },
-      { name: "API Documentation", type: "Web", url: "#" },
-      { name: "Best Practices Guide", type: "PDF", url: "#" },
+      { name: "User Manual", type: "PDF", url: "https://docs.lovable.dev/" },
+      { name: "API Documentation", type: "Web", url: "https://supabase.com/docs" },
+      { name: "Best Practices Guide", type: "PDF", url: "https://docs.lovable.dev/tips-tricks/troubleshooting" },
     ]
   },
   {
     title: "Training Materials",
     icon: BookOpen,
     items: [
-      { name: "Getting Started Tutorial", type: "Video", url: "#" },
-      { name: "Advanced Features Training", type: "Video", url: "#" },
-      { name: "CRM Workflow Guide", type: "PDF", url: "#" },
+      { name: "Getting Started Tutorial", type: "Video", url: "https://www.youtube.com/watch?v=9KHLTZaJcR8" },
+      { name: "Advanced Features Training", type: "Video", url: "https://www.youtube.com/playlist?list=PLbVHz4urQBZkJiAWdG8HWoJTdgEysigIO" },
+      { name: "CRM Workflow Guide", type: "PDF", url: "https://docs.lovable.dev/user-guides/quickstart" },
     ]
   },
   {
     title: "External Resources",
     icon: Globe,
     items: [
-      { name: "Industry Reports", type: "Web", url: "#" },
-      { name: "Compliance Guidelines", type: "PDF", url: "#" },
-      { name: "Regulatory Updates", type: "Web", url: "#" },
+      { name: "Industry Reports", type: "Web", url: "https://www.sba.gov/partners/lenders" },
+      { name: "Compliance Guidelines", type: "PDF", url: "https://www.fdic.gov/regulations/compliance/" },
+      { name: "Regulatory Updates", type: "Web", url: "https://www.consumerfinance.gov/" },
     ]
   }
 ];
@@ -78,7 +78,7 @@ export default function Resources() {
                           <p className="text-sm text-muted-foreground">{item.type}</p>
                         </div>
                       </div>
-                      <Button variant="ghost" size="sm">
+                      <Button variant="ghost" size="sm" onClick={() => window.open(item.url, '_blank')}>
                         <ExternalLink className="w-4 h-4" />
                       </Button>
                     </div>
