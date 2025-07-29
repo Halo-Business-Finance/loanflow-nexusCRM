@@ -157,7 +157,8 @@ export default function Users() {
         options: {
           data: {
             first_name: newUser.first_name,
-            last_name: newUser.last_name
+            last_name: newUser.last_name,
+            phone_number: newUser.phone_number // Include phone in signup metadata
           },
           emailRedirectTo: `${window.location.origin}/`
         }
@@ -177,13 +178,16 @@ export default function Users() {
 
       if (roleError) throw roleError
 
-      // Update the profile with phone number
+      // Update the profile with phone number (in case trigger didn't handle it)
       const { error: profileError } = await supabase
         .from('profiles')
         .update({ phone_number: newUser.phone_number })
         .eq('id', data.user.id)
 
-      if (profileError) throw profileError
+      if (profileError) {
+        console.error('Phone number update error:', profileError)
+        // Don't throw error here as user creation was successful
+      }
 
       toast({
         title: "Success",
