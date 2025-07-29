@@ -50,6 +50,10 @@ All colors MUST be HSL.
 
     --radius: 0.5rem;
 
+    /* Navy blue for navigation */
+    --navy: 220 91% 15%;
+    --navy-foreground: 0 0% 100%;
+
     --sidebar-background: 220 60% 96%;
     --sidebar-foreground: 220 25% 15%;
     --sidebar-primary: 220 91% 25%;
