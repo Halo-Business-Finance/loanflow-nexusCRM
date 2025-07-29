@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Progress } from "@/components/ui/progress"
 import { BarChart3, TrendingUp, DollarSign, Users, FileText, Calendar, Download, Filter } from "lucide-react"
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Area, AreaChart } from "recharts"
 
 const reportData = {
   loanVolume: {
@@ -187,28 +188,58 @@ export default function Reports() {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="space-y-4">
-              <div className="grid grid-cols-6 gap-4">
-                {monthlyData.map((month, index) => (
-                  <div key={month.month} className="text-center space-y-2">
-                    <div className="text-sm font-medium">{month.month}</div>
-                    <div className="space-y-1">
-                      <div className="h-24 bg-primary/10 rounded flex items-end justify-center relative">
-                        <div 
-                          className="w-full bg-primary rounded"
-                          style={{ height: `${(month.loans / 70) * 100}%` }}
-                        />
-                        <span className="absolute top-1 text-xs font-medium">
-                          {month.loans}
-                        </span>
-                      </div>
-                      <div className="text-xs text-muted-foreground">
-                        ${(month.volume / 1000000).toFixed(1)}M
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
+            <div className="h-80">
+              <ResponsiveContainer width="100%" height="100%">
+                <AreaChart data={monthlyData}>
+                  <CartesianGrid strokeDasharray="3 3" className="opacity-30" />
+                  <XAxis 
+                    dataKey="month" 
+                    className="text-muted-foreground text-sm"
+                  />
+                  <YAxis 
+                    yAxisId="loans"
+                    orientation="left"
+                    className="text-muted-foreground text-sm"
+                    tickFormatter={(value) => `${value}`}
+                  />
+                  <YAxis 
+                    yAxisId="volume"
+                    orientation="right"
+                    className="text-muted-foreground text-sm"
+                    tickFormatter={(value) => `$${(value / 1000000).toFixed(1)}M`}
+                  />
+                  <Tooltip 
+                    formatter={(value: number, name: string) => [
+                      name === 'loans' ? `${value} loans` : `$${(value / 1000000).toFixed(1)}M`,
+                      name === 'loans' ? 'Loans' : 'Volume'
+                    ]}
+                    labelFormatter={(label: string) => `Month: ${label}`}
+                    contentStyle={{
+                      backgroundColor: 'hsl(var(--card))',
+                      border: '1px solid hsl(var(--border))',
+                      borderRadius: '8px'
+                    }}
+                  />
+                  <Area
+                    yAxisId="loans"
+                    type="monotone"
+                    dataKey="loans"
+                    stroke="hsl(var(--primary))"
+                    fill="hsl(var(--primary))"
+                    fillOpacity={0.3}
+                    strokeWidth={2}
+                  />
+                  <Area
+                    yAxisId="volume"
+                    type="monotone"
+                    dataKey="volume"
+                    stroke="hsl(var(--accent))"
+                    fill="hsl(var(--accent))"
+                    fillOpacity={0.2}
+                    strokeWidth={2}
+                  />
+                </AreaChart>
+              </ResponsiveContainer>
             </div>
           </CardContent>
         </Card>
