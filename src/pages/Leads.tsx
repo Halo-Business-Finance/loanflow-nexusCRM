@@ -540,6 +540,12 @@ export default function Leads() {
                   rows={3}
                 />
               </div>
+              
+              <div className="border-t pt-4">
+                <p className="text-sm text-muted-foreground mb-2">
+                  💡 Tip: You can add multiple loan requests after creating the lead
+                </p>
+              </div>
             </div>
             <DialogFooter>
               <Button variant="outline" onClick={() => setShowAddDialog(false)}>

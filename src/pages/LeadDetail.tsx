@@ -21,6 +21,7 @@ import { EmailComposer } from "@/components/EmailComposer"
 import { formatNumber, formatCurrency } from "@/lib/utils"
 import { useNotifications } from "@/hooks/useNotifications"
 import { format } from "date-fns"
+import LoanRequestManager from "@/components/LoanRequestManager"
 import { 
   ArrowLeft, 
   User, 
@@ -114,6 +115,7 @@ export default function LeadDetail() {
   const [lead, setLead] = useState<Lead | null>(null)
   const [client, setClient] = useState<Client | null>(null)
   const [loading, setLoading] = useState(true)
+  const [loanRequests, setLoanRequests] = useState<any[]>([])
   const [isEditing, setIsEditing] = useState(false)
   const [callNotes, setCallNotes] = useState("")
   const [newCallNote, setNewCallNote] = useState("")
@@ -198,6 +200,9 @@ export default function LeadDetail() {
       if (data.is_converted_to_client) {
         await fetchClientData(data.id)
       }
+      
+      // Fetch loan requests for this lead
+      await fetchLoanRequests(data.id)
     } catch (error) {
       console.error('Error fetching lead:', error)
       toast({
@@ -227,6 +232,22 @@ export default function LeadDetail() {
       setClient(data)
     } catch (error) {
       console.error('Error fetching client:', error)
+    }
+  }
+
+  const fetchLoanRequests = async (leadId: string) => {
+    try {
+      const { data, error } = await supabase
+        .from('loan_requests')
+        .select('*')
+        .eq('lead_id', leadId)
+        .order('created_at', { ascending: false })
+
+      if (error) throw error
+      
+      setLoanRequests(data || [])
+    } catch (error) {
+      console.error('Error fetching loan requests:', error)
     }
   }
 
@@ -1405,6 +1426,23 @@ export default function LeadDetail() {
             </CardContent>
           </Card>
         )}
+
+        {/* Loan Requests Section */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2" style={{ color: 'white' }}>
+              <DollarSign className="w-5 h-5" />
+              Loan Requests
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <LoanRequestManager
+              leadId={lead?.id}
+              loanRequests={loanRequests}
+              onLoanRequestsUpdate={setLoanRequests}
+            />
+          </CardContent>
+        </Card>
 
         {/* Call Notes Section */}
         <Card>
