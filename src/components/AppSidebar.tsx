@@ -88,8 +88,8 @@ export function AppSidebar() {
           <SidebarGroupContent>
             <SidebarMenu>
               {settingsItems.map((item) => {
-                // Only show Security, Users, and Enterprise to admins
-                if ((item.title === "Security" || item.title === "Users" || item.title === "Enterprise") && !hasRole('admin')) {
+                // Only show Security, Users, and Enterprise to admins and super_admins
+                if ((item.title === "Security" || item.title === "Users" || item.title === "Enterprise") && !hasRole('admin') && !hasRole('super_admin')) {
                   return null;
                 }
                 return (

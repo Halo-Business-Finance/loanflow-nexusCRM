@@ -51,7 +51,7 @@ interface UserProfile {
   last_name: string | null
   phone_number: string | null
   created_at: string
-  role: 'admin' | 'manager' | 'agent' | 'viewer'
+  role: 'super_admin' | 'admin' | 'manager' | 'agent' | 'viewer'
   is_active: boolean
 }
 
@@ -78,15 +78,15 @@ export default function Users() {
   const [confirmPassword, setConfirmPassword] = useState("")
 
   useEffect(() => {
-    if (hasRole('admin')) {
+    if (hasRole('admin') || hasRole('super_admin')) {
       fetchUsers()
     } else {
       setLoading(false)
     }
   }, [hasRole])
 
-  // Redirect if not admin
-  if (!hasRole('admin')) {
+  // Redirect if not admin or super_admin
+  if (!hasRole('admin') && !hasRole('super_admin')) {
     return (
       <Layout>
         <div className="flex items-center justify-center min-h-[400px]">
@@ -460,6 +460,7 @@ export default function Users() {
 
   const getRoleBadgeVariant = (role: string) => {
     switch (role) {
+      case 'super_admin': return 'destructive'
       case 'admin': return 'destructive'
       case 'manager': return 'default'
       case 'agent': return 'secondary'
@@ -564,6 +565,7 @@ export default function Users() {
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent className="bg-background border shadow-lg z-50">
+                      <SelectItem value="super_admin">Super Administrator</SelectItem>
                       <SelectItem value="admin">Administrator</SelectItem>
                       <SelectItem value="manager">Manager</SelectItem>
                       <SelectItem value="agent">Loan Originator (Agent)</SelectItem>
@@ -771,6 +773,7 @@ export default function Users() {
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent className="bg-background border shadow-lg z-50">
+                      <SelectItem value="super_admin">Super Administrator</SelectItem>
                       <SelectItem value="admin">Administrator</SelectItem>
                       <SelectItem value="manager">Manager</SelectItem>
                       <SelectItem value="agent">Loan Originator (Agent)</SelectItem>
