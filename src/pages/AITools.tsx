@@ -60,17 +60,17 @@ export default function AITools() {
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
               {/* Lead Scoring Switch */}
-              <div className="flex items-center justify-between p-4 border rounded-lg">
-                <div className="flex items-center space-x-3">
-                  <Target className="w-5 h-5 text-primary" />
-                  <div>
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between p-4 border rounded-lg space-y-2 sm:space-y-0">
+                <div className="flex items-center space-x-3 flex-1">
+                  <Target className="w-5 h-5 text-primary flex-shrink-0" />
+                  <div className="min-w-0">
                     <Label htmlFor="lead-scoring-switch" className="font-medium">Lead Scoring</Label>
                     <p className="text-sm text-muted-foreground">AI-powered lead prioritization</p>
                   </div>
                 </div>
-                <div className="flex flex-col items-end space-y-2">
+                <div className="flex flex-col sm:items-end space-y-2 sm:flex-shrink-0">
                   <Switch
                     id="lead-scoring-switch"
                     checked={aiToolsEnabled.leadScoring}
@@ -83,15 +83,15 @@ export default function AITools() {
               </div>
 
               {/* Revenue Forecasting Switch */}
-              <div className="flex items-center justify-between p-4 border rounded-lg">
-                <div className="flex items-center space-x-3">
-                  <TrendingUp className="w-5 h-5 text-primary" />
-                  <div>
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between p-4 border rounded-lg space-y-2 sm:space-y-0">
+                <div className="flex items-center space-x-3 flex-1">
+                  <TrendingUp className="w-5 h-5 text-primary flex-shrink-0" />
+                  <div className="min-w-0">
                     <Label htmlFor="forecasting-switch" className="font-medium">Revenue Forecast</Label>
                     <p className="text-sm text-muted-foreground">Predict future revenue</p>
                   </div>
                 </div>
-                <div className="flex flex-col items-end space-y-2">
+                <div className="flex flex-col sm:items-end space-y-2 sm:flex-shrink-0">
                   <Switch
                     id="forecasting-switch"
                     checked={aiToolsEnabled.forecasting}
@@ -104,15 +104,15 @@ export default function AITools() {
               </div>
 
               {/* Predictive Analytics Switch */}
-              <div className="flex items-center justify-between p-4 border rounded-lg">
-                <div className="flex items-center space-x-3">
-                  <BarChart3 className="w-5 h-5 text-primary" />
-                  <div>
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between p-4 border rounded-lg space-y-2 sm:space-y-0">
+                <div className="flex items-center space-x-3 flex-1">
+                  <BarChart3 className="w-5 h-5 text-primary flex-shrink-0" />
+                  <div className="min-w-0">
                     <Label htmlFor="analytics-switch" className="font-medium">Predictive Analytics</Label>
                     <p className="text-sm text-muted-foreground">AI insights & recommendations</p>
                   </div>
                 </div>
-                <div className="flex flex-col items-end space-y-2">
+                <div className="flex flex-col sm:items-end space-y-2 sm:flex-shrink-0">
                   <Switch
                     id="analytics-switch"
                     checked={aiToolsEnabled.analytics}
@@ -125,15 +125,15 @@ export default function AITools() {
               </div>
 
               {/* Workflow Automation Switch */}
-              <div className="flex items-center justify-between p-4 border rounded-lg">
-                <div className="flex items-center space-x-3">
-                  <Bot className="w-5 h-5 text-primary" />
-                  <div>
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between p-4 border rounded-lg space-y-2 sm:space-y-0">
+                <div className="flex items-center space-x-3 flex-1">
+                  <Bot className="w-5 h-5 text-primary flex-shrink-0" />
+                  <div className="min-w-0">
                     <Label htmlFor="automation-switch" className="font-medium">Automation</Label>
                     <p className="text-sm text-muted-foreground">Automate workflows & tasks</p>
                   </div>
                 </div>
-                <div className="flex flex-col items-end space-y-2">
+                <div className="flex flex-col sm:items-end space-y-2 sm:flex-shrink-0">
                   <Switch
                     id="automation-switch"
                     checked={aiToolsEnabled.automation}
@@ -149,22 +149,22 @@ export default function AITools() {
         </Card>
 
         <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-          <TabsList className="grid w-full grid-cols-4">
-            <TabsTrigger value="lead-scoring" className="flex items-center space-x-2">
-              <Target className="w-4 h-4" />
-              <span>Lead Scoring</span>
+          <TabsList className="grid w-full grid-cols-2 sm:grid-cols-4 h-auto">
+            <TabsTrigger value="lead-scoring" className="flex items-center space-x-1 sm:space-x-2 p-2 sm:p-3">
+              <Target className="w-4 h-4 flex-shrink-0" />
+              <span className="text-xs sm:text-sm truncate">Lead Scoring</span>
             </TabsTrigger>
-            <TabsTrigger value="forecasting" className="flex items-center space-x-2">
-              <TrendingUp className="w-4 h-4" />
-              <span>Revenue Forecast</span>
+            <TabsTrigger value="forecasting" className="flex items-center space-x-1 sm:space-x-2 p-2 sm:p-3">
+              <TrendingUp className="w-4 h-4 flex-shrink-0" />
+              <span className="text-xs sm:text-sm truncate">Revenue Forecast</span>
             </TabsTrigger>
-            <TabsTrigger value="analytics" className="flex items-center space-x-2">
-              <BarChart3 className="w-4 h-4" />
-              <span>Predictive Analytics</span>
+            <TabsTrigger value="analytics" className="flex items-center space-x-1 sm:space-x-2 p-2 sm:p-3">
+              <BarChart3 className="w-4 h-4 flex-shrink-0" />
+              <span className="text-xs sm:text-sm truncate">Predictive Analytics</span>
             </TabsTrigger>
-            <TabsTrigger value="automation" className="flex items-center space-x-2">
-              <Bot className="w-4 h-4" />
-              <span>Automation</span>
+            <TabsTrigger value="automation" className="flex items-center space-x-1 sm:space-x-2 p-2 sm:p-3">
+              <Bot className="w-4 h-4 flex-shrink-0" />
+              <span className="text-xs sm:text-sm truncate">Automation</span>
             </TabsTrigger>
           </TabsList>
 
