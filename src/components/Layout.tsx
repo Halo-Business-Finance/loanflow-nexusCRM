@@ -70,7 +70,7 @@ export default function Layout({ children }: LayoutProps) {
                 <ArrowRight className="w-4 h-4" />
               </Button>
               <div className="flex items-center gap-2 ml-2">
-                <img src="/lovable-uploads/20ce0230-d041-4bb4-948d-cfa460751461.png" alt="LoanFlow CRM" className="h-12" />
+                <img src="/lovable-uploads/20ce0230-d041-4bb4-948d-cfa460751461.png" alt="LoanFlow CRM" className="h-20" />
               </div>
             </div>
             <div className="flex items-center gap-4">
