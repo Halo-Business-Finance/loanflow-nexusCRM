@@ -1,4 +1,4 @@
-import React, { ReactNode } from 'react'
+import { ReactNode, useEffect } from 'react'
 import { ErrorBoundary } from './ErrorBoundary'
 
 interface AsyncErrorBoundaryProps {
@@ -10,7 +10,7 @@ interface AsyncErrorBoundaryProps {
 // Simple wrapper that just uses ErrorBoundary for now
 // This eliminates any complex React hook issues
 export function AsyncErrorBoundary({ children, fallback, onError }: AsyncErrorBoundaryProps) {
-  React.useEffect(() => {
+  useEffect(() => {
     // Handle unhandled promise rejections
     const handleUnhandledRejection = (event: PromiseRejectionEvent) => {
       console.error('Unhandled promise rejection:', event.reason)
