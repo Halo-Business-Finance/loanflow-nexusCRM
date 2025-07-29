@@ -23,8 +23,8 @@ interface Notification {
   type: string
   is_read: boolean
   created_at: string
-  lead_id?: string
-  client_id?: string
+  related_id?: string
+  related_type?: string
 }
 
 interface NotificationCenterProps {
@@ -69,9 +69,9 @@ export function NotificationCenter({
     }
 
     // Navigate to relevant page based on notification type
-    if (notification.lead_id) {
-      navigate(`/leads/${notification.lead_id}`)
-    } else if (notification.client_id) {
+    if (notification.related_type === 'lead' && notification.related_id) {
+      navigate(`/leads/${notification.related_id}`)
+    } else if (notification.related_type === 'client' && notification.related_id) {
       navigate(`/clients`)
     }
   }

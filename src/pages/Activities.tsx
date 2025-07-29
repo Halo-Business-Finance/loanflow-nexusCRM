@@ -17,8 +17,8 @@ interface Notification {
   type: string
   is_read: boolean
   created_at: string
-  lead_id?: string
-  client_id?: string
+  related_id?: string
+  related_type?: string
 }
 
 interface Activity {
