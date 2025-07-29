@@ -112,13 +112,13 @@ export default function Enterprise() {
                 <Card 
                   key={feature.id} 
                   className={`cursor-pointer transition-colors ${
-                    isActive ? 'border-primary bg-primary/5' : 'hover:border-primary/50'
+                    isActive ? 'border-primary bg-primary text-primary-foreground' : 'hover:border-primary/50'
                   }`}
                   onClick={() => setActiveTab(feature.id)}
                 >
                   <CardHeader className="pb-3">
                     <div className="flex items-center justify-between">
-                      <Icon className={`h-5 w-5 ${isActive ? 'text-primary' : 'text-muted-foreground'}`} />
+                      <Icon className={`h-5 w-5 ${isActive ? 'text-primary-foreground' : 'text-muted-foreground'}`} />
                       {isActive && <Badge variant="secondary">Active</Badge>}
                     </div>
                     <CardTitle className="text-sm">{feature.label}</CardTitle>
