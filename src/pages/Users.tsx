@@ -267,16 +267,17 @@ export default function Users() {
         throw profileError
       }
 
-      // Update role - First deactivate all existing roles, then set the new one
-      // Step 1: Deactivate all existing roles for this user
-      const { error: deactivateError } = await supabase
+      // Update role - Delete existing active roles, then insert the new one
+      // Step 1: Delete all active roles for this user
+      const { error: deleteError } = await supabase
         .from('user_roles')
-        .update({ is_active: false })
+        .delete()
         .eq('user_id', editingUser.id)
+        .eq('is_active', true)
 
-      if (deactivateError) {
-        console.error('Error deactivating existing roles:', deactivateError)
-        throw deactivateError
+      if (deleteError) {
+        console.error('Error deleting existing active roles:', deleteError)
+        throw deleteError
       }
 
       // Step 2: Insert the new active role
@@ -289,7 +290,7 @@ export default function Users() {
         })
         .select()
 
-      console.log('Role update result:', { roleData, roleError })
+      console.log('Role insert result:', { roleData, roleError })
 
       if (roleError) {
         console.error('Role update error:', roleError)
