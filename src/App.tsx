@@ -22,6 +22,7 @@ import Reports from "./pages/Reports";
 import Settings from "./pages/Settings";
 import Users from "./pages/Users";
 import Resources from "./pages/Resources";
+import Enterprise from "./pages/Enterprise";
 import NotFound from "./pages/NotFound";
 import { useKeyboardShortcuts } from "@/hooks/useKeyboardShortcuts";
 
@@ -66,6 +67,7 @@ function AuthenticatedApp() {
             <Route path="/users" element={<Users />} errorElement={<RouteErrorBoundary />} />
             <Route path="/security" element={<SecurityDashboard />} errorElement={<RouteErrorBoundary />} />
             <Route path="/security-center" element={<SecurityManager />} errorElement={<RouteErrorBoundary />} />
+            <Route path="/enterprise" element={<Enterprise />} errorElement={<RouteErrorBoundary />} />
             <Route path="/resources" element={<Resources />} errorElement={<RouteErrorBoundary />} />
             <Route path="*" element={<NotFound />} errorElement={<RouteErrorBoundary />} />
           </>
