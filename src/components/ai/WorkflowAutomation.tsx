@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -27,42 +27,81 @@ interface Automation {
   runs: number
 }
 
+const AUTOMATION_STORAGE_KEY = "loanflow-automation-rules"
+const WEBHOOK_STORAGE_KEY = "loanflow-zapier-webhook"
+
+const defaultAutomations: Automation[] = [
+  {
+    id: "1",
+    name: "Lead Stage Change → Send Document",
+    trigger: "Lead moves to 'Qualified'",
+    action: "Send loan application via DocuSign",
+    enabled: true,
+    runs: 23
+  },
+  {
+    id: "2", 
+    name: "Follow-up Reminder",
+    trigger: "No contact for 3 days",
+    action: "Create task + send email reminder",
+    enabled: true,
+    runs: 45
+  },
+  {
+    id: "3",
+    name: "Document Completion Alert",
+    trigger: "DocuSign document signed",
+    action: "Move lead to 'Documentation' stage",
+    enabled: false,
+    runs: 12
+  },
+  {
+    id: "4",
+    name: "High-Value Lead Alert",
+    trigger: "Loan amount > $1M",
+    action: "Notify manager + schedule call",
+    enabled: true,
+    runs: 8
+  }
+]
+
 export function WorkflowAutomation() {
-  const [webhookUrl, setWebhookUrl] = useState("")
-  const [automations, setAutomations] = useState<Automation[]>([
-    {
-      id: "1",
-      name: "Lead Stage Change → Send Document",
-      trigger: "Lead moves to 'Qualified'",
-      action: "Send loan application via DocuSign",
-      enabled: true,
-      runs: 23
-    },
-    {
-      id: "2", 
-      name: "Follow-up Reminder",
-      trigger: "No contact for 3 days",
-      action: "Create task + send email reminder",
-      enabled: true,
-      runs: 45
-    },
-    {
-      id: "3",
-      name: "Document Completion Alert",
-      trigger: "DocuSign document signed",
-      action: "Move lead to 'Documentation' stage",
-      enabled: false,
-      runs: 12
-    },
-    {
-      id: "4",
-      name: "High-Value Lead Alert",
-      trigger: "Loan amount > $1M",
-      action: "Notify manager + schedule call",
-      enabled: true,
-      runs: 8
+  // Load webhook URL from localStorage
+  const [webhookUrl, setWebhookUrl] = useState(() => {
+    try {
+      return localStorage.getItem(WEBHOOK_STORAGE_KEY) || ""
+    } catch {
+      return ""
     }
-  ])
+  })
+
+  // Load automations from localStorage
+  const [automations, setAutomations] = useState<Automation[]>(() => {
+    try {
+      const stored = localStorage.getItem(AUTOMATION_STORAGE_KEY)
+      return stored ? JSON.parse(stored) : defaultAutomations
+    } catch {
+      return defaultAutomations
+    }
+  })
+
+  // Save webhook URL to localStorage when it changes
+  useEffect(() => {
+    try {
+      localStorage.setItem(WEBHOOK_STORAGE_KEY, webhookUrl)
+    } catch (error) {
+      console.error("Error saving webhook URL:", error)
+    }
+  }, [webhookUrl])
+
+  // Save automations to localStorage when they change
+  useEffect(() => {
+    try {
+      localStorage.setItem(AUTOMATION_STORAGE_KEY, JSON.stringify(automations))
+    } catch (error) {
+      console.error("Error saving automation rules:", error)
+    }
+  }, [automations])
 
   const { toast } = useToast()
 
