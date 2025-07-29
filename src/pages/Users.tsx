@@ -109,6 +109,7 @@ export default function Users() {
           first_name,
           last_name,
           phone_number,
+          email,
           created_at
         `)
 
@@ -121,25 +122,13 @@ export default function Users() {
 
       if (rolesError) throw rolesError
 
-      // Get auth users data - Note: Admin functions may not be available in all environments
-      let authUsers: any[] = []
-      try {
-        const { data, error: authError } = await supabase.auth.admin.listUsers()
-        if (data?.users) {
-          authUsers = data.users
-        }
-      } catch (error) {
-        console.log('Admin functions not available, using profile data only')
-      }
-
-      // Combine the data
+      // Combine the data - use email from profiles table instead of auth admin API
       const combinedUsers: UserProfile[] = profiles.map(profile => {
         const role = roles.find(r => r.user_id === profile.id)
-        const authUser = authUsers.find((u: any) => u.id === profile.id)
         
         return {
           ...profile,
-          email: authUser?.email || '',
+          email: profile.email || '',
           role: role?.role || 'agent',
           is_active: role?.is_active || false
         }
