@@ -878,15 +878,15 @@ export default function LeadDetail() {
                   </div>
                 </div>
 
-                <div className="flex items-center gap-3">
-                  <MapPin className="w-4 h-4" style={{ color: 'white' }} />
-                  <div className="flex-1">
-                    <p className="text-sm" style={{ color: 'white' }}>Address</p>
+                  <div className="flex items-center gap-3">
+                    <MapPin className="w-4 h-4" style={{ color: 'white' }} />
+                    <div className="flex-1">
+                      <p className="text-sm" style={{ color: 'white' }}>Address</p>
                     {isEditing ? (
                       <Input
                         value={editableFields.location}
                         onChange={(e) => setEditableFields({...editableFields, location: e.target.value})}
-                        placeholder="Enter address"
+                           placeholder="Enter address"
                       />
                     ) : (
                       <p className="font-medium" style={{ color: 'white' }}>{lead.location || 'N/A'}</p>
