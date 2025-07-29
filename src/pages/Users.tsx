@@ -208,11 +208,25 @@ export default function Users() {
       })
       setShowNewUserDialog(false)
       fetchUsers()
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error creating user:', error)
+      
+      let errorMessage = "Failed to create user"
+      
+      // Handle specific error types
+      if (error.code === 'weak_password') {
+        errorMessage = "Password is too weak or has been found in data breaches. Please choose a stronger, unique password with at least 8 characters, including uppercase, lowercase, numbers, and symbols."
+      } else if (error.code === 'email_address_not_authorized') {
+        errorMessage = "This email address is not authorized to sign up."
+      } else if (error.code === 'signup_disabled') {
+        errorMessage = "User registration is currently disabled."
+      } else if (error.message) {
+        errorMessage = error.message
+      }
+      
       toast({
         title: "Error",
-        description: "Failed to create user",
+        description: errorMessage,
         variant: "destructive"
       })
     }
@@ -442,7 +456,11 @@ export default function Users() {
                     type="password"
                     value={newUser.password}
                     onChange={(e) => setNewUser({...newUser, password: e.target.value})}
+                    placeholder="Enter a strong password"
                   />
+                  <p className="text-xs text-muted-foreground">
+                    Password must be at least 8 characters with uppercase, lowercase, numbers, and symbols. Avoid common passwords.
+                  </p>
                 </div>
                 
                 <div className="space-y-2">
