@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react"
+import { Link } from "react-router-dom"
 import Layout from "@/components/Layout"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
@@ -69,7 +70,7 @@ export default function Settings() {
                 <p className="text-muted-foreground">
                   Security settings are managed in the Security Center.{" "}
                   <Button variant="link" className="p-0 h-auto" asChild>
-                    <a href="/security">Go to Security Center →</a>
+                    <Link to="/security">Go to Security Center →</Link>
                   </Button>
                 </p>
               </CardContent>

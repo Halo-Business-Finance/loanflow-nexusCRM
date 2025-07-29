@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react"
+import { useNavigate } from "react-router-dom"
 import Layout from "@/components/Layout"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
@@ -50,6 +51,7 @@ export default function Activities() {
   const [newActivityOpen, setNewActivityOpen] = useState(false)
   const { user } = useAuth()
   const { toast } = useToast()
+  const navigate = useNavigate()
 
   const fetchNotifications = async () => {
     if (!user) return
@@ -536,12 +538,12 @@ export default function Activities() {
                                     variant="outline"
                                     onClick={(e) => {
                                       e.stopPropagation();
-                                      const notification = notifications.find(n => n.id === activity.id);
-                                      if (notification?.related_type === 'lead' && notification?.related_id) {
-                                        window.location.href = `/leads/${notification.related_id}`;
-                                      } else {
-                                        window.location.href = '/leads';
-                                      }
+                                       const notification = notifications.find(n => n.id === activity.id);
+                                       if (notification?.related_type === 'lead' && notification?.related_id) {
+                                         navigate(`/leads/${notification.related_id}`);
+                                       } else {
+                                         navigate('/leads');
+                                       }
                                     }}
                                     className="h-8 px-3"
                                   >
@@ -555,7 +557,7 @@ export default function Activities() {
                                     variant="outline"
                                     onClick={(e) => {
                                       e.stopPropagation();
-                                      window.location.href = '/clients';
+                                       navigate('/clients');
                                     }}
                                     className="h-8 px-3"
                                   >
@@ -569,7 +571,7 @@ export default function Activities() {
                                     variant="outline"
                                     onClick={(e) => {
                                       e.stopPropagation();
-                                      window.location.href = '/clients';
+                                      navigate('/clients');
                                     }}
                                     className="h-8 px-3"
                                   >
