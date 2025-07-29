@@ -25,7 +25,8 @@ import {
   Phone, 
   Calendar,
   Shield,
-  User
+  User,
+  Key
 } from "lucide-react"
 
 // Phone number formatting function
@@ -71,6 +72,10 @@ export default function Users() {
   const [editingUser, setEditingUser] = useState<UserProfile | null>(null)
   const [showNewUserDialog, setShowNewUserDialog] = useState(false)
   const [showEditDialog, setShowEditDialog] = useState(false)
+  const [showPasswordDialog, setShowPasswordDialog] = useState(false)
+  const [passwordChangeUser, setPasswordChangeUser] = useState<UserProfile | null>(null)
+  const [newPassword, setNewPassword] = useState("")
+  const [confirmPassword, setConfirmPassword] = useState("")
 
   useEffect(() => {
     if (hasRole('admin')) {
@@ -373,6 +378,57 @@ export default function Users() {
     }
   }
 
+  const changeUserPassword = async () => {
+    if (!passwordChangeUser) return
+
+    // Validate passwords
+    if (newPassword !== confirmPassword) {
+      toast({
+        title: "Error",
+        description: "Passwords do not match",
+        variant: "destructive"
+      })
+      return
+    }
+
+    if (newPassword.length < 8) {
+      toast({
+        title: "Error",
+        description: "Password must be at least 8 characters long",
+        variant: "destructive"
+      })
+      return
+    }
+
+    try {
+      // Use admin functions to update user password
+      const { error } = await supabase.auth.admin.updateUserById(
+        passwordChangeUser.id,
+        { password: newPassword }
+      )
+
+      if (error) throw error
+
+      toast({
+        title: "Success",
+        description: `Password updated successfully for ${passwordChangeUser.first_name} ${passwordChangeUser.last_name}`
+      })
+
+      // Reset form and close dialog
+      setNewPassword("")
+      setConfirmPassword("")
+      setPasswordChangeUser(null)
+      setShowPasswordDialog(false)
+    } catch (error: any) {
+      console.error('Error changing password:', error)
+      toast({
+        title: "Error",
+        description: error.message || "Failed to change password",
+        variant: "destructive"
+      })
+    }
+  }
+
   const filteredUsers = users.filter(user => 
     user.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
     `${user.first_name} ${user.last_name}`.toLowerCase().includes(searchTerm.toLowerCase())
@@ -569,53 +625,68 @@ export default function Users() {
                 
                 <Separator />
                 
-                <div className="flex gap-2">
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    className="flex-1"
-                    onClick={() => {
-                      setEditingUser(user)
-                      setShowEditDialog(true)
-                    }}
-                  >
-                    <Edit className="h-4 w-4 mr-1" />
-                    Edit
-                  </Button>
-                  <Button
-                    variant={user.is_active ? "destructive" : "default"}
-                    size="sm"
-                    onClick={() => toggleUserStatus(user.id, user.is_active)}
-                  >
-                    {user.is_active ? 'Deactivate' : 'Activate'}
-                  </Button>
-                  {user.email !== currentUser?.email && ( // Prevent self-deletion
-                    <AlertDialog>
-                      <AlertDialogTrigger asChild>
-                        <Button variant="destructive" size="sm">
-                          <Trash2 className="h-4 w-4" />
-                        </Button>
-                      </AlertDialogTrigger>
-                      <AlertDialogContent>
-                        <AlertDialogHeader>
-                          <AlertDialogTitle>Delete User</AlertDialogTitle>
-                          <AlertDialogDescription>
-                            Are you sure you want to delete <strong>{user.first_name} {user.last_name}</strong> ({user.email})? 
-                            This will remove all their data including profile, roles, sessions, and notifications. This action cannot be undone.
-                          </AlertDialogDescription>
-                        </AlertDialogHeader>
-                        <AlertDialogFooter>
-                          <AlertDialogCancel>Cancel</AlertDialogCancel>
-                          <AlertDialogAction
-                            onClick={() => deleteUser(user.id, user.email)}
-                            className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-                          >
-                            Delete User
-                          </AlertDialogAction>
-                        </AlertDialogFooter>
-                      </AlertDialogContent>
-                    </AlertDialog>
-                  )}
+                <div className="space-y-2">
+                  <div className="flex gap-2">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="flex-1"
+                      onClick={() => {
+                        setEditingUser(user)
+                        setShowEditDialog(true)
+                      }}
+                    >
+                      <Edit className="h-4 w-4 mr-1" />
+                      Edit
+                    </Button>
+                    <Button
+                      variant="secondary"
+                      size="sm"
+                      onClick={() => {
+                        setPasswordChangeUser(user)
+                        setShowPasswordDialog(true)
+                      }}
+                    >
+                      <Key className="h-4 w-4" />
+                    </Button>
+                  </div>
+                  <div className="flex gap-2">
+                    <Button
+                      variant={user.is_active ? "destructive" : "default"}
+                      size="sm"
+                      className="flex-1"
+                      onClick={() => toggleUserStatus(user.id, user.is_active)}
+                    >
+                      {user.is_active ? 'Deactivate' : 'Activate'}
+                    </Button>
+                    {user.email !== currentUser?.email && ( // Prevent self-deletion
+                      <AlertDialog>
+                        <AlertDialogTrigger asChild>
+                          <Button variant="destructive" size="sm">
+                            <Trash2 className="h-4 w-4" />
+                          </Button>
+                        </AlertDialogTrigger>
+                        <AlertDialogContent>
+                          <AlertDialogHeader>
+                            <AlertDialogTitle>Delete User</AlertDialogTitle>
+                            <AlertDialogDescription>
+                              Are you sure you want to delete <strong>{user.first_name} {user.last_name}</strong> ({user.email})? 
+                              This will remove all their data including profile, roles, sessions, and notifications. This action cannot be undone.
+                            </AlertDialogDescription>
+                          </AlertDialogHeader>
+                          <AlertDialogFooter>
+                            <AlertDialogCancel>Cancel</AlertDialogCancel>
+                            <AlertDialogAction
+                              onClick={() => deleteUser(user.id, user.email)}
+                              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                            >
+                              Delete User
+                            </AlertDialogAction>
+                          </AlertDialogFooter>
+                        </AlertDialogContent>
+                      </AlertDialog>
+                    )}
+                  </div>
                 </div>
               </CardContent>
             </Card>
@@ -684,6 +755,80 @@ export default function Users() {
                 <div className="flex gap-2 pt-4">
                   <Button onClick={updateUser} className="flex-1">Update User</Button>
                   <Button variant="outline" onClick={() => setShowEditDialog(false)}>Cancel</Button>
+                </div>
+              </div>
+            )}
+          </DialogContent>
+        </Dialog>
+
+        {/* Change Password Dialog */}
+        <Dialog open={showPasswordDialog} onOpenChange={setShowPasswordDialog}>
+          <DialogContent className="sm:max-w-[400px]">
+            <DialogHeader>
+              <DialogTitle>Change Password</DialogTitle>
+            </DialogHeader>
+            {passwordChangeUser && (
+              <div className="space-y-4">
+                <div className="p-4 bg-muted/20 rounded-lg">
+                  <p className="text-sm text-muted-foreground">
+                    Changing password for:
+                  </p>
+                  <p className="font-semibold">
+                    {passwordChangeUser.first_name} {passwordChangeUser.last_name}
+                  </p>
+                  <p className="text-sm text-muted-foreground">
+                    {passwordChangeUser.email}
+                  </p>
+                </div>
+                
+                <div className="space-y-2">
+                  <Label htmlFor="newPassword">New Password</Label>
+                  <Input
+                    id="newPassword"
+                    type="password"
+                    value={newPassword}
+                    onChange={(e) => setNewPassword(e.target.value)}
+                    placeholder="Enter new password"
+                  />
+                </div>
+                
+                <div className="space-y-2">
+                  <Label htmlFor="confirmPassword">Confirm Password</Label>
+                  <Input
+                    id="confirmPassword"
+                    type="password"
+                    value={confirmPassword}
+                    onChange={(e) => setConfirmPassword(e.target.value)}
+                    placeholder="Confirm new password"
+                  />
+                </div>
+                
+                <div className="p-3 bg-yellow-50 dark:bg-yellow-950/20 rounded-lg border border-yellow-200 dark:border-yellow-800">
+                  <p className="text-xs text-yellow-700 dark:text-yellow-300">
+                    Password must be at least 8 characters long. The user will need to use this new password for their next login.
+                  </p>
+                </div>
+                
+                <div className="flex gap-2 pt-4">
+                  <Button 
+                    onClick={changeUserPassword} 
+                    className="flex-1"
+                    disabled={!newPassword || !confirmPassword}
+                  >
+                    <Key className="h-4 w-4 mr-2" />
+                    Change Password
+                  </Button>
+                  <Button 
+                    variant="outline" 
+                    onClick={() => {
+                      setShowPasswordDialog(false)
+                      setNewPassword("")
+                      setConfirmPassword("")
+                      setPasswordChangeUser(null)
+                    }}
+                  >
+                    Cancel
+                  </Button>
                 </div>
               </div>
             )}
