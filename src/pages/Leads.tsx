@@ -80,7 +80,21 @@ export default function Leads() {
     net_operating_income: "",
     priority: "medium",
     stage: "Initial Contact",
-    notes: ""
+    notes: "",
+    // Additional business fields
+    business_address: "",
+    annual_revenue: "",
+    existing_loan_amount: "",
+    // POS Information fields
+    pos_system: "",
+    monthly_processing_volume: "",
+    average_transaction_size: "",
+    processor_name: "",
+    current_processing_rate: "",
+    // BDO Information
+    bdo_name: "",
+    bdo_telephone: "",
+    bdo_email: ""
   })
   
   const [editLead, setEditLead] = useState({
@@ -95,7 +109,21 @@ export default function Leads() {
     net_operating_income: "",
     priority: "medium",
     stage: "Initial Contact",
-    notes: ""
+    notes: "",
+    // Additional business fields
+    business_address: "",
+    annual_revenue: "",
+    existing_loan_amount: "",
+    // POS Information fields
+    pos_system: "",
+    monthly_processing_volume: "",
+    average_transaction_size: "",
+    processor_name: "",
+    current_processing_rate: "",
+    // BDO Information
+    bdo_name: "",
+    bdo_telephone: "",
+    bdo_email: ""
   })
 
   useEffect(() => {
@@ -200,13 +228,22 @@ export default function Leads() {
           phone: newLead.phone || null,
           location: newLead.location || null,
           business_name: newLead.business_name || null,
+          business_address: newLead.business_address || null,
+          annual_revenue: newLead.annual_revenue ? parseFloat(newLead.annual_revenue) : null,
+          existing_loan_amount: newLead.existing_loan_amount ? parseFloat(newLead.existing_loan_amount) : null,
           loan_amount: newLead.loan_amount ? parseFloat(newLead.loan_amount) : null,
           loan_type: newLead.loan_type || null,
           credit_score: newLead.credit_score ? parseInt(newLead.credit_score) : null,
           net_operating_income: newLead.net_operating_income ? parseFloat(newLead.net_operating_income) : null,
           priority: newLead.priority,
           stage: newLead.stage,
-          notes: newLead.notes || null
+          notes: newLead.notes || null,
+          // POS Information
+          pos_system: newLead.pos_system || null,
+          monthly_processing_volume: newLead.monthly_processing_volume ? parseFloat(newLead.monthly_processing_volume) : null,
+          average_transaction_size: newLead.average_transaction_size ? parseFloat(newLead.average_transaction_size) : null,
+          processor_name: newLead.processor_name || null,
+          current_processing_rate: newLead.current_processing_rate ? parseFloat(newLead.current_processing_rate) : null
         })
 
       if (error) throw error
@@ -229,7 +266,21 @@ export default function Leads() {
         net_operating_income: "",
         priority: "medium",
         stage: "Initial Contact",
-        notes: ""
+        notes: "",
+        // Additional business fields
+        business_address: "",
+        annual_revenue: "",
+        existing_loan_amount: "",
+        // POS Information fields
+        pos_system: "",
+        monthly_processing_volume: "",
+        average_transaction_size: "",
+        processor_name: "",
+        current_processing_rate: "",
+        // BDO Information
+        bdo_name: "",
+        bdo_telephone: "",
+        bdo_email: ""
       })
       setShowAddDialog(false)
       fetchLeads() // Refresh the leads list
@@ -257,7 +308,19 @@ export default function Leads() {
       net_operating_income: lead.net_operating_income?.toString() || "",
       priority: lead.priority,
       stage: lead.stage,
-      notes: "" // notes field not shown in current interface
+      notes: "", // notes field not shown in current interface
+      // Additional fields - will be empty for leads that don't have them
+      business_address: "",
+      annual_revenue: "",
+      existing_loan_amount: "",
+      pos_system: "",
+      monthly_processing_volume: "",
+      average_transaction_size: "",
+      processor_name: "",
+      current_processing_rate: "",
+      bdo_name: "",
+      bdo_telephone: "",
+      bdo_email: ""
     })
     setShowEditDialog(true)
   }
