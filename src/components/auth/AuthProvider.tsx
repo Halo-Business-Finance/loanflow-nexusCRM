@@ -1,11 +1,12 @@
 import { createContext, useContext, useEffect, useState } from 'react'
-import { User } from '@supabase/supabase-js'
+import { User, Session } from '@supabase/supabase-js'
 import { supabase } from '@/integrations/supabase/client'
 import { useToast } from '@/hooks/use-toast'
 import { SecurityManager } from '@/lib/security'
 
 interface AuthContextType {
   user: User | null
+  session: Session | null
   userRole: string | null
   loading: boolean
   signIn: (email: string, password: string) => Promise<void>
@@ -18,43 +19,18 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined)
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null)
+  const [session, setSession] = useState<Session | null>(null)
   const [userRole, setUserRole] = useState<string | null>(null)
   const [loading, setLoading] = useState(true)
   const { toast } = useToast()
 
   useEffect(() => {
-    console.log('AuthProvider useEffect running')
     let mounted = true
     
-    const checkSession = async () => {
-      try {
-        console.log('Checking initial session...')
-        const { data: { session }, error } = await supabase.auth.getSession()
-        console.log('Session result:', { session: !!session, error })
-        
-        if (mounted) {
-          setUser(session?.user ?? null)
-          if (session?.user) {
-            await fetchUserRole(session.user.id)
-          } else {
-            setUserRole(null)
-          }
-          setLoading(false)
-          console.log('Set loading to false')
-        }
-      } catch (error) {
-        console.error('Session check failed:', error)
-        if (mounted) {
-          setLoading(false)
-        }
-      }
-    }
-
-    checkSession()
-
+    // Set up auth state listener FIRST to avoid missing events
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
-      console.log('Auth state change:', event, !!session)
       if (mounted) {
+        setSession(session)
         setUser(session?.user ?? null)
         if (session?.user) {
           // Defer role fetching to avoid deadlock
@@ -69,6 +45,31 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         setLoading(false)
       }
     })
+
+    // THEN check for existing session
+    const checkSession = async () => {
+      try {
+        const { data: { session }, error } = await supabase.auth.getSession()
+        
+        if (mounted && !error) {
+          setSession(session)
+          setUser(session?.user ?? null)
+          if (session?.user) {
+            await fetchUserRole(session.user.id)
+          } else {
+            setUserRole(null)
+          }
+          setLoading(false)
+        }
+      } catch (error) {
+        console.error('Session check failed:', error)
+        if (mounted) {
+          setLoading(false)
+        }
+      }
+    }
+
+    checkSession()
 
     return () => {
       mounted = false
@@ -273,6 +274,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const value = {
     user,
+    session,
     userRole,
     loading,
     signIn,
