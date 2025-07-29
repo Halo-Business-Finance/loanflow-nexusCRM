@@ -682,7 +682,7 @@ export default function LeadDetail() {
     return (
       <Layout>
         <div className="text-center">
-          <h1 className="text-2xl font-bold mb-4" style={{ color: 'white' }}>Lead Not Found</h1>
+          <h1 className="text-2xl font-bold mb-4 text-foreground">Lead Not Found</h1>
           <Button onClick={() => navigate('/leads')}>
             <ArrowLeft className="w-4 h-4 mr-2" />
             Back to Leads
@@ -703,7 +703,7 @@ export default function LeadDetail() {
               Back to Leads
             </Button>
             <div>
-              <h1 className="text-3xl font-bold" style={{ color: 'white' }}>{lead.name}</h1>
+              <h1 className="text-3xl font-bold text-foreground">{lead.name}</h1>
               <div className="flex items-center gap-4 mt-2">
                 <Badge variant={getPriorityColor(lead.priority)}>
                   {lead.priority} Priority
@@ -805,7 +805,7 @@ export default function LeadDetail() {
           {/* Lead Information */}
           <Card>
             <CardHeader>
-              <CardTitle className="flex items-center gap-2" style={{ color: 'white' }}>
+              <CardTitle className="flex items-center gap-2 text-foreground">
                 <User className="w-5 h-5" />
                 Lead Information
               </CardTitle>
@@ -823,7 +823,7 @@ export default function LeadDetail() {
                         placeholder="Enter full name"
                       />
                     ) : (
-                      <p className="font-medium" style={{ color: 'white' }}>{lead.name}</p>
+                      <p className="font-medium text-foreground">{lead.name}</p>
                     )}
                   </div>
                 </div>
@@ -843,7 +843,7 @@ export default function LeadDetail() {
                     ) : (
                       <EmailComposer 
                         trigger={
-                          <button className="font-medium hover:text-primary transition-colors text-left" style={{ color: 'white' }}>
+                          <button className="font-medium hover:text-primary transition-colors text-left text-foreground">
                             {lead.email}
                           </button>
                         }
@@ -866,22 +866,22 @@ export default function LeadDetail() {
                       lead.phone ? (
                         <PhoneDialer 
                           trigger={
-                            <button className="font-medium hover:text-primary transition-colors text-left" style={{ color: 'white' }}>
+                            <button className="font-medium hover:text-primary transition-colors text-left text-foreground">
                               {lead.phone}
                             </button>
                           }
                         />
                       ) : (
-                        <p className="font-medium" style={{ color: 'white' }}>N/A</p>
+                        <p className="font-medium text-foreground">N/A</p>
                       )
                     )}
                   </div>
                 </div>
 
                   <div className="flex items-center gap-3">
-                    <MapPin className="w-4 h-4" style={{ color: 'white' }} />
+                    <MapPin className="w-4 h-4 text-muted-foreground" />
                     <div className="flex-1">
-                      <p className="text-sm" style={{ color: 'white' }}>Address</p>
+                      <p className="text-sm text-muted-foreground">Address</p>
                     {isEditing ? (
                       <Input
                         value={editableFields.location}
@@ -889,7 +889,7 @@ export default function LeadDetail() {
                            placeholder="Enter address"
                       />
                     ) : (
-                      <p className="font-medium" style={{ color: 'white' }}>{lead.location || 'N/A'}</p>
+                      <p className="font-medium text-foreground">{lead.location || 'N/A'}</p>
                     )}
                   </div>
                 </div>
@@ -897,7 +897,7 @@ export default function LeadDetail() {
                 <div className="grid grid-cols-2 gap-4">
                   <div className="flex items-center gap-3">
                     <div className="flex-1">
-                      <p className="text-sm" style={{ color: 'white' }}>Stage</p>
+                      <p className="text-sm text-muted-foreground">Stage</p>
                       {isEditing ? (
                         <Select value={editableFields.stage} onValueChange={(value) => setEditableFields({...editableFields, stage: value})}>
                           <SelectTrigger>
@@ -921,7 +921,7 @@ export default function LeadDetail() {
 
                   <div className="flex items-center gap-3">
                     <div className="flex-1">
-                      <p className="text-sm" style={{ color: 'white' }}>Priority</p>
+                      <p className="text-sm text-muted-foreground">Priority</p>
                       {isEditing ? (
                         <Select value={editableFields.priority} onValueChange={(value) => setEditableFields({...editableFields, priority: value})}>
                           <SelectTrigger>
@@ -941,9 +941,9 @@ export default function LeadDetail() {
                 </div>
 
                 <div className="flex items-center gap-3">
-                  <CreditCard className="w-4 h-4" style={{ color: 'white' }} />
+                  <CreditCard className="w-4 h-4 text-muted-foreground" />
                   <div className="flex-1">
-                    <p className="text-sm" style={{ color: 'white' }}>Credit Score</p>
+                    <p className="text-sm text-muted-foreground">Credit Score</p>
                     {isEditing ? (
                       <Input
                         type="number"
@@ -954,7 +954,7 @@ export default function LeadDetail() {
                         max="850"
                       />
                     ) : (
-                      <p className="font-medium" style={{ color: 'white' }}>{formatNumber(lead.credit_score)}</p>
+                      <p className="font-medium text-foreground">{formatNumber(lead.credit_score)}</p>
                     )}
                   </div>
                 </div>
@@ -975,7 +975,7 @@ export default function LeadDetail() {
           {/* Business Information */}
           <Card>
             <CardHeader>
-              <CardTitle className="flex items-center gap-2" style={{ color: 'white' }}>
+              <CardTitle className="flex items-center gap-2 text-foreground">
                 <Building className="w-5 h-5" />
                 Business Information
               </CardTitle>
@@ -1649,18 +1649,18 @@ export default function LeadDetail() {
                 </div>
 
                 <div className="flex items-center gap-3">
-                  <Mail className="w-4 h-4" style={{ color: 'white' }} />
+                  <Mail className="w-4 h-4 text-muted-foreground" />
                   <div>
-                    <p className="text-sm" style={{ color: 'white' }}>Email</p>
+                    <p className="text-sm text-muted-foreground">Email</p>
                     <p className="font-medium" style={{ color: 'white' }}>{client.email}</p>
                   </div>
                 </div>
 
                 {client.phone && (
                   <div className="flex items-center gap-3">
-                    <Phone className="w-4 h-4" style={{ color: 'white' }} />
-                    <div>
-                      <p className="text-sm" style={{ color: 'white' }}>Phone</p>
+                  <Phone className="w-4 h-4 text-muted-foreground" />
+                  <div>
+                    <p className="text-sm text-muted-foreground">Phone</p>
                       <p className="font-medium" style={{ color: 'white' }}>{client.phone}</p>
                     </div>
                   </div>
