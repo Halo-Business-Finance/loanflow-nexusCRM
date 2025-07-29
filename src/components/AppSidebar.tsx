@@ -73,7 +73,7 @@ export function AppSidebar() {
                 <SidebarMenuItem key={item.title}>
                   <SidebarMenuButton asChild>
                     <NavLink to={item.url} end className={getNavClass}>
-                      <item.icon className="w-4 h-4" />
+                      <item.icon className="w-4 h-4 text-navy-600" />
                       {state !== "collapsed" && <span>{item.title}</span>}
                     </NavLink>
                   </SidebarMenuButton>
@@ -96,7 +96,7 @@ export function AppSidebar() {
                   <SidebarMenuItem key={item.title}>
                     <SidebarMenuButton asChild>
                       <NavLink to={item.url} className={getNavClass}>
-                        <item.icon className="w-4 h-4" />
+                        <item.icon className="w-4 h-4 text-navy-600" />
                         {state !== "collapsed" && <span>{item.title}</span>}
                       </NavLink>
                     </SidebarMenuButton>
