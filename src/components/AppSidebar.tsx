@@ -66,7 +66,7 @@ export function AppSidebar() {
       <SidebarContent className="bg-card border-r">
 
         <SidebarGroup>
-          <SidebarGroupLabel>Navigation</SidebarGroupLabel>
+          <SidebarGroupLabel className="text-foreground font-semibold">Navigation</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
               {navigationItems.map((item) => (
@@ -84,7 +84,7 @@ export function AppSidebar() {
         </SidebarGroup>
 
         <SidebarGroup>
-          <SidebarGroupLabel>System Settings</SidebarGroupLabel>
+          <SidebarGroupLabel className="text-foreground font-semibold">System Settings</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
               {settingsItems.map((item) => {
@@ -109,7 +109,7 @@ export function AppSidebar() {
 
         {/* Quick Actions */}
         <SidebarGroup>
-          <SidebarGroupLabel>Quick Actions</SidebarGroupLabel>
+          <SidebarGroupLabel className="text-foreground font-semibold">Quick Actions</SidebarGroupLabel>
           <SidebarGroupContent>
             <div className="space-y-2 px-2">
               <PhoneDialer 
