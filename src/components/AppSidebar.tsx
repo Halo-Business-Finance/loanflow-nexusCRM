@@ -27,8 +27,6 @@ const navigationItems = [
   { title: "Documents", url: "/documents", icon: FileText },
   { title: "Activities", url: "/activities", icon: Calendar },
   { title: "Reports", url: "/reports", icon: BarChart3 },
-  { title: "Integrations", url: "/integrations", icon: Zap },
-  { title: "AI Tools", url: "/ai-tools", icon: Target },
   { title: "Resources", url: "/resources", icon: BookOpen },
 ]
 
@@ -36,6 +34,8 @@ const settingsItems = [
   { title: "Settings", url: "/settings", icon: Settings },
   { title: "Users", url: "/users", icon: UserCheck },
   { title: "Enterprise", url: "/enterprise", icon: Building2 },
+  { title: "Integrations", url: "/integrations", icon: Zap },
+  { title: "AI Tools", url: "/ai-tools", icon: Target },
   { title: "Security", url: "/security", icon: Shield },
 ]
 
