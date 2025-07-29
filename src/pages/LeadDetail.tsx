@@ -76,6 +76,9 @@ interface Lead {
   created_at: string
   income?: number
   is_converted_to_client: boolean
+  bdo_name?: string
+  bdo_telephone?: string
+  bdo_email?: string
 }
 
 interface Client {
@@ -102,6 +105,9 @@ interface Client {
   call_notes?: string
   priority?: string
   income?: number
+  bdo_name?: string
+  bdo_telephone?: string
+  bdo_email?: string
 }
 
 export default function LeadDetail() {
@@ -144,6 +150,9 @@ export default function LeadDetail() {
     interest_rate: "",
     maturity_date: "",
     existing_loan_amount: "",
+    bdo_name: "",
+    bdo_telephone: "",
+    bdo_email: "",
     // POS Information fields
     pos_system: "",
     monthly_processing_volume: "",
@@ -194,6 +203,9 @@ export default function LeadDetail() {
         interest_rate: data.interest_rate?.toString() || "",
         maturity_date: data.maturity_date || "",
         existing_loan_amount: data.existing_loan_amount?.toString() || "",
+        bdo_name: data.bdo_name || "",
+        bdo_telephone: data.bdo_telephone || "",
+        bdo_email: data.bdo_email || "",
         // POS Information fields
         pos_system: (data as any).pos_system || "",
         monthly_processing_volume: (data as any).monthly_processing_volume?.toString() || "",
@@ -493,6 +505,9 @@ export default function LeadDetail() {
         interest_rate: editableFields.interest_rate ? parseFloat(editableFields.interest_rate) : null,
         maturity_date: editableFields.maturity_date || null,
         existing_loan_amount: editableFields.existing_loan_amount ? parseFloat(editableFields.existing_loan_amount) : null,
+        bdo_name: editableFields.bdo_name || null,
+        bdo_telephone: editableFields.bdo_telephone || null,
+        bdo_email: editableFields.bdo_email || null,
         pos_system: editableFields.pos_system || null,
         monthly_processing_volume: editableFields.monthly_processing_volume ? parseFloat(editableFields.monthly_processing_volume) : null,
         average_transaction_size: editableFields.average_transaction_size ? parseFloat(editableFields.average_transaction_size) : null,
@@ -1479,6 +1494,70 @@ export default function LeadDetail() {
                     ) : (
                       <p className="font-medium text-foreground">{lead.stage || 'N/A'}</p>
                     )}
+                  </div>
+                </div>
+
+                {/* BDO Information Section */}
+                <div className="col-span-full">
+                  <h3 className="text-lg font-semibold text-foreground mb-4 flex items-center gap-2">
+                    <User className="w-5 h-5" />
+                    BDO Information
+                  </h3>
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6 pt-4 border-t border-gray-200/10">
+                    <div className="flex items-center gap-3">
+                      <User className="w-4 h-4 text-muted-foreground" />
+                      <div className="flex-1">
+                        <p className="text-sm text-muted-foreground">BDO Name</p>
+                        {isEditing ? (
+                          <Input
+                            value={editableFields.bdo_name}
+                            onChange={(e) => setEditableFields({...editableFields, bdo_name: e.target.value})}
+                            placeholder="Enter BDO name"
+                          />
+                        ) : (
+                          <p className="font-medium text-foreground">
+                            {lead.bdo_name || 'N/A'}
+                          </p>
+                        )}
+                      </div>
+                    </div>
+
+                    <div className="flex items-center gap-3">
+                      <Phone className="w-4 h-4 text-muted-foreground" />
+                      <div className="flex-1">
+                        <p className="text-sm text-muted-foreground">BDO Telephone</p>
+                        {isEditing ? (
+                          <Input
+                            value={editableFields.bdo_telephone}
+                            onChange={(e) => setEditableFields({...editableFields, bdo_telephone: e.target.value})}
+                            placeholder="Enter BDO telephone"
+                          />
+                        ) : (
+                          <p className="font-medium text-foreground">
+                            {lead.bdo_telephone || 'N/A'}
+                          </p>
+                        )}
+                      </div>
+                    </div>
+
+                    <div className="flex items-center gap-3">
+                      <Mail className="w-4 h-4 text-muted-foreground" />
+                      <div className="flex-1">
+                        <p className="text-sm text-muted-foreground">BDO Email</p>
+                        {isEditing ? (
+                          <Input
+                            type="email"
+                            value={editableFields.bdo_email}
+                            onChange={(e) => setEditableFields({...editableFields, bdo_email: e.target.value})}
+                            placeholder="Enter BDO email"
+                          />
+                        ) : (
+                          <p className="font-medium text-foreground">
+                            {lead.bdo_email || 'N/A'}
+                          </p>
+                        )}
+                      </div>
+                    </div>
                   </div>
                 </div>
 

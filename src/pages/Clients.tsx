@@ -53,6 +53,9 @@ interface Client {
   average_transaction_size?: number
   processor_name?: string
   current_processing_rate?: number
+  bdo_name?: string
+  bdo_telephone?: string
+  bdo_email?: string
 }
 
 interface Loan {

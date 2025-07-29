@@ -393,6 +393,9 @@ export type Database = {
           annual_revenue: number | null
           average_transaction_size: number | null
           bank_lender_name: string | null
+          bdo_email: string | null
+          bdo_name: string | null
+          bdo_telephone: string | null
           business_address: string | null
           business_name: string | null
           call_notes: string | null
@@ -433,6 +436,9 @@ export type Database = {
           annual_revenue?: number | null
           average_transaction_size?: number | null
           bank_lender_name?: string | null
+          bdo_email?: string | null
+          bdo_name?: string | null
+          bdo_telephone?: string | null
           business_address?: string | null
           business_name?: string | null
           call_notes?: string | null
@@ -473,6 +479,9 @@ export type Database = {
           annual_revenue?: number | null
           average_transaction_size?: number | null
           bank_lender_name?: string | null
+          bdo_email?: string | null
+          bdo_name?: string | null
+          bdo_telephone?: string | null
           business_address?: string | null
           business_name?: string | null
           call_notes?: string | null
@@ -1517,6 +1526,9 @@ export type Database = {
           annual_revenue: number | null
           average_transaction_size: number | null
           bank_lender_name: string | null
+          bdo_email: string | null
+          bdo_name: string | null
+          bdo_telephone: string | null
           business_address: string | null
           business_name: string | null
           call_notes: string | null
@@ -1554,6 +1566,9 @@ export type Database = {
           annual_revenue?: number | null
           average_transaction_size?: number | null
           bank_lender_name?: string | null
+          bdo_email?: string | null
+          bdo_name?: string | null
+          bdo_telephone?: string | null
           business_address?: string | null
           business_name?: string | null
           call_notes?: string | null
@@ -1591,6 +1606,9 @@ export type Database = {
           annual_revenue?: number | null
           average_transaction_size?: number | null
           bank_lender_name?: string | null
+          bdo_email?: string | null
+          bdo_name?: string | null
+          bdo_telephone?: string | null
           business_address?: string | null
           business_name?: string | null
           call_notes?: string | null

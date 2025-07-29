@@ -69,6 +69,9 @@ interface Client {
   average_transaction_size?: number
   processor_name?: string
   current_processing_rate?: number
+  bdo_name?: string
+  bdo_telephone?: string
+  bdo_email?: string
   // Additional fields from leads
   maturity_date?: string
   interest_rate?: number
@@ -129,6 +132,9 @@ export default function ClientDetail() {
     average_transaction_size: "",
     processor_name: "",
     current_processing_rate: "",
+    bdo_name: "",
+    bdo_telephone: "",
+    bdo_email: "",
     // Additional fields from leads
     maturity_date: "",
     interest_rate: "",
@@ -183,6 +189,9 @@ export default function ClientDetail() {
         average_transaction_size: data.average_transaction_size?.toString() || "",
         processor_name: data.processor_name || "",
         current_processing_rate: data.current_processing_rate?.toString() || "",
+        bdo_name: data.bdo_name || "",
+        bdo_telephone: data.bdo_telephone || "",
+        bdo_email: data.bdo_email || "",
         // Additional fields from leads
         maturity_date: (data as any).maturity_date || "",
         interest_rate: (data as any).interest_rate?.toString() || "",
@@ -325,6 +334,9 @@ export default function ClientDetail() {
         average_transaction_size: editableFields.average_transaction_size ? parseFloat(editableFields.average_transaction_size) : null,
         processor_name: editableFields.processor_name || null,
         current_processing_rate: editableFields.current_processing_rate ? parseFloat(editableFields.current_processing_rate) : null,
+        bdo_name: editableFields.bdo_name || null,
+        bdo_telephone: editableFields.bdo_telephone || null,
+        bdo_email: editableFields.bdo_email || null,
         // Additional fields from leads
         maturity_date: editableFields.maturity_date || null,
         interest_rate: editableFields.interest_rate ? parseFloat(editableFields.interest_rate) : null,
@@ -1021,6 +1033,71 @@ export default function ClientDetail() {
                     )}
                   </div>
                 </div>
+
+                {/* BDO Information Section */}
+                <div className="col-span-full mt-6">
+                  <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
+                    <User className="w-5 h-5" />
+                    BDO Information
+                  </h3>
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6 pt-4 border-t border-gray-200/10">
+                    <div className="flex items-center gap-3">
+                      <User className="w-4 h-4 text-muted-foreground" />
+                      <div className="flex-1">
+                        <p className="text-sm text-muted-foreground">BDO Name</p>
+                        {isEditing ? (
+                          <Input
+                            value={editableFields.bdo_name}
+                            onChange={(e) => setEditableFields({...editableFields, bdo_name: e.target.value})}
+                            placeholder="Enter BDO name"
+                          />
+                        ) : (
+                          <p className="font-medium">
+                            {client.bdo_name || 'N/A'}
+                          </p>
+                        )}
+                      </div>
+                    </div>
+
+                    <div className="flex items-center gap-3">
+                      <Phone className="w-4 h-4 text-muted-foreground" />
+                      <div className="flex-1">
+                        <p className="text-sm text-muted-foreground">BDO Telephone</p>
+                        {isEditing ? (
+                          <Input
+                            value={editableFields.bdo_telephone}
+                            onChange={(e) => setEditableFields({...editableFields, bdo_telephone: e.target.value})}
+                            placeholder="Enter BDO telephone"
+                          />
+                        ) : (
+                          <p className="font-medium">
+                            {client.bdo_telephone || 'N/A'}
+                          </p>
+                        )}
+                      </div>
+                    </div>
+
+                    <div className="flex items-center gap-3">
+                      <Mail className="w-4 h-4 text-muted-foreground" />
+                      <div className="flex-1">
+                        <p className="text-sm text-muted-foreground">BDO Email</p>
+                        {isEditing ? (
+                          <Input
+                            type="email"
+                            value={editableFields.bdo_email}
+                            onChange={(e) => setEditableFields({...editableFields, bdo_email: e.target.value})}
+                            placeholder="Enter BDO email"
+                          />
+                        ) : (
+                          <p className="font-medium">
+                            {client.bdo_email || 'N/A'}
+                          </p>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
                 </div>
               </div>
             </CardContent>
