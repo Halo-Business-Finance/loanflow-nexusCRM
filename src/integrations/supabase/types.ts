@@ -2001,40 +2001,52 @@ export type Database = {
       profiles: {
         Row: {
           created_at: string
+          daily_summary_reports: boolean | null
           email: string | null
+          email_notifications: boolean | null
           first_name: string | null
           id: string
           is_active: boolean | null
           job_title: string | null
           language: string | null
           last_name: string | null
+          new_application_alerts: boolean | null
           phone_number: string | null
+          status_change_notifications: boolean | null
           timezone: string | null
           updated_at: string
         }
         Insert: {
           created_at?: string
+          daily_summary_reports?: boolean | null
           email?: string | null
+          email_notifications?: boolean | null
           first_name?: string | null
           id: string
           is_active?: boolean | null
           job_title?: string | null
           language?: string | null
           last_name?: string | null
+          new_application_alerts?: boolean | null
           phone_number?: string | null
+          status_change_notifications?: boolean | null
           timezone?: string | null
           updated_at?: string
         }
         Update: {
           created_at?: string
+          daily_summary_reports?: boolean | null
           email?: string | null
+          email_notifications?: boolean | null
           first_name?: string | null
           id?: string
           is_active?: boolean | null
           job_title?: string | null
           language?: string | null
           last_name?: string | null
+          new_application_alerts?: boolean | null
           phone_number?: string | null
+          status_change_notifications?: boolean | null
           timezone?: string | null
           updated_at?: string
         }
