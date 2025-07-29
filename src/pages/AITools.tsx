@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import Layout from "@/components/Layout"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
@@ -12,17 +12,41 @@ import { WorkflowAutomation } from "@/components/ai/WorkflowAutomation"
 import { useToast } from "@/hooks/use-toast"
 import { Target, TrendingUp, BarChart3, Bot, Power, Settings } from "lucide-react"
 
+const AI_TOOLS_STORAGE_KEY = "loanflow-ai-tools-enabled"
+
 export default function AITools() {
   const [activeTab, setActiveTab] = useState("lead-scoring")
   const { toast } = useToast()
   
+  // Load initial state from localStorage or use defaults
+  const getInitialState = () => {
+    try {
+      const stored = localStorage.getItem(AI_TOOLS_STORAGE_KEY)
+      if (stored) {
+        return JSON.parse(stored)
+      }
+    } catch (error) {
+      console.error("Error loading AI tools state from localStorage:", error)
+    }
+    return {
+      leadScoring: true,
+      forecasting: true,
+      analytics: false,
+      automation: true
+    }
+  }
+
   // State for each AI tool
-  const [aiToolsEnabled, setAiToolsEnabled] = useState({
-    leadScoring: true,
-    forecasting: true,
-    analytics: false,
-    automation: true
-  })
+  const [aiToolsEnabled, setAiToolsEnabled] = useState(getInitialState)
+
+  // Save to localStorage whenever state changes
+  useEffect(() => {
+    try {
+      localStorage.setItem(AI_TOOLS_STORAGE_KEY, JSON.stringify(aiToolsEnabled))
+    } catch (error) {
+      console.error("Error saving AI tools state to localStorage:", error)
+    }
+  }, [aiToolsEnabled])
 
   const handleToolToggle = (toolKey: keyof typeof aiToolsEnabled, toolName: string) => {
     setAiToolsEnabled(prev => ({
