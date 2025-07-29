@@ -264,6 +264,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const hasRole = (role: string) => {
     if (!userRole) return false
     
+    // Super admin has access to everything
+    if (userRole === 'super_admin') return true
+    
     // Role hierarchy: admin > manager > agent > viewer
     const roleHierarchy = ['viewer', 'agent', 'manager', 'admin']
     const userRoleIndex = roleHierarchy.indexOf(userRole)
