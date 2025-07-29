@@ -1069,7 +1069,7 @@ export default function LeadDetail() {
                             checked={editableFields.owns_property}
                             onCheckedChange={(checked) => setEditableFields({...editableFields, owns_property: checked})}
                           />
-                          <span className="text-sm" style={{ color: 'white' }}>
+                          <span className="text-sm text-foreground">
                             {editableFields.owns_property ? 'Owns Property' : 'Does not own property'}
                           </span>
                         </div>
@@ -1080,7 +1080,7 @@ export default function LeadDetail() {
                           ) : (
                             <XCircle className="w-4 h-4 text-red-500" />
                           )}
-                          <p className="font-medium" style={{ color: 'white' }}>
+                          <p className="font-medium text-foreground">
                             {lead.owns_property ? 'Owns Property' : 'Does not own property'}
                           </p>
                         </div>
@@ -1096,9 +1096,9 @@ export default function LeadDetail() {
                       {/* Property Fields Left Column */}
                       <div className="space-y-4">
                         <div className="flex items-center gap-3">
-                          <DollarSign className="w-4 h-4" style={{ color: 'white' }} />
+                          <DollarSign className="w-4 h-4 text-muted-foreground" />
                           <div className="flex-1">
-                            <p className="text-sm" style={{ color: 'white' }}>Property Payment Amount</p>
+                            <p className="text-sm text-muted-foreground">Property Payment Amount</p>
                             {isEditing ? (
                               <Input
                                 type="number"
@@ -1107,7 +1107,7 @@ export default function LeadDetail() {
                                 placeholder="Enter monthly/yearly payment amount"
                               />
                             ) : (
-                              <p className="font-medium" style={{ color: 'white' }}>
+                              <p className="font-medium text-foreground">
                                 {(lead as any).property_payment_amount ? formatCurrency((lead as any).property_payment_amount) : 'N/A'}
                               </p>
                             )}
@@ -1115,9 +1115,9 @@ export default function LeadDetail() {
                         </div>
 
                         <div className="flex items-center gap-3">
-                          <Target className="w-4 h-4" style={{ color: 'white' }} />
+                          <Target className="w-4 h-4 text-muted-foreground" />
                           <div className="flex-1">
-                            <p className="text-sm" style={{ color: 'white' }}>Interest Rate (%)</p>
+                            <p className="text-sm text-muted-foreground">Interest Rate (%)</p>
                             {isEditing ? (
                               <Input
                                 type="number"
@@ -1127,7 +1127,7 @@ export default function LeadDetail() {
                                 placeholder="Enter interest rate"
                               />
                             ) : (
-                              <p className="font-medium" style={{ color: 'white' }}>
+                              <p className="font-medium text-foreground">
                                 {lead.interest_rate ? `${lead.interest_rate}%` : 'N/A'}
                               </p>
                             )}
@@ -1138,9 +1138,9 @@ export default function LeadDetail() {
                       {/* Property Fields Right Column */}
                       <div className="space-y-4">
                         <div className="flex items-center gap-3">
-                          <Calendar className="w-4 h-4" style={{ color: 'white' }} />
+                          <Calendar className="w-4 h-4 text-muted-foreground" />
                           <div className="flex-1">
-                            <p className="text-sm" style={{ color: 'white' }}>Loan Maturity Date</p>
+                            <p className="text-sm text-muted-foreground">Loan Maturity Date</p>
                             {isEditing ? (
                               <Input
                                 type="date"
@@ -1148,7 +1148,7 @@ export default function LeadDetail() {
                                 onChange={(e) => setEditableFields({...editableFields, maturity_date: e.target.value})}
                               />
                             ) : (
-                              <p className="font-medium" style={{ color: 'white' }}>
+                              <p className="font-medium text-foreground">
                                 {lead.maturity_date ? new Date(lead.maturity_date).toLocaleDateString() : 'N/A'}
                               </p>
                             )}
@@ -1156,9 +1156,9 @@ export default function LeadDetail() {
                         </div>
 
                         <div className="flex items-center gap-3">
-                          <DollarSign className="w-4 h-4" style={{ color: 'white' }} />
+                          <DollarSign className="w-4 h-4 text-muted-foreground" />
                           <div className="flex-1">
-                            <p className="text-sm" style={{ color: 'white' }}>Existing Loan Amount</p>
+                            <p className="text-sm text-muted-foreground">Existing Loan Amount</p>
                             {isEditing ? (
                               <Input
                                 type="number"
@@ -1167,7 +1167,7 @@ export default function LeadDetail() {
                                 placeholder="Enter existing loan amount"
                               />
                             ) : (
-                              <p className="font-medium" style={{ color: 'white' }}>
+                              <p className="font-medium text-foreground">
                                 {lead.existing_loan_amount ? formatCurrency(lead.existing_loan_amount) : 'N/A'}
                               </p>
                             )}
@@ -1180,9 +1180,9 @@ export default function LeadDetail() {
               </div>
 
               <div className="flex items-center gap-3">
-                <DollarSign className="w-4 h-4" style={{ color: 'white' }} />
+                <DollarSign className="w-4 h-4 text-muted-foreground" />
                 <div className="flex-1">
-                  <p className="text-sm" style={{ color: 'white' }}>Annual Revenue</p>
+                  <p className="text-sm text-muted-foreground">Annual Revenue</p>
                   {isEditing ? (
                     <Input
                       type="number"
@@ -1191,7 +1191,7 @@ export default function LeadDetail() {
                       placeholder="Enter annual revenue"
                     />
                   ) : (
-                    <p className="font-medium" style={{ color: 'white' }}>
+                    <p className="font-medium text-foreground">
                       {formatCurrency(lead.annual_revenue)}
                     </p>
                   )}
@@ -1215,9 +1215,9 @@ export default function LeadDetail() {
                 {/* Left Column */}
                 <div className="space-y-4">
                   <div className="flex items-center gap-3">
-                    <ShoppingCart className="w-4 h-4" style={{ color: 'white' }} />
+                    <ShoppingCart className="w-4 h-4 text-muted-foreground" />
                     <div className="flex-1">
-                      <p className="text-sm" style={{ color: 'white' }}>POS System</p>
+                      <p className="text-sm text-muted-foreground">POS System</p>
                       {isEditing ? (
                         <Input
                           value={editableFields.pos_system}
@@ -1225,7 +1225,7 @@ export default function LeadDetail() {
                           placeholder="Enter POS system name"
                         />
                       ) : (
-                        <p className="font-medium" style={{ color: 'white' }}>
+                        <p className="font-medium text-foreground">
                           {(lead as any).pos_system || 'N/A'}
                         </p>
                       )}
@@ -1233,9 +1233,9 @@ export default function LeadDetail() {
                   </div>
 
                   <div className="flex items-center gap-3">
-                    <DollarSign className="w-4 h-4" style={{ color: 'white' }} />
+                    <DollarSign className="w-4 h-4 text-muted-foreground" />
                     <div className="flex-1">
-                      <p className="text-sm" style={{ color: 'white' }}>Monthly Processing Volume</p>
+                      <p className="text-sm text-muted-foreground">Monthly Processing Volume</p>
                       {isEditing ? (
                         <Input
                           type="number"
@@ -1244,7 +1244,7 @@ export default function LeadDetail() {
                           placeholder="Enter monthly volume"
                         />
                       ) : (
-                        <p className="font-medium" style={{ color: 'white' }}>
+                        <p className="font-medium text-foreground">
                           {formatCurrency((lead as any).monthly_processing_volume)}
                         </p>
                       )}
@@ -1255,9 +1255,9 @@ export default function LeadDetail() {
                 {/* Right Column */}
                 <div className="space-y-4">
                   <div className="flex items-center gap-3">
-                    <DollarSign className="w-4 h-4" style={{ color: 'white' }} />
+                    <DollarSign className="w-4 h-4 text-muted-foreground" />
                     <div className="flex-1">
-                      <p className="text-sm" style={{ color: 'white' }}>Average Transaction Size</p>
+                      <p className="text-sm text-muted-foreground">Average Transaction Size</p>
                       {isEditing ? (
                         <Input
                           type="number"
@@ -1266,7 +1266,7 @@ export default function LeadDetail() {
                           placeholder="Enter average transaction size"
                         />
                       ) : (
-                        <p className="font-medium" style={{ color: 'white' }}>
+                        <p className="font-medium text-foreground">
                           {formatCurrency((lead as any).average_transaction_size)}
                         </p>
                       )}
@@ -1274,9 +1274,9 @@ export default function LeadDetail() {
                   </div>
 
                   <div className="flex items-center gap-3">
-                    <Building className="w-4 h-4" style={{ color: 'white' }} />
+                    <Building className="w-4 h-4 text-muted-foreground" />
                     <div className="flex-1">
-                      <p className="text-sm" style={{ color: 'white' }}>Current Processor</p>
+                      <p className="text-sm text-muted-foreground">Current Processor</p>
                       {isEditing ? (
                         <Input
                           value={editableFields.processor_name}
@@ -1284,7 +1284,7 @@ export default function LeadDetail() {
                           placeholder="Enter processor name"
                         />
                       ) : (
-                        <p className="font-medium" style={{ color: 'white' }}>
+                        <p className="font-medium text-foreground">
                           {(lead as any).processor_name || 'N/A'}
                         </p>
                       )}
@@ -1292,9 +1292,9 @@ export default function LeadDetail() {
                   </div>
 
                   <div className="flex items-center gap-3">
-                    <CreditCard className="w-4 h-4" style={{ color: 'white' }} />
+                    <CreditCard className="w-4 h-4 text-muted-foreground" />
                     <div className="flex-1">
-                      <p className="text-sm" style={{ color: 'white' }}>Current Processing Rate (%)</p>
+                      <p className="text-sm text-muted-foreground">Current Processing Rate (%)</p>
                       {isEditing ? (
                         <Input
                           type="number"
@@ -1304,7 +1304,7 @@ export default function LeadDetail() {
                           placeholder="Enter processing rate"
                         />
                       ) : (
-                        <p className="font-medium" style={{ color: 'white' }}>
+                        <p className="font-medium text-foreground">
                           {(lead as any).current_processing_rate ? `${(lead as any).current_processing_rate}%` : 'N/A'}
                         </p>
                       )}
@@ -1318,7 +1318,7 @@ export default function LeadDetail() {
           {/* Loan Information */}
           <Card>
             <CardHeader>
-              <CardTitle className="flex items-center gap-2" style={{ color: 'white' }}>
+              <CardTitle className="flex items-center gap-2 text-foreground">
                 <DollarSign className="w-5 h-5" />
                 Loan Information
               </CardTitle>
@@ -1328,9 +1328,9 @@ export default function LeadDetail() {
                 {/* Left Column */}
                 <div className="space-y-4">
                   <div className="flex items-center gap-3">
-                    <DollarSign className="w-4 h-4" style={{ color: 'white' }} />
+                    <DollarSign className="w-4 h-4 text-muted-foreground" />
                     <div className="flex-1">
-                      <p className="text-sm" style={{ color: 'white' }}>Loan Amount</p>
+                      <p className="text-sm text-muted-foreground">Loan Amount</p>
                       {isEditing ? (
                         <Input
                           type="number"
@@ -1339,7 +1339,7 @@ export default function LeadDetail() {
                           placeholder="Enter loan amount"
                         />
                       ) : (
-                        <p className="font-medium text-lg" style={{ color: 'white' }}>
+                        <p className="font-medium text-lg text-foreground">
                           {formatCurrency(lead.loan_amount)}
                         </p>
                       )}
@@ -1347,9 +1347,9 @@ export default function LeadDetail() {
                   </div>
 
                   <div className="flex items-center gap-3">
-                    <Building className="w-4 h-4" style={{ color: 'white' }} />
+                    <Building className="w-4 h-4 text-muted-foreground" />
                     <div className="flex-1">
-                      <p className="text-sm" style={{ color: 'white' }}>Loan Type</p>
+                      <p className="text-sm text-muted-foreground">Loan Type</p>
                       {isEditing ? (
                           <Select value={editableFields.loan_type} onValueChange={(value) => setEditableFields({...editableFields, loan_type: value})}>
                             <SelectTrigger>
@@ -1369,7 +1369,7 @@ export default function LeadDetail() {
                             </SelectContent>
                           </Select>
                       ) : (
-                        <p className="font-medium" style={{ color: 'white' }}>{lead.loan_type || 'N/A'}</p>
+                        <p className="font-medium text-foreground">{lead.loan_type || 'N/A'}</p>
                       )}
                     </div>
                   </div>
@@ -1547,7 +1547,7 @@ export default function LeadDetail() {
         {/* Loan Requests Section */}
         <Card>
           <CardHeader>
-            <CardTitle className="flex items-center gap-2" style={{ color: 'white' }}>
+            <CardTitle className="flex items-center gap-2 text-foreground">
               <DollarSign className="w-5 h-5" />
               Loan Requests
             </CardTitle>
@@ -1564,11 +1564,11 @@ export default function LeadDetail() {
         {/* General Notes Section */}
         <Card>
           <CardHeader>
-            <CardTitle style={{ color: 'white' }}>General Notes</CardTitle>
+            <CardTitle className="text-foreground">General Notes</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="generalNotes" style={{ color: 'white' }}>
+              <Label htmlFor="generalNotes" className="text-foreground">
                 Notes
               </Label>
               <Textarea
@@ -1589,7 +1589,7 @@ export default function LeadDetail() {
         {/* Call Notes Section */}
         <Card>
           <CardHeader>
-            <CardTitle className="flex items-center gap-2" style={{ color: 'white' }}>
+            <CardTitle className="flex items-center gap-2 text-foreground">
               <PhoneIcon className="w-5 h-5" />
               Call Notes
             </CardTitle>
@@ -1598,9 +1598,9 @@ export default function LeadDetail() {
             {/* Existing Call Notes */}
             {callNotes && (
               <div>
-                <Label style={{ color: 'white' }}>Previous Call Notes</Label>
+                <Label className="text-foreground">Previous Call Notes</Label>
                 <div className="mt-2 p-3 bg-muted rounded-lg">
-                  <pre className="whitespace-pre-wrap text-sm" style={{ color: 'white' }}>
+                  <pre className="whitespace-pre-wrap text-sm text-foreground">
                     {callNotes}
                   </pre>
                 </div>
@@ -1611,7 +1611,7 @@ export default function LeadDetail() {
 
             {/* Add New Call Note */}
             <div className="space-y-2">
-              <Label htmlFor="newCallNote" style={{ color: 'white' }}>
+              <Label htmlFor="newCallNote" className="text-foreground">
                 Add New Call Note
               </Label>
               <Textarea
