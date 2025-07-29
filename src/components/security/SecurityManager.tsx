@@ -11,6 +11,7 @@ import { useToast } from "@/hooks/use-toast";
 import { Shield, Lock, AlertTriangle, Eye, Users, Key } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/components/auth/AuthProvider";
+import Layout from "@/components/Layout";
 
 interface SecurityNotification {
   id: string;
@@ -224,11 +225,12 @@ export function SecurityManager() {
   }
 
   return (
-    <div className="container mx-auto p-6 space-y-6">
-      <div className="flex items-center space-x-2">
-        <Shield className="h-6 w-6" />
-        <h1 className="text-2xl font-bold">Security Center</h1>
-      </div>
+    <Layout>
+      <div className="container mx-auto space-y-6">
+        <div className="flex items-center space-x-2">
+          <Shield className="h-6 w-6" />
+          <h1 className="text-2xl font-bold">Security Center</h1>
+        </div>
 
       <Tabs defaultValue="overview" className="space-y-4">
         <TabsList>
@@ -542,6 +544,7 @@ export function SecurityManager() {
           </TabsContent>
         )}
       </Tabs>
-    </div>
+      </div>
+    </Layout>
   );
 }
