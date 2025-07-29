@@ -37,7 +37,6 @@ const settingsItems = [
   { title: "Users", url: "/users", icon: UserCheck },
   { title: "Enterprise", url: "/enterprise", icon: Building2 },
   { title: "Security", url: "/security", icon: Shield },
-  { title: "Security Center", url: "/security-center", icon: Lock },
 ]
 
 export function AppSidebar() {
@@ -89,7 +88,7 @@ export function AppSidebar() {
           <SidebarGroupContent>
             <SidebarMenu>
               {settingsItems.map((item) => {
-                // Only show Security, Users, and Enterprise to admins, but Security Center is available to all
+                // Only show Security, Users, and Enterprise to admins
                 if ((item.title === "Security" || item.title === "Users" || item.title === "Enterprise") && !hasRole('admin')) {
                   return null;
                 }

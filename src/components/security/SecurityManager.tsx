@@ -8,7 +8,7 @@ import { Badge } from "@/components/ui/badge";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToast } from "@/hooks/use-toast";
-import { Shield, Lock, AlertTriangle, Eye, Users, Key } from "lucide-react";
+import { Shield, Lock, AlertTriangle, Eye, Users, Key, Activity, Trash2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/components/auth/AuthProvider";
 import Layout from "@/components/Layout";
@@ -40,11 +40,44 @@ interface PasswordPolicy {
   prevent_reuse_count: number;
 }
 
+// Admin dashboard interfaces
+interface AuditLog {
+  id: string
+  action: string
+  table_name: string
+  created_at: string
+  user_id: string
+}
+
+interface UserRole {
+  id: string
+  user_id: string
+  role: string
+  assigned_at: string
+  is_active: boolean
+}
+
+interface UserSession {
+  id: string
+  user_id: string
+  ip_address: string | null
+  user_agent: string | null
+  last_activity: string
+  created_at: string
+  is_active: boolean
+}
+
 export function SecurityManager() {
   const { user, hasRole } = useAuth();
   const { toast } = useToast();
   const [loading, setLoading] = useState(false);
   const [securityNotifications, setSecurityNotifications] = useState<SecurityNotification[]>([]);
+  
+  // Admin dashboard state
+  const [auditLogs, setAuditLogs] = useState<AuditLog[]>([])
+  const [userRoles, setUserRoles] = useState<UserRole[]>([])
+  const [userSessions, setUserSessions] = useState<UserSession[]>([])
+  
   const [mfaSettings, setMfaSettings] = useState<MFASettings>({
     is_enabled: false,
     preferred_method: 'totp'
@@ -105,6 +138,17 @@ export function SecurityManager() {
         if (policy) {
           setPasswordPolicy(policy);
         }
+
+        // Fetch admin dashboard data
+        const [auditResponse, rolesResponse, sessionsResponse] = await Promise.all([
+          supabase.from('audit_logs').select('*').order('created_at', { ascending: false }).limit(50),
+          supabase.from('user_roles').select('*').order('assigned_at', { ascending: false }),
+          supabase.from('user_sessions').select('*').order('last_activity', { ascending: false })
+        ])
+
+        if (auditResponse.data) setAuditLogs(auditResponse.data)
+        if (rolesResponse.data) setUserRoles(rolesResponse.data)
+        if (sessionsResponse.data) setUserSessions(sessionsResponse.data as UserSession[])
       }
     } catch (error) {
       console.error('Error fetching security data:', error);
@@ -206,6 +250,27 @@ export function SecurityManager() {
     }
   };
 
+  const cleanupExpiredSessions = async () => {
+    try {
+      const { data, error } = await supabase.rpc('cleanup_expired_sessions')
+      
+      if (error) throw error
+
+      toast({
+        title: "Sessions Cleaned",
+        description: `Removed ${data} expired sessions`,
+      })
+      
+      fetchSecurityData()
+    } catch (error: any) {
+      toast({
+        title: "Error",
+        description: error.message,
+        variant: "destructive",
+      })
+    }
+  }
+
   const getSeverityColor = (severity: string) => {
     switch (severity) {
       case 'critical': return 'destructive';
@@ -232,16 +297,20 @@ export function SecurityManager() {
           <h1 className="text-2xl font-bold">Security Center</h1>
         </div>
 
-      <Tabs defaultValue="overview" className="space-y-4">
-        <TabsList>
-          <TabsTrigger value="overview">Overview</TabsTrigger>
-          <TabsTrigger value="mfa">Multi-Factor Auth</TabsTrigger>
-          <TabsTrigger value="notifications">Security Alerts</TabsTrigger>
-          {hasRole('admin') && <TabsTrigger value="policies">Password Policy</TabsTrigger>}
-        </TabsList>
+        <Tabs defaultValue="overview" className="space-y-4">
+          <TabsList>
+            <TabsTrigger value="overview">Overview</TabsTrigger>
+            <TabsTrigger value="mfa">Multi-Factor Auth</TabsTrigger>
+            <TabsTrigger value="notifications">Security Alerts</TabsTrigger>
+            {hasRole('admin') && <TabsTrigger value="policies">Password Policy</TabsTrigger>}
+            {hasRole('admin') && <TabsTrigger value="audit">Audit Logs</TabsTrigger>}
+            {hasRole('admin') && <TabsTrigger value="users">User Roles</TabsTrigger>}
+            {hasRole('admin') && <TabsTrigger value="sessions">Active Sessions</TabsTrigger>}
+          </TabsList>
 
         <TabsContent value="overview" className="space-y-4">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          {/* Security Overview Cards */}
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
             <Card>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                 <CardTitle className="text-sm font-medium">Security Status</CardTitle>
@@ -284,6 +353,21 @@ export function SecurityManager() {
                 </p>
               </CardContent>
             </Card>
+
+            {hasRole('admin') && (
+              <Card>
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                  <CardTitle className="text-sm font-medium">Active Users</CardTitle>
+                  <Users className="h-4 w-4 text-muted-foreground" />
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-bold">{userRoles.filter(r => r.is_active).length}</div>
+                  <p className="text-xs text-muted-foreground">
+                    System-wide user count
+                  </p>
+                </CardContent>
+              </Card>
+            )}
           </div>
 
           <Card>
@@ -543,6 +627,100 @@ export function SecurityManager() {
             </Card>
           </TabsContent>
         )}
+
+        {hasRole('admin') && (
+          <TabsContent value="audit" className="space-y-4">
+            <Card>
+              <CardHeader>
+                <CardTitle>Recent Audit Logs</CardTitle>
+                <CardDescription>System activity and security events</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-2">
+                  {auditLogs.map((log) => (
+                    <div key={log.id} className="flex items-center justify-between p-3 border rounded-lg">
+                      <div>
+                        <p className="font-medium">{log.action}</p>
+                        <p className="text-sm text-muted-foreground">
+                          {log.table_name} • {new Date(log.created_at).toLocaleString()}
+                        </p>
+                      </div>
+                      <Badge variant="outline">{log.action.split('_')[0]}</Badge>
+                    </div>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
+        )}
+
+        {hasRole('admin') && (
+          <TabsContent value="users" className="space-y-4">
+            <Card>
+              <CardHeader>
+                <CardTitle>User Roles</CardTitle>
+                <CardDescription>Manage user permissions and access levels</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-2">
+                  {userRoles.map((role) => (
+                    <div key={role.id} className="flex items-center justify-between p-3 border rounded-lg">
+                      <div>
+                        <p className="font-medium">User ID: {role.user_id}</p>
+                        <p className="text-sm text-muted-foreground">
+                          Assigned: {new Date(role.assigned_at).toLocaleString()}
+                        </p>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <Badge variant={role.role === 'admin' ? 'default' : 'secondary'}>
+                          {role.role}
+                        </Badge>
+                        {role.is_active ? (
+                          <Badge variant="outline" className="bg-green-50 text-green-700">Active</Badge>
+                        ) : (
+                          <Badge variant="outline" className="bg-gray-50 text-gray-700">Inactive</Badge>
+                        )}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
+        )}
+
+        {hasRole('admin') && (
+          <TabsContent value="sessions" className="space-y-4">
+            <Card>
+              <CardHeader className="flex flex-row items-center justify-between">
+                <div>
+                  <CardTitle>Active Sessions</CardTitle>
+                  <CardDescription>Monitor user sessions and activity</CardDescription>
+                </div>
+                <Button onClick={cleanupExpiredSessions} variant="outline" size="sm">
+                  <Trash2 className="w-4 h-4 mr-2" />
+                  Clean Expired
+                </Button>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-2">
+                  {userSessions.filter(s => s.is_active).map((session) => (
+                    <div key={session.id} className="flex items-center justify-between p-3 border rounded-lg">
+                      <div>
+                        <p className="font-medium">User ID: {session.user_id}</p>
+                        <p className="text-sm text-muted-foreground">
+                          IP: {session.ip_address} • Last activity: {new Date(session.last_activity).toLocaleString()}
+                        </p>
+                      </div>
+                      <Badge variant="outline" className="bg-green-50 text-green-700">Active</Badge>
+                    </div>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
+        )}
+
       </Tabs>
       </div>
     </Layout>
