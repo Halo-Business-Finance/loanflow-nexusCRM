@@ -2,7 +2,7 @@ import React from "react"
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar"
 import { AppSidebar } from "@/components/AppSidebar"
 import { ReactNode, useState, useEffect } from "react"
-import { Clock, ArrowLeft, ArrowRight } from "lucide-react"
+import { Clock, ArrowLeft, ArrowRight, Building2 } from "lucide-react"
 import { useNavigate } from "react-router-dom"
 import { Button } from "@/components/ui/button"
 import { NotificationBell } from "@/components/NotificationBell"
@@ -68,7 +68,10 @@ export default function Layout({ children }: LayoutProps) {
               >
                 <ArrowRight className="w-4 h-4" />
               </Button>
-              <h1 className="text-xl font-semibold text-foreground ml-2">Welcome back!</h1>
+              <div className="flex items-center gap-2 ml-2">
+                <Building2 className="w-6 h-6 text-primary" />
+                <h1 className="text-xl font-semibold text-foreground">LoanFlow</h1>
+              </div>
             </div>
             <div className="flex items-center gap-4">
               <div className="hidden md:block w-80">
