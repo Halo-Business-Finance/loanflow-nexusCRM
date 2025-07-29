@@ -1696,45 +1696,6 @@ export default function LeadDetail() {
           </CardContent>
         </Card>
 
-        {/* Quick Actions */}
-        <Card>
-          <CardHeader>
-            <CardTitle style={{ color: 'white' }}>Quick Actions</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="flex gap-4 flex-wrap">
-              <PhoneDialer 
-                trigger={
-                  <Button variant="outline" className="flex-1">
-                    <PhoneIcon className="w-4 h-4 mr-2" />
-                    Call Lead
-                  </Button>
-                }
-              />
-              <EmailComposer 
-                trigger={
-                  <Button variant="outline" className="flex-1">
-                    <Mail className="w-4 h-4 mr-2" />
-                    Send Email
-                  </Button>
-                }
-              />
-              <Button 
-                variant="outline" 
-                className="flex-1"
-                onClick={() => navigate('/documents')}
-              >
-                <FileText className="w-4 h-4 mr-2" />
-                Documents
-              </Button>
-              {!lead.is_converted_to_client && (
-                <Button className="flex-1">
-                  Convert to Client
-                </Button>
-              )}
-            </div>
-          </CardContent>
-        </Card>
       </div>
 
       {/* Action Reminder Dialog */}
