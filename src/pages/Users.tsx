@@ -72,6 +72,14 @@ export default function Users() {
   const [showNewUserDialog, setShowNewUserDialog] = useState(false)
   const [showEditDialog, setShowEditDialog] = useState(false)
 
+  useEffect(() => {
+    if (hasRole('admin')) {
+      fetchUsers()
+    } else {
+      setLoading(false)
+    }
+  }, [hasRole])
+
   // Redirect if not admin
   if (!hasRole('admin')) {
     return (
@@ -86,10 +94,6 @@ export default function Users() {
       </Layout>
     )
   }
-
-  useEffect(() => {
-    fetchUsers()
-  }, [])
 
   const fetchUsers = async () => {
     try {
