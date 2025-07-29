@@ -50,7 +50,7 @@ export default function Layout({ children }: LayoutProps) {
       <div className="min-h-screen flex w-full bg-background">
         <AppSidebar />
         <div className="flex-1 flex flex-col">
-          <header className="h-16 border-b bg-card shadow-soft flex items-center justify-between px-6">
+          <header className="h-20 border-b bg-card shadow-soft flex items-center justify-between px-6">
             <div className="flex items-center gap-2">
               <SidebarTrigger className="mr-2" />
               <Button 
@@ -70,7 +70,7 @@ export default function Layout({ children }: LayoutProps) {
                 <ArrowRight className="w-4 h-4" />
               </Button>
               <div className="flex items-center gap-2 ml-2">
-                <img src="/lovable-uploads/20ce0230-d041-4bb4-948d-cfa460751461.png" alt="LoanFlow CRM" className="h-20" />
+                <img src="/lovable-uploads/20ce0230-d041-4bb4-948d-cfa460751461.png" alt="LoanFlow CRM" className="h-16 object-contain" />
               </div>
             </div>
             <div className="flex items-center gap-4">
