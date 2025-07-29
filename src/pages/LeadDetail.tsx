@@ -267,10 +267,21 @@ export default function LeadDetail() {
   }
 
   const saveCallNotes = async () => {
-    if (!lead) return
+    if (!lead || !user) return
 
     try {
-      const updatedNotes = callNotes + (newCallNote ? `\n\n[${new Date().toLocaleString()}] ${newCallNote}` : "")
+      // Get user's profile for display name
+      const { data: profile } = await supabase
+        .from('profiles')
+        .select('first_name, last_name')
+        .eq('id', user.id)
+        .single()
+
+      const userName = profile 
+        ? `${profile.first_name} ${profile.last_name}`.trim() 
+        : user.email?.split('@')[0] || 'Unknown User'
+
+      const updatedNotes = callNotes + (newCallNote ? `\n\n[${new Date().toLocaleString()}] ${userName}: ${newCallNote}` : "")
       
       const { error } = await supabase
         .from('leads')
