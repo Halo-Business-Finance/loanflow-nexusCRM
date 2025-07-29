@@ -7,6 +7,7 @@ import { Label } from "@/components/ui/label"
 import { Switch } from "@/components/ui/switch"
 import { Separator } from "@/components/ui/separator"
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Badge } from "@/components/ui/badge"
 import { 
@@ -93,8 +94,8 @@ export default function Settings() {
           email: data.email || user.email || '',
           phone_number: data.phone_number || '',
           job_title: data.job_title || '',
-          language: data.language || 'en-US',
-          timezone: data.timezone || 'America/New_York'
+          language: (data as any).language || 'en-US',
+          timezone: (data as any).timezone || 'America/New_York'
         })
       } else {
         // Create profile if it doesn't exist
@@ -132,6 +133,8 @@ export default function Settings() {
           email: profile.email,
           phone_number: profile.phone_number,
           job_title: profile.job_title,
+          language: profile.language,
+          timezone: profile.timezone,
           updated_at: new Date().toISOString()
         })
 
@@ -565,25 +568,41 @@ export default function Settings() {
 
                 <div className="space-y-2">
                   <Label>Language</Label>
-                  <select className="w-full px-3 py-2 text-sm border rounded-md bg-background">
-                    <option>English (US)</option>
-                    <option>Español (Spanish)</option>
-                    <option>Français (French)</option>
-                  </select>
+                  <Select 
+                    value={profile.language} 
+                    onValueChange={(value) => handleInputChange('language', value)}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select language" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="en-US">English (US)</SelectItem>
+                      <SelectItem value="es-ES">Español (Spanish)</SelectItem>
+                      <SelectItem value="fr-FR">Français (French)</SelectItem>
+                    </SelectContent>
+                  </Select>
                 </div>
 
                 <Separator />
 
                 <div className="space-y-2">
                   <Label>Time Zone</Label>
-                  <select className="w-full px-3 py-2 text-sm border rounded-md bg-background">
-                    <option>Eastern Time (US)</option>
-                    <option>Central Time (US)</option>
-                    <option>Mountain Time (US)</option>
-                    <option>Pacific Time (US)</option>
-                    <option>Alaska Time (US)</option>
-                    <option>Hawaii Time (US)</option>
-                  </select>
+                  <Select 
+                    value={profile.timezone} 
+                    onValueChange={(value) => handleInputChange('timezone', value)}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select timezone" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="America/New_York">Eastern Time (US)</SelectItem>
+                      <SelectItem value="America/Chicago">Central Time (US)</SelectItem>
+                      <SelectItem value="America/Denver">Mountain Time (US)</SelectItem>
+                      <SelectItem value="America/Los_Angeles">Pacific Time (US)</SelectItem>
+                      <SelectItem value="America/Anchorage">Alaska Time (US)</SelectItem>
+                      <SelectItem value="Pacific/Honolulu">Hawaii Time (US)</SelectItem>
+                    </SelectContent>
+                  </Select>
                 </div>
               </CardContent>
             </Card>

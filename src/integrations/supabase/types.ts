@@ -2006,8 +2006,10 @@ export type Database = {
           id: string
           is_active: boolean | null
           job_title: string | null
+          language: string | null
           last_name: string | null
           phone_number: string | null
+          timezone: string | null
           updated_at: string
         }
         Insert: {
@@ -2017,8 +2019,10 @@ export type Database = {
           id: string
           is_active?: boolean | null
           job_title?: string | null
+          language?: string | null
           last_name?: string | null
           phone_number?: string | null
+          timezone?: string | null
           updated_at?: string
         }
         Update: {
@@ -2028,8 +2032,10 @@ export type Database = {
           id?: string
           is_active?: boolean | null
           job_title?: string | null
+          language?: string | null
           last_name?: string | null
           phone_number?: string | null
+          timezone?: string | null
           updated_at?: string
         }
         Relationships: []
