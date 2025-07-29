@@ -1119,7 +1119,7 @@ export default function ClientDetail() {
               />
             </CardContent>
           </Card>
-          {(client.pos_system || client.monthly_processing_volume || client.processor_name || isEditing) && (
+          {(client.pos_system || client.monthly_processing_volume || client.average_transaction_size || client.processor_name || client.current_processing_rate || isEditing) && (
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
@@ -1165,6 +1165,23 @@ export default function ClientDetail() {
                   </div>
 
                   <div className="space-y-4">
+                    <div className="flex items-center gap-3">
+                      <DollarSign className="w-4 h-4" />
+                      <div className="flex-1">
+                        <p className="text-sm text-muted-foreground">Average Transaction Size</p>
+                        {isEditing ? (
+                          <Input
+                            type="number"
+                            value={editableFields.average_transaction_size}
+                            onChange={(e) => setEditableFields({...editableFields, average_transaction_size: e.target.value})}
+                            placeholder="Enter average transaction size"
+                          />
+                        ) : (
+                          <p className="font-medium">{formatCurrency(client.average_transaction_size)}</p>
+                        )}
+                      </div>
+                    </div>
+
                     <div className="flex items-center gap-3">
                       <Building className="w-4 h-4" />
                       <div className="flex-1">
