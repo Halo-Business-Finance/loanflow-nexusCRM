@@ -56,7 +56,7 @@ export default function Layout({ children }: LayoutProps) {
                 variant="ghost" 
                 size="sm" 
                 onClick={handleGoBack}
-                className="text-white hover:bg-white/10"
+                className="text-foreground hover:bg-accent/10"
               >
                 <ArrowLeft className="w-4 h-4" />
               </Button>
@@ -64,7 +64,7 @@ export default function Layout({ children }: LayoutProps) {
                 variant="ghost" 
                 size="sm" 
                 onClick={handleGoForward}
-                className="text-white hover:bg-white/10"
+                className="text-foreground hover:bg-accent/10"
               >
                 <ArrowRight className="w-4 h-4" />
               </Button>
@@ -75,8 +75,8 @@ export default function Layout({ children }: LayoutProps) {
                 <GlobalSearch />
               </div>
               <NotificationBell />
-              <div className="flex items-center gap-2 text-sm font-medium text-white">
-                <Clock className="w-4 h-4 text-white" />
+              <div className="flex items-center gap-2 text-sm font-medium text-foreground">
+                <Clock className="w-4 h-4 text-foreground" />
                 <span>{formatDateTime(currentDateTime)}</span>
               </div>
             </div>
