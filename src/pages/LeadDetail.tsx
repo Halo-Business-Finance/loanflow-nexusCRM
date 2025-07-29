@@ -842,6 +842,25 @@ export default function LeadDetail() {
                 </div>
 
                 <div className="flex items-center gap-3">
+                  <CreditCard className="w-4 h-4" style={{ color: 'white' }} />
+                  <div className="flex-1">
+                    <p className="text-sm" style={{ color: 'white' }}>Credit Score</p>
+                    {isEditing ? (
+                      <Input
+                        type="number"
+                        value={editableFields.credit_score}
+                        onChange={(e) => setEditableFields({...editableFields, credit_score: e.target.value})}
+                        placeholder="Enter credit score"
+                        min="300"
+                        max="850"
+                      />
+                    ) : (
+                      <p className="font-medium" style={{ color: 'white' }}>{formatNumber(lead.credit_score)}</p>
+                    )}
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-3">
                   <Calendar className="w-4 h-4" style={{ color: 'white' }} />
                   <div>
                     <p className="text-sm" style={{ color: 'white' }}>Last Contact</p>
@@ -1143,24 +1162,6 @@ export default function LeadDetail() {
                     </div>
                   </div>
 
-                  <div className="flex items-center gap-3">
-                    <CreditCard className="w-4 h-4" style={{ color: 'white' }} />
-                    <div className="flex-1">
-                      <p className="text-sm" style={{ color: 'white' }}>Credit Score</p>
-                      {isEditing ? (
-                        <Input
-                          type="number"
-                          value={editableFields.credit_score}
-                          onChange={(e) => setEditableFields({...editableFields, credit_score: e.target.value})}
-                          placeholder="Enter credit score"
-                          min="300"
-                          max="850"
-                        />
-                      ) : (
-                        <p className="font-medium" style={{ color: 'white' }}>{formatNumber(lead.credit_score)}</p>
-                      )}
-                    </div>
-                  </div>
                 </div>
 
                 {/* Right Column */}
