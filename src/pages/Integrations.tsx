@@ -1,4 +1,5 @@
 import { useState } from "react"
+import Layout from "@/components/Layout"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
@@ -179,195 +180,197 @@ export default function Integrations() {
   ]
 
   return (
-    <div className="container mx-auto p-6 space-y-6">
-      <div className="flex justify-between items-center">
-        <div>
-          <h1 className="text-3xl font-bold tracking-tight">Integrations & Tools</h1>
-          <p className="text-muted-foreground">
-            Connect your CRM with external services and enable AI-powered tools
-          </p>
+    <Layout>
+      <div className="container mx-auto p-6 space-y-6">
+        <div className="flex justify-between items-center">
+          <div>
+            <h1 className="text-3xl font-bold tracking-tight">Integrations & Tools</h1>
+            <p className="text-muted-foreground">
+              Connect your CRM with external services and enable AI-powered tools
+            </p>
+          </div>
+          <Button>
+            <ExternalLink className="w-4 h-4 mr-2" />
+            Browse Marketplace
+          </Button>
         </div>
-        <Button>
-          <ExternalLink className="w-4 h-4 mr-2" />
-          Browse Marketplace
-        </Button>
+
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
+          <TabsList className="grid w-full grid-cols-3">
+            <TabsTrigger value="integrations">Third-Party Integrations</TabsTrigger>
+            <TabsTrigger value="ai-tools">AI Tools</TabsTrigger>
+            <TabsTrigger value="webhooks">Webhooks & API</TabsTrigger>
+          </TabsList>
+
+          <TabsContent value="integrations" className="space-y-6">
+            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+              {integrations.map((integration) => (
+                <Card key={integration.id} className="hover:shadow-lg transition-shadow">
+                  <CardHeader className="pb-3">
+                    <div className="flex items-start justify-between">
+                      <div className="flex items-center space-x-3">
+                        <div className="p-2 bg-primary/10 rounded-lg">
+                          <integration.icon className="w-6 h-6 text-primary" />
+                        </div>
+                        <div>
+                          <CardTitle className="text-lg">{integration.name}</CardTitle>
+                          <div className="flex items-center space-x-2 mt-1">
+                            {getStatusIcon(integration.status)}
+                            <Badge className={getStatusColor(integration.status)}>
+                              {integration.status}
+                            </Badge>
+                          </div>
+                        </div>
+                      </div>
+                      <Switch 
+                        checked={integration.status === "connected"}
+                        onCheckedChange={(enabled) => handleIntegrationToggle(integration.id, enabled)}
+                      />
+                    </div>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    <CardDescription>{integration.description}</CardDescription>
+                    
+                    <div className="space-y-2">
+                      <Label className="text-sm font-medium">Features:</Label>
+                      <div className="flex flex-wrap gap-1">
+                        {integration.features.map((feature) => (
+                          <Badge key={feature} variant="secondary" className="text-xs">
+                            {feature}
+                          </Badge>
+                        ))}
+                      </div>
+                    </div>
+
+                    <Button 
+                      className="w-full" 
+                      variant={integration.status === "connected" ? "outline" : "default"}
+                    >
+                      {integration.status === "connected" ? "Configure" : "Connect"}
+                    </Button>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          </TabsContent>
+
+          <TabsContent value="ai-tools" className="space-y-6">
+            <div className="grid gap-6 md:grid-cols-2">
+              {aiTools.map((tool) => (
+                <Card key={tool.id} className="hover:shadow-lg transition-shadow">
+                  <CardHeader className="pb-3">
+                    <div className="flex items-start justify-between">
+                      <div className="flex items-center space-x-3">
+                        <div className="p-2 bg-primary/10 rounded-lg">
+                          <tool.icon className="w-6 h-6 text-primary" />
+                        </div>
+                        <div>
+                          <CardTitle className="text-lg">{tool.name}</CardTitle>
+                          <div className="flex items-center space-x-2 mt-1">
+                            {getStatusIcon(tool.status)}
+                            <Badge className={getStatusColor(tool.status)}>
+                              {tool.status}
+                            </Badge>
+                          </div>
+                        </div>
+                      </div>
+                      <Switch 
+                        checked={tool.status === "active"}
+                        onCheckedChange={(enabled) => handleIntegrationToggle(tool.id, enabled)}
+                      />
+                    </div>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    <CardDescription>{tool.description}</CardDescription>
+                    
+                    <div className="space-y-2">
+                      <Label className="text-sm font-medium">Capabilities:</Label>
+                      <div className="flex flex-wrap gap-1">
+                        {tool.features.map((feature) => (
+                          <Badge key={feature} variant="secondary" className="text-xs">
+                            {feature}
+                          </Badge>
+                        ))}
+                      </div>
+                    </div>
+
+                    <Button 
+                      className="w-full" 
+                      variant={tool.status === "active" ? "outline" : "default"}
+                    >
+                      {tool.status === "active" ? "Configure" : "Enable"}
+                    </Button>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          </TabsContent>
+
+          <TabsContent value="webhooks" className="space-y-6">
+            <div className="grid gap-6 md:grid-cols-2">
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center space-x-2">
+                    <Zap className="w-5 h-5" />
+                    <span>Zapier Webhook</span>
+                  </CardTitle>
+                  <CardDescription>
+                    Connect your CRM to Zapier for advanced automation
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="webhook-url">Webhook URL</Label>
+                    <Input
+                      id="webhook-url"
+                      placeholder="https://hooks.zapier.com/hooks/catch/..."
+                      value={webhookUrl}
+                      onChange={(e) => setWebhookUrl(e.target.value)}
+                    />
+                  </div>
+                  <Button onClick={handleWebhookSave} className="w-full">
+                    Save Webhook URL
+                  </Button>
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center space-x-2">
+                    <Settings className="w-5 h-5" />
+                    <span>API Configuration</span>
+                  </CardTitle>
+                  <CardDescription>
+                    Configure external API connections
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="space-y-2">
+                    <Label>API Endpoints</Label>
+                    <div className="space-y-2 text-sm">
+                      <div className="flex justify-between items-center p-2 bg-muted rounded">
+                        <span>GET /api/leads</span>
+                        <Badge variant="secondary">Active</Badge>
+                      </div>
+                      <div className="flex justify-between items-center p-2 bg-muted rounded">
+                        <span>POST /api/clients</span>
+                        <Badge variant="secondary">Active</Badge>
+                      </div>
+                      <div className="flex justify-between items-center p-2 bg-muted rounded">
+                        <span>GET /api/pipeline</span>
+                        <Badge variant="secondary">Active</Badge>
+                      </div>
+                    </div>
+                  </div>
+                  <Button variant="outline" className="w-full">
+                    View API Documentation
+                  </Button>
+                </CardContent>
+              </Card>
+            </div>
+          </TabsContent>
+        </Tabs>
       </div>
-
-      <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-        <TabsList className="grid w-full grid-cols-3">
-          <TabsTrigger value="integrations">Third-Party Integrations</TabsTrigger>
-          <TabsTrigger value="ai-tools">AI Tools</TabsTrigger>
-          <TabsTrigger value="webhooks">Webhooks & API</TabsTrigger>
-        </TabsList>
-
-        <TabsContent value="integrations" className="space-y-6">
-          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-            {integrations.map((integration) => (
-              <Card key={integration.id} className="hover:shadow-lg transition-shadow">
-                <CardHeader className="pb-3">
-                  <div className="flex items-start justify-between">
-                    <div className="flex items-center space-x-3">
-                      <div className="p-2 bg-primary/10 rounded-lg">
-                        <integration.icon className="w-6 h-6 text-primary" />
-                      </div>
-                      <div>
-                        <CardTitle className="text-lg">{integration.name}</CardTitle>
-                        <div className="flex items-center space-x-2 mt-1">
-                          {getStatusIcon(integration.status)}
-                          <Badge className={getStatusColor(integration.status)}>
-                            {integration.status}
-                          </Badge>
-                        </div>
-                      </div>
-                    </div>
-                    <Switch 
-                      checked={integration.status === "connected"}
-                      onCheckedChange={(enabled) => handleIntegrationToggle(integration.id, enabled)}
-                    />
-                  </div>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <CardDescription>{integration.description}</CardDescription>
-                  
-                  <div className="space-y-2">
-                    <Label className="text-sm font-medium">Features:</Label>
-                    <div className="flex flex-wrap gap-1">
-                      {integration.features.map((feature) => (
-                        <Badge key={feature} variant="secondary" className="text-xs">
-                          {feature}
-                        </Badge>
-                      ))}
-                    </div>
-                  </div>
-
-                  <Button 
-                    className="w-full" 
-                    variant={integration.status === "connected" ? "outline" : "default"}
-                  >
-                    {integration.status === "connected" ? "Configure" : "Connect"}
-                  </Button>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        </TabsContent>
-
-        <TabsContent value="ai-tools" className="space-y-6">
-          <div className="grid gap-6 md:grid-cols-2">
-            {aiTools.map((tool) => (
-              <Card key={tool.id} className="hover:shadow-lg transition-shadow">
-                <CardHeader className="pb-3">
-                  <div className="flex items-start justify-between">
-                    <div className="flex items-center space-x-3">
-                      <div className="p-2 bg-primary/10 rounded-lg">
-                        <tool.icon className="w-6 h-6 text-primary" />
-                      </div>
-                      <div>
-                        <CardTitle className="text-lg">{tool.name}</CardTitle>
-                        <div className="flex items-center space-x-2 mt-1">
-                          {getStatusIcon(tool.status)}
-                          <Badge className={getStatusColor(tool.status)}>
-                            {tool.status}
-                          </Badge>
-                        </div>
-                      </div>
-                    </div>
-                    <Switch 
-                      checked={tool.status === "active"}
-                      onCheckedChange={(enabled) => handleIntegrationToggle(tool.id, enabled)}
-                    />
-                  </div>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <CardDescription>{tool.description}</CardDescription>
-                  
-                  <div className="space-y-2">
-                    <Label className="text-sm font-medium">Capabilities:</Label>
-                    <div className="flex flex-wrap gap-1">
-                      {tool.features.map((feature) => (
-                        <Badge key={feature} variant="secondary" className="text-xs">
-                          {feature}
-                        </Badge>
-                      ))}
-                    </div>
-                  </div>
-
-                  <Button 
-                    className="w-full" 
-                    variant={tool.status === "active" ? "outline" : "default"}
-                  >
-                    {tool.status === "active" ? "Configure" : "Enable"}
-                  </Button>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        </TabsContent>
-
-        <TabsContent value="webhooks" className="space-y-6">
-          <div className="grid gap-6 md:grid-cols-2">
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center space-x-2">
-                  <Zap className="w-5 h-5" />
-                  <span>Zapier Webhook</span>
-                </CardTitle>
-                <CardDescription>
-                  Connect your CRM to Zapier for advanced automation
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="space-y-2">
-                  <Label htmlFor="webhook-url">Webhook URL</Label>
-                  <Input
-                    id="webhook-url"
-                    placeholder="https://hooks.zapier.com/hooks/catch/..."
-                    value={webhookUrl}
-                    onChange={(e) => setWebhookUrl(e.target.value)}
-                  />
-                </div>
-                <Button onClick={handleWebhookSave} className="w-full">
-                  Save Webhook URL
-                </Button>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center space-x-2">
-                  <Settings className="w-5 h-5" />
-                  <span>API Configuration</span>
-                </CardTitle>
-                <CardDescription>
-                  Configure external API connections
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="space-y-2">
-                  <Label>API Endpoints</Label>
-                  <div className="space-y-2 text-sm">
-                    <div className="flex justify-between items-center p-2 bg-muted rounded">
-                      <span>GET /api/leads</span>
-                      <Badge variant="secondary">Active</Badge>
-                    </div>
-                    <div className="flex justify-between items-center p-2 bg-muted rounded">
-                      <span>POST /api/clients</span>
-                      <Badge variant="secondary">Active</Badge>
-                    </div>
-                    <div className="flex justify-between items-center p-2 bg-muted rounded">
-                      <span>GET /api/pipeline</span>
-                      <Badge variant="secondary">Active</Badge>
-                    </div>
-                  </div>
-                </div>
-                <Button variant="outline" className="w-full">
-                  View API Documentation
-                </Button>
-              </CardContent>
-            </Card>
-          </div>
-        </TabsContent>
-      </Tabs>
-    </div>
+    </Layout>
   )
 }
