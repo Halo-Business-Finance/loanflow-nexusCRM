@@ -56,7 +56,7 @@ interface UserProfile {
 }
 
 export default function Users() {
-  const { hasRole, user: currentUser } = useAuth()
+  const { hasRole, user: currentUser, userRole: currentUserRole } = useAuth()
   const { toast } = useToast()
   const [users, setUsers] = useState<UserProfile[]>([])
   const [loading, setLoading] = useState(true)
@@ -701,7 +701,10 @@ export default function Users() {
                           <AlertDialogFooter>
                             <AlertDialogCancel>Cancel</AlertDialogCancel>
                             <AlertDialogAction
-                              onClick={() => deleteUser(user.id, user.email)}
+                              onClick={() => {
+                                console.log('Delete confirmation clicked for:', user.id, user.email)
+                                deleteUser(user.id, user.email)
+                              }}
                               className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
                             >
                               Delete User
