@@ -50,9 +50,9 @@ export function RingCentralSetup({ trigger }: RingCentralSetupProps) {
         .from('ringcentral_accounts')
         .select('*')
         .eq('user_id', user.id)
-        .single()
+        .maybeSingle()
 
-      if (error && error.code !== 'PGRST116') {
+      if (error) {
         throw error
       }
 

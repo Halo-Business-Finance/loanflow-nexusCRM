@@ -37,9 +37,9 @@ export function EmailSetup({ trigger }: EmailSetupProps) {
         .select('*')
         .eq('user_id', user.id)
         .eq('is_active', true)
-        .single()
+        .maybeSingle()
 
-      if (error && error.code !== 'PGRST116') {
+      if (error) {
         throw error
       }
 

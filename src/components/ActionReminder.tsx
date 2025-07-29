@@ -22,6 +22,7 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import { supabase } from "@/integrations/supabase/client"
+import { useAuth } from "@/components/auth/AuthProvider"
 import { useToast } from "@/hooks/use-toast"
 
 interface ActionReminderProps {
@@ -33,6 +34,7 @@ interface ActionReminderProps {
 }
 
 export function ActionReminder({ entityId, entityName, entityType, isOpen, onClose }: ActionReminderProps) {
+  const { user } = useAuth()
   const [selectedDate, setSelectedDate] = useState<Date>()
   const [selectedTime, setSelectedTime] = useState("09:00")
   const [reminderType, setReminderType] = useState<'call' | 'email' | 'follow_up'>()
@@ -87,7 +89,7 @@ export function ActionReminder({ entityId, entityName, entityType, isOpen, onClo
       const { error } = await supabase
         .from('notifications')
         .insert({
-          user_id: (await supabase.auth.getUser()).data.user?.id,
+          user_id: user?.id,
           title: `${reminderTypes.find(t => t.id === reminderType)?.label}`,
           message: customNote || `${reminderType === 'call' ? 'Call' : reminderType === 'email' ? 'Email' : 'Follow up with'} ${entityName}`,
           type: `${reminderType}_reminder`,
