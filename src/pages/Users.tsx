@@ -159,6 +159,16 @@ export default function Users() {
         return
       }
 
+      // Check if trying to create admin without being super_admin or admin
+      if (newUser.role === 'admin' && currentUserRole !== 'super_admin' && currentUserRole !== 'admin') {
+        toast({
+          title: "Access Denied",
+          description: "Only super administrators or administrators can create other administrators",
+          variant: "destructive"
+        })
+        return
+      }
+
       // Sign up the user first
       const { data, error } = await supabase.auth.signUp({
         email: newUser.email,
@@ -246,6 +256,16 @@ export default function Users() {
         toast({
           title: "Access Denied",
           description: "Only super administrators can assign the super administrator role",
+          variant: "destructive"
+        })
+        return
+      }
+
+      // Check if trying to assign admin role without being super_admin or admin
+      if (editingUser.role === 'admin' && currentUserRole !== 'super_admin' && currentUserRole !== 'admin') {
+        toast({
+          title: "Access Denied",
+          description: "Only super administrators or administrators can assign the administrator role",
           variant: "destructive"
         })
         return
@@ -577,7 +597,9 @@ export default function Users() {
                       {currentUserRole === 'super_admin' && (
                         <SelectItem value="super_admin">Super Administrator</SelectItem>
                       )}
-                      <SelectItem value="admin">Administrator</SelectItem>
+                      {(currentUserRole === 'super_admin' || currentUserRole === 'admin') && (
+                        <SelectItem value="admin">Administrator</SelectItem>
+                      )}
                       <SelectItem value="manager">Manager</SelectItem>
                       <SelectItem value="agent">Loan Originator (Agent)</SelectItem>
                       <SelectItem value="viewer">Viewer</SelectItem>
@@ -830,7 +852,9 @@ export default function Users() {
                       {currentUserRole === 'super_admin' && (
                         <SelectItem value="super_admin">Super Administrator</SelectItem>
                       )}
-                      <SelectItem value="admin">Administrator</SelectItem>
+                      {(currentUserRole === 'super_admin' || currentUserRole === 'admin') && (
+                        <SelectItem value="admin">Administrator</SelectItem>
+                      )}
                       <SelectItem value="manager">Manager</SelectItem>
                       <SelectItem value="agent">Loan Originator (Agent)</SelectItem>
                       <SelectItem value="viewer">Viewer</SelectItem>
