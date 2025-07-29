@@ -317,6 +317,8 @@ export default function Users() {
 
   const deleteUser = async (userId: string, userEmail: string) => {
     try {
+      console.log('Starting user deletion for:', userId, userEmail)
+      
       // First, delete associated data
       // Delete user roles
       const { error: roleError } = await supabase
@@ -324,6 +326,7 @@ export default function Users() {
         .delete()
         .eq('user_id', userId)
 
+      console.log('Role deletion result:', { roleError })
       if (roleError) throw roleError
 
       // Delete user profile
@@ -332,6 +335,7 @@ export default function Users() {
         .delete()
         .eq('id', userId)
 
+      console.log('Profile deletion result:', { profileError })
       if (profileError) throw profileError
 
       // Delete user sessions
@@ -340,6 +344,7 @@ export default function Users() {
         .delete()
         .eq('user_id', userId)
 
+      console.log('Session deletion result:', { sessionError })
       if (sessionError) throw sessionError
 
       // Delete notifications
@@ -348,12 +353,14 @@ export default function Users() {
         .delete()
         .eq('user_id', userId)
 
+      console.log('Notification deletion result:', { notificationError })
       if (notificationError) throw notificationError
 
       // Note: We cannot delete from auth.users table directly through the client
       // The user's auth record will remain but they won't be able to access the system
       // without the associated profile and role records
 
+      console.log('User deletion completed successfully')
       toast({
         title: "Success!",
         description: `User ${userEmail} has been deleted successfully.`,
