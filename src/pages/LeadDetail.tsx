@@ -73,6 +73,9 @@ interface Lead {
   created_at: string
   income?: number
   is_converted_to_client: boolean
+  bdo_name?: string
+  bdo_telephone?: string
+  bdo_email?: string
 }
 
 interface Client {
@@ -138,7 +141,10 @@ export default function LeadDetail() {
     annual_revenue: "",
     interest_rate: "",
     maturity_date: "",
-    existing_loan_amount: ""
+    existing_loan_amount: "",
+    bdo_name: "",
+    bdo_telephone: "",
+    bdo_email: ""
   })
 
   useEffect(() => {
@@ -182,7 +188,10 @@ export default function LeadDetail() {
         annual_revenue: data.annual_revenue?.toString() || "",
         interest_rate: data.interest_rate?.toString() || "",
         maturity_date: data.maturity_date || "",
-        existing_loan_amount: data.existing_loan_amount?.toString() || ""
+        existing_loan_amount: data.existing_loan_amount?.toString() || "",
+        bdo_name: (data as any).bdo_name || "",
+        bdo_telephone: (data as any).bdo_telephone || "",
+        bdo_email: (data as any).bdo_email || ""
       })
       
       // If lead is converted, fetch client data
@@ -445,7 +454,10 @@ export default function LeadDetail() {
         annual_revenue: editableFields.annual_revenue ? parseFloat(editableFields.annual_revenue) : null,
         interest_rate: editableFields.interest_rate ? parseFloat(editableFields.interest_rate) : null,
         maturity_date: editableFields.maturity_date || null,
-        existing_loan_amount: editableFields.existing_loan_amount ? parseFloat(editableFields.existing_loan_amount) : null
+        existing_loan_amount: editableFields.existing_loan_amount ? parseFloat(editableFields.existing_loan_amount) : null,
+        bdo_name: editableFields.bdo_name || null,
+        bdo_telephone: editableFields.bdo_telephone || null,
+        bdo_email: editableFields.bdo_email || null
       }
 
       // Check if stage is being changed to "Funded" and lead isn't already converted
@@ -1225,6 +1237,66 @@ export default function LeadDetail() {
                     ) : (
                       <p className="font-medium" style={{ color: 'white' }}>{lead.stage || 'N/A'}</p>
                     )}
+                  </div>
+                </div>
+
+                {/* BDO Information Section */}
+                <div className="col-span-full">
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6 pt-4 border-t border-gray-200/10">
+                    <div className="flex items-center gap-3">
+                      <User className="w-4 h-4" style={{ color: 'white' }} />
+                      <div className="flex-1">
+                        <p className="text-sm" style={{ color: 'white' }}>BDO Name</p>
+                        {isEditing ? (
+                          <Input
+                            value={editableFields.bdo_name}
+                            onChange={(e) => setEditableFields({...editableFields, bdo_name: e.target.value})}
+                            placeholder="Enter BDO name"
+                          />
+                        ) : (
+                          <p className="font-medium" style={{ color: 'white' }}>
+                            {(lead as any).bdo_name || 'N/A'}
+                          </p>
+                        )}
+                      </div>
+                    </div>
+
+                    <div className="flex items-center gap-3">
+                      <Phone className="w-4 h-4" style={{ color: 'white' }} />
+                      <div className="flex-1">
+                        <p className="text-sm" style={{ color: 'white' }}>BDO Telephone</p>
+                        {isEditing ? (
+                          <Input
+                            value={editableFields.bdo_telephone}
+                            onChange={(e) => setEditableFields({...editableFields, bdo_telephone: e.target.value})}
+                            placeholder="Enter BDO telephone"
+                          />
+                        ) : (
+                          <p className="font-medium" style={{ color: 'white' }}>
+                            {(lead as any).bdo_telephone || 'N/A'}
+                          </p>
+                        )}
+                      </div>
+                    </div>
+
+                    <div className="flex items-center gap-3">
+                      <Mail className="w-4 h-4" style={{ color: 'white' }} />
+                      <div className="flex-1">
+                        <p className="text-sm" style={{ color: 'white' }}>BDO Email</p>
+                        {isEditing ? (
+                          <Input
+                            type="email"
+                            value={editableFields.bdo_email}
+                            onChange={(e) => setEditableFields({...editableFields, bdo_email: e.target.value})}
+                            placeholder="Enter BDO email"
+                          />
+                        ) : (
+                          <p className="font-medium" style={{ color: 'white' }}>
+                            {(lead as any).bdo_email || 'N/A'}
+                          </p>
+                        )}
+                      </div>
+                    </div>
                   </div>
                 </div>
                 </div>
