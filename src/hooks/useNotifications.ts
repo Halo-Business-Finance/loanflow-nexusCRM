@@ -18,14 +18,14 @@ export function useNotifications() {
 
     try {
       const { error } = await supabase
-        .from('notifications' as any)
+        .from('notifications')
         .insert({
           user_id: user.id,
           title: params.title,
           message: params.message,
           type: params.type,
-          lead_id: params.leadId || null,
-          client_id: params.clientId || null,
+          related_id: params.leadId || params.clientId || null,
+          related_type: params.leadId ? 'lead' : params.clientId ? 'client' : null,
         })
 
       if (error) throw error
