@@ -50,6 +50,136 @@ export type Database = {
         }
         Relationships: []
       }
+      approval_processes: {
+        Row: {
+          approval_steps: Json
+          created_at: string
+          created_by: string
+          entry_criteria: Json | null
+          final_approval_actions: Json | null
+          final_rejection_actions: Json | null
+          id: string
+          is_active: boolean
+          name: string
+          object_type: string
+          updated_at: string
+        }
+        Insert: {
+          approval_steps: Json
+          created_at?: string
+          created_by: string
+          entry_criteria?: Json | null
+          final_approval_actions?: Json | null
+          final_rejection_actions?: Json | null
+          id?: string
+          is_active?: boolean
+          name: string
+          object_type: string
+          updated_at?: string
+        }
+        Update: {
+          approval_steps?: Json
+          created_at?: string
+          created_by?: string
+          entry_criteria?: Json | null
+          final_approval_actions?: Json | null
+          final_rejection_actions?: Json | null
+          id?: string
+          is_active?: boolean
+          name?: string
+          object_type?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      approval_requests: {
+        Row: {
+          comments: string | null
+          completed_at: string | null
+          current_step: number
+          id: string
+          process_id: string
+          record_id: string
+          record_type: string
+          status: string
+          submitted_at: string
+          submitted_by: string
+        }
+        Insert: {
+          comments?: string | null
+          completed_at?: string | null
+          current_step?: number
+          id?: string
+          process_id: string
+          record_id: string
+          record_type: string
+          status?: string
+          submitted_at?: string
+          submitted_by: string
+        }
+        Update: {
+          comments?: string | null
+          completed_at?: string | null
+          current_step?: number
+          id?: string
+          process_id?: string
+          record_id?: string
+          record_type?: string
+          status?: string
+          submitted_at?: string
+          submitted_by?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "approval_requests_process_id_fkey"
+            columns: ["process_id"]
+            isOneToOne: false
+            referencedRelation: "approval_processes"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      approval_steps: {
+        Row: {
+          actioned_at: string | null
+          approver_id: string
+          comments: string | null
+          created_at: string
+          id: string
+          request_id: string
+          status: string
+          step_number: number
+        }
+        Insert: {
+          actioned_at?: string | null
+          approver_id: string
+          comments?: string | null
+          created_at?: string
+          id?: string
+          request_id: string
+          status?: string
+          step_number: number
+        }
+        Update: {
+          actioned_at?: string | null
+          approver_id?: string
+          comments?: string | null
+          created_at?: string
+          id?: string
+          request_id?: string
+          status?: string
+          step_number?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "approval_steps_request_id_fkey"
+            columns: ["request_id"]
+            isOneToOne: false
+            referencedRelation: "approval_requests"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       audit_logs: {
         Row: {
           action: string
@@ -196,6 +326,130 @@ export type Database = {
           },
         ]
       }
+      custom_fields: {
+        Row: {
+          api_name: string
+          created_at: string
+          created_by: string
+          default_value: string | null
+          field_type: string
+          id: string
+          is_active: boolean
+          is_required: boolean
+          name: string
+          object_id: string
+          picklist_values: Json | null
+          updated_at: string
+        }
+        Insert: {
+          api_name: string
+          created_at?: string
+          created_by: string
+          default_value?: string | null
+          field_type: string
+          id?: string
+          is_active?: boolean
+          is_required?: boolean
+          name: string
+          object_id: string
+          picklist_values?: Json | null
+          updated_at?: string
+        }
+        Update: {
+          api_name?: string
+          created_at?: string
+          created_by?: string
+          default_value?: string | null
+          field_type?: string
+          id?: string
+          is_active?: boolean
+          is_required?: boolean
+          name?: string
+          object_id?: string
+          picklist_values?: Json | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "custom_fields_object_id_fkey"
+            columns: ["object_id"]
+            isOneToOne: false
+            referencedRelation: "custom_objects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      custom_objects: {
+        Row: {
+          api_name: string
+          created_at: string
+          created_by: string
+          description: string | null
+          icon: string | null
+          id: string
+          is_active: boolean
+          name: string
+          updated_at: string
+        }
+        Insert: {
+          api_name: string
+          created_at?: string
+          created_by: string
+          description?: string | null
+          icon?: string | null
+          id?: string
+          is_active?: boolean
+          name: string
+          updated_at?: string
+        }
+        Update: {
+          api_name?: string
+          created_at?: string
+          created_by?: string
+          description?: string | null
+          icon?: string | null
+          id?: string
+          is_active?: boolean
+          name?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      custom_records: {
+        Row: {
+          created_at: string
+          created_by: string
+          data: Json
+          id: string
+          object_id: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          created_by: string
+          data?: Json
+          id?: string
+          object_id: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string
+          data?: Json
+          id?: string
+          object_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "custom_records_object_id_fkey"
+            columns: ["object_id"]
+            isOneToOne: false
+            referencedRelation: "custom_objects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       email_accounts: {
         Row: {
           access_token: string
@@ -261,6 +515,102 @@ export type Database = {
           user_agent?: string | null
         }
         Relationships: []
+      }
+      forecast_periods: {
+        Row: {
+          created_at: string
+          created_by: string
+          end_date: string
+          id: string
+          name: string
+          period_type: string
+          start_date: string
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          created_by: string
+          end_date: string
+          id?: string
+          name: string
+          period_type: string
+          start_date: string
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string
+          end_date?: string
+          id?: string
+          name?: string
+          period_type?: string
+          start_date?: string
+          status?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      forecasts: {
+        Row: {
+          amount: number
+          confidence_level: number | null
+          created_at: string
+          id: string
+          methodology: string
+          notes: string | null
+          period_id: string
+          quota: number | null
+          submitted_at: string | null
+          territory_id: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          amount: number
+          confidence_level?: number | null
+          created_at?: string
+          id?: string
+          methodology: string
+          notes?: string | null
+          period_id: string
+          quota?: number | null
+          submitted_at?: string | null
+          territory_id?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          amount?: number
+          confidence_level?: number | null
+          created_at?: string
+          id?: string
+          methodology?: string
+          notes?: string | null
+          period_id?: string
+          quota?: number | null
+          submitted_at?: string | null
+          territory_id?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "forecasts_period_id_fkey"
+            columns: ["period_id"]
+            isOneToOne: false
+            referencedRelation: "forecast_periods"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "forecasts_territory_id_fkey"
+            columns: ["territory_id"]
+            isOneToOne: false
+            referencedRelation: "territories"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       ip_restrictions: {
         Row: {
@@ -502,6 +852,123 @@ export type Database = {
         }
         Relationships: []
       }
+      opportunities: {
+        Row: {
+          amount: number
+          client_id: string | null
+          close_date: string
+          created_at: string
+          created_by: string
+          id: string
+          lead_id: string | null
+          name: string
+          primary_owner_id: string
+          probability: number | null
+          stage: string
+          territory_id: string | null
+          updated_at: string
+        }
+        Insert: {
+          amount: number
+          client_id?: string | null
+          close_date: string
+          created_at?: string
+          created_by: string
+          id?: string
+          lead_id?: string | null
+          name: string
+          primary_owner_id: string
+          probability?: number | null
+          stage: string
+          territory_id?: string | null
+          updated_at?: string
+        }
+        Update: {
+          amount?: number
+          client_id?: string | null
+          close_date?: string
+          created_at?: string
+          created_by?: string
+          id?: string
+          lead_id?: string | null
+          name?: string
+          primary_owner_id?: string
+          probability?: number | null
+          stage?: string
+          territory_id?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "opportunities_client_id_fkey"
+            columns: ["client_id"]
+            isOneToOne: false
+            referencedRelation: "clients"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "opportunities_lead_id_fkey"
+            columns: ["lead_id"]
+            isOneToOne: false
+            referencedRelation: "leads"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "opportunities_territory_id_fkey"
+            columns: ["territory_id"]
+            isOneToOne: false
+            referencedRelation: "territories"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      opportunity_splits: {
+        Row: {
+          amount: number | null
+          created_at: string
+          created_by: string
+          id: string
+          opportunity_id: string
+          percentage: number
+          role: string | null
+          split_type: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          amount?: number | null
+          created_at?: string
+          created_by: string
+          id?: string
+          opportunity_id: string
+          percentage: number
+          role?: string | null
+          split_type: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          amount?: number | null
+          created_at?: string
+          created_by?: string
+          id?: string
+          opportunity_id?: string
+          percentage?: number
+          role?: string | null
+          split_type?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "opportunity_splits_opportunity_id_fkey"
+            columns: ["opportunity_id"]
+            isOneToOne: false
+            referencedRelation: "opportunities"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       pipeline_entries: {
         Row: {
           amount: number | null
@@ -697,6 +1164,94 @@ export type Database = {
         }
         Relationships: []
       }
+      territories: {
+        Row: {
+          created_at: string
+          created_by: string
+          description: string | null
+          id: string
+          is_active: boolean
+          manager_id: string | null
+          name: string
+          parent_id: string | null
+          rules: Json
+          territory_type: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          created_by: string
+          description?: string | null
+          id?: string
+          is_active?: boolean
+          manager_id?: string | null
+          name: string
+          parent_id?: string | null
+          rules: Json
+          territory_type: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string
+          description?: string | null
+          id?: string
+          is_active?: boolean
+          manager_id?: string | null
+          name?: string
+          parent_id?: string | null
+          rules?: Json
+          territory_type?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "territories_parent_id_fkey"
+            columns: ["parent_id"]
+            isOneToOne: false
+            referencedRelation: "territories"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      territory_assignments: {
+        Row: {
+          assigned_at: string
+          assigned_by: string
+          id: string
+          is_active: boolean
+          role: string
+          territory_id: string
+          user_id: string
+        }
+        Insert: {
+          assigned_at?: string
+          assigned_by: string
+          id?: string
+          is_active?: boolean
+          role: string
+          territory_id: string
+          user_id: string
+        }
+        Update: {
+          assigned_at?: string
+          assigned_by?: string
+          id?: string
+          is_active?: boolean
+          role?: string
+          territory_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "territory_assignments_territory_id_fkey"
+            columns: ["territory_id"]
+            isOneToOne: false
+            referencedRelation: "territories"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       user_roles: {
         Row: {
           assigned_at: string | null
@@ -763,6 +1318,89 @@ export type Database = {
           session_token?: string
           user_agent?: string | null
           user_id?: string
+        }
+        Relationships: []
+      }
+      workflow_executions: {
+        Row: {
+          completed_at: string | null
+          error_message: string | null
+          execution_data: Json | null
+          id: string
+          record_id: string
+          started_at: string
+          status: string
+          workflow_id: string
+        }
+        Insert: {
+          completed_at?: string | null
+          error_message?: string | null
+          execution_data?: Json | null
+          id?: string
+          record_id: string
+          started_at?: string
+          status: string
+          workflow_id: string
+        }
+        Update: {
+          completed_at?: string | null
+          error_message?: string | null
+          execution_data?: Json | null
+          id?: string
+          record_id?: string
+          started_at?: string
+          status?: string
+          workflow_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "workflow_executions_workflow_id_fkey"
+            columns: ["workflow_id"]
+            isOneToOne: false
+            referencedRelation: "workflows"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      workflows: {
+        Row: {
+          created_at: string
+          created_by: string
+          description: string | null
+          flow_definition: Json
+          id: string
+          is_active: boolean
+          name: string
+          object_type: string
+          trigger_conditions: Json | null
+          trigger_type: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          created_by: string
+          description?: string | null
+          flow_definition: Json
+          id?: string
+          is_active?: boolean
+          name: string
+          object_type: string
+          trigger_conditions?: Json | null
+          trigger_type: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string
+          description?: string | null
+          flow_definition?: Json
+          id?: string
+          is_active?: boolean
+          name?: string
+          object_type?: string
+          trigger_conditions?: Json | null
+          trigger_type?: string
+          updated_at?: string
         }
         Relationships: []
       }
