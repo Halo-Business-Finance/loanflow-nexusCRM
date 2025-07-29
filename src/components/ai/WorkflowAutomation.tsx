@@ -29,7 +29,7 @@ interface Automation {
 
 export function WorkflowAutomation() {
   const [webhookUrl, setWebhookUrl] = useState("")
-  const [automations] = useState<Automation[]>([
+  const [automations, setAutomations] = useState<Automation[]>([
     {
       id: "1",
       name: "Lead Stage Change → Send Document",
@@ -102,9 +102,18 @@ export function WorkflowAutomation() {
   }
 
   const toggleAutomation = (id: string) => {
+    setAutomations(prev => 
+      prev.map(automation => 
+        automation.id === id 
+          ? { ...automation, enabled: !automation.enabled }
+          : automation
+      )
+    )
+    
+    const automation = automations.find(a => a.id === id)
     toast({
-      title: "Automation Updated",
-      description: "Workflow automation has been toggled",
+      title: `Automation ${automation?.enabled ? 'Disabled' : 'Enabled'}`,
+      description: `${automation?.name} has been ${automation?.enabled ? 'paused' : 'activated'}`,
     })
   }
 
