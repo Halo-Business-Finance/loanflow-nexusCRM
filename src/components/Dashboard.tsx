@@ -29,6 +29,7 @@ import { LineChart, Line, XAxis, YAxis, ResponsiveContainer } from "recharts"
 import { useToast } from "@/hooks/use-toast"
 import { useNavigate } from "react-router-dom"
 import { TodaysTasks } from "@/components/TodaysTasks"
+import { AdminAITools } from "@/components/AdminAITools"
 import { useAuth } from "@/components/auth/AuthProvider"
 import { PhoneDialer } from "@/components/PhoneDialer"
 import { EmailComposer } from "@/components/EmailComposer"
@@ -146,7 +147,7 @@ const chartConfig = {
 export default function Dashboard() {
   const { toast } = useToast()
   const navigate = useNavigate()
-  const { user } = useAuth()
+  const { user, hasRole } = useAuth()
   const [currentDateTime, setCurrentDateTime] = useState(new Date())
   const [selectedMetric, setSelectedMetric] = useState<string | null>(null)
   const [selectedLead, setSelectedLead] = useState<typeof recentLeads[0] | null>(null)
@@ -644,6 +645,11 @@ export default function Dashboard() {
           </div>
         </CardContent>
       </Card>
+
+      {/* Admin AI Tools */}
+      {hasRole('admin') && (
+        <AdminAITools />
+      )}
 
       {/* Lead Details Dialog */}
       <Dialog open={!!selectedLead} onOpenChange={() => setSelectedLead(null)}>
