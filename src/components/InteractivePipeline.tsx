@@ -1,23 +1,10 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import {
-  ReactFlow,
-  MiniMap,
-  Controls,
-  Background,
-  useNodesState,
-  useEdgesState,
-  addEdge,
-  Connection,
-  Edge,
-  Node,
-  Handle,
-  Position,
-} from '@xyflow/react';
-import '@xyflow/react/dist/style.css';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { DollarSign, User, Calendar, Phone, Mail } from "lucide-react";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { DollarSign, User, Calendar, Phone, Mail, ArrowRight, Eye, Edit } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/components/auth/AuthProvider";
 import { useToast } from "@/hooks/use-toast";
@@ -31,120 +18,137 @@ interface LeadData {
   priority: string;
   last_contact?: string;
   stage: string;
+  business_name?: string;
+  loan_type?: string;
 }
 
-// Custom Node Component for Pipeline Stages
-const StageNode = ({ data }: { data: any }) => {
-  const { stage, leads, color } = data;
-
+// Lead Card Component
+const LeadCard = ({ lead, onStageChange, onViewDetails }: { 
+  lead: LeadData; 
+  onStageChange: (leadId: string, newStage: string) => void;
+  onViewDetails: (lead: LeadData) => void;
+}) => {
   return (
-    <div className="bg-background border-2 border-border rounded-lg p-4 min-w-[300px] shadow-md">
-      <Handle type="target" position={Position.Left} className="!bg-primary" />
-      
-      <div className="space-y-3">
-        <div className="flex items-center justify-between">
-          <h3 className="font-semibold text-lg">{stage}</h3>
-          <Badge variant="secondary">{leads.length}</Badge>
-        </div>
-        
-        <div className="space-y-2 max-h-[300px] overflow-y-auto">
-          {leads.map((lead: LeadData) => (
-            <Card key={lead.id} className="cursor-move hover:shadow-lg transition-shadow">
-              <CardContent className="p-3">
-                <div className="flex items-start justify-between">
-                  <div className="space-y-1 flex-1">
-                    <div className="flex items-center gap-2">
-                      <User className="h-4 w-4 text-muted-foreground" />
-                      <span className="font-medium text-sm">{lead.name}</span>
-                    </div>
-                    
-                    {lead.loan_amount && (
-                      <div className="flex items-center gap-2">
-                        <DollarSign className="h-4 w-4 text-muted-foreground" />
-                        <span className="text-sm text-muted-foreground">
-                          ${lead.loan_amount.toLocaleString()}
-                        </span>
-                      </div>
-                    )}
-                    
-                    <div className="flex items-center gap-4">
-                      {lead.email && (
-                        <div className="flex items-center gap-1">
-                          <Mail className="h-3 w-3 text-muted-foreground" />
-                          <span className="text-xs text-muted-foreground truncate max-w-[120px]">
-                            {lead.email}
-                          </span>
-                        </div>
-                      )}
-                      
-                      {lead.phone && (
-                        <div className="flex items-center gap-1">
-                          <Phone className="h-3 w-3 text-muted-foreground" />
-                          <span className="text-xs text-muted-foreground">
-                            {lead.phone}
-                          </span>
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                  
-                  <Badge 
-                    variant={
-                      lead.priority === 'high' ? 'destructive' : 
-                      lead.priority === 'medium' ? 'default' : 'secondary'
-                    }
-                    className="text-xs"
-                  >
-                    {lead.priority}
-                  </Badge>
+    <Card className="mb-3 hover:shadow-md transition-shadow cursor-pointer">
+      <CardContent className="p-4">
+        <div className="flex items-start justify-between">
+          <div className="space-y-2 flex-1">
+            <div className="flex items-center gap-2">
+              <User className="h-4 w-4 text-muted-foreground" />
+              <span className="font-medium text-sm">{lead.name}</span>
+            </div>
+            
+            {lead.business_name && (
+              <div className="text-xs text-muted-foreground">
+                {lead.business_name}
+              </div>
+            )}
+            
+            {lead.loan_amount && (
+              <div className="flex items-center gap-2">
+                <DollarSign className="h-4 w-4 text-muted-foreground" />
+                <span className="text-sm text-muted-foreground">
+                  ${lead.loan_amount.toLocaleString()}
+                </span>
+              </div>
+            )}
+            
+            <div className="flex items-center gap-4">
+              {lead.email && (
+                <div className="flex items-center gap-1">
+                  <Mail className="h-3 w-3 text-muted-foreground" />
+                  <span className="text-xs text-muted-foreground truncate max-w-[120px]">
+                    {lead.email}
+                  </span>
                 </div>
-                
-                {lead.last_contact && (
-                  <div className="flex items-center gap-1 mt-2">
-                    <Calendar className="h-3 w-3 text-muted-foreground" />
-                    <span className="text-xs text-muted-foreground">
-                      Last contact: {new Date(lead.last_contact).toLocaleDateString()}
-                    </span>
+              )}
+              
+              {lead.phone && (
+                <div className="flex items-center gap-1">
+                  <Phone className="h-3 w-3 text-muted-foreground" />
+                  <span className="text-xs text-muted-foreground">
+                    {lead.phone}
+                  </span>
+                </div>
+              )}
+            </div>
+            
+            {lead.last_contact && (
+              <div className="flex items-center gap-1">
+                <Calendar className="h-3 w-3 text-muted-foreground" />
+                <span className="text-xs text-muted-foreground">
+                  Last contact: {new Date(lead.last_contact).toLocaleDateString()}
+                </span>
+              </div>
+            )}
+          </div>
+          
+          <div className="flex flex-col gap-2 items-end">
+            <Badge 
+              variant={
+                lead.priority === 'high' ? 'destructive' : 
+                lead.priority === 'medium' ? 'default' : 'secondary'
+              }
+              className="text-xs"
+            >
+              {lead.priority}
+            </Badge>
+            
+            <div className="flex gap-1">
+              <Button
+                size="sm"
+                variant="ghost"
+                onClick={() => onViewDetails(lead)}
+                className="h-6 w-6 p-0"
+              >
+                <Eye className="h-3 w-3" />
+              </Button>
+              
+              <Dialog>
+                <DialogTrigger asChild>
+                  <Button size="sm" variant="ghost" className="h-6 w-6 p-0">
+                    <Edit className="h-3 w-3" />
+                  </Button>
+                </DialogTrigger>
+                <DialogContent>
+                  <DialogHeader>
+                    <DialogTitle>Move Lead: {lead.name}</DialogTitle>
+                  </DialogHeader>
+                  <div className="space-y-4">
+                    <div>
+                      <label className="text-sm font-medium">Move to Stage:</label>
+                      <Select onValueChange={(value) => onStageChange(lead.id, value)}>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select new stage" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {stageOrder.map(stage => (
+                            <SelectItem key={stage} value={stage} disabled={stage === lead.stage}>
+                              {stage} {stage === lead.stage && "(current)"}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
                   </div>
-                )}
-              </CardContent>
-            </Card>
-          ))}
+                </DialogContent>
+              </Dialog>
+            </div>
+          </div>
         </div>
-      </div>
-      
-      <Handle type="source" position={Position.Right} className="!bg-primary" />
-    </div>
+      </CardContent>
+    </Card>
   );
-};
-
-const nodeTypes = {
-  stage: StageNode,
 };
 
 const stageOrder = ["Initial Contact", "Qualified", "Application", "Pre-approval", "Documentation", "Closing", "Funded"];
-const stageColors = {
-  "Initial Contact": "#f3f4f6",
-  "Qualified": "#fef3c7", 
-  "Application": "#dbeafe",
-  "Pre-approval": "#fce7f3",
-  "Documentation": "#f0f9ff",
-  "Closing": "#ecfdf5",
-  "Funded": "#f0fdf4"
-};
 
 export function InteractivePipeline() {
-  const [nodes, setNodes, onNodesChange] = useNodesState([]);
-  const [edges, setEdges, onEdgesChange] = useEdgesState([]);
   const [leads, setLeads] = useState<LeadData[]>([]);
   const [loading, setLoading] = useState(true);
+  const [selectedLead, setSelectedLead] = useState<LeadData | null>(null);
   const { user } = useAuth();
   const { toast } = useToast();
-
-  const onConnect = useCallback(
-    (params: Connection) => setEdges((eds) => addEdge(params, eds)),
-    [setEdges],
-  );
 
   useEffect(() => {
     if (user) {
@@ -163,7 +167,6 @@ export function InteractivePipeline() {
       if (error) throw error;
 
       setLeads(data || []);
-      generatePipelineNodes(data || []);
     } catch (error) {
       console.error('Error fetching leads:', error);
       toast({
@@ -174,51 +177,6 @@ export function InteractivePipeline() {
     } finally {
       setLoading(false);
     }
-  };
-
-  const generatePipelineNodes = (leadsData: LeadData[]) => {
-    const stageGroups: { [key: string]: LeadData[] } = {};
-    
-    // Initialize stage groups
-    stageOrder.forEach(stage => {
-      stageGroups[stage] = [];
-    });
-
-    // Group leads by stage
-    leadsData.forEach(lead => {
-      if (stageGroups[lead.stage]) {
-        stageGroups[lead.stage].push(lead);
-      }
-    });
-
-    // Create nodes for each stage
-    const newNodes: Node[] = stageOrder.map((stage, index) => ({
-      id: `stage-${index}`,
-      type: 'stage',
-      position: { x: index * 350, y: 50 },
-      data: {
-        stage,
-        leads: stageGroups[stage],
-        color: stageColors[stage as keyof typeof stageColors]
-      },
-      dragHandle: '.drag-handle',
-    }));
-
-    // Create edges between stages
-    const newEdges: Edge[] = [];
-    for (let i = 0; i < stageOrder.length - 1; i++) {
-      newEdges.push({
-        id: `edge-${i}`,
-        source: `stage-${i}`,
-        target: `stage-${i + 1}`,
-        type: 'smoothstep',
-        animated: true,
-        style: { stroke: '#94a3b8', strokeWidth: 2 },
-      });
-    }
-
-    setNodes(newNodes);
-    setEdges(newEdges);
   };
 
   const updateLeadStage = async (leadId: string, newStage: string) => {
@@ -251,6 +209,16 @@ export function InteractivePipeline() {
     fetchLeads();
   };
 
+  const handleViewDetails = (lead: LeadData) => {
+    setSelectedLead(lead);
+  };
+
+  // Group leads by stage
+  const stageGroups = stageOrder.reduce((acc, stage) => {
+    acc[stage] = leads.filter(lead => lead.stage === stage);
+    return acc;
+  }, {} as Record<string, LeadData[]>);
+
   if (loading) {
     return (
       <div className="flex items-center justify-center h-96">
@@ -260,61 +228,150 @@ export function InteractivePipeline() {
   }
 
   return (
-    <Card className="shadow-soft">
-      <CardHeader>
-        <div className="flex items-center justify-between">
-          <div>
-            <CardTitle>Interactive Sales Pipeline</CardTitle>
-            <p className="text-sm text-muted-foreground">
-              Drag leads between stages to update their status
-            </p>
+    <div className="space-y-6">
+      <Card className="shadow-soft">
+        <CardHeader>
+          <div className="flex items-center justify-between">
+            <div>
+              <CardTitle>Interactive Sales Pipeline</CardTitle>
+              <p className="text-sm text-muted-foreground">
+                Click on leads to view details or move them between stages
+              </p>
+            </div>
+            <Button onClick={handleRefresh} variant="outline">
+              Refresh
+            </Button>
           </div>
-          <Button onClick={handleRefresh} variant="outline">
-            Refresh
-          </Button>
-        </div>
-      </CardHeader>
-      <CardContent>
-        <div className="h-[600px] w-full">
-          <ReactFlow
-            nodes={nodes}
-            edges={edges}
-            onNodesChange={onNodesChange}
-            onEdgesChange={onEdgesChange}
-            onConnect={onConnect}
-            nodeTypes={nodeTypes}
-            fitView
-            className="bg-muted/30 rounded-lg"
-            minZoom={0.3}
-            maxZoom={1.5}
-          >
-            <MiniMap 
-              nodeColor={(node) => {
-                return (node.data?.color as string) || '#6366f1';
-              }}
-              className="!bg-background border border-border"
-              pannable
-              zoomable
-            />
-            <Controls className="!bg-background border border-border" />
-            <Background 
-              color="#94a3b8" 
-              gap={20} 
-              size={1}
-              className="opacity-50"
-            />
-          </ReactFlow>
-        </div>
-        
-        <div className="mt-4 flex items-center justify-between text-sm text-muted-foreground">
-          <div>
-            Total Leads: {leads.length}
+        </CardHeader>
+      </Card>
+
+      {/* Pipeline Stages Grid */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+        {stageOrder.map((stage, index) => (
+          <div key={stage} className="space-y-4">
+            <Card className="shadow-soft">
+              <CardHeader className="pb-3">
+                <div className="flex items-center justify-between">
+                  <CardTitle className="text-lg">{stage}</CardTitle>
+                  <div className="flex items-center gap-2">
+                    <Badge variant="secondary">{stageGroups[stage]?.length || 0}</Badge>
+                    {index < stageOrder.length - 1 && (
+                      <ArrowRight className="h-4 w-4 text-muted-foreground" />
+                    )}
+                  </div>
+                </div>
+                <div className="text-sm text-muted-foreground">
+                  Total Value: ${stageGroups[stage]?.reduce((sum, lead) => sum + (lead.loan_amount || 0), 0).toLocaleString() || '0'}
+                </div>
+              </CardHeader>
+              <CardContent className="pt-0">
+                <div className="space-y-3 max-h-[500px] overflow-y-auto">
+                  {stageGroups[stage]?.length === 0 ? (
+                    <div className="text-center py-8 text-muted-foreground">
+                      No leads in this stage
+                    </div>
+                  ) : (
+                    stageGroups[stage]?.map(lead => (
+                      <LeadCard
+                        key={lead.id}
+                        lead={lead}
+                        onStageChange={updateLeadStage}
+                        onViewDetails={handleViewDetails}
+                      />
+                    ))
+                  )}
+                </div>
+              </CardContent>
+            </Card>
           </div>
-          <div>
-            Pipeline Value: ${leads.reduce((sum, lead) => sum + (lead.loan_amount || 0), 0).toLocaleString()}
-          </div>
+        ))}
+      </div>
+
+      {/* Lead Details Dialog */}
+      {selectedLead && (
+        <Dialog open={!!selectedLead} onOpenChange={() => setSelectedLead(null)}>
+          <DialogContent className="max-w-md">
+            <DialogHeader>
+              <DialogTitle>Lead Details</DialogTitle>
+            </DialogHeader>
+            <div className="space-y-4">
+              <div>
+                <label className="text-sm font-medium">Name:</label>
+                <p className="text-sm text-muted-foreground">{selectedLead.name}</p>
+              </div>
+              
+              {selectedLead.business_name && (
+                <div>
+                  <label className="text-sm font-medium">Business:</label>
+                  <p className="text-sm text-muted-foreground">{selectedLead.business_name}</p>
+                </div>
+              )}
+              
+              <div>
+                <label className="text-sm font-medium">Email:</label>
+                <p className="text-sm text-muted-foreground">{selectedLead.email}</p>
+              </div>
+              
+              {selectedLead.phone && (
+                <div>
+                  <label className="text-sm font-medium">Phone:</label>
+                  <p className="text-sm text-muted-foreground">{selectedLead.phone}</p>
+                </div>
+              )}
+              
+              <div>
+                <label className="text-sm font-medium">Current Stage:</label>
+                <Badge className="ml-2">{selectedLead.stage}</Badge>
+              </div>
+              
+              <div>
+                <label className="text-sm font-medium">Priority:</label>
+                <Badge 
+                  className="ml-2"
+                  variant={
+                    selectedLead.priority === 'high' ? 'destructive' : 
+                    selectedLead.priority === 'medium' ? 'default' : 'secondary'
+                  }
+                >
+                  {selectedLead.priority}
+                </Badge>
+              </div>
+              
+              {selectedLead.loan_amount && (
+                <div>
+                  <label className="text-sm font-medium">Loan Amount:</label>
+                  <p className="text-sm text-muted-foreground">${selectedLead.loan_amount.toLocaleString()}</p>
+                </div>
+              )}
+              
+              {selectedLead.loan_type && (
+                <div>
+                  <label className="text-sm font-medium">Loan Type:</label>
+                  <p className="text-sm text-muted-foreground">{selectedLead.loan_type}</p>
+                </div>
+              )}
+              
+              {selectedLead.last_contact && (
+                <div>
+                  <label className="text-sm font-medium">Last Contact:</label>
+                  <p className="text-sm text-muted-foreground">
+                    {new Date(selectedLead.last_contact).toLocaleDateString()}
+                  </p>
+                </div>
+              )}
+            </div>
+          </DialogContent>
+        </Dialog>
+      )}
+
+      <div className="mt-4 flex items-center justify-between text-sm text-muted-foreground">
+        <div>
+          Total Leads: {leads.length}
         </div>
-      </CardContent>
-    </Card>
+        <div>
+          Pipeline Value: ${leads.reduce((sum, lead) => sum + (lead.loan_amount || 0), 0).toLocaleString()}
+        </div>
+      </div>
+    </div>
   );
 }
