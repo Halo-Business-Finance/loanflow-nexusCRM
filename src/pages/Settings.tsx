@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Switch } from "@/components/ui/switch"
 import { Separator } from "@/components/ui/separator"
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Badge } from "@/components/ui/badge"
 import { 
@@ -18,7 +19,10 @@ import {
   Phone, 
   Globe, 
   Save,
-  Upload
+  Upload,
+  Key,
+  Copy,
+  Check
 } from "lucide-react"
 import { supabase } from "@/integrations/supabase/client"
 import { useAuth } from "@/components/auth/AuthProvider"
@@ -56,6 +60,11 @@ export default function Settings() {
     status_change_notifications: true,
     daily_summary_reports: false
   })
+  const [mfaEnabled, setMfaEnabled] = useState(false)
+  const [showMfaDialog, setShowMfaDialog] = useState(false)
+  const [mfaSecret, setMfaSecret] = useState('')
+  const [mfaQrCode, setMfaQrCode] = useState('')
+  const [copied, setCopied] = useState(false)
 
   useEffect(() => {
     if (user) {
@@ -155,6 +164,75 @@ export default function Settings() {
     toast({
       title: "Notification Updated",
       description: `${field.replace(/_/g, ' ')} ${value ? 'enabled' : 'disabled'}`
+    })
+  }
+
+  const setupMFA = async () => {
+    try {
+      // In a real implementation, this would call your backend to generate MFA secret
+      const secret = 'JBSWY3DPEHPK3PXP' // This should come from your backend
+      const qrCodeUrl = `otpauth://totp/YourApp:${profile.email}?secret=${secret}&issuer=YourApp`
+      
+      setMfaSecret(secret)
+      setMfaQrCode(qrCodeUrl)
+      setShowMfaDialog(true)
+    } catch (error) {
+      console.error('Error setting up MFA:', error)
+      toast({
+        title: "Error",
+        description: "Failed to set up two-factor authentication",
+        variant: "destructive"
+      })
+    }
+  }
+
+  const enableMFA = async () => {
+    try {
+      // In a real implementation, this would verify the TOTP code and enable MFA
+      setMfaEnabled(true)
+      setShowMfaDialog(false)
+      
+      toast({
+        title: "Success",
+        description: "Two-factor authentication has been enabled"
+      })
+    } catch (error) {
+      console.error('Error enabling MFA:', error)
+      toast({
+        title: "Error",
+        description: "Failed to enable two-factor authentication",
+        variant: "destructive"
+      })
+    }
+  }
+
+  const disableMFA = async () => {
+    try {
+      // In a real implementation, this would call your backend to disable MFA
+      setMfaEnabled(false)
+      
+      toast({
+        title: "Success",
+        description: "Two-factor authentication has been disabled"
+      })
+    } catch (error) {
+      console.error('Error disabling MFA:', error)
+      toast({
+        title: "Error",
+        description: "Failed to disable two-factor authentication",
+        variant: "destructive"
+      })
+    }
+  }
+
+  const copySecret = () => {
+    navigator.clipboard.writeText(mfaSecret)
+    setCopied(true)
+    setTimeout(() => setCopied(false), 2000)
+    
+    toast({
+      title: "Copied",
+      description: "Secret key copied to clipboard"
     })
   }
 
@@ -355,10 +433,77 @@ export default function Settings() {
                       <p className="text-sm text-muted-foreground">
                         Add an extra layer of security to your account
                       </p>
+                      {mfaEnabled && (
+                        <div className="flex items-center gap-2 mt-2">
+                          <div className="h-2 w-2 bg-green-500 rounded-full"></div>
+                          <span className="text-sm text-green-600">Enabled</span>
+                        </div>
+                      )}
                     </div>
-                    <Button variant="outline">
-                      Enable 2FA
-                    </Button>
+                    {mfaEnabled ? (
+                      <Button variant="outline" onClick={disableMFA}>
+                        Disable 2FA
+                      </Button>
+                    ) : (
+                      <Dialog open={showMfaDialog} onOpenChange={setShowMfaDialog}>
+                        <DialogTrigger asChild>
+                          <Button variant="outline" onClick={setupMFA}>
+                            <Key className="h-4 w-4 mr-2" />
+                            Enable 2FA
+                          </Button>
+                        </DialogTrigger>
+                        <DialogContent className="sm:max-w-md">
+                          <DialogHeader>
+                            <DialogTitle>Set up Two-Factor Authentication</DialogTitle>
+                            <DialogDescription>
+                              Scan the QR code with your authenticator app or enter the secret key manually
+                            </DialogDescription>
+                          </DialogHeader>
+                          <div className="space-y-6">
+                            {/* QR Code placeholder */}
+                            <div className="flex justify-center">
+                              <div className="w-48 h-48 bg-muted rounded-lg flex items-center justify-center">
+                                <p className="text-sm text-muted-foreground text-center">
+                                  QR Code would appear here<br />
+                                  (Use secret key for now)
+                                </p>
+                              </div>
+                            </div>
+                            
+                            {/* Secret Key */}
+                            <div className="space-y-2">
+                              <Label>Secret Key</Label>
+                              <div className="flex gap-2">
+                                <Input value={mfaSecret} readOnly className="font-mono text-sm" />
+                                <Button
+                                  variant="outline"
+                                  size="icon"
+                                  onClick={copySecret}
+                                  className="shrink-0"
+                                >
+                                  {copied ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
+                                </Button>
+                              </div>
+                            </div>
+                            
+                            {/* Verification Code Input */}
+                            <div className="space-y-2">
+                              <Label>Enter verification code from your app</Label>
+                              <Input placeholder="000000" maxLength={6} />
+                            </div>
+                            
+                            <div className="flex gap-2">
+                              <Button onClick={enableMFA} className="flex-1">
+                                Enable 2FA
+                              </Button>
+                              <Button variant="outline" onClick={() => setShowMfaDialog(false)}>
+                                Cancel
+                              </Button>
+                            </div>
+                          </div>
+                        </DialogContent>
+                      </Dialog>
+                    )}
                   </div>
                 </div>
               </CardContent>
