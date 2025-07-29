@@ -537,12 +537,30 @@ export default function Clients() {
                           </>
                         )}
                       </Button>
+                      {/* Quick Action Buttons */}
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        className="h-8 px-3 text-xs bg-gradient-to-r from-blue-500/10 to-blue-500/5 hover:from-blue-500/20 hover:to-blue-500/10 border-blue-500/20"
+                      >
+                        <Phone className="w-3 h-3 mr-1" />
+                        Call
+                      </Button>
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        className="h-8 px-3 text-xs bg-gradient-to-r from-green-500/10 to-green-500/5 hover:from-green-500/20 hover:to-green-500/10 border-green-500/20"
+                      >
+                        <Mail className="w-3 h-3 mr-1" />
+                        Email
+                      </Button>
                       <Button 
                         size="sm" 
                         variant="outline"
                         onClick={() => setSelectedClientForReminder(client)}
+                        className="h-8 px-3 text-xs bg-gradient-to-r from-primary/10 to-primary/5 hover:from-primary/20 hover:to-primary/10 border-primary/20"
                       >
-                        <Bell className="h-4 w-4 mr-1" />
+                        <Bell className="w-3 h-3 mr-1" />
                         Reminder
                       </Button>
                       {hasRole('admin') && (

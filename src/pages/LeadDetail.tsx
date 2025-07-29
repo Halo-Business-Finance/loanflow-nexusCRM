@@ -718,6 +718,34 @@ export default function LeadDetail() {
             </div>
           </div>
           <div className="flex gap-2">
+            {/* Quick Action Buttons */}
+            <Button
+              onClick={() => setShowReminderDialog(true)}
+              size="sm"
+              variant="outline"
+              className="h-9 px-3 text-xs bg-gradient-to-r from-primary/10 to-primary/5 hover:from-primary/20 hover:to-primary/10 border-primary/20"
+            >
+              <Bell className="w-3 h-3 mr-1" />
+              Reminder
+            </Button>
+            <Button
+              size="sm"
+              variant="outline"
+              className="h-9 px-3 text-xs bg-gradient-to-r from-blue-500/10 to-blue-500/5 hover:from-blue-500/20 hover:to-blue-500/10 border-blue-500/20"
+            >
+              <PhoneIcon className="w-3 h-3 mr-1" />
+              Call
+            </Button>
+            <Button
+              size="sm"
+              variant="outline"
+              className="h-9 px-3 text-xs bg-gradient-to-r from-green-500/10 to-green-500/5 hover:from-green-500/20 hover:to-green-500/10 border-green-500/20"
+            >
+              <Mail className="w-3 h-3 mr-1" />
+              Email
+            </Button>
+            
+            {/* Edit/Save Buttons */}
             <Button onClick={() => setIsEditing(!isEditing)}>
               <Edit className="w-4 h-4 mr-2" />
               {isEditing ? 'Cancel' : 'Edit'}
@@ -1615,35 +1643,6 @@ export default function LeadDetail() {
             />
           </CardContent>
         </Card>
-
-        {/* Quick Action Buttons - Compact */}
-        <div className="flex gap-2 justify-center">
-          <Button
-            onClick={() => setShowReminderDialog(true)}
-            size="sm"
-            variant="outline"
-            className="h-8 px-3 text-xs bg-gradient-to-r from-primary/10 to-primary/5 hover:from-primary/20 hover:to-primary/10 border-primary/20"
-          >
-            <Bell className="w-3 h-3 mr-1" />
-            Reminder
-          </Button>
-          <Button
-            size="sm"
-            variant="outline"
-            className="h-8 px-3 text-xs bg-gradient-to-r from-blue-500/10 to-blue-500/5 hover:from-blue-500/20 hover:to-blue-500/10 border-blue-500/20"
-          >
-            <PhoneIcon className="w-3 h-3 mr-1" />
-            Call
-          </Button>
-          <Button
-            size="sm"
-            variant="outline"
-            className="h-8 px-3 text-xs bg-gradient-to-r from-green-500/10 to-green-500/5 hover:from-green-500/20 hover:to-green-500/10 border-green-500/20"
-          >
-            <Mail className="w-3 h-3 mr-1" />
-            Email
-          </Button>
-        </div>
 
         {/* Call Notes Section */}
         <Card>
