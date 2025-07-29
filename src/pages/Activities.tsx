@@ -9,7 +9,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
-import { Search, Filter, Phone, Mail, Calendar, FileText, DollarSign, Clock, User, Bell, AlertCircle, Plus, CheckCircle2, X } from "lucide-react"
+import { Search, Filter, Phone, Mail, Calendar, FileText, DollarSign, Clock, User, Bell, AlertCircle, Plus, CheckCircle2, X, Users } from "lucide-react"
 import { supabase } from "@/integrations/supabase/client"
 import { useAuth } from "@/components/auth/AuthProvider"
 import { useToast } from "@/hooks/use-toast"
@@ -466,76 +466,122 @@ export default function Activities() {
                 )}
               </div>
             ) : (
-              <div className="space-y-6">
+              <div className="space-y-4">
                 {filteredActivities.map((activity, index) => {
                   const IconComponent = getActivityIcon(activity.type)
                   return (
-                    <div key={activity.id} className="flex gap-4">
-                      {/* Timeline indicator */}
-                      <div className="flex flex-col items-center">
-                        <div className={`flex h-10 w-10 items-center justify-center rounded-full ${
-                          activity.status === 'Pending' ? 'bg-destructive/10' : 'bg-primary/10'
-                        }`}>
-                          <IconComponent className={`h-4 w-4 ${
-                            activity.status === 'Pending' ? 'text-destructive' : 'text-primary'
-                          }`} />
-                        </div>
-                        {index < activities.length - 1 && (
-                          <div className="h-6 w-px bg-border mt-2" />
-                        )}
-                      </div>
-
-                      {/* Activity content */}
-                      <div className="flex-1 space-y-3">
-                        <div className="flex items-start justify-between">
-                          <div className="space-y-1 flex-1">
-                            <h4 className="font-medium text-foreground">{activity.title}</h4>
-                            <p className="text-sm text-muted-foreground">{activity.description}</p>
+                    <div key={activity.id} className="group">
+                      <Card className="p-4 hover:shadow-md transition-shadow border-l-4 border-l-primary/20 hover:border-l-primary/50">
+                        <div className="flex gap-4">
+                          {/* Timeline indicator */}
+                          <div className="flex flex-col items-center">
+                            <div className={`flex h-10 w-10 items-center justify-center rounded-full ${
+                              activity.status === 'Pending' ? 'bg-destructive/10' : 'bg-primary/10'
+                            }`}>
+                              <IconComponent className={`h-4 w-4 ${
+                                activity.status === 'Pending' ? 'text-destructive' : 'text-primary'
+                              }`} />
+                            </div>
                           </div>
-                          <div className="text-right space-y-1 flex items-center gap-2">
-                            <Badge variant={getStatusColor(activity.status)} className="text-xs">
-                              {activity.status}
-                            </Badge>
-                            {activity.status === 'Pending' && (
-                              <Button
-                                size="sm"
-                                variant="ghost"
-                                onClick={() => markAsRead(activity.id)}
-                                className="h-6 w-6 p-0"
-                              >
-                                <CheckCircle2 className="h-4 w-4" />
-                              </Button>
-                            )}
-                            <div className="text-xs text-muted-foreground">
-                              {activity.timestamp}
+                          
+                          {/* Activity Content */}
+                          <div className="flex-1 min-w-0">
+                            <div className="flex items-start justify-between">
+                              <div className="flex-1">
+                                <div className="flex items-center gap-2 mb-2">
+                                  <h3 className="font-medium text-foreground">{activity.title}</h3>
+                                  <Badge variant={getStatusColor(activity.status)} className="text-xs">
+                                    {activity.status}
+                                  </Badge>
+                                </div>
+                                <p className="text-sm text-muted-foreground mb-3">
+                                  {activity.description}
+                                </p>
+                                <div className="flex items-center gap-4 text-sm text-muted-foreground">
+                                  <span className="flex items-center gap-1">
+                                    <User className="h-3 w-3" />
+                                    {activity.officer}
+                                  </span>
+                                  <span className="flex items-center gap-1">
+                                    <Clock className="h-3 w-3" />
+                                    {activity.timestamp}
+                                  </span>
+                                  {activity.type && (
+                                    <Badge variant="outline" className="text-xs">
+                                      {activity.type}
+                                    </Badge>
+                                  )}
+                                </div>
+                              </div>
+                              
+                              {/* Action Buttons */}
+                              <div className="flex items-start gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                                {activity.status === 'Pending' && (
+                                  <Button
+                                    size="sm"
+                                    variant="outline"
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      markAsRead(activity.id);
+                                    }}
+                                    className="h-8 px-3"
+                                  >
+                                    <CheckCircle2 className="h-3 w-3 mr-1" />
+                                    Mark Read
+                                  </Button>
+                                )}
+                                {activity.notification_type && ['lead_created', 'lead_status_change', 'follow_up_reminder'].includes(activity.notification_type) && (
+                                  <Button
+                                    size="sm"
+                                    variant="outline"
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      const notification = notifications.find(n => n.id === activity.id);
+                                      if (notification?.related_type === 'lead' && notification?.related_id) {
+                                        window.location.href = `/leads/${notification.related_id}`;
+                                      } else {
+                                        window.location.href = '/leads';
+                                      }
+                                    }}
+                                    className="h-8 px-3"
+                                  >
+                                    <User className="h-3 w-3 mr-1" />
+                                    View Lead
+                                  </Button>
+                                )}
+                                {activity.notification_type === 'client_created' && (
+                                  <Button
+                                    size="sm"
+                                    variant="outline"
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      window.location.href = '/clients';
+                                    }}
+                                    className="h-8 px-3"
+                                  >
+                                    <Users className="h-3 w-3 mr-1" />
+                                    View Client
+                                  </Button>
+                                )}
+                                {activity.notification_type === 'loan_created' && (
+                                  <Button
+                                    size="sm"
+                                    variant="outline"
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      window.location.href = '/clients';
+                                    }}
+                                    className="h-8 px-3"
+                                  >
+                                    <DollarSign className="h-3 w-3 mr-1" />
+                                    View Loan
+                                  </Button>
+                                )}
+                              </div>
                             </div>
                           </div>
                         </div>
-
-                        <div className="flex items-center gap-6 text-sm">
-                          <div className="flex items-center gap-2">
-                            <Avatar className="h-5 w-5">
-                              <AvatarFallback className="text-xs">
-                                {activity.officer === 'System' ? 'SYS' : activity.officer.split(' ').map(n => n[0]).join('')}
-                              </AvatarFallback>
-                            </Avatar>
-                            <span className="text-muted-foreground">Source:</span>
-                            <span className="font-medium">{activity.officer}</span>
-                          </div>
-                          {activity.notification_type && (
-                            <div className="flex items-center gap-2">
-                              <span className="text-muted-foreground">Type:</span>
-                              <span className="font-medium text-accent capitalize">
-                                {activity.notification_type.replace(/_/g, ' ')}
-                              </span>
-                            </div>
-                          )}
-                        </div>
-
-                        {index < filteredActivities.length - 1 && (
-                          <div className="border-b pt-3" />
-                        )}
-                      </div>
+                      </Card>
                     </div>
                   )
                 })}
