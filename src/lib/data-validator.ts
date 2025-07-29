@@ -323,10 +323,19 @@ export class DataFieldValidator {
         }
       }
 
-      // Fix null values that should be zeros
-      const { error: fixNullsError } = await supabase.rpc('fix_null_numeric_fields');
-      if (fixNullsError) {
-        result.errors.push(`Failed to fix null numeric fields: ${fixNullsError.message}`);
+      // Fix null values that should be zeros - using direct SQL call
+      try {
+        const { error: fixNullsError } = await supabase
+          .from('leads')
+          .update({ loan_amount: 0 })
+          .is('loan_amount', null)
+          .in('stage', ['Application', 'Pre-approval', 'Documentation', 'Closing']);
+        
+        if (!fixNullsError) {
+          result.fixed += 1; // Count as one bulk fix operation
+        }
+      } catch (error) {
+        result.errors.push(`Failed to fix null loan amounts: ${error}`);
       }
 
     } catch (error) {

@@ -2835,6 +2835,10 @@ export type Database = {
         }
         Returns: Json
       }
+      fix_null_numeric_fields: {
+        Args: Record<PropertyKey, never>
+        Returns: string
+      }
       get_recent_failed_attempts: {
         Args: { user_email: string }
         Returns: number
