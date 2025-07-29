@@ -122,7 +122,15 @@ export function ActionReminder({ entityId, entityName, entityType, isOpen, onClo
   if (!isOpen) return null
 
   return (
-    <Card className="w-full max-w-lg mx-auto">
+    <div 
+      className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm"
+      onClick={onClose}
+    >
+      <div 
+        className="fixed top-4 left-1/2 transform -translate-x-1/2 w-full max-w-lg px-4"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <Card className="w-full shadow-xl border animate-in slide-in-from-top-4 duration-300">
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
         <CardTitle className="text-lg font-semibold">
           Create Action Reminder
@@ -200,6 +208,7 @@ export function ActionReminder({ entityId, entityName, entityType, isOpen, onClo
                 onSelect={setSelectedDate}
                 disabled={(date) => date < new Date()}
                 initialFocus
+                className="p-3 pointer-events-auto"
               />
             </PopoverContent>
           </Popover>
@@ -279,5 +288,7 @@ export function ActionReminder({ entityId, entityName, entityType, isOpen, onClo
         </div>
       </CardContent>
     </Card>
+      </div>
+    </div>
   )
 }
