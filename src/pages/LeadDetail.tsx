@@ -1544,6 +1544,23 @@ export default function LeadDetail() {
           </Card>
         </div>
 
+        {/* Loan Requests Section */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2" style={{ color: 'white' }}>
+              <DollarSign className="w-5 h-5" />
+              Loan Requests
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <LoanRequestManager
+              leadId={lead?.id}
+              loanRequests={loanRequests}
+              onLoanRequestsUpdate={setLoanRequests}
+            />
+          </CardContent>
+        </Card>
+
         {/* General Notes Section */}
         <Card>
           <CardHeader>
@@ -1564,6 +1581,49 @@ export default function LeadDetail() {
               <Button onClick={saveGeneralNotes}>
                 <Save className="w-4 h-4 mr-2" />
                 Save General Notes
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Call Notes Section */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2" style={{ color: 'white' }}>
+              <PhoneIcon className="w-5 h-5" />
+              Call Notes
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            {/* Existing Call Notes */}
+            {callNotes && (
+              <div>
+                <Label style={{ color: 'white' }}>Previous Call Notes</Label>
+                <div className="mt-2 p-3 bg-muted rounded-lg">
+                  <pre className="whitespace-pre-wrap text-sm" style={{ color: 'white' }}>
+                    {callNotes}
+                  </pre>
+                </div>
+              </div>
+            )}
+
+            <Separator />
+
+            {/* Add New Call Note */}
+            <div className="space-y-2">
+              <Label htmlFor="newCallNote" style={{ color: 'white' }}>
+                Add New Call Note
+              </Label>
+              <Textarea
+                id="newCallNote"
+                placeholder="Enter your call notes here..."
+                value={newCallNote}
+                onChange={(e) => setNewCallNote(e.target.value)}
+                rows={4}
+              />
+              <Button onClick={saveCallNotes} disabled={!newCallNote.trim()}>
+                <Save className="w-4 h-4 mr-2" />
+                Save Call Note
               </Button>
             </div>
           </CardContent>
@@ -1643,66 +1703,6 @@ export default function LeadDetail() {
             </CardContent>
           </Card>
         )}
-
-        {/* Loan Requests Section */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2" style={{ color: 'white' }}>
-              <DollarSign className="w-5 h-5" />
-              Loan Requests
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <LoanRequestManager
-              leadId={lead?.id}
-              loanRequests={loanRequests}
-              onLoanRequestsUpdate={setLoanRequests}
-            />
-          </CardContent>
-        </Card>
-
-        {/* Call Notes Section */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2" style={{ color: 'white' }}>
-              <PhoneIcon className="w-5 h-5" />
-              Call Notes
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            {/* Existing Call Notes */}
-            {callNotes && (
-              <div>
-                <Label style={{ color: 'white' }}>Previous Call Notes</Label>
-                <div className="mt-2 p-3 bg-muted rounded-lg">
-                  <pre className="whitespace-pre-wrap text-sm" style={{ color: 'white' }}>
-                    {callNotes}
-                  </pre>
-                </div>
-              </div>
-            )}
-
-            <Separator />
-
-            {/* Add New Call Note */}
-            <div className="space-y-2">
-              <Label htmlFor="newCallNote" style={{ color: 'white' }}>
-                Add New Call Note
-              </Label>
-              <Textarea
-                id="newCallNote"
-                placeholder="Enter your call notes here..."
-                value={newCallNote}
-                onChange={(e) => setNewCallNote(e.target.value)}
-                rows={4}
-              />
-              <Button onClick={saveCallNotes} disabled={!newCallNote.trim()}>
-                <Save className="w-4 h-4 mr-2" />
-                Save Call Note
-              </Button>
-            </div>
-          </CardContent>
-        </Card>
 
       </div>
 
