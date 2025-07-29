@@ -337,12 +337,14 @@ export type Database = {
       clients: {
         Row: {
           annual_revenue: number | null
+          average_transaction_size: number | null
           bank_lender_name: string | null
           business_address: string | null
           business_name: string | null
           call_notes: string | null
           created_at: string
           credit_score: number | null
+          current_processing_rate: number | null
           email: string
           existing_loan_amount: number | null
           id: string
@@ -351,12 +353,15 @@ export type Database = {
           last_activity: string | null
           lead_id: string | null
           location: string | null
+          monthly_processing_volume: number | null
           name: string
           net_operating_income: number | null
           notes: string | null
           owns_property: boolean | null
           phone: string | null
+          pos_system: string | null
           priority: string | null
+          processor_name: string | null
           property_payment_amount: number | null
           status: string
           total_loan_value: number | null
@@ -367,12 +372,14 @@ export type Database = {
         }
         Insert: {
           annual_revenue?: number | null
+          average_transaction_size?: number | null
           bank_lender_name?: string | null
           business_address?: string | null
           business_name?: string | null
           call_notes?: string | null
           created_at?: string
           credit_score?: number | null
+          current_processing_rate?: number | null
           email: string
           existing_loan_amount?: number | null
           id?: string
@@ -381,12 +388,15 @@ export type Database = {
           last_activity?: string | null
           lead_id?: string | null
           location?: string | null
+          monthly_processing_volume?: number | null
           name: string
           net_operating_income?: number | null
           notes?: string | null
           owns_property?: boolean | null
           phone?: string | null
+          pos_system?: string | null
           priority?: string | null
+          processor_name?: string | null
           property_payment_amount?: number | null
           status?: string
           total_loan_value?: number | null
@@ -397,12 +407,14 @@ export type Database = {
         }
         Update: {
           annual_revenue?: number | null
+          average_transaction_size?: number | null
           bank_lender_name?: string | null
           business_address?: string | null
           business_name?: string | null
           call_notes?: string | null
           created_at?: string
           credit_score?: number | null
+          current_processing_rate?: number | null
           email?: string
           existing_loan_amount?: number | null
           id?: string
@@ -411,12 +423,15 @@ export type Database = {
           last_activity?: string | null
           lead_id?: string | null
           location?: string | null
+          monthly_processing_volume?: number | null
           name?: string
           net_operating_income?: number | null
           notes?: string | null
           owns_property?: boolean | null
           phone?: string | null
+          pos_system?: string | null
           priority?: string | null
+          processor_name?: string | null
           property_payment_amount?: number | null
           status?: string
           total_loan_value?: number | null
@@ -1392,6 +1407,7 @@ export type Database = {
       leads: {
         Row: {
           annual_revenue: number | null
+          average_transaction_size: number | null
           bank_lender_name: string | null
           business_address: string | null
           business_name: string | null
@@ -1399,6 +1415,7 @@ export type Database = {
           converted_at: string | null
           created_at: string
           credit_score: number | null
+          current_processing_rate: number | null
           email: string
           existing_loan_amount: number | null
           id: string
@@ -1410,12 +1427,15 @@ export type Database = {
           loan_type: string | null
           location: string | null
           maturity_date: string | null
+          monthly_processing_volume: number | null
           name: string
           net_operating_income: number | null
           notes: string | null
           owns_property: boolean | null
           phone: string | null
+          pos_system: string | null
           priority: string
+          processor_name: string | null
           property_payment_amount: number | null
           stage: string
           updated_at: string
@@ -1424,6 +1444,7 @@ export type Database = {
         }
         Insert: {
           annual_revenue?: number | null
+          average_transaction_size?: number | null
           bank_lender_name?: string | null
           business_address?: string | null
           business_name?: string | null
@@ -1431,6 +1452,7 @@ export type Database = {
           converted_at?: string | null
           created_at?: string
           credit_score?: number | null
+          current_processing_rate?: number | null
           email: string
           existing_loan_amount?: number | null
           id?: string
@@ -1442,12 +1464,15 @@ export type Database = {
           loan_type?: string | null
           location?: string | null
           maturity_date?: string | null
+          monthly_processing_volume?: number | null
           name: string
           net_operating_income?: number | null
           notes?: string | null
           owns_property?: boolean | null
           phone?: string | null
+          pos_system?: string | null
           priority?: string
+          processor_name?: string | null
           property_payment_amount?: number | null
           stage?: string
           updated_at?: string
@@ -1456,6 +1481,7 @@ export type Database = {
         }
         Update: {
           annual_revenue?: number | null
+          average_transaction_size?: number | null
           bank_lender_name?: string | null
           business_address?: string | null
           business_name?: string | null
@@ -1463,6 +1489,7 @@ export type Database = {
           converted_at?: string | null
           created_at?: string
           credit_score?: number | null
+          current_processing_rate?: number | null
           email?: string
           existing_loan_amount?: number | null
           id?: string
@@ -1474,12 +1501,15 @@ export type Database = {
           loan_type?: string | null
           location?: string | null
           maturity_date?: string | null
+          monthly_processing_volume?: number | null
           name?: string
           net_operating_income?: number | null
           notes?: string | null
           owns_property?: boolean | null
           phone?: string | null
+          pos_system?: string | null
           priority?: string
+          processor_name?: string | null
           property_payment_amount?: number | null
           stage?: string
           updated_at?: string

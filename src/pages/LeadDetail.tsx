@@ -147,7 +147,13 @@ export default function LeadDetail() {
     existing_loan_amount: "",
     bdo_name: "",
     bdo_telephone: "",
-    bdo_email: ""
+    bdo_email: "",
+    // POS Information fields
+    pos_system: "",
+    monthly_processing_volume: "",
+    average_transaction_size: "",
+    processor_name: "",
+    current_processing_rate: ""
   })
 
   useEffect(() => {
@@ -194,7 +200,13 @@ export default function LeadDetail() {
         existing_loan_amount: data.existing_loan_amount?.toString() || "",
         bdo_name: (data as any).bdo_name || "",
         bdo_telephone: (data as any).bdo_telephone || "",
-        bdo_email: (data as any).bdo_email || ""
+        bdo_email: (data as any).bdo_email || "",
+        // POS Information fields
+        pos_system: (data as any).pos_system || "",
+        monthly_processing_volume: (data as any).monthly_processing_volume?.toString() || "",
+        average_transaction_size: (data as any).average_transaction_size?.toString() || "",
+        processor_name: (data as any).processor_name || "",
+        current_processing_rate: (data as any).current_processing_rate?.toString() || ""
       })
       
       // If lead is converted, fetch client data
