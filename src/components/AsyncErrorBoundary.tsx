@@ -1,4 +1,4 @@
-import React, { ReactNode, useEffect, useState } from 'react'
+import React, { ReactNode, Component, ErrorInfo } from 'react'
 import { ErrorBoundary } from './ErrorBoundary'
 
 interface AsyncErrorBoundaryProps {
@@ -7,57 +7,72 @@ interface AsyncErrorBoundaryProps {
   onError?: (error: Error) => void
 }
 
-export function AsyncErrorBoundary({ children, fallback, onError }: AsyncErrorBoundaryProps) {
-  const [asyncError, setAsyncError] = useState<Error | null>(null)
+interface AsyncErrorBoundaryState {
+  asyncError: Error | null
+}
 
-  useEffect(() => {
-    const handleUnhandledRejection = (event: PromiseRejectionEvent) => {
-      console.error('Unhandled promise rejection:', event.reason)
-      
-      // Convert promise rejection to Error if it isn't already
-      const error = event.reason instanceof Error 
-        ? event.reason 
-        : new Error(String(event.reason))
-      
-      setAsyncError(error)
-      onError?.(error)
-      
-      // Prevent the default browser handling
-      event.preventDefault()
-    }
-
-    const handleError = (event: ErrorEvent) => {
-      console.error('Unhandled error:', event.error)
-      
-      const error = event.error instanceof Error 
-        ? event.error 
-        : new Error(event.message)
-      
-      setAsyncError(error)
-      onError?.(error)
-    }
-
-    window.addEventListener('unhandledrejection', handleUnhandledRejection)
-    window.addEventListener('error', handleError)
-
-    return () => {
-      window.removeEventListener('unhandledrejection', handleUnhandledRejection)
-      window.removeEventListener('error', handleError)
-    }
-  }, [onError])
-
-  // Reset async error when children change
-  useEffect(() => {
-    setAsyncError(null)
-  }, [children])
-
-  if (asyncError) {
-    throw asyncError
+export class AsyncErrorBoundary extends Component<AsyncErrorBoundaryProps, AsyncErrorBoundaryState> {
+  constructor(props: AsyncErrorBoundaryProps) {
+    super(props)
+    this.state = { asyncError: null }
   }
 
-  return (
-    <ErrorBoundary fallback={fallback} onError={onError}>
-      {children}
-    </ErrorBoundary>
-  )
+  componentDidMount() {
+    // Handle unhandled promise rejections
+    window.addEventListener('unhandledrejection', this.handleUnhandledRejection)
+    window.addEventListener('error', this.handleError)
+  }
+
+  componentWillUnmount() {
+    window.removeEventListener('unhandledrejection', this.handleUnhandledRejection)
+    window.removeEventListener('error', this.handleError)
+  }
+
+  handleUnhandledRejection = (event: PromiseRejectionEvent) => {
+    console.error('Unhandled promise rejection:', event.reason)
+    
+    // Convert promise rejection to Error if it isn't already
+    const error = event.reason instanceof Error 
+      ? event.reason 
+      : new Error(String(event.reason))
+    
+    this.setState({ asyncError: error })
+    this.props.onError?.(error)
+    
+    // Prevent the default browser handling
+    event.preventDefault()
+  }
+
+  handleError = (event: ErrorEvent) => {
+    console.error('Unhandled error:', event.error)
+    
+    const error = event.error instanceof Error 
+      ? event.error 
+      : new Error(event.message)
+    
+    this.setState({ asyncError: error })
+    this.props.onError?.(error)
+  }
+
+  static getDerivedStateFromError(error: Error) {
+    return { asyncError: error }
+  }
+
+  componentDidCatch(error: Error, errorInfo: ErrorInfo) {
+    console.error('AsyncErrorBoundary caught an error:', error, errorInfo)
+    this.props.onError?.(error)
+  }
+
+  render() {
+    if (this.state.asyncError) {
+      // Re-throw to let ErrorBoundary handle it
+      throw this.state.asyncError
+    }
+
+    return (
+      <ErrorBoundary fallback={this.props.fallback} onError={this.props.onError}>
+        {this.props.children}
+      </ErrorBoundary>
+    )
+  }
 }
