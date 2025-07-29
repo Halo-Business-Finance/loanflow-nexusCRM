@@ -34,7 +34,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         
         if (mounted) {
           setUser(session?.user ?? null)
-          setUserRole('admin') // Temporarily set role to admin to bypass role fetching
+          if (session?.user) {
+            await fetchUserRole(session.user.id)
+          } else {
+            setUserRole(null)
+          }
           setLoading(false)
           console.log('Set loading to false')
         }
@@ -52,7 +56,16 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       console.log('Auth state change:', event, !!session)
       if (mounted) {
         setUser(session?.user ?? null)
-        setUserRole(session?.user ? 'admin' : null)
+        if (session?.user) {
+          // Defer role fetching to avoid deadlock
+          setTimeout(() => {
+            if (mounted) {
+              fetchUserRole(session.user.id)
+            }
+          }, 0)
+        } else {
+          setUserRole(null)
+        }
         setLoading(false)
       }
     })

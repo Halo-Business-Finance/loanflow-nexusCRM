@@ -8,6 +8,8 @@ import { AuthPage } from "@/components/auth/AuthPage";
 import { SecurityDashboard } from "@/components/security/SecurityDashboard";
 import { SecurityManager } from "@/components/security/SecurityManager";
 import { GeoSecurityCheck } from "@/components/GeoSecurityCheck";
+import { AsyncErrorBoundary } from "@/components/AsyncErrorBoundary";
+import { RouteErrorBoundary } from "@/components/RouteErrorBoundary";
 import Index from "./pages/Index";
 import Leads from "./pages/Leads";
 import LeadDetail from "./pages/LeadDetail";
@@ -45,30 +47,30 @@ function AuthenticatedApp() {
       <KeyboardShortcutsProvider />
       <Routes>
         {/* Public route for authentication */}
-        <Route path="/auth" element={<AuthPage />} />
+        <Route path="/auth" element={<AuthPage />} errorElement={<RouteErrorBoundary />} />
         
         {/* Protected routes - require authentication */}
         {user ? (
           <>
-            <Route path="/" element={<Index />} />
-            <Route path="/leads" element={<Leads />} />
-            <Route path="/leads/:id" element={<LeadDetail />} />
-            <Route path="/clients" element={<Clients />} />
-            <Route path="/pipeline" element={<Pipeline />} />
-            <Route path="/documents" element={<Documents />} />
-            <Route path="/activities" element={<Activities />} />
-            <Route path="/reports" element={<Reports />} />
-            <Route path="/settings" element={<Settings />} />
-            <Route path="/users" element={<Users />} />
-            <Route path="/security" element={<SecurityDashboard />} />
-            <Route path="/security-center" element={<SecurityManager />} />
-            <Route path="/resources" element={<Resources />} />
-            <Route path="*" element={<NotFound />} />
+            <Route path="/" element={<Index />} errorElement={<RouteErrorBoundary />} />
+            <Route path="/leads" element={<Leads />} errorElement={<RouteErrorBoundary />} />
+            <Route path="/leads/:id" element={<LeadDetail />} errorElement={<RouteErrorBoundary />} />
+            <Route path="/clients" element={<Clients />} errorElement={<RouteErrorBoundary />} />
+            <Route path="/pipeline" element={<Pipeline />} errorElement={<RouteErrorBoundary />} />
+            <Route path="/documents" element={<Documents />} errorElement={<RouteErrorBoundary />} />
+            <Route path="/activities" element={<Activities />} errorElement={<RouteErrorBoundary />} />
+            <Route path="/reports" element={<Reports />} errorElement={<RouteErrorBoundary />} />
+            <Route path="/settings" element={<Settings />} errorElement={<RouteErrorBoundary />} />
+            <Route path="/users" element={<Users />} errorElement={<RouteErrorBoundary />} />
+            <Route path="/security" element={<SecurityDashboard />} errorElement={<RouteErrorBoundary />} />
+            <Route path="/security-center" element={<SecurityManager />} errorElement={<RouteErrorBoundary />} />
+            <Route path="/resources" element={<Resources />} errorElement={<RouteErrorBoundary />} />
+            <Route path="*" element={<NotFound />} errorElement={<RouteErrorBoundary />} />
           </>
         ) : (
           <>
             {/* Redirect all other routes to auth when not logged in */}
-            <Route path="*" element={<AuthPage />} />
+            <Route path="*" element={<AuthPage />} errorElement={<RouteErrorBoundary />} />
           </>
         )}
       </Routes>
@@ -77,17 +79,19 @@ function AuthenticatedApp() {
 }
 
 const App = () => (
-  <QueryClientProvider client={queryClient}>
-    <GeoSecurityCheck>
-      <AuthProvider>
-        <TooltipProvider>
-          <Toaster />
-          <Sonner />
-          <AuthenticatedApp />
-        </TooltipProvider>
-      </AuthProvider>
-    </GeoSecurityCheck>
-  </QueryClientProvider>
+  <AsyncErrorBoundary>
+    <QueryClientProvider client={queryClient}>
+      <GeoSecurityCheck>
+        <AuthProvider>
+          <TooltipProvider>
+            <Toaster />
+            <Sonner />
+            <AuthenticatedApp />
+          </TooltipProvider>
+        </AuthProvider>
+      </GeoSecurityCheck>
+    </QueryClientProvider>
+  </AsyncErrorBoundary>
 );
 
 export default App;
