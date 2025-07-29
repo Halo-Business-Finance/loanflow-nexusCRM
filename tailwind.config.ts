@@ -79,7 +79,7 @@ export default {
 				navy: {
 					DEFAULT: 'hsl(var(--navy))',
 					foreground: 'hsl(var(--navy-foreground))',
-					600: 'hsl(220 91% 15%)'
+					600: 'hsl(220 80% 45%)'
 				}
 			},
 			borderRadius: {
