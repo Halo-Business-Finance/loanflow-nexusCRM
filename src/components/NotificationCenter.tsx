@@ -72,7 +72,7 @@ export function NotificationCenter({
     if (notification.related_type === 'lead' && notification.related_id) {
       navigate(`/leads/${notification.related_id}`)
     } else if (notification.related_type === 'client' && notification.related_id) {
-      navigate(`/clients`)
+      navigate(`/clients/${notification.related_id}`)
     }
   }
 
