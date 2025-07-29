@@ -67,7 +67,7 @@ export default function Users() {
     first_name: "",
     last_name: "",
     phone_number: "",
-    role: "agent" as const
+    role: "agent" as 'super_admin' | 'admin' | 'manager' | 'agent' | 'viewer'
   })
   const [editingUser, setEditingUser] = useState<UserProfile | null>(null)
   const [showNewUserDialog, setShowNewUserDialog] = useState(false)
@@ -149,6 +149,16 @@ export default function Users() {
 
   const createUser = async () => {
     try {
+      // Check if trying to create super_admin without being super_admin
+      if (newUser.role === 'super_admin' && currentUserRole !== 'super_admin') {
+        toast({
+          title: "Access Denied",
+          description: "Only super administrators can create other super administrators",
+          variant: "destructive"
+        })
+        return
+      }
+
       // Sign up the user first
       const { data, error } = await supabase.auth.signUp({
         email: newUser.email,
@@ -231,6 +241,16 @@ export default function Users() {
     if (!editingUser) return
 
     try {
+      // Check if trying to assign super_admin role without being super_admin
+      if (editingUser.role === 'super_admin' && currentUserRole !== 'super_admin') {
+        toast({
+          title: "Access Denied",
+          description: "Only super administrators can assign the super administrator role",
+          variant: "destructive"
+        })
+        return
+      }
+
       console.log('Updating user with data:', {
         first_name: editingUser.first_name,
         last_name: editingUser.last_name,
@@ -554,7 +574,9 @@ export default function Users() {
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent className="bg-background border shadow-lg z-50">
-                      <SelectItem value="super_admin">Super Administrator</SelectItem>
+                      {currentUserRole === 'super_admin' && (
+                        <SelectItem value="super_admin">Super Administrator</SelectItem>
+                      )}
                       <SelectItem value="admin">Administrator</SelectItem>
                       <SelectItem value="manager">Manager</SelectItem>
                       <SelectItem value="agent">Loan Originator (Agent)</SelectItem>
@@ -805,7 +827,9 @@ export default function Users() {
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent className="bg-background border shadow-lg z-50">
-                      <SelectItem value="super_admin">Super Administrator</SelectItem>
+                      {currentUserRole === 'super_admin' && (
+                        <SelectItem value="super_admin">Super Administrator</SelectItem>
+                      )}
                       <SelectItem value="admin">Administrator</SelectItem>
                       <SelectItem value="manager">Manager</SelectItem>
                       <SelectItem value="agent">Loan Originator (Agent)</SelectItem>
