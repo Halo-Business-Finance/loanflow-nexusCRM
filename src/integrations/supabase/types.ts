@@ -899,6 +899,39 @@ export type Database = {
         }
         Relationships: []
       }
+      encryption_keys: {
+        Row: {
+          algorithm: string
+          created_at: string
+          expires_at: string | null
+          id: string
+          is_active: boolean
+          key_name: string
+          key_purpose: string
+          last_rotated: string | null
+        }
+        Insert: {
+          algorithm?: string
+          created_at?: string
+          expires_at?: string | null
+          id?: string
+          is_active?: boolean
+          key_name: string
+          key_purpose: string
+          last_rotated?: string | null
+        }
+        Update: {
+          algorithm?: string
+          created_at?: string
+          expires_at?: string | null
+          id?: string
+          is_active?: boolean
+          key_name?: string
+          key_purpose?: string
+          last_rotated?: string | null
+        }
+        Relationships: []
+      }
       event_attendees: {
         Row: {
           attendance_date: string | null
@@ -1527,6 +1560,45 @@ export type Database = {
           },
         ]
       }
+      mfa_settings: {
+        Row: {
+          backup_codes: string[] | null
+          created_at: string
+          id: string
+          is_enabled: boolean
+          last_used: string | null
+          phone_number: string | null
+          preferred_method: string
+          secret_key: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          backup_codes?: string[] | null
+          created_at?: string
+          id?: string
+          is_enabled?: boolean
+          last_used?: string | null
+          phone_number?: string | null
+          preferred_method?: string
+          secret_key?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          backup_codes?: string[] | null
+          created_at?: string
+          id?: string
+          is_enabled?: boolean
+          last_used?: string | null
+          phone_number?: string | null
+          preferred_method?: string
+          secret_key?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       notifications: {
         Row: {
           created_at: string
@@ -1683,6 +1755,69 @@ export type Database = {
           },
         ]
       }
+      password_history: {
+        Row: {
+          created_at: string
+          id: string
+          password_hash: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          password_hash: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          password_hash?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      password_policies: {
+        Row: {
+          created_at: string
+          id: string
+          is_active: boolean
+          max_age_days: number
+          min_length: number
+          prevent_reuse_count: number
+          require_lowercase: boolean
+          require_numbers: boolean
+          require_special_chars: boolean
+          require_uppercase: boolean
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          max_age_days?: number
+          min_length?: number
+          prevent_reuse_count?: number
+          require_lowercase?: boolean
+          require_numbers?: boolean
+          require_special_chars?: boolean
+          require_uppercase?: boolean
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          max_age_days?: number
+          min_length?: number
+          prevent_reuse_count?: number
+          require_lowercase?: boolean
+          require_numbers?: boolean
+          require_special_chars?: boolean
+          require_uppercase?: boolean
+          updated_at?: string
+        }
+        Relationships: []
+      }
       pipeline_entries: {
         Row: {
           amount: number | null
@@ -1776,6 +1911,42 @@ export type Database = {
         }
         Relationships: []
       }
+      rate_limits: {
+        Row: {
+          action_type: string
+          attempt_count: number
+          block_until: string | null
+          created_at: string
+          id: string
+          identifier: string
+          is_blocked: boolean
+          updated_at: string
+          window_start: string
+        }
+        Insert: {
+          action_type: string
+          attempt_count?: number
+          block_until?: string | null
+          created_at?: string
+          id?: string
+          identifier: string
+          is_blocked?: boolean
+          updated_at?: string
+          window_start?: string
+        }
+        Update: {
+          action_type?: string
+          attempt_count?: number
+          block_until?: string | null
+          created_at?: string
+          id?: string
+          identifier?: string
+          is_blocked?: boolean
+          updated_at?: string
+          window_start?: string
+        }
+        Relationships: []
+      }
       ringcentral_accounts: {
         Row: {
           client_id: string
@@ -1812,6 +1983,57 @@ export type Database = {
           updated_at?: string
           user_id?: string
           username?: string
+        }
+        Relationships: []
+      }
+      secure_sessions: {
+        Row: {
+          created_at: string
+          device_fingerprint: string | null
+          expires_at: string
+          id: string
+          ip_address: unknown | null
+          is_active: boolean
+          is_suspicious: boolean
+          last_activity: string
+          location_data: Json | null
+          mfa_verified: boolean
+          risk_score: number
+          session_token: string
+          user_agent: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          device_fingerprint?: string | null
+          expires_at?: string
+          id?: string
+          ip_address?: unknown | null
+          is_active?: boolean
+          is_suspicious?: boolean
+          last_activity?: string
+          location_data?: Json | null
+          mfa_verified?: boolean
+          risk_score?: number
+          session_token: string
+          user_agent?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          device_fingerprint?: string | null
+          expires_at?: string
+          id?: string
+          ip_address?: unknown | null
+          is_active?: boolean
+          is_suspicious?: boolean
+          last_activity?: string
+          location_data?: Json | null
+          mfa_verified?: boolean
+          risk_score?: number
+          session_token?: string
+          user_agent?: string | null
+          user_id?: string
         }
         Relationships: []
       }
@@ -1875,6 +2097,42 @@ export type Database = {
           severity?: string
           user_agent?: string | null
           user_id?: string | null
+        }
+        Relationships: []
+      }
+      security_notifications: {
+        Row: {
+          created_at: string
+          id: string
+          is_read: boolean
+          message: string
+          metadata: Json | null
+          notification_type: string
+          severity: string
+          title: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          is_read?: boolean
+          message: string
+          metadata?: Json | null
+          notification_type: string
+          severity?: string
+          title: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          is_read?: boolean
+          message?: string
+          metadata?: Json | null
+          notification_type?: string
+          severity?: string
+          title?: string
+          user_id?: string
         }
         Relationships: []
       }
@@ -2204,6 +2462,15 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      check_rate_limit: {
+        Args: {
+          p_identifier: string
+          p_action_type: string
+          p_max_attempts?: number
+          p_window_minutes?: number
+        }
+        Returns: Json
+      }
       cleanup_expired_sessions: {
         Args: Record<PropertyKey, never>
         Returns: number
@@ -2245,6 +2512,19 @@ export type Database = {
         Args: { user_email: string; lock_reason?: string }
         Returns: string
       }
+      log_enhanced_security_event: {
+        Args: {
+          p_user_id?: string
+          p_event_type?: string
+          p_severity?: string
+          p_details?: Json
+          p_ip_address?: unknown
+          p_user_agent?: string
+          p_device_fingerprint?: string
+          p_location?: Json
+        }
+        Returns: string
+      }
       log_security_event: {
         Args: {
           p_user_id?: string
@@ -2255,6 +2535,10 @@ export type Database = {
           p_user_agent?: string
         }
         Returns: string
+      }
+      validate_password_strength: {
+        Args: { password: string }
+        Returns: Json
       }
     }
     Enums: {
