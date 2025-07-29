@@ -32,10 +32,12 @@ serve(async (req) => {
       throw new Error('Unauthorized');
     }
 
-    // Get client IP and user agent
-    const clientIP = req.headers.get('x-forwarded-for') || 
-                    req.headers.get('x-real-ip') || 
-                    'unknown';
+    // Get client IP and user agent - handle comma-separated IPs
+    const rawIP = req.headers.get('x-forwarded-for') || 
+                  req.headers.get('x-real-ip') || 
+                  'unknown';
+    // Parse first valid IP address from comma-separated list
+    const clientIP = rawIP.includes(',') ? rawIP.split(',')[0].trim() : rawIP;
     const userAgent = req.headers.get('user-agent') || 'unknown';
 
     console.log(`Audit log: ${action} by user ${user.id}`);
