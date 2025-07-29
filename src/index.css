@@ -29,13 +29,13 @@ All colors MUST be HSL.
     --muted-foreground: 220 60% 35%;
 
     --accent: 142 76% 36%;
-    --accent-foreground: 0 0% 100%;
+    --accent-foreground: 220 25% 15%;
 
     --warning: 38 92% 50%;
-    --warning-foreground: 0 0% 100%;
+    --warning-foreground: 220 25% 15%;
 
     --destructive: 0 84% 60%;
-    --destructive-foreground: 0 0% 100%;
+    --destructive-foreground: 220 25% 15%;
 
     --border: 220 60% 85%;
     --input: 220 50% 94%;
@@ -55,7 +55,7 @@ All colors MUST be HSL.
     --sidebar-primary: 220 91% 25%;
     --sidebar-primary-foreground: 0 0% 100%;
     --sidebar-accent: 220 70% 90%;
-    --sidebar-accent-foreground: 220 91% 25%;
+    --sidebar-accent-foreground: 220 25% 15%;
     --sidebar-border: 220 60% 85%;
     --sidebar-ring: 220 91% 25%;
   }
