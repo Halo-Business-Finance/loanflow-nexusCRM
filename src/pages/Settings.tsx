@@ -605,9 +605,9 @@ export default function Settings() {
                     <SelectTrigger>
                       <SelectValue placeholder="Select theme" />
                     </SelectTrigger>
-                    <SelectContent className="bg-white dark:bg-gray-800 border border-border">
-                      <SelectItem value="light" className="text-gray-900 dark:text-gray-100 hover:bg-gray-100 dark:hover:bg-gray-700">Light</SelectItem>
-                      <SelectItem value="dark" className="text-gray-900 dark:text-gray-100 hover:bg-gray-100 dark:hover:bg-gray-700">Dark</SelectItem>
+                    <SelectContent className="bg-white border border-border">
+                      <SelectItem value="light" className="text-black hover:bg-gray-100">Light</SelectItem>
+                      <SelectItem value="dark" className="text-black hover:bg-gray-100">Dark</SelectItem>
                     </SelectContent>
                   </Select>
                   <p className="text-xs text-muted-foreground">
