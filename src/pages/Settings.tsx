@@ -50,6 +50,12 @@ export default function Settings() {
     phone_number: '',
     job_title: ''
   })
+  const [notifications, setNotifications] = useState({
+    email_notifications: true,
+    new_application_alerts: true,
+    status_change_notifications: true,
+    daily_summary_reports: false
+  })
 
   useEffect(() => {
     if (user) {
@@ -137,6 +143,19 @@ export default function Settings() {
       ...prev,
       [field]: field === 'phone_number' ? formatPhoneNumber(value) : value
     }))
+  }
+
+  const handleNotificationChange = (field: string, value: boolean) => {
+    setNotifications(prev => ({
+      ...prev,
+      [field]: value
+    }))
+    
+    // Optionally save to database or show a toast
+    toast({
+      title: "Notification Updated",
+      description: `${field.replace(/_/g, ' ')} ${value ? 'enabled' : 'disabled'}`
+    })
   }
 
   return (
@@ -253,7 +272,10 @@ export default function Settings() {
                         Receive email updates about applications
                       </p>
                     </div>
-                    <Switch defaultChecked />
+                    <Switch 
+                      checked={notifications.email_notifications}
+                      onCheckedChange={(value) => handleNotificationChange('email_notifications', value)}
+                    />
                   </div>
 
                   <Separator />
@@ -265,7 +287,10 @@ export default function Settings() {
                         Get notified when new applications are submitted
                       </p>
                     </div>
-                    <Switch defaultChecked />
+                    <Switch 
+                      checked={notifications.new_application_alerts}
+                      onCheckedChange={(value) => handleNotificationChange('new_application_alerts', value)}
+                    />
                   </div>
 
                   <Separator />
@@ -277,7 +302,10 @@ export default function Settings() {
                         Alerts for application status updates
                       </p>
                     </div>
-                    <Switch defaultChecked />
+                    <Switch 
+                      checked={notifications.status_change_notifications}
+                      onCheckedChange={(value) => handleNotificationChange('status_change_notifications', value)}
+                    />
                   </div>
 
                   <Separator />
@@ -289,7 +317,10 @@ export default function Settings() {
                         Daily digest of activities and metrics
                       </p>
                     </div>
-                    <Switch />
+                    <Switch 
+                      checked={notifications.daily_summary_reports}
+                      onCheckedChange={(value) => handleNotificationChange('daily_summary_reports', value)}
+                    />
                   </div>
                 </div>
               </CardContent>
