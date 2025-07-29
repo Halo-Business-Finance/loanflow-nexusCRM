@@ -605,9 +605,9 @@ export default function Settings() {
                     <SelectTrigger>
                       <SelectValue placeholder="Select theme" />
                     </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="light" className="text-black">Light</SelectItem>
-                      <SelectItem value="dark" className="text-black">Dark</SelectItem>
+                    <SelectContent className="bg-background border border-border">
+                      <SelectItem value="light" className="text-foreground hover:bg-accent hover:text-accent-foreground">Light</SelectItem>
+                      <SelectItem value="dark" className="text-foreground hover:bg-accent hover:text-accent-foreground">Dark</SelectItem>
                     </SelectContent>
                   </Select>
                   <p className="text-xs text-muted-foreground">
