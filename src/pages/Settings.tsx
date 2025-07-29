@@ -606,8 +606,8 @@ export default function Settings() {
                       <SelectValue placeholder="Select theme" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="light">Light</SelectItem>
-                      <SelectItem value="dark">Dark</SelectItem>
+                      <SelectItem value="light" className="text-black">Light</SelectItem>
+                      <SelectItem value="dark" className="text-black">Dark</SelectItem>
                     </SelectContent>
                   </Select>
                   <p className="text-xs text-muted-foreground">
