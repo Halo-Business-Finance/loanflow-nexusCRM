@@ -155,6 +155,22 @@ export default function Integrations() {
     })
   }
 
+  const handleAIToolToggle = (toolId: string, enabled: boolean) => {
+    const tool = aiTools.find(t => t.id === toolId)
+    if (!tool) return
+
+    toast({
+      title: enabled ? "AI Tool Enabled" : "AI Tool Disabled",
+      description: `${tool.name} has been ${enabled ? 'enabled' : 'disabled'}`,
+    })
+    
+    // Update the tool status in the array (in a real app, this would update the backend)
+    const updatedTools = aiTools.map(t => 
+      t.id === toolId ? { ...t, status: enabled ? "active" : "available" } : t
+    )
+    // In a real implementation, you would update state here
+  }
+
   const handleAIToolAction = (toolId: string, status: string) => {
     const tool = aiTools.find(t => t.id === toolId)
     if (!tool) return
@@ -306,7 +322,7 @@ export default function Integrations() {
                       </div>
                       <Switch 
                         checked={tool.status === "active"}
-                        onCheckedChange={(enabled) => handleIntegrationToggle(tool.id, enabled)}
+                        onCheckedChange={(enabled) => handleAIToolToggle(tool.id, enabled)}
                       />
                     </div>
                   </CardHeader>
