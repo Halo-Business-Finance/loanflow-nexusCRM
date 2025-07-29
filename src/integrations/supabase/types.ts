@@ -50,6 +50,60 @@ export type Database = {
         }
         Relationships: []
       }
+      api_request_analytics: {
+        Row: {
+          ai_confidence_score: number | null
+          blocked: boolean
+          created_at: string
+          endpoint: string
+          id: string
+          ip_address: unknown | null
+          is_bot_suspected: boolean
+          method: string
+          rate_limit_triggered: boolean
+          request_fingerprint: string | null
+          request_size: number | null
+          response_time: number | null
+          status_code: number | null
+          user_agent: string | null
+          user_id: string | null
+        }
+        Insert: {
+          ai_confidence_score?: number | null
+          blocked?: boolean
+          created_at?: string
+          endpoint: string
+          id?: string
+          ip_address?: unknown | null
+          is_bot_suspected?: boolean
+          method: string
+          rate_limit_triggered?: boolean
+          request_fingerprint?: string | null
+          request_size?: number | null
+          response_time?: number | null
+          status_code?: number | null
+          user_agent?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          ai_confidence_score?: number | null
+          blocked?: boolean
+          created_at?: string
+          endpoint?: string
+          id?: string
+          ip_address?: unknown | null
+          is_bot_suspected?: boolean
+          method?: string
+          rate_limit_triggered?: boolean
+          request_fingerprint?: string | null
+          request_size?: number | null
+          response_time?: number | null
+          status_code?: number | null
+          user_agent?: string | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       approval_processes: {
         Row: {
           approval_steps: Json
@@ -775,6 +829,45 @@ export type Database = {
           successful_records?: number | null
           total_records?: number | null
           user_id?: string
+        }
+        Relationships: []
+      }
+      device_fingerprints: {
+        Row: {
+          ai_detection_flags: Json | null
+          created_at: string
+          device_characteristics: Json
+          fingerprint_hash: string
+          first_seen: string
+          id: string
+          is_suspicious: boolean
+          last_seen: string
+          risk_score: number
+          user_id: string | null
+        }
+        Insert: {
+          ai_detection_flags?: Json | null
+          created_at?: string
+          device_characteristics?: Json
+          fingerprint_hash: string
+          first_seen?: string
+          id?: string
+          is_suspicious?: boolean
+          last_seen?: string
+          risk_score?: number
+          user_id?: string | null
+        }
+        Update: {
+          ai_detection_flags?: Json | null
+          created_at?: string
+          device_characteristics?: Json
+          fingerprint_hash?: string
+          first_seen?: string
+          id?: string
+          is_suspicious?: boolean
+          last_seen?: string
+          risk_score?: number
+          user_id?: string | null
         }
         Relationships: []
       }
@@ -2446,6 +2539,96 @@ export type Database = {
           },
         ]
       }
+      threat_incidents: {
+        Row: {
+          ai_generated: boolean
+          created_at: string
+          id: string
+          incident_data: Json
+          incident_type: string
+          ip_address: unknown | null
+          is_resolved: boolean
+          resolved_at: string | null
+          resolved_by: string | null
+          response_action: string | null
+          severity: string
+          threat_vector: string
+          user_agent: string | null
+          user_id: string | null
+        }
+        Insert: {
+          ai_generated?: boolean
+          created_at?: string
+          id?: string
+          incident_data?: Json
+          incident_type: string
+          ip_address?: unknown | null
+          is_resolved?: boolean
+          resolved_at?: string | null
+          resolved_by?: string | null
+          response_action?: string | null
+          severity: string
+          threat_vector: string
+          user_agent?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          ai_generated?: boolean
+          created_at?: string
+          id?: string
+          incident_data?: Json
+          incident_type?: string
+          ip_address?: unknown | null
+          is_resolved?: boolean
+          resolved_at?: string | null
+          resolved_by?: string | null
+          response_action?: string | null
+          severity?: string
+          threat_vector?: string
+          user_agent?: string | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
+      user_behavior_patterns: {
+        Row: {
+          action_sequence: Json
+          ai_likelihood_score: number
+          anomaly_flags: Json | null
+          created_at: string
+          id: string
+          keyboard_patterns: Json | null
+          mouse_patterns: Json | null
+          session_id: string
+          timing_patterns: Json
+          user_id: string | null
+        }
+        Insert: {
+          action_sequence?: Json
+          ai_likelihood_score?: number
+          anomaly_flags?: Json | null
+          created_at?: string
+          id?: string
+          keyboard_patterns?: Json | null
+          mouse_patterns?: Json | null
+          session_id: string
+          timing_patterns?: Json
+          user_id?: string | null
+        }
+        Update: {
+          action_sequence?: Json
+          ai_likelihood_score?: number
+          anomaly_flags?: Json | null
+          created_at?: string
+          id?: string
+          keyboard_patterns?: Json | null
+          mouse_patterns?: Json | null
+          session_id?: string
+          timing_patterns?: Json
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       user_roles: {
         Row: {
           assigned_at: string | null
@@ -2625,6 +2808,32 @@ export type Database = {
           p_new_values?: Json
         }
         Returns: string
+      }
+      detect_ai_behavior: {
+        Args: {
+          p_user_id: string
+          p_request_pattern: Json
+          p_timing_data: Json
+        }
+        Returns: number
+      }
+      detect_login_anomalies: {
+        Args: {
+          p_user_id: string
+          p_ip_address: unknown
+          p_user_agent: string
+          p_geo_data: Json
+        }
+        Returns: Json
+      }
+      enhanced_rate_limit_check: {
+        Args: {
+          p_identifier: string
+          p_action_type: string
+          p_user_agent?: string
+          p_request_fingerprint?: string
+        }
+        Returns: Json
       }
       get_recent_failed_attempts: {
         Args: { user_email: string }

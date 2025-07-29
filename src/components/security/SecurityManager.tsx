@@ -11,6 +11,7 @@ import { useToast } from "@/hooks/use-toast";
 import { Shield, Lock, AlertTriangle, Eye, Users, Key, Activity, Trash2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/components/auth/AuthProvider";
+import { AdvancedThreatDetection } from "./AdvancedThreatDetection";
 import Layout from "@/components/Layout";
 
 interface SecurityNotification {
@@ -300,6 +301,7 @@ export function SecurityManager() {
         <Tabs defaultValue="overview" className="space-y-4">
           <TabsList>
             <TabsTrigger value="overview">Overview</TabsTrigger>
+            <TabsTrigger value="threats">AI Protection</TabsTrigger>
             <TabsTrigger value="mfa">Multi-Factor Auth</TabsTrigger>
             <TabsTrigger value="notifications">Security Alerts</TabsTrigger>
             {hasRole('admin') && <TabsTrigger value="policies">Password Policy</TabsTrigger>}
@@ -400,6 +402,10 @@ export function SecurityManager() {
               )}
             </CardContent>
           </Card>
+        </TabsContent>
+
+        <TabsContent value="threats" className="space-y-4">
+          <AdvancedThreatDetection />
         </TabsContent>
 
         <TabsContent value="mfa" className="space-y-4">
