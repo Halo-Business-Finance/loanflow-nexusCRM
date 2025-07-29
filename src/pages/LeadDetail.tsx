@@ -720,15 +720,6 @@ export default function LeadDetail() {
           <div className="flex gap-2">
             {/* Quick Action Buttons */}
             <Button
-              onClick={() => setShowReminderDialog(true)}
-              size="sm"
-              variant="outline"
-              className="h-9 px-3 text-xs bg-gradient-to-r from-primary/10 to-primary/5 hover:from-primary/20 hover:to-primary/10 border-primary/20"
-            >
-              <Bell className="w-3 h-3 mr-1" />
-              Reminder
-            </Button>
-            <Button
               size="sm"
               variant="outline"
               className="h-9 px-3 text-xs bg-gradient-to-r from-blue-500/10 to-blue-500/5 hover:from-blue-500/20 hover:to-blue-500/10 border-blue-500/20"
@@ -743,6 +734,24 @@ export default function LeadDetail() {
             >
               <Mail className="w-3 h-3 mr-1" />
               Email
+            </Button>
+            <Button
+              size="sm"
+              variant="outline"
+              className="h-9 px-3 text-xs bg-gradient-to-r from-orange-500/10 to-orange-500/5 hover:from-orange-500/20 hover:to-orange-500/10 border-orange-500/20"
+              onClick={() => navigate('/documents')}
+            >
+              <FileText className="w-3 h-3 mr-1" />
+              Documents
+            </Button>
+            <Button
+              onClick={() => setShowReminderDialog(true)}
+              size="sm"
+              variant="outline"
+              className="h-9 px-3 text-xs bg-gradient-to-r from-primary/10 to-primary/5 hover:from-primary/20 hover:to-primary/10 border-primary/20"
+            >
+              <Bell className="w-3 h-3 mr-1" />
+              Reminder
             </Button>
             
             {/* Edit/Save Buttons */}
