@@ -17,6 +17,7 @@ import { ActionReminder } from "@/components/ActionReminder"
 import { PhoneDialer } from "@/components/PhoneDialer"
 import { EmailComposer } from "@/components/EmailComposer"
 import { LoanManager } from "@/components/LoanManager"
+import LoanRequestManager from "@/components/LoanRequestManager"
 import { formatNumber, formatCurrency } from "@/lib/utils"
 import { 
   ArrowLeft, 
@@ -34,7 +35,8 @@ import {
   Bell,
   Calendar,
   Home,
-  ShoppingCart
+  ShoppingCart,
+  Target
 } from "lucide-react"
 
 interface Client {
@@ -67,6 +69,13 @@ interface Client {
   average_transaction_size?: number
   processor_name?: string
   current_processing_rate?: number
+  // Additional fields from leads
+  maturity_date?: string
+  interest_rate?: number
+  stage?: string
+  bdo_name?: string
+  bdo_telephone?: string
+  bdo_email?: string
 }
 
 interface Loan {
@@ -91,6 +100,7 @@ export default function ClientDetail() {
   
   const [client, setClient] = useState<Client | null>(null)
   const [loans, setLoans] = useState<Loan[]>([])
+  const [loanRequests, setLoanRequests] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
   const [isEditing, setIsEditing] = useState(false)
   const [callNotes, setCallNotes] = useState("")
@@ -119,13 +129,21 @@ export default function ClientDetail() {
     monthly_processing_volume: "",
     average_transaction_size: "",
     processor_name: "",
-    current_processing_rate: ""
+    current_processing_rate: "",
+    // Additional fields from leads
+    maturity_date: "",
+    interest_rate: "",
+    stage: "",
+    bdo_name: "",
+    bdo_telephone: "",
+    bdo_email: ""
   })
 
   useEffect(() => {
     if (id && user) {
       fetchClient()
       fetchClientLoans()
+      fetchLoanRequests()
     }
   }, [id, user])
 
@@ -166,7 +184,14 @@ export default function ClientDetail() {
         monthly_processing_volume: data.monthly_processing_volume?.toString() || "",
         average_transaction_size: data.average_transaction_size?.toString() || "",
         processor_name: data.processor_name || "",
-        current_processing_rate: data.current_processing_rate?.toString() || ""
+        current_processing_rate: data.current_processing_rate?.toString() || "",
+        // Additional fields from leads
+        maturity_date: (data as any).maturity_date || "",
+        interest_rate: (data as any).interest_rate?.toString() || "",
+        stage: (data as any).stage || "",
+        bdo_name: (data as any).bdo_name || "",
+        bdo_telephone: (data as any).bdo_telephone || "",
+        bdo_email: (data as any).bdo_email || ""
       })
     } catch (error) {
       console.error('Error fetching client:', error)
@@ -178,6 +203,22 @@ export default function ClientDetail() {
       navigate('/clients')
     } finally {
       setLoading(false)
+    }
+  }
+
+  const fetchLoanRequests = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('loan_requests')
+        .select('*')
+        .eq('client_id', id)
+        .order('created_at', { ascending: false })
+
+      if (error) throw error
+      
+      setLoanRequests(data || [])
+    } catch (error) {
+      console.error('Error fetching loan requests:', error)
     }
   }
 
@@ -287,6 +328,13 @@ export default function ClientDetail() {
         average_transaction_size: editableFields.average_transaction_size ? parseFloat(editableFields.average_transaction_size) : null,
         processor_name: editableFields.processor_name || null,
         current_processing_rate: editableFields.current_processing_rate ? parseFloat(editableFields.current_processing_rate) : null,
+        // Additional fields from leads
+        maturity_date: editableFields.maturity_date || null,
+        interest_rate: editableFields.interest_rate ? parseFloat(editableFields.interest_rate) : null,
+        stage: editableFields.stage || null,
+        bdo_name: editableFields.bdo_name || null,
+        bdo_telephone: editableFields.bdo_telephone || null,
+        bdo_email: editableFields.bdo_email || null,
         updated_at: new Date().toISOString()
       }
 
@@ -305,6 +353,7 @@ export default function ClientDetail() {
       
       // Refresh client data
       fetchClient()
+      fetchLoanRequests()
     } catch (error) {
       console.error('Error updating client:', error)
       toast({
@@ -324,6 +373,19 @@ export default function ClientDetail() {
     }
   }
 
+  const getStageColor = (stage: string) => {
+    switch (stage) {
+      case 'Initial Contact': return 'secondary'
+      case 'Qualified': return 'default'
+      case 'Application': return 'secondary'
+      case 'Pre-approval': return 'outline'
+      case 'Documentation': return 'secondary'
+      case 'Closing': return 'default'
+      case 'Funded': return 'default'
+      default: return 'secondary'
+    }
+  }
+
   const getPriorityColor = (priority: string) => {
     switch (priority?.toLowerCase()) {
       case 'high': return 'destructive'
@@ -336,6 +398,7 @@ export default function ClientDetail() {
   const handleLoansUpdate = () => {
     fetchClientLoans()
     fetchClient() // Refresh client totals
+    fetchLoanRequests()
   }
 
   if (loading) {
@@ -380,6 +443,9 @@ export default function ClientDetail() {
               <Badge variant={getStatusColor(client.status)}>{client.status}</Badge>
               {client.priority && (
                 <Badge variant={getPriorityColor(client.priority)}>{client.priority} Priority</Badge>
+              )}
+              {client.stage && (
+                <Badge variant={getStageColor(client.stage)}>{client.stage}</Badge>
               )}
             </div>
           </div>
@@ -714,7 +780,244 @@ export default function ClientDetail() {
             </CardContent>
           </Card>
 
-          {/* POS Information */}
+          {/* Financial Information */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <DollarSign className="w-5 h-5" />
+                Financial Information
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="space-y-4">
+                  <div className="flex items-center gap-3">
+                    <DollarSign className="w-4 h-4" />
+                    <div className="flex-1">
+                      <p className="text-sm text-muted-foreground">Net Operating Income</p>
+                      {isEditing ? (
+                        <Input
+                          type="number"
+                          value={editableFields.net_operating_income}
+                          onChange={(e) => setEditableFields({...editableFields, net_operating_income: e.target.value})}
+                          placeholder="Enter net operating income"
+                        />
+                      ) : (
+                        <p className="font-medium">{formatCurrency(client.net_operating_income)}</p>
+                      )}
+                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-3">
+                    <Building className="w-4 h-4" />
+                    <div className="flex-1">
+                      <p className="text-sm text-muted-foreground">Bank/Lender Name</p>
+                      {isEditing ? (
+                        <Input
+                          value={editableFields.bank_lender_name}
+                          onChange={(e) => setEditableFields({...editableFields, bank_lender_name: e.target.value})}
+                          placeholder="Enter bank or lender name"
+                        />
+                      ) : (
+                        <p className="font-medium">{client.bank_lender_name || 'N/A'}</p>
+                      )}
+                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-3">
+                    <DollarSign className="w-4 h-4" />
+                    <div className="flex-1">
+                      <p className="text-sm text-muted-foreground">Existing Loan Amount</p>
+                      {isEditing ? (
+                        <Input
+                          type="number"
+                          value={editableFields.existing_loan_amount}
+                          onChange={(e) => setEditableFields({...editableFields, existing_loan_amount: e.target.value})}
+                          placeholder="Enter existing loan amount"
+                        />
+                      ) : (
+                        <p className="font-medium">{formatCurrency(client.existing_loan_amount)}</p>
+                      )}
+                    </div>
+                  </div>
+                </div>
+
+                <div className="space-y-4">
+                  <div className="flex items-center gap-3">
+                    <Target className="w-4 h-4" />
+                    <div className="flex-1">
+                      <p className="text-sm text-muted-foreground">Interest Rate (%)</p>
+                      {isEditing ? (
+                        <Input
+                          type="number"
+                          step="0.01"
+                          value={editableFields.interest_rate}
+                          onChange={(e) => setEditableFields({...editableFields, interest_rate: e.target.value})}
+                          placeholder="Enter interest rate"
+                        />
+                      ) : (
+                        <p className="font-medium">{client.interest_rate ? `${client.interest_rate}%` : 'N/A'}</p>
+                      )}
+                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-3">
+                    <Calendar className="w-4 h-4" />
+                    <div className="flex-1">
+                      <p className="text-sm text-muted-foreground">Maturity Date</p>
+                      {isEditing ? (
+                        <Input
+                          type="date"
+                          value={editableFields.maturity_date}
+                          onChange={(e) => setEditableFields({...editableFields, maturity_date: e.target.value})}
+                        />
+                      ) : (
+                        <p className="font-medium">{client.maturity_date ? new Date(client.maturity_date).toLocaleDateString() : 'N/A'}</p>
+                      )}
+                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-3">
+                    <Target className="w-4 h-4" />
+                    <div className="flex-1">
+                      <p className="text-sm text-muted-foreground">Stage</p>
+                      {isEditing ? (
+                        <Select value={editableFields.stage} onValueChange={(value) => setEditableFields({...editableFields, stage: value})}>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select stage" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="Initial Contact">Initial Contact</SelectItem>
+                            <SelectItem value="Qualified">Qualified</SelectItem>
+                            <SelectItem value="Application">Application</SelectItem>
+                            <SelectItem value="Pre-approval">Pre-approval</SelectItem>
+                            <SelectItem value="Documentation">Documentation</SelectItem>
+                            <SelectItem value="Closing">Closing</SelectItem>
+                            <SelectItem value="Funded">Funded</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      ) : (
+                        <p className="font-medium">{client.stage || 'N/A'}</p>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Property Information */}
+          {(client.owns_property || client.property_payment_amount || isEditing) && (
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Home className="w-5 h-5" />
+                  Property Information
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div className="flex items-center gap-3">
+                    <DollarSign className="w-4 h-4" />
+                    <div className="flex-1">
+                      <p className="text-sm text-muted-foreground">Property Payment Amount</p>
+                      {isEditing ? (
+                        <Input
+                          type="number"
+                          value={editableFields.property_payment_amount}
+                          onChange={(e) => setEditableFields({...editableFields, property_payment_amount: e.target.value})}
+                          placeholder="Enter monthly/yearly payment amount"
+                        />
+                      ) : (
+                        <p className="font-medium">{formatCurrency(client.property_payment_amount)}</p>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          )}
+
+          {/* BDO Information */}
+          {(client.bdo_name || client.bdo_telephone || client.bdo_email || isEditing) && (
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <User className="w-5 h-5" />
+                  BDO Information
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                  <div className="flex items-center gap-3">
+                    <User className="w-4 h-4" />
+                    <div className="flex-1">
+                      <p className="text-sm text-muted-foreground">BDO Name</p>
+                      {isEditing ? (
+                        <Input
+                          value={editableFields.bdo_name}
+                          onChange={(e) => setEditableFields({...editableFields, bdo_name: e.target.value})}
+                          placeholder="Enter BDO name"
+                        />
+                      ) : (
+                        <p className="font-medium">{client.bdo_name || 'N/A'}</p>
+                      )}
+                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-3">
+                    <Phone className="w-4 h-4" />
+                    <div className="flex-1">
+                      <p className="text-sm text-muted-foreground">BDO Telephone</p>
+                      {isEditing ? (
+                        <Input
+                          value={editableFields.bdo_telephone}
+                          onChange={(e) => setEditableFields({...editableFields, bdo_telephone: e.target.value})}
+                          placeholder="Enter BDO telephone"
+                        />
+                      ) : (
+                        <p className="font-medium">{client.bdo_telephone || 'N/A'}</p>
+                      )}
+                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-3">
+                    <Mail className="w-4 h-4" />
+                    <div className="flex-1">
+                      <p className="text-sm text-muted-foreground">BDO Email</p>
+                      {isEditing ? (
+                        <Input
+                          type="email"
+                          value={editableFields.bdo_email}
+                          onChange={(e) => setEditableFields({...editableFields, bdo_email: e.target.value})}
+                          placeholder="Enter BDO email"
+                        />
+                      ) : (
+                        <p className="font-medium">{client.bdo_email || 'N/A'}</p>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          )}
+
+          {/* Loan Requests Section */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <DollarSign className="w-5 h-5" />
+                Loan Requests
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <LoanRequestManager
+                clientId={client.id}
+                loanRequests={loanRequests}
+                onLoanRequestsUpdate={setLoanRequests}
+              />
+            </CardContent>
+          </Card>
           {(client.pos_system || client.monthly_processing_volume || client.processor_name || isEditing) && (
             <Card>
               <CardHeader>
