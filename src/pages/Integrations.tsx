@@ -130,6 +130,15 @@ export default function Integrations() {
   })
   const { toast } = useToast()
 
+  const handleBrowseMarketplace = () => {
+    // Open the integrations marketplace in a new tab
+    window.open('https://zapier.com/apps', '_blank')
+    toast({
+      title: "Opening Integration Marketplace",
+      description: "Browse thousands of available integrations",
+    })
+  }
+
   const handleWebhookSave = () => {
     if (webhookUrl) {
       toast({
@@ -189,7 +198,7 @@ export default function Integrations() {
               Connect your CRM with external services and enable AI-powered tools
             </p>
           </div>
-          <Button>
+          <Button onClick={handleBrowseMarketplace}>
             <ExternalLink className="w-4 h-4 mr-2" />
             Browse Marketplace
           </Button>
