@@ -218,8 +218,15 @@ export default function Users() {
     if (!editingUser) return
 
     try {
+      console.log('Updating user with data:', {
+        first_name: editingUser.first_name,
+        last_name: editingUser.last_name,
+        phone_number: editingUser.phone_number,
+        user_id: editingUser.id
+      })
+
       // Update profile
-      const { error: profileError } = await supabase
+      const { data: profileData, error: profileError } = await supabase
         .from('profiles')
         .update({
           first_name: editingUser.first_name,
@@ -227,16 +234,28 @@ export default function Users() {
           phone_number: editingUser.phone_number
         })
         .eq('id', editingUser.id)
+        .select()
 
-      if (profileError) throw profileError
+      console.log('Profile update result:', { profileData, profileError })
+
+      if (profileError) {
+        console.error('Profile update error:', profileError)
+        throw profileError
+      }
 
       // Update role
-      const { error: roleError } = await supabase
+      const { data: roleData, error: roleError } = await supabase
         .from('user_roles')
         .update({ role: editingUser.role })
         .eq('user_id', editingUser.id)
+        .select()
 
-      if (roleError) throw roleError
+      console.log('Role update result:', { roleData, roleError })
+
+      if (roleError) {
+        console.error('Role update error:', roleError)
+        throw roleError
+      }
 
       toast({
         title: "Success",
@@ -250,7 +269,7 @@ export default function Users() {
       console.error('Error updating user:', error)
       toast({
         title: "Error",
-        description: "Failed to update user",
+        description: `Failed to update user: ${error.message || 'Unknown error'}`,
         variant: "destructive"
       })
     }
