@@ -75,10 +75,6 @@ export default function Layout({ children }: LayoutProps) {
                 <GlobalSearch />
               </div>
               <NotificationBell />
-              <div className="flex items-center gap-2 text-sm font-medium text-foreground">
-                <Clock className="w-4 h-4 text-foreground" />
-                <span>{formatDateTime(currentDateTime)}</span>
-              </div>
             </div>
           </header>
           <main className="flex-1 p-6 bg-muted/30">
