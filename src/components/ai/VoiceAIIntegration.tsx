@@ -161,7 +161,14 @@ export function VoiceAIIntegration() {
                 <Phone className="h-4 w-4" />
                 Start AI Call
               </Button>
-              <Button variant="outline" className="gap-2">
+              <Button 
+                variant="outline" 
+                className="gap-2"
+                onClick={() => {
+                  // TODO: Implement voice settings functionality
+                  console.log('Voice settings clicked')
+                }}
+              >
                 <Volume2 className="h-4 w-4" />
                 Voice Settings
               </Button>

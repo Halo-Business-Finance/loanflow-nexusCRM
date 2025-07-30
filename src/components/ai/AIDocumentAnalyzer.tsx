@@ -208,7 +208,14 @@ export function AIDocumentAnalyzer() {
                 </div>
               </div>
 
-              <Button className="w-full" variant="outline">
+              <Button 
+                className="w-full" 
+                variant="outline"
+                onClick={() => {
+                  // TODO: Implement auto-populate loan application functionality
+                  console.log('Auto-populate loan application clicked')
+                }}
+              >
                 <DollarSign className="mr-2 h-4 w-4" />
                 Auto-populate Loan Application
               </Button>

@@ -263,7 +263,14 @@ export function WorkflowAutomation() {
             ))}
           </div>
 
-          <Button variant="outline" className="w-full gap-2">
+          <Button 
+            variant="outline" 
+            className="w-full gap-2"
+            onClick={() => {
+              // TODO: Implement create new automation functionality
+              console.log('Create new automation clicked')
+            }}
+          >
             <Settings className="h-4 w-4" />
             Create New Automation
           </Button>
