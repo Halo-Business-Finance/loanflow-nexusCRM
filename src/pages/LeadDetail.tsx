@@ -708,7 +708,8 @@ export default function LeadDetail() {
     }
   }
 
-  const getPriorityColor = (priority: string) => {
+  const getPriorityColor = (priority?: string) => {
+    if (!priority) return 'secondary'
     switch (priority.toLowerCase()) {
       case 'high': return 'destructive'
       case 'medium': return 'default'
@@ -717,7 +718,8 @@ export default function LeadDetail() {
     }
   }
 
-  const getStageColor = (stage: string) => {
+  const getStageColor = (stage?: string) => {
+    if (!stage) return 'secondary'
     switch (stage) {
       case 'Initial Contact': return 'secondary'
       case 'Qualified': return 'default'
