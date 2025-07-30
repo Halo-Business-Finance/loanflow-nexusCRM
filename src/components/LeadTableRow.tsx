@@ -118,12 +118,6 @@ export function LeadTableRow({ lead, onEdit, onDelete, onConvert, hasAdminRole }
         </div>
       </td>
 
-      {/* Contact Info */}
-      <td className="p-4">
-        <div className="text-sm text-muted-foreground truncate">
-          Contact info available in details
-        </div>
-      </td>
 
       {/* Loan Info */}
       <td className="p-4">
