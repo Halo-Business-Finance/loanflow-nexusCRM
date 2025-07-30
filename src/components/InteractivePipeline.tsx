@@ -34,20 +34,20 @@ const LeadCard = ({ lead, onStageChange, onViewDetails }: {
         <div className="flex items-start justify-between">
           <div className="space-y-2 flex-1">
             <div className="flex items-center gap-2">
-              <User className="h-4 w-4 text-muted-foreground" />
-              <span className="font-medium text-sm">{lead.name}</span>
+              <User className="h-4 w-4 text-muted-foreground dark:text-white" />
+              <span className="font-medium text-sm dark:text-white">{lead.name}</span>
             </div>
             
             {lead.business_name && (
-              <div className="text-xs text-muted-foreground">
+              <div className="text-xs text-muted-foreground dark:text-white">
                 {lead.business_name}
               </div>
             )}
             
             {lead.loan_amount && (
               <div className="flex items-center gap-2">
-                <DollarSign className="h-4 w-4 text-muted-foreground" />
-                <span className="text-sm text-muted-foreground">
+                <DollarSign className="h-4 w-4 text-muted-foreground dark:text-white" />
+                <span className="text-sm text-muted-foreground dark:text-white">
                   ${lead.loan_amount.toLocaleString()}
                 </span>
               </div>
@@ -56,8 +56,8 @@ const LeadCard = ({ lead, onStageChange, onViewDetails }: {
             <div className="flex items-center gap-4">
               {lead.email && (
                 <div className="flex items-center gap-1">
-                  <Mail className="h-3 w-3 text-muted-foreground" />
-                  <span className="text-xs text-muted-foreground truncate max-w-[120px]">
+                  <Mail className="h-3 w-3 text-muted-foreground dark:text-white" />
+                  <span className="text-xs text-muted-foreground dark:text-white truncate max-w-[120px]">
                     {lead.email}
                   </span>
                 </div>
@@ -65,8 +65,8 @@ const LeadCard = ({ lead, onStageChange, onViewDetails }: {
               
               {lead.phone && (
                 <div className="flex items-center gap-1">
-                  <Phone className="h-3 w-3 text-muted-foreground" />
-                  <span className="text-xs text-muted-foreground">
+                  <Phone className="h-3 w-3 text-muted-foreground dark:text-white" />
+                  <span className="text-xs text-muted-foreground dark:text-white">
                     {lead.phone}
                   </span>
                 </div>
@@ -75,8 +75,8 @@ const LeadCard = ({ lead, onStageChange, onViewDetails }: {
             
             {lead.last_contact && (
               <div className="flex items-center gap-1">
-                <Calendar className="h-3 w-3 text-muted-foreground" />
-                <span className="text-xs text-muted-foreground">
+                <Calendar className="h-3 w-3 text-muted-foreground dark:text-white" />
+                <span className="text-xs text-muted-foreground dark:text-white">
                   Last contact: {new Date(lead.last_contact).toLocaleDateString()}
                 </span>
               </div>
@@ -112,11 +112,11 @@ const LeadCard = ({ lead, onStageChange, onViewDetails }: {
                 </DialogTrigger>
                 <DialogContent>
                   <DialogHeader>
-                    <DialogTitle>Move Lead: {lead.name}</DialogTitle>
+                    <DialogTitle className="dark:text-white">Move Lead: {lead.name}</DialogTitle>
                   </DialogHeader>
                   <div className="space-y-4">
                     <div>
-                      <label className="text-sm font-medium">Move to Stage:</label>
+                      <label className="text-sm font-medium dark:text-white">Move to Stage:</label>
                       <Select onValueChange={(value) => onStageChange(lead.id, value)}>
                         <SelectTrigger>
                           <SelectValue placeholder="Select new stage" />
@@ -242,8 +242,8 @@ export function InteractivePipeline() {
         <CardHeader>
           <div className="flex items-center justify-between">
             <div>
-              <CardTitle>Interactive Sales Pipeline</CardTitle>
-              <p className="text-sm text-muted-foreground">
+              <CardTitle className="dark:text-white">Interactive Sales Pipeline</CardTitle>
+              <p className="text-sm text-muted-foreground dark:text-white">
                 Click on leads to view details or move them between stages
               </p>
             </div>
@@ -261,22 +261,22 @@ export function InteractivePipeline() {
             <Card className="shadow-soft">
               <CardHeader className="pb-3">
                 <div className="flex items-center justify-between">
-                  <CardTitle className="text-lg">{stage}</CardTitle>
+                  <CardTitle className="text-lg dark:text-white">{stage}</CardTitle>
                   <div className="flex items-center gap-2">
                     <Badge variant="secondary">{stageGroups[stage]?.length || 0}</Badge>
                     {index < stageOrder.length - 1 && (
-                      <ArrowRight className="h-4 w-4 text-muted-foreground" />
+                      <ArrowRight className="h-4 w-4 text-muted-foreground dark:text-white" />
                     )}
                   </div>
                 </div>
-                <div className="text-sm text-muted-foreground">
+                <div className="text-sm text-muted-foreground dark:text-white">
                   Total Value: ${stageGroups[stage]?.reduce((sum, lead) => sum + (lead.loan_amount || 0), 0).toLocaleString() || '0'}
                 </div>
               </CardHeader>
               <CardContent className="pt-0">
                 <div className="space-y-3 max-h-[500px] overflow-y-auto">
                   {stageGroups[stage]?.length === 0 ? (
-                    <div className="text-center py-8 text-muted-foreground">
+                    <div className="text-center py-8 text-muted-foreground dark:text-white">
                       No leads in this stage
                     </div>
                   ) : (
@@ -301,40 +301,40 @@ export function InteractivePipeline() {
         <Dialog open={!!selectedLead} onOpenChange={() => setSelectedLead(null)}>
           <DialogContent className="max-w-md">
             <DialogHeader>
-              <DialogTitle>Lead Details</DialogTitle>
+              <DialogTitle className="dark:text-white">Lead Details</DialogTitle>
             </DialogHeader>
             <div className="space-y-4">
               <div>
-                <label className="text-sm font-medium">Name:</label>
-                <p className="text-sm text-muted-foreground">{selectedLead.name}</p>
+                <label className="text-sm font-medium dark:text-white">Name:</label>
+                <p className="text-sm text-muted-foreground dark:text-white">{selectedLead.name}</p>
               </div>
               
               {selectedLead.business_name && (
                 <div>
-                  <label className="text-sm font-medium">Business:</label>
-                  <p className="text-sm text-muted-foreground">{selectedLead.business_name}</p>
+                  <label className="text-sm font-medium dark:text-white">Business:</label>
+                  <p className="text-sm text-muted-foreground dark:text-white">{selectedLead.business_name}</p>
                 </div>
               )}
               
               <div>
-                <label className="text-sm font-medium">Email:</label>
-                <p className="text-sm text-muted-foreground">{selectedLead.email}</p>
+                <label className="text-sm font-medium dark:text-white">Email:</label>
+                <p className="text-sm text-muted-foreground dark:text-white">{selectedLead.email}</p>
               </div>
               
               {selectedLead.phone && (
                 <div>
-                  <label className="text-sm font-medium">Phone:</label>
-                  <p className="text-sm text-muted-foreground">{selectedLead.phone}</p>
+                  <label className="text-sm font-medium dark:text-white">Phone:</label>
+                  <p className="text-sm text-muted-foreground dark:text-white">{selectedLead.phone}</p>
                 </div>
               )}
               
               <div>
-                <label className="text-sm font-medium">Current Stage:</label>
+                <label className="text-sm font-medium dark:text-white">Current Stage:</label>
                 <Badge className="ml-2">{selectedLead.stage}</Badge>
               </div>
               
               <div>
-                <label className="text-sm font-medium">Priority:</label>
+                <label className="text-sm font-medium dark:text-white">Priority:</label>
                 <Badge 
                   className="ml-2"
                   variant={
@@ -348,22 +348,22 @@ export function InteractivePipeline() {
               
               {selectedLead.loan_amount && (
                 <div>
-                  <label className="text-sm font-medium">Loan Amount:</label>
-                  <p className="text-sm text-muted-foreground">${selectedLead.loan_amount.toLocaleString()}</p>
+                  <label className="text-sm font-medium dark:text-white">Loan Amount:</label>
+                  <p className="text-sm text-muted-foreground dark:text-white">${selectedLead.loan_amount.toLocaleString()}</p>
                 </div>
               )}
               
               {selectedLead.loan_type && (
                 <div>
-                  <label className="text-sm font-medium">Loan Type:</label>
-                  <p className="text-sm text-muted-foreground">{selectedLead.loan_type}</p>
+                  <label className="text-sm font-medium dark:text-white">Loan Type:</label>
+                  <p className="text-sm text-muted-foreground dark:text-white">{selectedLead.loan_type}</p>
                 </div>
               )}
               
               {selectedLead.last_contact && (
                 <div>
-                  <label className="text-sm font-medium">Last Contact:</label>
-                  <p className="text-sm text-muted-foreground">
+                  <label className="text-sm font-medium dark:text-white">Last Contact:</label>
+                  <p className="text-sm text-muted-foreground dark:text-white">
                     {new Date(selectedLead.last_contact).toLocaleDateString()}
                   </p>
                 </div>
@@ -373,7 +373,7 @@ export function InteractivePipeline() {
         </Dialog>
       )}
 
-      <div className="mt-4 flex items-center justify-between text-sm text-muted-foreground">
+      <div className="mt-4 flex items-center justify-between text-sm text-muted-foreground dark:text-white">
         <div>
           Total Leads: {leads.length}
         </div>
