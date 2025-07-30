@@ -259,20 +259,33 @@ export default function Activities() {
   };
 
   const deleteActivity = async (activityId: string) => {
+    console.log('Attempting to delete activity:', activityId);
     try {
+      // First, remove from local state immediately for optimistic UI update
+      setActivities(prevActivities => prevActivities.filter(a => a.id !== activityId));
+      setNotifications(prevNotifications => prevNotifications.filter(n => n.id !== activityId));
+
       const { error } = await supabase
         .from('notifications')
         .delete()
         .eq('id', activityId);
 
-      if (error) throw error;
+      if (error) {
+        console.error('Database deletion error:', error);
+        // Revert the optimistic update if deletion failed
+        fetchNotifications();
+        throw error;
+      }
 
+      console.log('Activity deleted successfully from database');
+      
       toast({
         title: "Success",
         description: "Activity deleted successfully",
       });
 
-      fetchNotifications();
+      // Don't call fetchNotifications() here as the real-time subscription will handle it
+      // and we've already updated the local state optimistically
     } catch (error) {
       console.error('Error deleting activity:', error);
       toast({
