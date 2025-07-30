@@ -650,11 +650,11 @@ export default function Users() {
               <table className="w-full">
                 <thead>
                   <tr className="border-b border-border">
-                    <th className="text-left py-3 px-4 font-medium text-muted-foreground">User</th>
-                    <th className="text-left py-3 px-4 font-medium text-muted-foreground">Contact</th>
-                    <th className="text-left py-3 px-4 font-medium text-muted-foreground">Role</th>
-                    <th className="text-left py-3 px-4 font-medium text-muted-foreground">Status</th>
-                    <th className="text-right py-3 px-4 font-medium text-muted-foreground">Actions</th>
+                    <th className="text-left py-3 px-4 font-medium text-white">User</th>
+                    <th className="text-left py-3 px-4 font-medium text-white">Contact</th>
+                    <th className="text-left py-3 px-4 font-medium text-white">Role</th>
+                    <th className="text-left py-3 px-4 font-medium text-white">Status</th>
+                    <th className="text-right py-3 px-4 font-medium text-white">Actions</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -663,11 +663,11 @@ export default function Users() {
                       {/* User Column */}
                       <td className="py-4 px-4">
                         <div className="flex items-center gap-3">
-                          <Avatar className="h-10 w-10">
-                            <AvatarFallback className="bg-primary/10 text-black font-medium">
-                              {user.first_name?.[0]}{user.last_name?.[0]}
-                            </AvatarFallback>
-                          </Avatar>
+                           <Avatar className="h-10 w-10">
+                             <AvatarFallback className="bg-primary/10 text-white font-medium">
+                               {user.first_name?.[0]}{user.last_name?.[0]}
+                             </AvatarFallback>
+                           </Avatar>
                           <div>
                             <p className="font-medium text-foreground">
                               {user.first_name} {user.last_name}
