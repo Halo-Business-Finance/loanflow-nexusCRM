@@ -8,6 +8,7 @@ import { DollarSign, User, Calendar, ArrowRight, Eye, Edit } from "lucide-react"
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/components/auth/AuthProvider";
 import { useToast } from "@/hooks/use-toast";
+import { useNavigate } from "react-router-dom";
 
 interface LeadData {
   id: string;
@@ -28,8 +29,17 @@ const LeadCard = ({ lead, onStageChange, onViewDetails }: {
   onStageChange: (leadId: string, newStage: string) => void;
   onViewDetails: (lead: LeadData) => void;
 }) => {
+  const navigate = useNavigate();
+
+  const handleCardClick = () => {
+    navigate(`/leads/${lead.id}`);
+  };
+
+  const handleActionClick = (e: React.MouseEvent) => {
+    e.stopPropagation(); // Prevent card click when clicking action buttons
+  };
   return (
-    <Card className="mb-3 hover:shadow-md transition-shadow cursor-pointer">
+    <Card className="mb-3 hover:shadow-md transition-shadow cursor-pointer" onClick={handleCardClick}>
       <CardContent className="p-4">
         <div className="flex items-start justify-between">
           <div className="space-y-2 flex-1">
@@ -74,7 +84,7 @@ const LeadCard = ({ lead, onStageChange, onViewDetails }: {
               {lead.priority}
             </Badge>
             
-            <div className="flex gap-1">
+            <div className="flex gap-1" onClick={handleActionClick}>
               <Button
                 size="sm"
                 variant="ghost"
