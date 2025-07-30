@@ -131,6 +131,25 @@ export default function Leads() {
     }
   }, [user])
 
+  // Refetch leads when component mounts or comes back into focus
+  useEffect(() => {
+    const handleFocus = () => {
+      if (user) {
+        fetchLeads()
+      }
+    }
+
+    window.addEventListener('focus', handleFocus)
+    return () => window.removeEventListener('focus', handleFocus)
+  }, [user])
+
+  // Also refetch when navigating back to this page
+  useEffect(() => {
+    if (user && document.visibilityState === 'visible') {
+      fetchLeads()
+    }
+  }, [window.location.pathname, user])
+
   const fetchLeads = async () => {
     try {
       const { data, error } = await supabase
