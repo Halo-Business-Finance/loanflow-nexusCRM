@@ -225,6 +225,79 @@ export default function Pipeline() {
         </TabsContent>
         
         <TabsContent value="performance" className="space-y-6">
+          {/* Loan Close Performance */}
+          <Card className="shadow-soft">
+            <CardHeader>
+              <CardTitle className="dark:text-white">Loan Close Performance</CardTitle>
+              <p className="text-sm text-muted-foreground dark:text-white">Monthly closed loans vs targets and close percentage</p>
+            </CardHeader>
+            <CardContent>
+              <ChartContainer config={chartConfig} className="h-[350px]">
+                <LineChart data={loanCloseData}>
+                  <XAxis 
+                    dataKey="month" 
+                    tickLine={false}
+                    axisLine={false}
+                    className="text-muted-foreground dark:text-white"
+                  />
+                  <YAxis 
+                    yAxisId="left"
+                    tickLine={false}
+                    axisLine={false}
+                    className="text-muted-foreground dark:text-white"
+                  />
+                  <YAxis 
+                    yAxisId="right"
+                    orientation="right"
+                    tickLine={false}
+                    axisLine={false}
+                    className="text-muted-foreground dark:text-white"
+                    tickFormatter={(value) => `${value}%`}
+                  />
+                  <ChartTooltip 
+                    content={
+                      <ChartTooltipContent 
+                        labelFormatter={(label) => `${label} 2024`}
+                        formatter={(value, name) => [
+                          name === "closePercentage" ? `${value}%` : value,
+                          name === "closedLoans" ? "Closed" : 
+                          name === "targetLoans" ? "Target" : "Close %"
+                        ]}
+                      />
+                    }
+                  />
+                  <Line
+                    yAxisId="left"
+                    type="monotone"
+                    dataKey="closedLoans"
+                    stroke="var(--color-closedLoans)"
+                    strokeWidth={3}
+                    dot={{ fill: "var(--color-closedLoans)", strokeWidth: 2, r: 6 }}
+                    activeDot={{ r: 8, stroke: "var(--color-closedLoans)", strokeWidth: 2 }}
+                  />
+                  <Line
+                    yAxisId="left"
+                    type="monotone"
+                    dataKey="targetLoans"
+                    stroke="var(--color-targetLoans)"
+                    strokeWidth={2}
+                    strokeDasharray="5 5"
+                    dot={{ fill: "var(--color-targetLoans)", strokeWidth: 2, r: 4 }}
+                  />
+                  <Line
+                    yAxisId="right"
+                    type="monotone"
+                    dataKey="closePercentage"
+                    stroke="var(--color-closePercentage)"
+                    strokeWidth={2}
+                    dot={{ fill: "var(--color-closePercentage)", strokeWidth: 2, r: 4 }}
+                    activeDot={{ r: 6, stroke: "var(--color-closePercentage)", strokeWidth: 2 }}
+                  />
+                </LineChart>
+              </ChartContainer>
+            </CardContent>
+          </Card>
+
           {/* Pipeline Value Trend */}
           <Card className="shadow-soft">
             <CardHeader>
@@ -414,78 +487,6 @@ export default function Pipeline() {
         </TabsContent>
         
         <TabsContent value="analytics" className="space-y-6">
-          {/* Loan Close Performance */}
-          <Card className="shadow-soft">
-            <CardHeader>
-              <CardTitle className="dark:text-white">Loan Close Performance</CardTitle>
-              <p className="text-sm text-muted-foreground dark:text-white">Monthly closed loans vs targets and close percentage</p>
-            </CardHeader>
-            <CardContent>
-              <ChartContainer config={chartConfig} className="h-[350px]">
-                <LineChart data={loanCloseData}>
-                  <XAxis 
-                    dataKey="month" 
-                    tickLine={false}
-                    axisLine={false}
-                    className="text-muted-foreground dark:text-white"
-                  />
-                  <YAxis 
-                    yAxisId="left"
-                    tickLine={false}
-                    axisLine={false}
-                    className="text-muted-foreground dark:text-white"
-                  />
-                  <YAxis 
-                    yAxisId="right"
-                    orientation="right"
-                    tickLine={false}
-                    axisLine={false}
-                    className="text-muted-foreground dark:text-white"
-                    tickFormatter={(value) => `${value}%`}
-                  />
-                  <ChartTooltip 
-                    content={
-                      <ChartTooltipContent 
-                        labelFormatter={(label) => `${label} 2024`}
-                        formatter={(value, name) => [
-                          name === "closePercentage" ? `${value}%` : value,
-                          name === "closedLoans" ? "Closed" : 
-                          name === "targetLoans" ? "Target" : "Close %"
-                        ]}
-                      />
-                    }
-                  />
-                  <Line
-                    yAxisId="left"
-                    type="monotone"
-                    dataKey="closedLoans"
-                    stroke="var(--color-closedLoans)"
-                    strokeWidth={3}
-                    dot={{ fill: "var(--color-closedLoans)", strokeWidth: 2, r: 6 }}
-                    activeDot={{ r: 8, stroke: "var(--color-closedLoans)", strokeWidth: 2 }}
-                  />
-                  <Line
-                    yAxisId="left"
-                    type="monotone"
-                    dataKey="targetLoans"
-                    stroke="var(--color-targetLoans)"
-                    strokeWidth={2}
-                    strokeDasharray="5 5"
-                    dot={{ fill: "var(--color-targetLoans)", strokeWidth: 2, r: 4 }}
-                  />
-                  <Line
-                    yAxisId="right"
-                    type="monotone"
-                    dataKey="closePercentage"
-                    stroke="var(--color-closePercentage)"
-                    strokeWidth={2}
-                    dot={{ fill: "var(--color-closePercentage)", strokeWidth: 2, r: 4 }}
-                    activeDot={{ r: 6, stroke: "var(--color-closePercentage)", strokeWidth: 2 }}
-                  />
-                </LineChart>
-              </ChartContainer>
-            </CardContent>
-          </Card>
 
         </TabsContent>
       </Tabs>
