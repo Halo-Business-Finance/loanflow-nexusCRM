@@ -672,7 +672,7 @@ export default function Users() {
                             <p className="font-medium text-foreground">
                               {user.first_name} {user.last_name}
                             </p>
-                            <p className="text-sm text-muted-foreground">{user.email}</p>
+                            <p className="text-sm text-white">{user.email}</p>
                           </div>
                         </div>
                       </td>
@@ -683,16 +683,16 @@ export default function Users() {
                           {user.phone_number ? (
                             <PhoneDialer 
                               trigger={
-                                <button className="flex items-center gap-2 text-sm text-muted-foreground hover:text-primary transition-colors">
+                                <button className="flex items-center gap-2 text-sm text-white hover:text-primary transition-colors">
                                   <Phone className="h-4 w-4 text-white" />
                                   {user.phone_number}
                                 </button>
                               }
                             />
                           ) : (
-                            <span className="text-sm text-muted-foreground">No phone</span>
+                            <span className="text-sm text-white">No phone</span>
                           )}
-                          <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                          <div className="flex items-center gap-2 text-sm text-white">
                             <Calendar className="h-4 w-4 text-white" />
                             {new Date(user.created_at).toLocaleDateString()}
                           </div>
