@@ -184,8 +184,8 @@ export function SecurityMonitor() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-2xl font-bold tracking-tight">Security Monitor</h2>
-          <p className="text-muted-foreground">
+          <h2 className="text-2xl font-bold tracking-tight text-foreground">Security Monitor</h2>
+          <p className="text-foreground/70">
             Monitor security threats and suspicious activities
           </p>
         </div>
@@ -276,13 +276,13 @@ export function SecurityMonitor() {
                     <div className="space-y-2">
                       {dashboardData.top_blocked_countries.map((country, index) => (
                         <div key={index} className="flex justify-between items-center">
-                          <span className="font-medium">{country.country}</span>
+                          <span className="font-medium text-foreground">{country.country}</span>
                           <Badge variant="outline">{country.count}</Badge>
                         </div>
                       ))}
                     </div>
                   ) : (
-                    <p className="text-muted-foreground">No blocked countries in the last 24 hours</p>
+                    <p className="text-foreground/70">No blocked countries in the last 24 hours</p>
                   )}
                 </CardContent>
               </Card>
@@ -296,7 +296,7 @@ export function SecurityMonitor() {
                     <div className="space-y-2">
                       {dashboardData.top_suspicious_ips.map((ip, index) => (
                         <div key={index} className="flex justify-between items-center">
-                          <span className="font-mono text-sm">{ip.ip}</span>
+                          <span className="font-mono text-sm text-foreground">{ip.ip}</span>
                           <div className="flex gap-2">
                             <Badge variant="outline">{ip.attempts} attempts</Badge>
                             <Badge variant="secondary">{ip.emails} emails</Badge>
@@ -305,7 +305,7 @@ export function SecurityMonitor() {
                       ))}
                     </div>
                   ) : (
-                    <p className="text-muted-foreground">No suspicious IPs detected</p>
+                    <p className="text-foreground/70">No suspicious IPs detected</p>
                   )}
                 </CardContent>
               </Card>
@@ -330,7 +330,7 @@ export function SecurityMonitor() {
                           <AlertDescription className="mt-1">
                             {alert.message}
                           </AlertDescription>
-                          <div className="text-xs text-muted-foreground mt-2">
+                          <div className="text-xs text-foreground/50 mt-2">
                             {new Date(alert.created_at).toLocaleString()}
                           </div>
                         </div>
@@ -353,7 +353,7 @@ export function SecurityMonitor() {
                 <CardContent className="flex items-center justify-center h-32">
                   <div className="text-center">
                     <CheckCircle className="h-12 w-12 text-green-600 mx-auto mb-2" />
-                    <p className="text-muted-foreground">No active security alerts</p>
+                    <p className="text-foreground/70">No active security alerts</p>
                   </div>
                 </CardContent>
               </Card>
