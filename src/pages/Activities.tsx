@@ -366,7 +366,7 @@ export default function Activities() {
         <div className="flex justify-between items-center">
           <div>
             <h1 className="text-3xl font-bold text-foreground dark:text-white">Activities & Notifications</h1>
-            <p className="text-muted-foreground">Track all notifications, reminders, and system activities</p>
+            <p className="text-foreground">Track all notifications, reminders, and system activities</p>
           </div>
           <div className="flex gap-4">
             <Button onClick={fetchNotifications} variant="outline" className="gap-2">
@@ -524,7 +524,7 @@ export default function Activities() {
             ) : filteredActivities.length === 0 ? (
               <div className="text-center py-8">
                 <Bell className="h-12 w-12 text-white mx-auto mb-4" />
-                <p className="text-muted-foreground">
+                <p className="text-foreground">
                   {searchTerm || filterType !== "all" || filterStatus !== "all" 
                     ? "No activities match your filters" 
                     : "No notifications or activities yet"
