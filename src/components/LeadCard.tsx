@@ -155,13 +155,6 @@ export function LeadCard({ lead, onEdit, onDelete, onConvert, hasAdminRole }: Le
               }
             />
           )}
-          
-          {lead.location && (
-            <div className="flex items-center gap-2 text-sm">
-              <MapPin className="w-4 h-4 text-white" />
-              <span className="text-foreground truncate">{lead.location}</span>
-            </div>
-          )}
         </div>
 
         {/* Financial Info */}
