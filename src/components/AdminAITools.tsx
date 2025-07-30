@@ -47,7 +47,7 @@ export function AdminAITools() {
           <h2 className="text-2xl font-bold">AI & Automation Tools</h2>
           <p className="text-muted-foreground">Advanced tools to boost loan origination efficiency</p>
         </div>
-        <Badge variant="destructive" className="ml-auto">Admin Only</Badge>
+        <Badge variant="default" className="ml-auto">Admin Only</Badge>
       </div>
 
       <Tabs defaultValue="ai-assistant" className="space-y-6">

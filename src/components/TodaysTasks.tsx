@@ -134,7 +134,7 @@ export function TodaysTasks() {
           <Clock className="h-5 w-5" />
           Today's Tasks
           {(todaysTasks.length + overdueTasks.length) > 0 && (
-            <Badge variant="destructive" className="ml-auto">
+            <Badge variant="default" className="ml-auto">
               {todaysTasks.length + overdueTasks.length}
             </Badge>
           )}
@@ -168,7 +168,7 @@ export function TodaysTasks() {
                       Overdue - {format(new Date(task.created_at), 'MMM d')}
                     </div>
                   </div>
-                  <Badge variant="destructive" className="text-xs">
+                  <Badge variant="default" className="text-xs">
                     Overdue
                   </Badge>
                 </div>
@@ -192,7 +192,7 @@ export function TodaysTasks() {
                     <div className="text-xs text-muted-foreground truncate">{task.message}</div>
                   </div>
                   <Badge 
-                    variant={task.priority === 'high' ? 'destructive' : task.priority === 'medium' ? 'default' : 'secondary'}
+                    variant={task.priority === 'high' ? 'default' : task.priority === 'medium' ? 'default' : 'secondary'}
                     className="text-xs capitalize"
                   >
                     {task.priority}
