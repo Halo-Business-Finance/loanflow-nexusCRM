@@ -8,7 +8,6 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 import { useToast } from "@/hooks/use-toast"
-import { PhoneDialer } from "@/components/PhoneDialer"
 import { ErrorBoundary } from "@/components/ErrorBoundary"
 
 // New modular components
@@ -494,8 +493,6 @@ export default function Leads() {
             </AlertDialogContent>
           </AlertDialog>
 
-          {/* Communication Tools */}
-          <PhoneDialer />
         </div>
       </Layout>
     </ErrorBoundary>
