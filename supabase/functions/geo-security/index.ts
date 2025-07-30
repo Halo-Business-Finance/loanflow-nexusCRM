@@ -32,22 +32,22 @@ serve(async (req) => {
     
     console.log('Checking geo-restriction for IP:', clientIP);
 
-    // Known Tor exit nodes and VPN/Proxy indicators
+    // Known Tor exit nodes and VPN/Proxy indicators - be more specific
     const suspiciousHeaders = [
       'tor-exit-node',
-      'x-tor',
-      'x-forwarded-proto',
-      'x-forwarded-host'
+      'x-tor'
     ];
 
     const userAgent = req.headers.get('user-agent') || '';
+    // Only flag as suspicious for actual Tor/proxy indicators, not normal headers
     const isSuspicious = suspiciousHeaders.some(header => req.headers.has(header)) ||
-                        userAgent.toLowerCase().includes('tor') ||
-                        userAgent.toLowerCase().includes('proxy');
+                        userAgent.toLowerCase().includes('tor browser') ||
+                        userAgent.toLowerCase().includes('phantom') ||
+                        userAgent.toLowerCase().includes('headless');
 
     // Check IP geolocation using a free service
     let countryCode = 'UNKNOWN';
-    let isAllowed = true; // Temporarily allow all traffic while debugging
+    let isAllowed = false; // Default to blocked for security
     
     console.log('DEBUG: Starting geo check for IP:', clientIP);
     console.log('DEBUG: User agent:', userAgent);
@@ -70,8 +70,12 @@ serve(async (req) => {
         
         console.log('DEBUG: Geolocation result:', { ip: clientIP, country: countryCode, fullData: geoData });
 
-        // Check if country is allowed (US only)
-        isAllowed = countryCode === 'US' && !isSuspicious;
+        // Allow US users unless they are actually suspicious
+        if (countryCode === 'US') {
+          isAllowed = !isSuspicious;
+        } else {
+          isAllowed = false; // Block non-US
+        }
         
         console.log('DEBUG: Access decision - Country:', countryCode, 'Suspicious:', isSuspicious, 'Allowed:', isAllowed);
       }
