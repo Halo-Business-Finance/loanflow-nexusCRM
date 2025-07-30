@@ -188,7 +188,7 @@ export function LeadCard({ lead, onEdit, onDelete, onConvert, hasAdminRole }: Le
               {lead.stage}
             </Badge>
             {lead.loan_type && (
-              <span className="text-xs text-muted-foreground bg-muted/50 px-2 py-1 rounded">
+              <span className="text-xs text-white bg-muted/50 px-2 py-1 rounded">
                 {lead.loan_type}
               </span>
             )}

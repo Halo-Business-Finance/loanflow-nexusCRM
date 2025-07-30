@@ -143,7 +143,7 @@ export function LeadTableRow({ lead, onEdit, onDelete, onConvert, hasAdminRole }
 
       {/* Loan Type */}
       <td className="p-4">
-        <span className="text-xs bg-muted/50 text-foreground px-2 py-1 rounded font-medium">
+        <span className="text-xs bg-muted/50 text-white px-2 py-1 rounded font-medium">
           {lead.loan_type || '-'}
         </span>
       </td>
