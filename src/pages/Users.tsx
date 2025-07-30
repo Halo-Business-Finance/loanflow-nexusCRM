@@ -629,7 +629,7 @@ export default function Users() {
                   onChange={(e) => setSearchTerm(e.target.value)}
                 />
               </div>
-              <div className="flex items-center gap-2 text-sm text-muted-foreground">
+              <div className="flex items-center gap-2 text-sm text-white">
                 <UsersIcon className="h-4 w-4 text-white" />
                 {filteredUsers.length} users
               </div>
