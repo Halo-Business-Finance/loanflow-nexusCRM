@@ -784,7 +784,7 @@ export default function Leads() {
                     <table className="w-full">
                       <thead>
                         <tr className="border-b border-muted/30 bg-muted/20">
-                          <th className="text-left p-4 font-semibold text-foreground">Lead</th>
+                          <th className="text-left p-4 font-semibold text-foreground">Lead Info</th>
                           <th className="text-right p-4 font-semibold text-foreground">Loan Amount</th>
                           <th className="text-left p-4 font-semibold text-foreground">Loan Type</th>
                           <th className="text-left p-4 font-semibold text-foreground">Stage</th>

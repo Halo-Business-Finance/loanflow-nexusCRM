@@ -88,7 +88,7 @@ export function LeadTableRow({ lead, onEdit, onDelete, onConvert, hasAdminRole }
       }`}
       onClick={() => navigate(`/leads/${lead.id}`)}
     >
-      {/* Name & Business */}
+      {/* Lead Info */}
       <td className="p-4">
         <div className="flex items-center gap-3">
           <Avatar className="h-10 w-10 border border-muted/30">
@@ -137,7 +137,7 @@ export function LeadTableRow({ lead, onEdit, onDelete, onConvert, hasAdminRole }
         )}
       </td>
 
-      {/* Stage & Priority */}
+      {/* Stage */}
       <td className="p-4">
         <div className="flex items-center gap-2 flex-wrap">
           <Badge variant={getStageColor(lead.stage)} className="text-xs">
