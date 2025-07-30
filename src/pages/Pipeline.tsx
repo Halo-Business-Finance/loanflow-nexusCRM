@@ -238,13 +238,13 @@ export default function Pipeline() {
                     dataKey="month" 
                     tickLine={false}
                     axisLine={false}
-                    className="text-muted-foreground"
+                    className="text-muted-foreground dark:text-white"
                   />
                   <YAxis 
                     yAxisId="left"
                     tickLine={false}
                     axisLine={false}
-                    className="text-muted-foreground"
+                    className="text-muted-foreground dark:text-white"
                     tickFormatter={(value) => `$${(value / 1000000).toFixed(1)}M`}
                   />
                   <YAxis 
@@ -252,7 +252,7 @@ export default function Pipeline() {
                     orientation="right"
                     tickLine={false}
                     axisLine={false}
-                    className="text-muted-foreground"
+                    className="text-muted-foreground dark:text-white"
                   />
                   <ChartTooltip 
                     content={
@@ -300,7 +300,7 @@ export default function Pipeline() {
                     dataKey="stage" 
                     tickLine={false}
                     axisLine={false}
-                    className="text-muted-foreground"
+                    className="text-muted-foreground dark:text-white"
                     angle={-45}
                     textAnchor="end"
                     height={80}
@@ -309,14 +309,14 @@ export default function Pipeline() {
                     yAxisId="left"
                     tickLine={false}
                     axisLine={false}
-                    className="text-muted-foreground"
+                    className="text-muted-foreground dark:text-white"
                   />
                   <YAxis 
                     yAxisId="right"
                     orientation="right"
                     tickLine={false}
                     axisLine={false}
-                    className="text-muted-foreground"
+                    className="text-muted-foreground dark:text-white"
                   />
                   <ChartTooltip 
                     content={
@@ -427,20 +427,20 @@ export default function Pipeline() {
                     dataKey="month" 
                     tickLine={false}
                     axisLine={false}
-                    className="text-muted-foreground"
+                    className="text-muted-foreground dark:text-white"
                   />
                   <YAxis 
                     yAxisId="left"
                     tickLine={false}
                     axisLine={false}
-                    className="text-muted-foreground"
+                    className="text-muted-foreground dark:text-white"
                   />
                   <YAxis 
                     yAxisId="right"
                     orientation="right"
                     tickLine={false}
                     axisLine={false}
-                    className="text-muted-foreground"
+                    className="text-muted-foreground dark:text-white"
                     tickFormatter={(value) => `${value}%`}
                   />
                   <ChartTooltip 
