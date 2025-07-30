@@ -49,8 +49,8 @@ export class DataFieldValidator {
       warnings: []
     }
 
-    // Handle both nested contact_entity and direct contact entity data
-    const contactEntity = leadData.contact_entity || leadData
+    // Handle both nested contact_entities and direct contact entity data
+    const contactEntity = leadData.contact_entities || leadData.contact_entity || leadData
     
     // Check required fields from contact entity
     if (!contactEntity?.name) {
@@ -165,19 +165,42 @@ export class DataFieldValidator {
       const { data: leads } = await supabase
         .from('leads')
         .select(`
-          *,
-          contact_entity:contact_entities!contact_entity_id (*)
+          id,
+          contact_entity_id,
+          user_id,
+          last_contact,
+          created_at,
+          updated_at,
+          is_converted_to_client,
+          converted_at,
+          contact_entities!inner (
+            name,
+            email,
+            phone,
+            business_name,
+            loan_amount,
+            loan_type,
+            stage,
+            priority,
+            credit_score,
+            annual_revenue,
+            business_address,
+            year_established,
+            owns_property,
+            notes,
+            call_notes
+          )
         `)
       
       if (leads) {
         for (const lead of leads) {
           console.log('Lead data structure:', lead);
-          console.log('Contact entity:', lead.contact_entity);
+          console.log('Contact entities:', lead.contact_entities);
           const validation = await this.validateLeadData(lead)
           if (!validation.isValid || validation.warnings.length > 0) {
             leadIssues.push({
               id: lead.id,
-              name: lead.contact_entity?.name || 'Unknown',
+              name: lead.contact_entities?.name || 'Unknown',
               validation
             })
           }
