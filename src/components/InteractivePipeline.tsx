@@ -8,20 +8,11 @@ import { DollarSign, User, Calendar, ArrowRight, Eye, Edit } from "lucide-react"
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/components/auth/AuthProvider";
 import { useToast } from "@/hooks/use-toast";
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom"
+import { Lead } from "@/types/lead"
 
-interface LeadData {
-  id: string;
-  name: string;
-  email: string;
-  phone?: string;
-  loan_amount?: number;
-  priority: string;
-  last_contact?: string;
-  stage: string;
-  business_name?: string;
-  loan_type?: string;
-}
+// Use Lead type from centralized types but alias as LeadData for backwards compatibility
+type LeadData = Lead
 
 // Lead Card Component
 const LeadCard = ({ lead, onStageChange, onViewDetails }: { 

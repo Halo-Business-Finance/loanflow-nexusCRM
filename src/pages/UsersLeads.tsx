@@ -23,20 +23,7 @@ interface UserWithLeads {
   convertedLeads: number
 }
 
-interface Lead {
-  id: string
-  name: string
-  email: string
-  phone?: string
-  stage: string
-  priority: string
-  loan_amount: number
-  loan_type: string
-  business_name?: string
-  created_at: string
-  is_converted_to_client: boolean
-  last_contact?: string
-}
+import { Lead } from "@/types/lead"
 
 export default function UsersLeads() {
   const [usersWithLeads, setUsersWithLeads] = useState<UserWithLeads[]>([])
@@ -120,6 +107,8 @@ export default function UsersLeads() {
         if (userLeads && leadItem.contact_entity) {
           const lead: Lead = {
             id: leadItem.id,
+            contact_entity_id: leadItem.contact_entity_id,
+            user_id: leadItem.user_id,
             name: leadItem.contact_entity.name || 'Unknown',
             email: leadItem.contact_entity.email || '',
             phone: leadItem.contact_entity.phone || '',

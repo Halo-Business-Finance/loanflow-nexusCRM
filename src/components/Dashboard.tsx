@@ -63,20 +63,7 @@ const initialMetrics = [
   }
 ]
 
-// Types for our data structures
-interface Lead {
-  id: string;
-  name: string;
-  email: string;
-  stage: string;
-  priority: string;
-  loan_amount?: number;
-  loan_type?: string;
-  created_at: string;
-  address?: string;
-  is_converted_to_client?: boolean;
-  last_contact?: string;
-}
+import { Lead } from "@/types/lead"
 
 interface PipelineEntry {
   id: string;

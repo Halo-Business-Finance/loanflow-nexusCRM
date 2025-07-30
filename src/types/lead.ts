@@ -7,16 +7,32 @@ export interface Lead {
   phone?: string
   location?: string
   business_name?: string
+  business_address?: string
   naics_code?: string
   ownership_structure?: string
+  owns_property?: boolean
+  property_payment_amount?: number
+  year_established?: number
   loan_amount?: number
   loan_type?: string
   stage: string
   priority: string
   credit_score?: number
   net_operating_income?: number
+  bank_lender_name?: string
+  annual_revenue?: number
+  interest_rate?: number
+  maturity_date?: string
+  existing_loan_amount?: number
+  notes?: string
+  call_notes?: string
   last_contact: string
+  created_at: string
+  income?: number
   is_converted_to_client: boolean
+  bdo_name?: string
+  bdo_telephone?: string
+  bdo_email?: string
 }
 
 export interface ContactEntity {
