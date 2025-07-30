@@ -92,7 +92,7 @@ export function LeadTableRow({ lead, onEdit, onDelete, onConvert, hasAdminRole }
       <td className="p-4">
         <div className="flex items-center gap-3">
           <Avatar className="h-10 w-10 border border-muted/30">
-            <AvatarFallback className="bg-primary/10 text-white font-medium text-sm">
+            <AvatarFallback className="bg-primary/10 text-primary font-medium text-sm">
               {getInitials(lead.name)}
             </AvatarFallback>
           </Avatar>
@@ -107,7 +107,7 @@ export function LeadTableRow({ lead, onEdit, onDelete, onConvert, hasAdminRole }
               <div className="text-sm text-muted-foreground truncate">{lead.business_name}</div>
             )}
             <div className="flex items-center gap-1 text-xs text-muted-foreground mt-1">
-              <Calendar className="w-3 h-3 text-white" />
+              <Calendar className="w-3 h-3 text-muted-foreground" />
               <span>
                 {daysSinceContact === 0 ? 'Today' : 
                  daysSinceContact === 1 ? '1 day ago' : 
@@ -120,7 +120,7 @@ export function LeadTableRow({ lead, onEdit, onDelete, onConvert, hasAdminRole }
 
       {/* Contact Info */}
       <td className="p-4">
-        <div className="text-sm text-white truncate">
+        <div className="text-sm text-muted-foreground truncate">
           Contact info available in details
         </div>
       </td>
@@ -129,12 +129,12 @@ export function LeadTableRow({ lead, onEdit, onDelete, onConvert, hasAdminRole }
       <td className="p-4">
         <div className="space-y-1">
           {lead.loan_type && (
-            <div className="text-xs text-white bg-muted/50 px-2 py-1 rounded font-medium">
+            <div className="text-xs text-card-foreground bg-muted/50 px-2 py-1 rounded font-medium">
               {lead.loan_type}
             </div>
           )}
           {lead.loan_amount && (
-            <div className="font-medium text-white text-sm">
+            <div className="font-medium text-card-foreground text-sm">
               ${lead.loan_amount.toLocaleString()}
             </div>
           )}

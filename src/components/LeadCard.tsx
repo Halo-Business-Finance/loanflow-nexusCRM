@@ -96,25 +96,25 @@ export function LeadCard({ lead, onEdit, onDelete, onConvert, hasAdminRole }: Le
         <div className="flex items-start justify-between">
           <div className="flex items-center gap-3">
             <Avatar className="h-12 w-12 border-2 border-primary/20">
-              <AvatarFallback className="bg-primary/10 text-white font-semibold">
+              <AvatarFallback className="bg-primary/10 text-primary font-semibold">
                 {getInitials(lead.name)}
               </AvatarFallback>
             </Avatar>
             <div className="flex-1 min-w-0">
               <div className="flex items-center gap-2 mb-1">
-                <h3 className="font-semibold text-white truncate">{lead.name}</h3>
+                <h3 className="font-semibold text-card-foreground truncate">{lead.name}</h3>
                 {lead.is_converted_to_client && (
                   <Badge variant="default" className="text-xs">Client</Badge>
                 )}
               </div>
               {lead.business_name && (
-                <div className="flex items-center gap-1 text-sm text-white mb-1">
-                  <Building className="w-3 h-3 text-white" />
+                <div className="flex items-center gap-1 text-sm text-muted-foreground mb-1">
+                  <Building className="w-3 h-3 text-muted-foreground" />
                   <span className="truncate">{lead.business_name}</span>
                 </div>
               )}
-              <div className="flex items-center gap-1 text-xs text-white">
-                <Calendar className="w-3 h-3 text-white" />
+              <div className="flex items-center gap-1 text-xs text-muted-foreground">
+                <Calendar className="w-3 h-3 text-muted-foreground" />
                 <span>
                   {daysSinceContact === 0 ? 'Today' : 
                    daysSinceContact === 1 ? '1 day ago' : 
@@ -132,18 +132,18 @@ export function LeadCard({ lead, onEdit, onDelete, onConvert, hasAdminRole }: Le
           <div className="pt-2 border-t border-muted/30">
             {lead.loan_type && (
               <div className="flex items-center justify-between text-sm mb-2">
-                <span className="text-white">Loan Type</span>
-                <span className="font-semibold text-white">{lead.loan_type}</span>
+                <span className="text-muted-foreground">Loan Type</span>
+                <span className="font-semibold text-card-foreground">{lead.loan_type}</span>
               </div>
             )}
             
             {lead.loan_amount && (
               <div className="flex items-center justify-between text-sm">
                 <div className="flex items-center gap-2">
-                  <DollarSign className="w-4 h-4 text-white" />
-                  <span className="text-white">Loan Amount</span>
+                  <DollarSign className="w-4 h-4 text-muted-foreground" />
+                  <span className="text-muted-foreground">Loan Amount</span>
                 </div>
-                <span className="font-semibold text-white">${lead.loan_amount.toLocaleString()}</span>
+                <span className="font-semibold text-card-foreground">${lead.loan_amount.toLocaleString()}</span>
               </div>
             )}
           </div>
