@@ -98,16 +98,16 @@ export function LeadTableRow({ lead, onEdit, onDelete, onConvert, hasAdminRole }
           </Avatar>
           <div className="min-w-0 flex-1">
             <div className="flex items-center gap-2 mb-1">
-              <span className="font-medium text-foreground truncate">{lead.name}</span>
+              <span className="font-medium text-foreground dark:text-white truncate">{lead.name}</span>
               {lead.is_converted_to_client && (
                 <Badge variant="default" className="text-xs">Client</Badge>
               )}
             </div>
             {lead.business_name && (
-              <div className="text-sm text-muted-foreground truncate">{lead.business_name}</div>
+              <div className="text-sm text-muted-foreground dark:text-white truncate">{lead.business_name}</div>
             )}
-            <div className="flex items-center gap-1 text-xs text-muted-foreground mt-1">
-              <Calendar className="w-3 h-3 text-muted-foreground" />
+            <div className="flex items-center gap-1 text-xs text-muted-foreground dark:text-white mt-1">
+              <Calendar className="w-3 h-3 text-muted-foreground dark:text-white" />
               <span>
                 {daysSinceContact === 0 ? 'Today' : 
                  daysSinceContact === 1 ? '1 day ago' : 
@@ -122,7 +122,7 @@ export function LeadTableRow({ lead, onEdit, onDelete, onConvert, hasAdminRole }
       {/* Loan Amount */}
       <td className="p-4 text-right">
         {lead.loan_amount && (
-          <div className="font-medium text-foreground text-sm">
+          <div className="font-medium text-foreground dark:text-white text-sm">
             ${lead.loan_amount.toLocaleString()}
           </div>
         )}
@@ -131,7 +131,7 @@ export function LeadTableRow({ lead, onEdit, onDelete, onConvert, hasAdminRole }
       {/* Loan Type */}
       <td className="p-4">
         {lead.loan_type && (
-          <div className="text-sm text-foreground">
+          <div className="text-sm text-foreground dark:text-white">
             {lead.loan_type}
           </div>
         )}

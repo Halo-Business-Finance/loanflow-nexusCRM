@@ -104,19 +104,19 @@ export function LeadCard({ lead, onEdit, onDelete, onConvert, hasAdminRole }: Le
             </Avatar>
             <div className="flex-1 min-w-0 pr-2">
               <div className="flex items-center gap-2 mb-1">
-                <h3 className="font-semibold text-foreground truncate">{lead.name}</h3>
+                <h3 className="font-semibold text-foreground dark:text-white truncate">{lead.name}</h3>
                 {lead.is_converted_to_client && (
                   <Badge variant="default" className="text-xs">Client</Badge>
                 )}
               </div>
               {lead.business_name && (
-                <div className="flex items-center gap-1 text-sm text-black mb-1">
-                  <Building className="w-3 h-3 text-black" />
+                <div className="flex items-center gap-1 text-sm text-black dark:text-white mb-1">
+                  <Building className="w-3 h-3 text-black dark:text-white" />
                   <span className="truncate">{lead.business_name}</span>
                 </div>
               )}
-              <div className="flex items-center gap-1 text-xs text-black">
-                <Calendar className="w-3 h-3 text-black" />
+              <div className="flex items-center gap-1 text-xs text-black dark:text-white">
+                <Calendar className="w-3 h-3 text-black dark:text-white" />
                 <span>
                   {daysSinceContact === 0 ? 'Today' : 
                    daysSinceContact === 1 ? '1 day ago' : 
@@ -134,18 +134,18 @@ export function LeadCard({ lead, onEdit, onDelete, onConvert, hasAdminRole }: Le
           <div className="pt-2 border-t border-muted/30">
             {lead.loan_type && (
               <div className="flex items-center justify-between text-sm mb-2">
-                <span className="text-black">Loan Type</span>
-                <span className="font-semibold text-black">{lead.loan_type}</span>
+                <span className="text-black dark:text-white">Loan Type</span>
+                <span className="font-semibold text-black dark:text-white">{lead.loan_type}</span>
               </div>
             )}
             
             {lead.loan_amount && (
               <div className="flex items-center justify-between text-sm">
                 <div className="flex items-center gap-2">
-                  <DollarSign className="w-4 h-4 text-muted-foreground" />
-                  <span className="text-black">Loan Amount</span>
+                  <DollarSign className="w-4 h-4 text-muted-foreground dark:text-white" />
+                  <span className="text-black dark:text-white">Loan Amount</span>
                 </div>
-                <span className="font-semibold text-black">${lead.loan_amount.toLocaleString()}</span>
+                <span className="font-semibold text-black dark:text-white">${lead.loan_amount.toLocaleString()}</span>
               </div>
             )}
           </div>

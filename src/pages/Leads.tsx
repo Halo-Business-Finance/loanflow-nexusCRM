@@ -454,7 +454,7 @@ export default function Leads() {
         <div className="flex items-center justify-center min-h-64">
           <div className="flex flex-col items-center gap-4">
             <Loader2 className="h-8 w-8 animate-spin text-primary" />
-            <p className="text-muted-foreground">Loading leads...</p>
+            <p className="text-muted-foreground dark:text-white">Loading leads...</p>
           </div>
         </div>
       </Layout>
@@ -468,8 +468,8 @@ export default function Leads() {
         <div className="flex flex-col gap-6">
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
             <div>
-              <h1 className="text-4xl font-bold text-foreground mb-2">Leads Management</h1>
-              <p className="text-muted-foreground text-lg">Track and manage your loan prospects</p>
+              <h1 className="text-4xl font-bold text-foreground dark:text-white mb-2">Leads Management</h1>
+              <p className="text-muted-foreground dark:text-white text-lg">Track and manage your loan prospects</p>
             </div>
             <Dialog open={showAddDialog} onOpenChange={setShowAddDialog}>
               <DialogTrigger asChild>
@@ -480,12 +480,12 @@ export default function Leads() {
               </DialogTrigger>
               <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
                 <DialogHeader>
-                  <DialogTitle className="text-xl">Add New Lead</DialogTitle>
+                  <DialogTitle className="text-xl dark:text-white">Add New Lead</DialogTitle>
                 </DialogHeader>
                 <div className="space-y-6">
                   {/* Basic Information */}
                   <div className="space-y-4">
-                    <h3 className="text-lg font-semibold text-foreground">Basic Information</h3>
+                    <h3 className="text-lg font-semibold text-foreground dark:text-white">Basic Information</h3>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <div>
                         <Label htmlFor="name">Name *</Label>
@@ -652,8 +652,8 @@ export default function Leads() {
               <CardContent className="p-6">
                 <div className="flex items-center justify-between">
                   <div>
-                     <p className="text-sm font-medium text-muted-foreground">Total Leads</p>
-                     <p className="text-3xl font-bold text-foreground">{totalLeads}</p>
+                     <p className="text-sm font-medium text-muted-foreground dark:text-white">Total Leads</p>
+                     <p className="text-3xl font-bold text-foreground dark:text-white">{totalLeads}</p>
                   </div>
                 </div>
               </CardContent>
@@ -663,8 +663,8 @@ export default function Leads() {
               <CardContent className="p-6">
                 <div className="flex items-center justify-between">
                   <div>
-                     <p className="text-sm font-medium text-muted-foreground">Active Leads</p>
-                     <p className="text-3xl font-bold text-foreground">{activeLeads}</p>
+                     <p className="text-sm font-medium text-muted-foreground dark:text-white">Active Leads</p>
+                     <p className="text-3xl font-bold text-foreground dark:text-white">{activeLeads}</p>
                   </div>
                 </div>
               </CardContent>
@@ -674,8 +674,8 @@ export default function Leads() {
               <CardContent className="p-6">
                 <div className="flex items-center justify-between">
                   <div>
-                     <p className="text-sm font-medium text-muted-foreground">Converted Leads</p>
-                     <p className="text-3xl font-bold text-foreground">{convertedLeads}</p>
+                     <p className="text-sm font-medium text-muted-foreground dark:text-white">Converted Leads</p>
+                     <p className="text-3xl font-bold text-foreground dark:text-white">{convertedLeads}</p>
                   </div>
                 </div>
               </CardContent>
@@ -685,8 +685,8 @@ export default function Leads() {
               <CardContent className="p-6">
                 <div className="flex items-center justify-between">
                   <div>
-                     <p className="text-sm font-medium text-muted-foreground">Pipeline Value</p>
-                     <p className="text-2xl font-bold text-foreground">${totalPipelineValue.toLocaleString()}</p>
+                     <p className="text-sm font-medium text-muted-foreground dark:text-white">Pipeline Value</p>
+                     <p className="text-2xl font-bold text-foreground dark:text-white">${totalPipelineValue.toLocaleString()}</p>
                   </div>
                 </div>
               </CardContent>
@@ -714,7 +714,7 @@ export default function Leads() {
         <div className="space-y-6">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <span className="text-sm font-medium text-muted-foreground">View:</span>
+              <span className="text-sm font-medium text-muted-foreground dark:text-white">View:</span>
               <div className="flex items-center border border-muted/30 rounded-lg p-1">
                 <Button
                   variant={viewMode === "grid" ? "default" : "ghost"}
@@ -742,9 +742,9 @@ export default function Leads() {
           {filteredLeads.length === 0 ? (
             <Card className="border-dashed border-2 border-muted/50">
               <CardContent className="flex flex-col items-center justify-center py-16">
-                <AlertTriangle className="h-12 w-12 text-muted-foreground mb-4" />
-                <h3 className="text-lg font-semibold text-foreground mb-2">No leads found</h3>
-                <p className="text-muted-foreground text-center max-w-md">
+                <AlertTriangle className="h-12 w-12 text-muted-foreground dark:text-white mb-4" />
+                <h3 className="text-lg font-semibold text-foreground dark:text-white mb-2">No leads found</h3>
+                <p className="text-muted-foreground dark:text-white text-center max-w-md">
                   {searchTerm || selectedStage !== "All" || selectedPriority !== "All" 
                     ? "Try adjusting your filters to see more leads."
                     : "Get started by adding your first lead to begin tracking prospects."
@@ -784,12 +784,12 @@ export default function Leads() {
                     <table className="w-full">
                       <thead>
                         <tr className="border-b border-muted/30 bg-muted/20">
-                          <th className="text-left p-4 font-semibold text-foreground">Lead Info</th>
-                          <th className="text-right p-4 font-semibold text-foreground">Loan Amount</th>
-                          <th className="text-left p-4 font-semibold text-foreground">Loan Type</th>
-                          <th className="text-left p-4 font-semibold text-foreground">Stage</th>
-                          <th className="text-left p-4 font-semibold text-foreground">Priority</th>
-                          <th className="text-center p-4 font-semibold text-foreground">Actions</th>
+                          <th className="text-left p-4 font-semibold text-foreground dark:text-white">Lead Info</th>
+                          <th className="text-right p-4 font-semibold text-foreground dark:text-white">Loan Amount</th>
+                          <th className="text-left p-4 font-semibold text-foreground dark:text-white">Loan Type</th>
+                          <th className="text-left p-4 font-semibold text-foreground dark:text-white">Stage</th>
+                          <th className="text-left p-4 font-semibold text-foreground dark:text-white">Priority</th>
+                          <th className="text-center p-4 font-semibold text-foreground dark:text-white">Actions</th>
                         </tr>
                       </thead>
                       <tbody>
