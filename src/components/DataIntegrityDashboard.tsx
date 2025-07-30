@@ -1,355 +1,363 @@
-import React, { useState, useEffect } from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { useState } from "react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { Progress } from "@/components/ui/progress";
-import { DataFieldValidator } from "@/lib/data-validator";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Check, AlertTriangle, X, RefreshCw, Database, FileText } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
-import { CheckCircle, AlertTriangle, XCircle, RefreshCw, Database, TrendingUp } from "lucide-react";
+import { DataFieldValidator } from "@/lib/data-validator";
 
-interface DataIntegrityDashboardProps {
-  onValidationComplete?: (results: any) => void;
+interface FieldIssue {
+  fieldName: string;
+  issueType: "missing" | "type_mismatch" | "format_error" | "consistency_error";
+  description: string;
+  severity: "low" | "medium" | "high" | "critical";
+  recordId: string;
+  recordType: "lead" | "client" | "pipeline";
 }
 
-export function DataIntegrityDashboard({ onValidationComplete }: DataIntegrityDashboardProps) {
+export function DataIntegrityDashboard() {
   const { toast } = useToast();
   const [loading, setLoading] = useState(false);
   const [auditResults, setAuditResults] = useState<any>(null);
-  const [fixingIssues, setFixingIssues] = useState(false);
-  const [lastAuditTime, setLastAuditTime] = useState<Date | null>(null);
+  const [fieldIssues, setFieldIssues] = useState<FieldIssue[]>([]);
+  const [autoFixResults, setAutoFixResults] = useState<any>(null);
 
-  useEffect(() => {
-    performAudit();
-  }, []);
-
-  const performAudit = async () => {
+  const runDataAudit = async () => {
     setLoading(true);
     try {
       const results = await DataFieldValidator.performDataAudit();
       setAuditResults(results);
-      setLastAuditTime(new Date());
-      onValidationComplete?.(results);
       
-      if (results.summary.totalIssues === 0) {
-        toast({
-          title: "Data Integrity Check Complete",
-          description: "✅ All data fields are correctly mapped and validated!",
+      // Convert audit results to field issues format
+      const issues: FieldIssue[] = [];
+      
+      // Process lead issues
+      results.leadIssues.forEach((issue: any) => {
+        issue.validation.errors.forEach((error: string) => {
+          issues.push({
+            fieldName: extractFieldName(error),
+            issueType: getIssueType(error),
+            description: error,
+            severity: "high",
+            recordId: issue.id,
+            recordType: "lead"
+          });
         });
-      } else {
-        toast({
-          title: "Data Issues Found",
-          description: `Found ${results.summary.totalIssues} data integrity issues`,
-          variant: results.summary.criticalIssues > 0 ? "destructive" : "default",
+        
+        issue.validation.warnings.forEach((warning: string) => {
+          issues.push({
+            fieldName: extractFieldName(warning),
+            issueType: getIssueType(warning),
+            description: warning,
+            severity: "medium",
+            recordId: issue.id,
+            recordType: "lead"
+          });
         });
-      }
+      });
+      
+      // Process client issues
+      results.clientIssues.forEach((issue: any) => {
+        issue.validation.errors.forEach((error: string) => {
+          issues.push({
+            fieldName: extractFieldName(error),
+            issueType: getIssueType(error),
+            description: error,
+            severity: "high",
+            recordId: issue.id,
+            recordType: "client"
+          });
+        });
+        
+        issue.validation.warnings.forEach((warning: string) => {
+          issues.push({
+            fieldName: extractFieldName(warning),
+            issueType: getIssueType(warning),
+            description: warning,
+            severity: "medium",
+            recordId: issue.id,
+            recordType: "client"
+          });
+        });
+      });
+      
+      // Process pipeline issues
+      results.pipelineIssues.forEach((issue: any) => {
+        issue.validation.errors.forEach((error: string) => {
+          issues.push({
+            fieldName: extractFieldName(error),
+            issueType: getIssueType(error),
+            description: error,
+            severity: "high",
+            recordId: issue.id,
+            recordType: "pipeline"
+          });
+        });
+        
+        issue.validation.warnings.forEach((warning: string) => {
+          issues.push({
+            fieldName: extractFieldName(warning),
+            issueType: getIssueType(warning),
+            description: warning,
+            severity: "medium",
+            recordId: issue.id,
+            recordType: "pipeline"
+          });
+        });
+      });
+      
+      setFieldIssues(issues);
+      
+      toast({
+        title: "Data Audit Complete",
+        description: `Found ${results.summary.totalIssues} total issues across your data.`
+      });
     } catch (error) {
-      console.error('Audit error:', error);
+      console.error('Data audit error:', error);
       toast({
         title: "Audit Failed",
-        description: "Failed to perform data integrity audit",
-        variant: "destructive",
+        description: "Failed to complete data audit. Check console for details.",
+        variant: "destructive"
       });
     } finally {
       setLoading(false);
     }
   };
 
-  const autoFixIssues = async () => {
-    setFixingIssues(true);
+  const runAutoFix = async () => {
+    setLoading(true);
     try {
-      const fixResult = await DataFieldValidator.autoFixDataIssues();
+      const results = await DataFieldValidator.autoFixDataIssues();
+      setAutoFixResults(results);
       
-      if (fixResult.fixed > 0) {
-        toast({
-          title: "Auto-Fix Complete",
-          description: `Fixed ${fixResult.fixed} data integrity issues`,
-        });
-        
-        // Re-run audit to show updated results
-        await performAudit();
-      } else {
-        toast({
-          title: "No Issues to Fix",
-          description: "All data fields are already properly formatted",
-        });
-      }
+      toast({
+        title: "Auto-Fix Complete",
+        description: `Fixed ${results.fixed} issues. ${results.errors.length} errors encountered.`,
+        variant: results.errors.length > 0 ? "destructive" : "default"
+      });
       
-      if (fixResult.errors.length > 0) {
-        console.error('Auto-fix errors:', fixResult.errors);
-        toast({
-          title: "Some Issues Remain",
-          description: `${fixResult.errors.length} issues could not be automatically fixed`,
-          variant: "destructive",
-        });
-      }
+      // Re-run audit to show updated results
+      await runDataAudit();
     } catch (error) {
       console.error('Auto-fix error:', error);
       toast({
         title: "Auto-Fix Failed",
-        description: "Failed to automatically fix data issues",
-        variant: "destructive",
+        description: "Failed to auto-fix data issues. Check console for details.",
+        variant: "destructive"
       });
     } finally {
-      setFixingIssues(false);
+      setLoading(false);
     }
   };
 
-  const getStatusIcon = (hasErrors: boolean, hasWarnings: boolean) => {
-    if (hasErrors) return <XCircle className="w-5 h-5 text-red-500" />;
-    if (hasWarnings) return <AlertTriangle className="w-5 h-5 text-yellow-500" />;
-    return <CheckCircle className="w-5 h-5 text-green-500" />;
+  const getSeverityColor = (severity: string) => {
+    switch (severity) {
+      case 'critical': return 'destructive';
+      case 'high': return 'destructive';
+      case 'medium': return 'default';
+      case 'low': return 'secondary';
+      default: return 'outline';
+    }
   };
 
-  const getStatusColor = (hasErrors: boolean, hasWarnings: boolean) => {
-    if (hasErrors) return 'text-red-600';
-    if (hasWarnings) return 'text-yellow-600';
-    return 'text-green-600';
+  const getIssueTypeIcon = (type: string) => {
+    switch (type) {
+      case 'missing': return <X className="h-4 w-4" />;
+      case 'type_mismatch': return <AlertTriangle className="h-4 w-4" />;
+      case 'format_error': return <FileText className="h-4 w-4" />;
+      case 'consistency_error': return <Database className="h-4 w-4" />;
+      default: return <AlertTriangle className="h-4 w-4" />;
+    }
   };
-
-  const calculateIntegrityScore = () => {
-    if (!auditResults) return 0;
-    const { totalIssues, criticalIssues } = auditResults.summary;
-    if (totalIssues === 0) return 100;
-    
-    // Calculate score based on severity
-    const warningIssues = totalIssues - criticalIssues;
-    const penaltyScore = (criticalIssues * 10) + (warningIssues * 3);
-    return Math.max(0, 100 - penaltyScore);
-  };
-
-  if (loading && !auditResults) {
-    return (
-      <div className="flex items-center justify-center p-8">
-        <div className="flex items-center gap-3">
-          <RefreshCw className="w-6 h-6 animate-spin text-primary" />
-          <span className="text-lg">Performing data integrity audit...</span>
-        </div>
-      </div>
-    );
-  }
 
   return (
     <div className="space-y-6">
-      {/* Header */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h2 className="text-2xl font-bold text-foreground">Data Integrity Dashboard</h2>
-          <p className="text-muted-foreground">
-            Comprehensive field mapping and data validation audit
-          </p>
-          {lastAuditTime && (
-            <p className="text-sm text-muted-foreground mt-1">
-              Last audit: {lastAuditTime.toLocaleString()}
-            </p>
-          )}
-        </div>
-        <div className="flex gap-2">
-          <Button
-            onClick={performAudit}
-            disabled={loading}
-            variant="outline"
-          >
-            <RefreshCw className={`w-4 h-4 mr-2 ${loading ? 'animate-spin' : ''}`} />
-            Re-audit
-          </Button>
-          <Button
-            onClick={autoFixIssues}
-            disabled={fixingIssues || !auditResults || auditResults.summary.totalIssues === 0}
-          >
-            <Database className={`w-4 h-4 mr-2 ${fixingIssues ? 'animate-pulse' : ''}`} />
-            Auto-Fix Issues
-          </Button>
-        </div>
-      </div>
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <Database className="h-5 w-5" />
+            Data Integrity Dashboard
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="flex gap-4">
+            <Button 
+              onClick={runDataAudit} 
+              disabled={loading}
+              className="flex items-center gap-2"
+            >
+              <RefreshCw className={`h-4 w-4 ${loading ? 'animate-spin' : ''}`} />
+              Run Data Audit
+            </Button>
+            
+            <Button 
+              onClick={runAutoFix} 
+              disabled={loading || !auditResults}
+              variant="outline"
+              className="flex items-center gap-2"
+            >
+              <Check className="h-4 w-4" />
+              Auto-Fix Issues
+            </Button>
+          </div>
 
-      {/* Overall Status */}
-      {auditResults && (
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <TrendingUp className="w-5 h-5" />
-              Data Integrity Score
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
-              <div className="flex items-center justify-between">
-                <span className="text-2xl font-bold">
-                  {calculateIntegrityScore()}%
-                </span>
-                <Badge variant={auditResults.summary.criticalIssues > 0 ? "destructive" : 
-                               auditResults.summary.totalIssues > 0 ? "default" : "secondary"}>
-                  {auditResults.summary.criticalIssues > 0 ? 'Critical Issues' :
-                   auditResults.summary.totalIssues > 0 ? 'Minor Issues' : 'Excellent'}
-                </Badge>
-              </div>
-              <Progress value={calculateIntegrityScore()} className="h-3" />
-              <div className="grid grid-cols-3 gap-4 text-center">
-                <div>
-                  <div className="text-2xl font-bold text-red-600">{auditResults.summary.criticalIssues}</div>
-                  <div className="text-sm text-muted-foreground">Critical</div>
-                </div>
-                <div>
-                  <div className="text-2xl font-bold text-yellow-600">{auditResults.summary.warningIssues}</div>
-                  <div className="text-sm text-muted-foreground">Warnings</div>
-                </div>
-                <div>
-                  <div className="text-2xl font-bold text-green-600">
-                    {Math.max(0, 100 - auditResults.summary.totalIssues)}
+          {auditResults && (
+            <Alert>
+              <Database className="h-4 w-4" />
+              <AlertDescription>
+                <div className="grid grid-cols-3 gap-4 mt-2">
+                  <div>
+                    <span className="font-medium">Total Issues:</span> {auditResults.summary.totalIssues}
                   </div>
-                  <div className="text-sm text-muted-foreground">Valid Records</div>
+                  <div>
+                    <span className="font-medium">Critical:</span> {auditResults.summary.criticalIssues}
+                  </div>
+                  <div>
+                    <span className="font-medium">Warnings:</span> {auditResults.summary.warningIssues}
+                  </div>
                 </div>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-      )}
+              </AlertDescription>
+            </Alert>
+          )}
+        </CardContent>
+      </Card>
 
-      {/* Detailed Results */}
       {auditResults && (
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {/* Leads Issues */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                {getStatusIcon(
-                  auditResults.leadIssues.some((i: any) => !i.validation.isValid),
-                  auditResults.leadIssues.some((i: any) => i.validation.warnings.length > 0)
-                )}
-                Leads ({auditResults.leadIssues.length} issues)
-              </CardTitle>
-              <CardDescription>
-                Field mapping validation for leads
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              {auditResults.leadIssues.length === 0 ? (
-                <p className="text-green-600 text-sm">✅ All lead data is properly mapped</p>
-              ) : (
-                <div className="space-y-2">
-                  {auditResults.leadIssues.slice(0, 3).map((issue: any, index: number) => (
-                    <div key={index} className="p-2 border rounded text-sm">
-                      <div className="font-medium">{issue.name}</div>
-                      {issue.validation.errors.map((error: string, i: number) => (
-                        <div key={i} className="text-red-600 text-xs">• {error}</div>
-                      ))}
-                      {issue.validation.warnings.map((warning: string, i: number) => (
-                        <div key={i} className="text-yellow-600 text-xs">• {warning}</div>
+        <Tabs defaultValue="issues" className="space-y-4">
+          <TabsList>
+            <TabsTrigger value="issues">Field Issues</TabsTrigger>
+            <TabsTrigger value="summary">Summary</TabsTrigger>
+            <TabsTrigger value="autofix">Auto-Fix Results</TabsTrigger>
+          </TabsList>
+
+          <TabsContent value="issues" className="space-y-4">
+            <div className="space-y-2">
+              {fieldIssues.map((issue, index) => (
+                <Card key={index}>
+                  <CardContent className="p-4">
+                    <div className="flex justify-between items-start">
+                      <div className="space-y-2">
+                        <div className="flex items-center gap-2">
+                          {getIssueTypeIcon(issue.issueType)}
+                          <Badge variant={getSeverityColor(issue.severity)}>
+                            {issue.severity.toUpperCase()}
+                          </Badge>
+                          <span className="font-medium">{issue.fieldName}</span>
+                          <Badge variant="outline">
+                            {issue.recordType}
+                          </Badge>
+                        </div>
+                        <p className="text-sm text-muted-foreground">{issue.description}</p>
+                        <p className="text-xs text-muted-foreground">
+                          Record ID: {issue.recordId} | Type: {issue.issueType}
+                        </p>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              ))}
+              
+              {fieldIssues.length === 0 && auditResults && (
+                <Card>
+                  <CardContent className="p-8 text-center">
+                    <Check className="h-12 w-12 text-green-600 mx-auto mb-4" />
+                    <h3 className="text-lg font-medium">No Field Issues Found</h3>
+                    <p className="text-muted-foreground">All data fields are correctly named and consistent.</p>
+                  </CardContent>
+                </Card>
+              )}
+            </div>
+          </TabsContent>
+
+          <TabsContent value="summary" className="space-y-4">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <Card>
+                <CardHeader>
+                  <CardTitle className="text-sm">Lead Issues</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-bold">{auditResults.leadIssues.length}</div>
+                  <p className="text-sm text-muted-foreground">Records with issues</p>
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader>
+                  <CardTitle className="text-sm">Client Issues</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-bold">{auditResults.clientIssues.length}</div>
+                  <p className="text-sm text-muted-foreground">Records with issues</p>
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader>
+                  <CardTitle className="text-sm">Pipeline Issues</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-bold">{auditResults.pipelineIssues.length}</div>
+                  <p className="text-sm text-muted-foreground">Records with issues</p>
+                </CardContent>
+              </Card>
+            </div>
+          </TabsContent>
+
+          <TabsContent value="autofix" className="space-y-4">
+            {autoFixResults ? (
+              <Card>
+                <CardHeader>
+                  <CardTitle>Auto-Fix Results</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <span className="font-medium">Issues Fixed:</span> {autoFixResults.fixed}
+                    </div>
+                    <div>
+                      <span className="font-medium">Errors:</span> {autoFixResults.errors.length}
+                    </div>
+                  </div>
+                  
+                  {autoFixResults.errors.length > 0 && (
+                    <div className="space-y-2">
+                      <h4 className="font-medium">Errors:</h4>
+                      {autoFixResults.errors.map((error: string, index: number) => (
+                        <Alert key={index} variant="destructive">
+                          <AlertTriangle className="h-4 w-4" />
+                          <AlertDescription>{error}</AlertDescription>
+                        </Alert>
                       ))}
                     </div>
-                  ))}
-                  {auditResults.leadIssues.length > 3 && (
-                    <p className="text-xs text-muted-foreground">
-                      ... and {auditResults.leadIssues.length - 3} more
-                    </p>
                   )}
-                </div>
-              )}
-            </CardContent>
-          </Card>
-
-          {/* Clients Issues */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                {getStatusIcon(
-                  auditResults.clientIssues.some((i: any) => !i.validation.isValid),
-                  auditResults.clientIssues.some((i: any) => i.validation.warnings.length > 0)
-                )}
-                Clients ({auditResults.clientIssues.length} issues)
-              </CardTitle>
-              <CardDescription>
-                Field mapping validation for clients
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              {auditResults.clientIssues.length === 0 ? (
-                <p className="text-green-600 text-sm">✅ All client data is properly mapped</p>
-              ) : (
-                <div className="space-y-2">
-                  {auditResults.clientIssues.slice(0, 3).map((issue: any, index: number) => (
-                    <div key={index} className="p-2 border rounded text-sm">
-                      <div className="font-medium">{issue.name}</div>
-                      {issue.validation.errors.map((error: string, i: number) => (
-                        <div key={i} className="text-red-600 text-xs">• {error}</div>
-                      ))}
-                      {issue.validation.warnings.map((warning: string, i: number) => (
-                        <div key={i} className="text-yellow-600 text-xs">• {warning}</div>
-                      ))}
-                    </div>
-                  ))}
-                  {auditResults.clientIssues.length > 3 && (
-                    <p className="text-xs text-muted-foreground">
-                      ... and {auditResults.clientIssues.length - 3} more
-                    </p>
-                  )}
-                </div>
-              )}
-            </CardContent>
-          </Card>
-
-          {/* Pipeline Issues */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                {getStatusIcon(
-                  auditResults.pipelineIssues.some((i: any) => !i.validation.isValid),
-                  auditResults.pipelineIssues.some((i: any) => i.validation.warnings.length > 0)
-                )}
-                Pipeline ({auditResults.pipelineIssues.length} issues)
-              </CardTitle>
-              <CardDescription>
-                Field mapping validation for pipeline entries
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              {auditResults.pipelineIssues.length === 0 ? (
-                <p className="text-green-600 text-sm">✅ All pipeline data is properly mapped</p>
-              ) : (
-                <div className="space-y-2">
-                  {auditResults.pipelineIssues.slice(0, 3).map((issue: any, index: number) => (
-                    <div key={index} className="p-2 border rounded text-sm">
-                      <div className="font-medium">Stage: {issue.stage}</div>
-                      {issue.validation.errors.map((error: string, i: number) => (
-                        <div key={i} className="text-red-600 text-xs">• {error}</div>
-                      ))}
-                      {issue.validation.warnings.map((warning: string, i: number) => (
-                        <div key={i} className="text-yellow-600 text-xs">• {warning}</div>
-                      ))}
-                    </div>
-                  ))}
-                  {auditResults.pipelineIssues.length > 3 && (
-                    <p className="text-xs text-muted-foreground">
-                      ... and {auditResults.pipelineIssues.length - 3} more
-                    </p>
-                  )}
-                </div>
-              )}
-            </CardContent>
-          </Card>
-        </div>
-      )}
-
-      {/* Recommendations */}
-      {auditResults && auditResults.summary.totalIssues > 0 && (
-        <Alert>
-          <AlertTriangle className="h-4 w-4" />
-          <AlertDescription>
-            <strong>Recommendations:</strong>
-            <ul className="mt-2 space-y-1 text-sm">
-              {auditResults.summary.criticalIssues > 0 && (
-                <li>• Fix critical data validation errors immediately</li>
-              )}
-              {auditResults.summary.warningIssues > 0 && (
-                <li>• Review warnings for data consistency issues</li>
-              )}
-              <li>• Use the Auto-Fix feature to resolve formatting issues</li>
-              <li>• Consider updating form validation to prevent future issues</li>
-            </ul>
-          </AlertDescription>
-        </Alert>
+                </CardContent>
+              </Card>
+            ) : (
+              <Card>
+                <CardContent className="p-8 text-center">
+                  <p className="text-muted-foreground">No auto-fix results yet. Run auto-fix to see results.</p>
+                </CardContent>
+              </Card>
+            )}
+          </TabsContent>
+        </Tabs>
       )}
     </div>
   );
+}
+
+// Helper functions
+function extractFieldName(message: string): string {
+  const match = message.match(/'([^']+)'/);
+  return match ? match[1] : 'unknown_field';
+}
+
+function getIssueType(message: string): "missing" | "type_mismatch" | "format_error" | "consistency_error" {
+  if (message.includes('missing') || message.includes('required')) return 'missing';
+  if (message.includes('should be') || message.includes('type')) return 'type_mismatch';
+  if (message.includes('format') || message.includes('invalid')) return 'format_error';
+  if (message.includes('consistency') || message.includes('greater than')) return 'consistency_error';
+  return 'format_error';
 }

@@ -55,7 +55,7 @@ export default function Settings() {
           </TabsList>
 
           <TabsContent value="data-integrity">
-            <DataIntegrityDashboard onValidationComplete={handleValidationComplete} />
+            <DataIntegrityDashboard />
           </TabsContent>
 
           <TabsContent value="security">

@@ -19,13 +19,18 @@ const LEAD_FIELD_MAPPINGS: FieldMapping[] = [
   { source: 'name', target: 'name', type: 'string', required: true },
   { source: 'email', target: 'email', type: 'string', required: true },
   { source: 'phone', target: 'phone', type: 'string' },
+  { source: 'phone_number', target: 'phone', type: 'string' }, // Handle phone_number -> phone mapping
   { source: 'location', target: 'location', type: 'string' },
   { source: 'business_name', target: 'business_name', type: 'string' },
+  { source: 'businessName', target: 'business_name', type: 'string' }, // Handle camelCase -> snake_case
   { source: 'business_address', target: 'business_address', type: 'string' },
   { source: 'loan_amount', target: 'loan_amount', type: 'number' },
+  { source: 'loanAmount', target: 'loan_amount', type: 'number' }, // Handle camelCase -> snake_case
   { source: 'loan_type', target: 'loan_type', type: 'string' },
   { source: 'credit_score', target: 'credit_score', type: 'number' },
+  { source: 'creditScore', target: 'credit_score', type: 'number' }, // Handle camelCase -> snake_case
   { source: 'annual_revenue', target: 'annual_revenue', type: 'number' },
+  { source: 'annualRevenue', target: 'annual_revenue', type: 'number' }, // Handle camelCase -> snake_case
   { source: 'net_operating_income', target: 'net_operating_income', type: 'number' },
   { source: 'existing_loan_amount', target: 'existing_loan_amount', type: 'number' },
   { source: 'pos_system', target: 'pos_system', type: 'string' },
@@ -33,6 +38,12 @@ const LEAD_FIELD_MAPPINGS: FieldMapping[] = [
   { source: 'average_transaction_size', target: 'average_transaction_size', type: 'number' },
   { source: 'processor_name', target: 'processor_name', type: 'string' },
   { source: 'current_processing_rate', target: 'current_processing_rate', type: 'number' },
+  { source: 'bdo_name', target: 'bdo_name', type: 'string' },
+  { source: 'bdoName', target: 'bdo_name', type: 'string' }, // Handle camelCase -> snake_case
+  { source: 'bdo_telephone', target: 'bdo_telephone', type: 'string' },
+  { source: 'bdoTelephone', target: 'bdo_telephone', type: 'string' }, // Handle camelCase -> snake_case
+  { source: 'bdo_email', target: 'bdo_email', type: 'string' },
+  { source: 'bdoEmail', target: 'bdo_email', type: 'string' }, // Handle camelCase -> snake_case
   { source: 'stage', target: 'stage', type: 'string' },
   { source: 'priority', target: 'priority', type: 'string' },
   { source: 'notes', target: 'notes', type: 'string' },
