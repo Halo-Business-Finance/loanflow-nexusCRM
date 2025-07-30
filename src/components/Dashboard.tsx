@@ -602,7 +602,7 @@ export default function Dashboard() {
       <Card className="shadow-soft">
         <CardHeader>
           <div className="flex justify-between items-center">
-            <CardTitle>Recent Leads</CardTitle>
+            <CardTitle className="dark:text-white">Recent Leads</CardTitle>
             <div className="relative">
               <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground dark:text-white" />
               <Input
@@ -624,24 +624,24 @@ export default function Dashboard() {
               >
                 <div className="flex items-center gap-4">
                   <div className="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center">
-                    <Users className="w-5 h-5 text-primary-foreground" />
+                    <Users className="w-5 h-5 text-primary-foreground dark:text-white" />
                   </div>
                   <div>
-                    <p className="font-medium text-foreground">{lead.name}</p>
-                    <p className="text-sm text-muted-foreground">{lead.amount}</p>
-                    <p className="text-xs text-muted-foreground">Program: {lead.loanType}</p>
+                    <p className="font-medium text-foreground dark:text-white">{lead.name}</p>
+                    <p className="text-sm text-muted-foreground dark:text-white">{lead.amount}</p>
+                    <p className="text-xs text-muted-foreground dark:text-white">Program: {lead.loanType}</p>
                   </div>
                 </div>
                 <div className="flex items-center gap-4">
                   <Badge variant="outline">{lead.stage}</Badge>
-                  <span className="text-sm text-muted-foreground">{lead.lastContact}</span>
+                  <span className="text-sm text-muted-foreground dark:text-white">{lead.lastContact}</span>
                   <Badge 
                     variant={lead.priority === 'high' ? 'destructive' : 
                             lead.priority === 'medium' ? 'default' : 'secondary'}
                   >
                     {lead.priority}
                   </Badge>
-                  <ChevronRight className="h-4 w-4 text-muted-foreground" />
+                  <ChevronRight className="h-4 w-4 text-muted-foreground dark:text-white" />
                 </div>
               </div>
             ))}
