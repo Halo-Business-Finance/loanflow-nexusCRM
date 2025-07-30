@@ -529,7 +529,7 @@ export default function Dashboard() {
       <Card className="shadow-soft">
         <CardHeader>
           <CardTitle className="dark:text-white">Loan Close Performance</CardTitle>
-          <p className="text-sm text-muted-foreground">Monthly closed loans vs targets and close percentage</p>
+          <p className="text-sm text-muted-foreground dark:text-white">Monthly closed loans vs targets and close percentage</p>
         </CardHeader>
         <CardContent>
           <ChartContainer config={chartConfig} className="h-[300px]">
@@ -538,20 +538,20 @@ export default function Dashboard() {
                 dataKey="month" 
                 tickLine={false}
                 axisLine={false}
-                className="text-muted-foreground"
+                className="text-muted-foreground dark:text-white"
               />
               <YAxis 
                 yAxisId="left"
                 tickLine={false}
                 axisLine={false}
-                className="text-muted-foreground"
+                className="text-muted-foreground dark:text-white"
               />
               <YAxis 
                 yAxisId="right"
                 orientation="right"
                 tickLine={false}
                 axisLine={false}
-                className="text-muted-foreground"
+                className="text-muted-foreground dark:text-white"
                 tickFormatter={(value) => `${value}%`}
               />
               <ChartTooltip 
