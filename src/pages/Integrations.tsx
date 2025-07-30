@@ -1,4 +1,5 @@
 import { useState } from "react"
+import { useNavigate } from "react-router-dom"
 import Layout from "@/components/Layout"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
@@ -129,6 +130,7 @@ const aiTools = [
 ]
 
 export default function Integrations() {
+  const navigate = useNavigate()
   const [activeTab, setActiveTab] = useState("integrations")
   const [searchQuery, setSearchQuery] = useState("")
   const [selectedCategory, setSelectedCategory] = useState("all")
@@ -186,19 +188,18 @@ export default function Integrations() {
     if (!tool) return
 
     if (status === "active") {
-      // Navigate to configuration for active tools
+      // Navigate to AI Tools configuration page
+      navigate('/ai-tools', { state: { configureToolId: toolId } })
       toast({
         title: "Opening Configuration",
         description: `Configure ${tool.name} settings`,
       })
-      // You can add navigation logic here, e.g., router.push(`/ai-tools/${toolId}/config`)
     } else {
       // Enable the tool
       toast({
         title: "AI Tool Enabled",
         description: `${tool.name} has been enabled successfully`,
       })
-      // You can add actual enable logic here
     }
   }
 
@@ -614,7 +615,11 @@ export default function Integrations() {
                         ))}
                       </div>
                     </div>
-                    <Button variant="outline" className="w-full rounded-xl border-accent/20 text-accent hover:bg-accent hover:text-accent-foreground">
+                    <Button 
+                      variant="outline" 
+                      className="w-full rounded-xl border-accent/20 text-accent hover:bg-accent hover:text-accent-foreground"
+                      onClick={() => window.open('https://docs.lovable.dev/', '_blank', 'noopener,noreferrer')}
+                    >
                       <ExternalLink className="w-4 h-4 mr-2" />
                       API Documentation
                     </Button>

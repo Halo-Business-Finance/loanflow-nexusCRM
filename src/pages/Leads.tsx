@@ -252,31 +252,41 @@ export default function Leads() {
 
   const addNewLead = async () => {
     try {
+      // Validate required fields
+      if (!newLead.name.trim() || !newLead.email.trim()) {
+        toast({
+          title: "Validation Error",
+          description: "Name and email are required fields",
+          variant: "destructive",
+        })
+        return
+      }
+
       // First create contact entity
       const { data: contactEntity, error: contactError } = await supabase
         .from('contact_entities')
         .insert({
           user_id: user?.id,
-          name: newLead.name,
-          email: newLead.email,
-          phone: newLead.phone || null,
-          location: newLead.location || null,
-          business_name: newLead.business_name || null,
-          business_address: newLead.business_address || null,
-          annual_revenue: newLead.annual_revenue ? parseFloat(newLead.annual_revenue) : null,
-          existing_loan_amount: newLead.existing_loan_amount ? parseFloat(newLead.existing_loan_amount) : null,
-          loan_amount: newLead.loan_amount ? parseFloat(newLead.loan_amount) : null,
-          loan_type: newLead.loan_type || null,
-          credit_score: newLead.credit_score ? parseInt(newLead.credit_score) : null,
-          net_operating_income: newLead.net_operating_income ? parseFloat(newLead.net_operating_income) : null,
-          priority: newLead.priority,
-          stage: newLead.stage,
-          notes: newLead.notes || null,
-          pos_system: newLead.pos_system || null,
-          monthly_processing_volume: newLead.monthly_processing_volume ? parseFloat(newLead.monthly_processing_volume) : null,
-          average_transaction_size: newLead.average_transaction_size ? parseFloat(newLead.average_transaction_size) : null,
-          processor_name: newLead.processor_name || null,
-          current_processing_rate: newLead.current_processing_rate ? parseFloat(newLead.current_processing_rate) : null
+          name: newLead.name.trim(),
+          email: newLead.email.trim().toLowerCase(),
+          phone: newLead.phone?.trim() || null,
+          location: newLead.location?.trim() || null,
+          business_name: newLead.business_name?.trim() || null,
+          business_address: newLead.business_address?.trim() || null,
+          annual_revenue: newLead.annual_revenue ? Math.max(0, parseFloat(newLead.annual_revenue) || 0) : null,
+          existing_loan_amount: newLead.existing_loan_amount ? Math.max(0, parseFloat(newLead.existing_loan_amount) || 0) : null,
+          loan_amount: newLead.loan_amount ? Math.max(0, parseFloat(newLead.loan_amount) || 0) : null,
+          loan_type: newLead.loan_type?.trim() || null,
+          credit_score: newLead.credit_score ? Math.max(300, Math.min(850, parseInt(newLead.credit_score) || 0)) : null,
+          net_operating_income: newLead.net_operating_income ? parseFloat(newLead.net_operating_income) || null : null,
+          priority: newLead.priority || 'medium',
+          stage: newLead.stage || 'New',
+          notes: newLead.notes?.trim() || null,
+          pos_system: newLead.pos_system?.trim() || null,
+          monthly_processing_volume: newLead.monthly_processing_volume ? Math.max(0, parseFloat(newLead.monthly_processing_volume) || 0) : null,
+          average_transaction_size: newLead.average_transaction_size ? Math.max(0, parseFloat(newLead.average_transaction_size) || 0) : null,
+          processor_name: newLead.processor_name?.trim() || null,
+          current_processing_rate: newLead.current_processing_rate ? Math.max(0, parseFloat(newLead.current_processing_rate) || 0) : null
         })
         .select()
         .single()

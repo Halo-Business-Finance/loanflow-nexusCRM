@@ -671,16 +671,17 @@ export default function LeadDetail() {
 
       // Create a loan record if loan amount is specified
       if (editableFields.loan_amount && parseFloat(editableFields.loan_amount) > 0) {
+        const loanAmount = Math.max(0, parseFloat(editableFields.loan_amount) || 0)
         const loanData = {
           client_id: newClient.id,
           lead_id: lead.id,
           user_id: user.id,
-          loan_amount: parseFloat(editableFields.loan_amount),
-          loan_type: editableFields.loan_type || 'Mortgage',
-          interest_rate: editableFields.interest_rate ? parseFloat(editableFields.interest_rate) : null,
+          loan_amount: loanAmount,
+          loan_type: editableFields.loan_type?.trim() || 'Mortgage',
+          interest_rate: editableFields.interest_rate ? Math.max(0, parseFloat(editableFields.interest_rate) || 0) : null,
           maturity_date: editableFields.maturity_date || null,
           status: 'Active',
-          remaining_balance: parseFloat(editableFields.loan_amount)
+          remaining_balance: loanAmount
         }
 
         const { error: loanError } = await supabase
