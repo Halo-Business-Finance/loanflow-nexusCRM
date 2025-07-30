@@ -512,7 +512,8 @@ export default function LeadDetail() {
     if (!lead) return
 
     try {
-      const updateData: any = {
+      // Update the contact entity with all the lead details
+      const contactUpdateData: any = {
         name: editableFields.name,
         email: editableFields.email,
         phone: editableFields.phone || null,
@@ -548,18 +549,31 @@ export default function LeadDetail() {
       // Check if stage is being changed to "Funded" and lead isn't already converted
       const isBeingFunded = editableFields.stage === "Funded" && lead.stage !== "Funded" && !lead.is_converted_to_client
 
-      if (isBeingFunded) {
-        // Mark lead as converted
-        updateData.is_converted_to_client = true
-        updateData.converted_at = new Date().toISOString()
+      // Update the contact entity
+      const { error: contactError } = await supabase
+        .from('contact_entities')
+        .update(contactUpdateData)
+        .eq('id', lead.contact_entity_id)
+
+      if (contactError) throw contactError
+
+      // Update the lead table only with lead-specific fields
+      const leadUpdateData: any = {
+        last_contact: new Date().toISOString()
       }
 
-      const { error } = await supabase
+      if (isBeingFunded) {
+        // Mark lead as converted
+        leadUpdateData.is_converted_to_client = true
+        leadUpdateData.converted_at = new Date().toISOString()
+      }
+
+      const { error: leadError } = await supabase
         .from('leads')
-        .update(updateData)
+        .update(leadUpdateData)
         .eq('id', lead.id)
 
-      if (error) throw error
+      if (leadError) throw leadError
 
       // If being funded, create client record
       if (isBeingFunded) {
