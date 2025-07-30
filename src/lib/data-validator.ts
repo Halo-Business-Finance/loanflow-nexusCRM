@@ -95,9 +95,9 @@ export class DataFieldValidator {
       warnings: []
     }
 
-    // Handle both nested contact_entity and direct contact entity data
-    const leadContactEntity = leadData.contact_entity || leadData
-    const clientContactEntity = clientData.contact_entity || clientData
+    // Handle both nested contact_entities and direct contact entity data
+    const leadContactEntity = leadData.contact_entities || leadData.contact_entity || leadData
+    const clientContactEntity = clientData.contact_entities || clientData.contact_entity || clientData
 
     // Check that essential data transferred from lead to client
     if (leadContactEntity?.name !== clientContactEntity?.name) {
@@ -211,8 +211,34 @@ export class DataFieldValidator {
       const { data: clients } = await supabase
         .from('clients')
         .select(`
-          *,
-          contact_entity:contact_entities!contact_entity_id (*)
+          id,
+          contact_entity_id,
+          user_id,
+          status,
+          total_loans,
+          total_loan_value,
+          join_date,
+          last_activity,
+          created_at,
+          updated_at,
+          lead_id,
+          contact_entities!inner (
+            name,
+            email,
+            phone,
+            business_name,
+            loan_amount,
+            loan_type,
+            stage,
+            priority,
+            credit_score,
+            annual_revenue,
+            business_address,
+            year_established,
+            owns_property,
+            notes,
+            call_notes
+          )
         `)
       
       if (clients) {
@@ -221,7 +247,7 @@ export class DataFieldValidator {
           if (!validation.isValid || validation.warnings.length > 0) {
             clientIssues.push({
               id: client.id,
-              name: client.contact_entity?.name || 'Unknown',
+              name: client.contact_entities?.name || 'Unknown',
               validation
             })
           }
