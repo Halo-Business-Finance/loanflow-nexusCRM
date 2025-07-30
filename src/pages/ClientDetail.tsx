@@ -982,35 +982,29 @@ export default function ClientDetail() {
                           placeholder="Enter loan amount"
                         />
                       ) : (
-                        <p className="font-medium text-lg">
-                          {formatCurrency(client.loan_amount)}
-                        </p>
+                        <p className="font-medium">{formatCurrency(client.loan_amount)}</p>
                       )}
                     </div>
                   </div>
 
                   <div className="flex items-center gap-3">
-                    <Building className="w-4 h-4" />
+                    <FileText className="w-4 h-4" />
                     <div className="flex-1">
                       <p className="text-sm text-muted-foreground">Loan Type</p>
                       {isEditing ? (
-                          <Select value={editableFields.loan_type} onValueChange={(value) => setEditableFields({...editableFields, loan_type: value})}>
-                            <SelectTrigger>
-                              <SelectValue placeholder="Select loan type" />
-                            </SelectTrigger>
-                            <SelectContent>
-                              <SelectItem value="SBA 7(a) Loan">SBA 7(a) Loan</SelectItem>
-                              <SelectItem value="SBA 504 Loan">SBA 504 Loan</SelectItem>
-                              <SelectItem value="Bridge Loan">Bridge Loan</SelectItem>
-                              <SelectItem value="Conventional Loan">Conventional Loan</SelectItem>
-                              <SelectItem value="Equipment Financing">Equipment Financing</SelectItem>
-                              <SelectItem value="USDA B&I Loan">USDA B&I Loan</SelectItem>
-                              <SelectItem value="Working Capital Loan">Working Capital Loan</SelectItem>
-                              <SelectItem value="Line of Credit">Line of Credit</SelectItem>
-                              <SelectItem value="Land Loan">Land Loan</SelectItem>
-                              <SelectItem value="Factoring">Factoring</SelectItem>
-                            </SelectContent>
-                          </Select>
+                        <Select value={editableFields.loan_type} onValueChange={(value) => setEditableFields({...editableFields, loan_type: value})}>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select loan type" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="SBA">SBA Loan</SelectItem>
+                            <SelectItem value="Term">Term Loan</SelectItem>
+                            <SelectItem value="Line of Credit">Line of Credit</SelectItem>
+                            <SelectItem value="Equipment">Equipment Loan</SelectItem>
+                            <SelectItem value="Real Estate">Real Estate Loan</SelectItem>
+                            <SelectItem value="Working Capital">Working Capital</SelectItem>
+                          </SelectContent>
+                        </Select>
                       ) : (
                         <p className="font-medium">{client.loan_type || 'N/A'}</p>
                       )}
@@ -1038,10 +1032,11 @@ export default function ClientDetail() {
                             <SelectItem value="Closing">Closing</SelectItem>
                             <SelectItem value="Funded">Funded</SelectItem>
                           </SelectContent>
-                      </Select>
-                    ) : (
-                      <p className="font-medium">{client.stage || 'N/A'}</p>
-                    )}
+                        </Select>
+                      ) : (
+                        <p className="font-medium">{client.stage || 'N/A'}</p>
+                      )}
+                    </div>
                   </div>
 
                   <div className="flex items-center gap-3">
@@ -1059,71 +1054,68 @@ export default function ClientDetail() {
                       )}
                     </div>
                   </div>
+
+                  {/* BDO Information Subsection */}
+                  <div className="space-y-3 pt-4 border-t">
+                    <h4 className="text-sm font-semibold text-muted-foreground">BDO Information</h4>
+                    
+                    <div className="flex items-center gap-3">
+                      <User className="w-4 h-4 text-muted-foreground" />
+                      <div className="flex-1">
+                        <p className="text-sm text-muted-foreground">BDO Name</p>
+                        {isEditing ? (
+                          <Input
+                            value={editableFields.bdo_name}
+                            onChange={(e) => setEditableFields({...editableFields, bdo_name: e.target.value})}
+                            placeholder="Enter BDO name"
+                          />
+                        ) : (
+                          <p className="font-medium">
+                            {client.bdo_name || 'N/A'}
+                          </p>
+                        )}
+                      </div>
+                    </div>
+
+                    <div className="flex items-center gap-3">
+                      <Phone className="w-4 h-4 text-muted-foreground" />
+                      <div className="flex-1">
+                        <p className="text-sm text-muted-foreground">BDO Telephone</p>
+                        {isEditing ? (
+                          <Input
+                            value={editableFields.bdo_telephone}
+                            onChange={(e) => setEditableFields({...editableFields, bdo_telephone: e.target.value})}
+                            placeholder="Enter BDO telephone"
+                          />
+                        ) : (
+                          <p className="font-medium">
+                            {client.bdo_telephone || 'N/A'}
+                          </p>
+                        )}
+                      </div>
+                    </div>
+
+                    <div className="flex items-center gap-3">
+                      <Mail className="w-4 h-4 text-muted-foreground" />
+                      <div className="flex-1">
+                        <p className="text-sm text-muted-foreground">BDO Email</p>
+                        {isEditing ? (
+                          <Input
+                            type="email"
+                            value={editableFields.bdo_email}
+                            onChange={(e) => setEditableFields({...editableFields, bdo_email: e.target.value})}
+                            placeholder="Enter BDO email"
+                          />
+                        ) : (
+                          <p className="font-medium">
+                            {client.bdo_email || 'N/A'}
+                          </p>
+                        )}
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </div>
-
-              {/* BDO Information Section */}
-              <div className="mt-6">
-                <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
-                  <User className="w-5 h-5" />
-                  BDO Information
-                </h3>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 pt-4 border-t border-gray-200/10">
-                  <div className="flex items-center gap-3">
-                    <User className="w-4 h-4 text-muted-foreground" />
-                    <div className="flex-1">
-                      <p className="text-sm text-muted-foreground">BDO Name</p>
-                      {isEditing ? (
-                        <Input
-                          value={editableFields.bdo_name}
-                          onChange={(e) => setEditableFields({...editableFields, bdo_name: e.target.value})}
-                          placeholder="Enter BDO name"
-                        />
-                      ) : (
-                        <p className="font-medium">
-                          {client.bdo_name || 'N/A'}
-                        </p>
-                      )}
-                    </div>
-                  </div>
-
-                  <div className="flex items-center gap-3">
-                    <Phone className="w-4 h-4 text-muted-foreground" />
-                    <div className="flex-1">
-                      <p className="text-sm text-muted-foreground">BDO Telephone</p>
-                      {isEditing ? (
-                        <Input
-                          value={editableFields.bdo_telephone}
-                          onChange={(e) => setEditableFields({...editableFields, bdo_telephone: e.target.value})}
-                          placeholder="Enter BDO telephone"
-                        />
-                      ) : (
-                        <p className="font-medium">
-                          {client.bdo_telephone || 'N/A'}
-                        </p>
-                      )}
-                    </div>
-                  </div>
-
-                  <div className="flex items-center gap-3">
-                    <Mail className="w-4 h-4 text-muted-foreground" />
-                    <div className="flex-1">
-                      <p className="text-sm text-muted-foreground">BDO Email</p>
-                      {isEditing ? (
-                        <Input
-                          type="email"
-                          value={editableFields.bdo_email}
-                          onChange={(e) => setEditableFields({...editableFields, bdo_email: e.target.value})}
-                          placeholder="Enter BDO email"
-                        />
-                      ) : (
-                        <p className="font-medium">
-                          {client.bdo_email || 'N/A'}
-                        </p>
-                      )}
-                    </div>
-                  </div>
-                </div>
             </CardContent>
           </Card>
 
