@@ -210,7 +210,10 @@ export function AdvancedThreatDetection() {
           language: navigator.language
         },
         last_seen: new Date().toISOString()
-      }, { onConflict: 'fingerprint_hash' });
+      }, { 
+        onConflict: 'fingerprint_hash',
+        ignoreDuplicates: false 
+      });
 
     } catch (error) {
       console.error('Error fetching security data:', error);

@@ -170,6 +170,9 @@ export function SecurityManager() {
           is_enabled: true,
           preferred_method: mfaSettings.preferred_method,
           phone_number: mfaSettings.phone_number
+        }, {
+          onConflict: 'user_id',
+          ignoreDuplicates: false
         });
 
       if (error) throw error;
