@@ -651,7 +651,7 @@ export default function Leads() {
               <CardContent className="p-6">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm font-medium text-white">Converted</p>
+                    <p className="text-sm font-medium text-white">Converted Leads</p>
                     <p className="text-3xl font-bold text-white">{convertedLeads}</p>
                   </div>
                 </div>
