@@ -632,7 +632,6 @@ export default function Leads() {
                     <p className="text-sm font-medium text-white">Total Leads</p>
                     <p className="text-3xl font-bold text-white">{totalLeads}</p>
                   </div>
-                  <Users className="h-8 w-8 text-white" />
                 </div>
               </CardContent>
             </Card>
@@ -644,7 +643,6 @@ export default function Leads() {
                     <p className="text-sm font-medium text-white">Active Leads</p>
                     <p className="text-3xl font-bold text-white">{activeLeads}</p>
                   </div>
-                  <Target className="h-8 w-8 text-white" />
                 </div>
               </CardContent>
             </Card>
@@ -656,7 +654,6 @@ export default function Leads() {
                     <p className="text-sm font-medium text-white">Converted</p>
                     <p className="text-3xl font-bold text-white">{convertedLeads}</p>
                   </div>
-                  <TrendingUp className="h-8 w-8 text-white" />
                 </div>
               </CardContent>
             </Card>
@@ -668,7 +665,6 @@ export default function Leads() {
                     <p className="text-sm font-medium text-white">Pipeline Value</p>
                     <p className="text-2xl font-bold text-white">${totalPipelineValue.toLocaleString()}</p>
                   </div>
-                  <DollarSign className="h-8 w-8 text-white" />
                 </div>
               </CardContent>
             </Card>
