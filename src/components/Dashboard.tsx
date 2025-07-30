@@ -433,7 +433,7 @@ export default function Dashboard() {
       {/* Header */}
       <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-3xl font-bold text-foreground">Dashboard</h1>
+          <h1 className="text-3xl font-bold text-foreground dark:text-white">Dashboard</h1>
           <p className="text-muted-foreground dark:text-white">Welcome back! Here's your performance overview.</p>
           <p className="text-sm text-muted-foreground dark:text-white mt-1">{formatDateTime(currentDateTime)}</p>
         </div>
@@ -528,7 +528,7 @@ export default function Dashboard() {
       {/* Loan Close Performance */}
       <Card className="shadow-soft">
         <CardHeader>
-          <CardTitle>Loan Close Performance</CardTitle>
+          <CardTitle className="dark:text-white">Loan Close Performance</CardTitle>
           <p className="text-sm text-muted-foreground">Monthly closed loans vs targets and close percentage</p>
         </CardHeader>
         <CardContent>

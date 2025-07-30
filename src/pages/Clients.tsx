@@ -385,7 +385,7 @@ export default function Clients() {
         {/* Header */}
         <div className="flex justify-between items-center">
           <div>
-            <h1 className="text-3xl font-bold text-foreground">Clients</h1>
+            <h1 className="text-3xl font-bold text-foreground dark:text-white">Clients</h1>
             <p className="text-muted-foreground">Manage your client relationships</p>
           </div>
           <Button className="bg-gradient-primary">

@@ -118,7 +118,7 @@ export function LeadFilters({
                 variant="ghost"
                 size="sm"
                 onClick={clearAllFilters}
-                className="text-xs text-muted-foreground hover:text-foreground h-7 px-2"
+                className="text-xs text-muted-foreground dark:text-white hover:text-foreground h-7 px-2"
               >
                 Clear all
               </Button>

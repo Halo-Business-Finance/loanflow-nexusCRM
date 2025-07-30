@@ -111,7 +111,7 @@ export function TodaysTasks() {
     return (
       <Card className="animate-pulse">
         <CardHeader>
-          <CardTitle className="flex items-center gap-2">
+          <CardTitle className="flex items-center gap-2 dark:text-white">
             <Clock className="h-5 w-5" />
             Today's Tasks
           </CardTitle>
@@ -130,7 +130,7 @@ export function TodaysTasks() {
   return (
     <Card className="shadow-soft">
       <CardHeader>
-        <CardTitle className="flex items-center gap-2">
+        <CardTitle className="flex items-center gap-2 dark:text-white">
           <Clock className="h-5 w-5" />
           Today's Tasks
           {(todaysTasks.length + overdueTasks.length) > 0 && (

@@ -134,7 +134,7 @@ export function ActionReminder({ entityId, entityName, entityType, isOpen, onClo
       >
         <Card className="w-full shadow-xl border animate-in slide-in-from-top-4 duration-300">
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 px-4 pt-4">
-        <CardTitle className="text-base font-semibold">
+        <CardTitle className="text-base font-semibold dark:text-white">
           Create Reminder
         </CardTitle>
         <Button variant="ghost" size="sm" onClick={onClose}>

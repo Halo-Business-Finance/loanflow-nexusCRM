@@ -288,7 +288,7 @@ export default function Activities() {
         {/* Header */}
         <div className="flex justify-between items-center">
           <div>
-            <h1 className="text-3xl font-bold text-foreground">Activities & Notifications</h1>
+            <h1 className="text-3xl font-bold text-foreground dark:text-white">Activities & Notifications</h1>
             <p className="text-muted-foreground">Track all notifications, reminders, and system activities</p>
           </div>
           <div className="flex gap-4">
