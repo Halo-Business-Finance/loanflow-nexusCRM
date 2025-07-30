@@ -217,7 +217,6 @@ export default function Pipeline() {
         <TabsList>
           <TabsTrigger value="interactive">Interactive Pipeline</TabsTrigger>
           <TabsTrigger value="performance">Performance Dashboard</TabsTrigger>
-          <TabsTrigger value="analytics">Detailed Analytics</TabsTrigger>
         </TabsList>
         
         <TabsContent value="interactive" className="space-y-6">
@@ -484,10 +483,6 @@ export default function Pipeline() {
               </div>
             </CardContent>
           </Card>
-        </TabsContent>
-        
-        <TabsContent value="analytics" className="space-y-6">
-
         </TabsContent>
       </Tabs>
       </div>
