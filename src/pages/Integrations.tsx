@@ -618,7 +618,7 @@ export default function Integrations() {
                     <Button 
                       variant="outline" 
                       className="w-full rounded-xl border-accent/20 text-accent hover:bg-accent hover:text-accent-foreground"
-                      onClick={() => window.open('https://docs.lovable.dev/', '_blank', 'noopener,noreferrer')}
+                      onClick={() => navigate('/api-docs')}
                     >
                       <ExternalLink className="w-4 h-4 mr-2" />
                       API Documentation

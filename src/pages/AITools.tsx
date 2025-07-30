@@ -1,257 +1,528 @@
 import { useState, useEffect } from "react"
+import { useLocation } from "react-router-dom"
 import Layout from "@/components/Layout"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Switch } from "@/components/ui/switch"
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
+import { Switch } from "@/components/ui/switch"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { Slider } from "@/components/ui/slider"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { Textarea } from "@/components/ui/textarea"
 import { Badge } from "@/components/ui/badge"
+import { Separator } from "@/components/ui/separator"
+import { useToast } from "@/hooks/use-toast"
 import { LeadScoring } from "@/components/ai/LeadScoring"
-import { RevenueForecast } from "@/components/analytics/RevenueForecast"
 import { PredictiveAnalytics } from "@/components/ai/PredictiveAnalytics"
 import { WorkflowAutomation } from "@/components/ai/WorkflowAutomation"
-import { useToast } from "@/hooks/use-toast"
-import { Target, TrendingUp, BarChart3, Bot, Power, Settings } from "lucide-react"
-
-const AI_TOOLS_STORAGE_KEY = "loanflow-ai-tools-enabled"
+import { 
+  Bot, 
+  Target, 
+  TrendingUp, 
+  BarChart3, 
+  Settings, 
+  Save,
+  Zap,
+  Brain,
+  AlertCircle,
+  CheckCircle,
+  Sliders,
+  Database
+} from "lucide-react"
 
 export default function AITools() {
+  const location = useLocation()
   const [activeTab, setActiveTab] = useState("lead-scoring")
+  const [configureToolId, setConfigureToolId] = useState<string | null>(null)
   const { toast } = useToast()
-  
-  // Load initial state from localStorage or use defaults
-  const getInitialState = () => {
-    try {
-      const stored = localStorage.getItem(AI_TOOLS_STORAGE_KEY)
-      if (stored) {
-        return JSON.parse(stored)
-      }
-    } catch (error) {
-      console.error("Error loading AI tools state from localStorage:", error)
-    }
-    return {
-      leadScoring: true,
-      forecasting: true,
-      analytics: false,
-      automation: true
-    }
-  }
 
-  // State for each AI tool
-  const [aiToolsEnabled, setAiToolsEnabled] = useState(getInitialState)
+  // AI Tool configurations
+  const [toolConfigs, setToolConfigs] = useState({
+    "lead-scoring": {
+      enabled: true,
+      scoringThreshold: [70],
+      autoUpdate: true,
+      weightFactors: {
+        demographic: 30,
+        behavioral: 40,
+        engagement: 30
+      },
+      notifications: true
+    },
+    "forecasting": {
+      enabled: true,
+      forecastPeriod: "quarterly",
+      confidenceLevel: [85],
+      includeTrends: true,
+      alertThreshold: [20]
+    },
+    "automation": {
+      enabled: true,
+      triggerDelay: [2],
+      maxActions: [5],
+      enableEmailSequence: true,
+      enableTaskCreation: true
+    },
+    "analytics": {
+      enabled: false,
+      reportFrequency: "weekly",
+      dataRetention: [90],
+      includeExternalData: false
+    }
+  })
 
-  // Save to localStorage whenever state changes
   useEffect(() => {
-    try {
-      localStorage.setItem(AI_TOOLS_STORAGE_KEY, JSON.stringify(aiToolsEnabled))
-    } catch (error) {
-      console.error("Error saving AI tools state to localStorage:", error)
+    // Check if we're coming from integrations page with a specific tool to configure
+    if (location.state?.configureToolId) {
+      setConfigureToolId(location.state.configureToolId)
+      setActiveTab("configuration")
     }
-  }, [aiToolsEnabled])
+  }, [location.state])
 
-  const handleToolToggle = (toolKey: keyof typeof aiToolsEnabled, toolName: string) => {
-    setAiToolsEnabled(prev => ({
+  const aiTools = [
+    {
+      id: "lead-scoring",
+      name: "AI Lead Scoring",
+      description: "Automatically score and prioritize leads based on behavior and demographics",
+      icon: Target,
+      status: toolConfigs["lead-scoring"].enabled ? "active" : "inactive",
+      component: LeadScoring
+    },
+    {
+      id: "forecasting", 
+      name: "Revenue Forecasting",
+      description: "Predict revenue trends using machine learning algorithms",
+      icon: TrendingUp,
+      status: toolConfigs["forecasting"].enabled ? "active" : "inactive",
+      component: PredictiveAnalytics
+    },
+    {
+      id: "automation",
+      name: "Workflow Automation", 
+      description: "Automate repetitive tasks and follow-up sequences",
+      icon: Bot,
+      status: toolConfigs["automation"].enabled ? "active" : "inactive",
+      component: WorkflowAutomation
+    },
+    {
+      id: "analytics",
+      name: "Predictive Analytics",
+      description: "Advanced insights and recommendations powered by AI",
+      icon: BarChart3,
+      status: toolConfigs["analytics"].enabled ? "active" : "inactive",
+      component: PredictiveAnalytics
+    }
+  ]
+
+  const handleToolToggle = (toolId: string) => {
+    setToolConfigs(prev => ({
       ...prev,
-      [toolKey]: !prev[toolKey]
+      [toolId]: {
+        ...prev[toolId],
+        enabled: !prev[toolId].enabled
+      }
     }))
     
+    const tool = aiTools.find(t => t.id === toolId)
     toast({
-      title: !aiToolsEnabled[toolKey] ? "AI Tool Enabled" : "AI Tool Disabled",
-      description: `${toolName} has been ${!aiToolsEnabled[toolKey] ? 'enabled' : 'disabled'}`,
+      title: `${tool?.name} ${!toolConfigs[toolId].enabled ? 'Enabled' : 'Disabled'}`,
+      description: `${tool?.name} has been ${!toolConfigs[toolId].enabled ? 'activated' : 'deactivated'}`,
     })
+  }
+
+  const handleConfigSave = (toolId: string) => {
+    toast({
+      title: "Configuration Saved",
+      description: `${aiTools.find(t => t.id === toolId)?.name} settings have been updated`,
+    })
+  }
+
+  const renderToolConfiguration = (toolId: string) => {
+    const tool = aiTools.find(t => t.id === toolId)
+    const config = toolConfigs[toolId]
+    
+    if (!tool) return null
+
+    return (
+      <Card className="w-full">
+        <CardHeader>
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div className="p-2 bg-primary/10 rounded-lg">
+                <tool.icon className="w-5 h-5 text-primary" />
+              </div>
+              <div>
+                <CardTitle>{tool.name} Configuration</CardTitle>
+                <CardDescription>{tool.description}</CardDescription>
+              </div>
+            </div>
+            <Badge variant={config.enabled ? "default" : "secondary"}>
+              {config.enabled ? "Active" : "Inactive"}
+            </Badge>
+          </div>
+        </CardHeader>
+        <CardContent className="space-y-6">
+          <div className="flex items-center justify-between">
+            <div>
+              <Label className="text-base font-medium">Enable {tool.name}</Label>
+              <p className="text-sm text-muted-foreground">Activate this AI tool for your organization</p>
+            </div>
+            <Switch 
+              checked={config.enabled} 
+              onCheckedChange={() => handleToolToggle(toolId)}
+            />
+          </div>
+          
+          <Separator />
+          
+          {config.enabled && (
+            <div className="space-y-6">
+              {toolId === "lead-scoring" && (
+                <>
+                  <div>
+                    <Label>Scoring Threshold ({config.scoringThreshold[0]}%)</Label>
+                    <p className="text-sm text-muted-foreground mb-2">Minimum score for high-quality leads</p>
+                    <Slider
+                      value={config.scoringThreshold}
+                      onValueChange={(value) => setToolConfigs(prev => ({
+                        ...prev,
+                        [toolId]: { ...prev[toolId], scoringThreshold: value }
+                      }))}
+                      max={100}
+                      min={1}
+                      step={1}
+                      className="w-full"
+                    />
+                  </div>
+                  
+                  <div className="grid grid-cols-3 gap-4">
+                    <div>
+                      <Label>Demographic Weight (%)</Label>
+                      <Input 
+                        type="number" 
+                        value={config.weightFactors.demographic}
+                        onChange={(e) => setToolConfigs(prev => ({
+                          ...prev,
+                          [toolId]: { 
+                            ...prev[toolId], 
+                            weightFactors: { 
+                              ...prev[toolId].weightFactors, 
+                              demographic: parseInt(e.target.value) || 0 
+                            }
+                          }
+                        }))}
+                        min="0" 
+                        max="100" 
+                      />
+                    </div>
+                    <div>
+                      <Label>Behavioral Weight (%)</Label>
+                      <Input 
+                        type="number" 
+                        value={config.weightFactors.behavioral}
+                        onChange={(e) => setToolConfigs(prev => ({
+                          ...prev,
+                          [toolId]: { 
+                            ...prev[toolId], 
+                            weightFactors: { 
+                              ...prev[toolId].weightFactors, 
+                              behavioral: parseInt(e.target.value) || 0 
+                            }
+                          }
+                        }))}
+                        min="0" 
+                        max="100" 
+                      />
+                    </div>
+                    <div>
+                      <Label>Engagement Weight (%)</Label>
+                      <Input 
+                        type="number" 
+                        value={config.weightFactors.engagement}
+                        onChange={(e) => setToolConfigs(prev => ({
+                          ...prev,
+                          [toolId]: { 
+                            ...prev[toolId], 
+                            weightFactors: { 
+                              ...prev[toolId].weightFactors, 
+                              engagement: parseInt(e.target.value) || 0 
+                            }
+                          }
+                        }))}
+                        min="0" 
+                        max="100" 
+                      />
+                    </div>
+                  </div>
+                </>
+              )}
+
+              {toolId === "forecasting" && (
+                <>
+                  <div>
+                    <Label>Forecast Period</Label>
+                    <Select 
+                      value={config.forecastPeriod} 
+                      onValueChange={(value) => setToolConfigs(prev => ({
+                        ...prev,
+                        [toolId]: { ...prev[toolId], forecastPeriod: value }
+                      }))}
+                    >
+                      <SelectTrigger>
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="monthly">Monthly</SelectItem>
+                        <SelectItem value="quarterly">Quarterly</SelectItem>
+                        <SelectItem value="yearly">Yearly</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  
+                  <div>
+                    <Label>Confidence Level ({config.confidenceLevel[0]}%)</Label>
+                    <Slider
+                      value={config.confidenceLevel}
+                      onValueChange={(value) => setToolConfigs(prev => ({
+                        ...prev,
+                        [toolId]: { ...prev[toolId], confidenceLevel: value }
+                      }))}
+                      max={99}
+                      min={50}
+                      step={1}
+                      className="w-full"
+                    />
+                  </div>
+                </>
+              )}
+
+              {toolId === "automation" && (
+                <>
+                  <div>
+                    <Label>Trigger Delay (hours)</Label>
+                    <Slider
+                      value={config.triggerDelay}
+                      onValueChange={(value) => setToolConfigs(prev => ({
+                        ...prev,
+                        [toolId]: { ...prev[toolId], triggerDelay: value }
+                      }))}
+                      max={72}
+                      min={1}
+                      step={1}
+                      className="w-full"
+                    />
+                    <p className="text-sm text-muted-foreground">Wait {config.triggerDelay[0]} hour(s) before triggering automation</p>
+                  </div>
+                  
+                  <div className="space-y-3">
+                    <div className="flex items-center justify-between">
+                      <Label>Enable Email Sequences</Label>
+                      <Switch 
+                        checked={config.enableEmailSequence}
+                        onCheckedChange={(checked) => setToolConfigs(prev => ({
+                          ...prev,
+                          [toolId]: { ...prev[toolId], enableEmailSequence: checked }
+                        }))}
+                      />
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <Label>Enable Task Creation</Label>
+                      <Switch 
+                        checked={config.enableTaskCreation}
+                        onCheckedChange={(checked) => setToolConfigs(prev => ({
+                          ...prev,
+                          [toolId]: { ...prev[toolId], enableTaskCreation: checked }
+                        }))}
+                      />
+                    </div>
+                  </div>
+                </>
+              )}
+
+              {toolId === "analytics" && (
+                <>
+                  <div>
+                    <Label>Report Frequency</Label>
+                    <Select 
+                      value={config.reportFrequency} 
+                      onValueChange={(value) => setToolConfigs(prev => ({
+                        ...prev,
+                        [toolId]: { ...prev[toolId], reportFrequency: value }
+                      }))}
+                    >
+                      <SelectTrigger>
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="daily">Daily</SelectItem>
+                        <SelectItem value="weekly">Weekly</SelectItem>
+                        <SelectItem value="monthly">Monthly</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  
+                  <div>
+                    <Label>Data Retention (days)</Label>
+                    <Slider
+                      value={config.dataRetention}
+                      onValueChange={(value) => setToolConfigs(prev => ({
+                        ...prev,
+                        [toolId]: { ...prev[toolId], dataRetention: value }
+                      }))}
+                      max={365}
+                      min={30}
+                      step={5}
+                      className="w-full"
+                    />
+                    <p className="text-sm text-muted-foreground">Keep data for {config.dataRetention[0]} days</p>
+                  </div>
+                </>
+              )}
+              
+              <div className="flex justify-end pt-4">
+                <Button onClick={() => handleConfigSave(toolId)} className="gap-2">
+                  <Save className="w-4 h-4" />
+                  Save Configuration
+                </Button>
+              </div>
+            </div>
+          )}
+        </CardContent>
+      </Card>
+    )
   }
 
   return (
     <Layout>
-      <div className="container mx-auto p-6 space-y-6">
-        <div className="flex justify-between items-center">
-          <div>
-            <h1 className="text-3xl font-bold tracking-tight">AI Tools</h1>
-            <p className="text-foreground">
-              AI-powered tools to enhance your CRM workflows and decision-making
+      <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted/20">
+        <div className="container mx-auto p-6 space-y-8">
+          {/* Header */}
+          <div className="text-center space-y-4 py-8">
+            <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-primary rounded-2xl mb-4">
+              <Brain className="w-8 h-8 text-white" />
+            </div>
+            <h1 className="text-4xl font-bold bg-gradient-to-r from-foreground to-foreground/80 bg-clip-text text-transparent">
+              AI Tools & Configuration
+            </h1>
+            <p className="text-lg text-foreground/70 max-w-2xl mx-auto">
+              Configure and manage AI-powered tools to enhance your CRM performance
             </p>
           </div>
-        </div>
 
-        {/* AI Tools Control Panel */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center space-x-2">
-              <Power className="w-5 h-5 text-white" />
-              <span>AI Tools Control Panel</span>
-            </CardTitle>
-            <CardDescription>
-              Enable or disable individual AI tools to customize your CRM experience
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-              {/* Lead Scoring Switch */}
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between p-4 border rounded-lg space-y-2 sm:space-y-0">
-                <div className="flex items-center space-x-3 flex-1">
-                  <div className="min-w-0">
-                    <Label htmlFor="lead-scoring-switch" className="font-medium">Lead Scoring</Label>
-                    <p className="text-sm text-muted-foreground">AI-powered lead prioritization</p>
-                  </div>
-                </div>
-                <div className="flex flex-col sm:items-end space-y-2 sm:flex-shrink-0">
-                  <Switch
-                    id="lead-scoring-switch"
-                    checked={aiToolsEnabled.leadScoring}
-                    onCheckedChange={() => handleToolToggle('leadScoring', 'Lead Scoring')}
-                  />
-                  <Badge variant={aiToolsEnabled.leadScoring ? "default" : "secondary"}>
-                    {aiToolsEnabled.leadScoring ? "Active" : "Disabled"}
-                  </Badge>
-                </div>
-              </div>
+          <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-8">
+            <TabsList className="grid w-full grid-cols-5 bg-card/50 backdrop-blur-sm rounded-2xl p-1">
+              <TabsTrigger value="lead-scoring" className="rounded-xl">
+                <Target className="w-4 h-4 mr-2" />
+                Lead Scoring
+              </TabsTrigger>
+              <TabsTrigger value="forecasting" className="rounded-xl">
+                <TrendingUp className="w-4 h-4 mr-2" />
+                Forecasting
+              </TabsTrigger>
+              <TabsTrigger value="automation" className="rounded-xl">
+                <Bot className="w-4 h-4 mr-2" />
+                Automation
+              </TabsTrigger>
+              <TabsTrigger value="analytics" className="rounded-xl">
+                <BarChart3 className="w-4 h-4 mr-2" />
+                Analytics
+              </TabsTrigger>
+              <TabsTrigger value="configuration" className="rounded-xl">
+                <Settings className="w-4 h-4 mr-2" />
+                Configuration
+              </TabsTrigger>
+            </TabsList>
 
-              {/* Revenue Forecasting Switch */}
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between p-4 border rounded-lg space-y-2 sm:space-y-0">
-                <div className="flex items-center space-x-3 flex-1">
-                  <div className="min-w-0">
-                    <Label htmlFor="forecasting-switch" className="font-medium">Revenue Forecast</Label>
-                    <p className="text-sm text-muted-foreground">Predict future revenue</p>
-                  </div>
-                </div>
-                <div className="flex flex-col sm:items-end space-y-2 sm:flex-shrink-0">
-                  <Switch
-                    id="forecasting-switch"
-                    checked={aiToolsEnabled.forecasting}
-                    onCheckedChange={() => handleToolToggle('forecasting', 'Revenue Forecasting')}
-                  />
-                  <Badge variant={aiToolsEnabled.forecasting ? "default" : "secondary"}>
-                    {aiToolsEnabled.forecasting ? "Active" : "Disabled"}
-                  </Badge>
-                </div>
-              </div>
-
-              {/* Predictive Analytics Switch */}
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between p-4 border rounded-lg space-y-2 sm:space-y-0">
-                <div className="flex items-center space-x-3 flex-1">
-                  <div className="min-w-0">
-                    <Label htmlFor="analytics-switch" className="font-medium">Predictive Analytics</Label>
-                    <p className="text-sm text-muted-foreground">AI insights & recommendations</p>
-                  </div>
-                </div>
-                <div className="flex flex-col sm:items-end space-y-2 sm:flex-shrink-0">
-                  <Switch
-                    id="analytics-switch"
-                    checked={aiToolsEnabled.analytics}
-                    onCheckedChange={() => handleToolToggle('analytics', 'Predictive Analytics')}
-                  />
-                  <Badge variant={aiToolsEnabled.analytics ? "default" : "secondary"}>
-                    {aiToolsEnabled.analytics ? "Active" : "Disabled"}
-                  </Badge>
-                </div>
-              </div>
-
-              {/* Workflow Automation Switch */}
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between p-4 border rounded-lg space-y-2 sm:space-y-0">
-                <div className="flex items-center space-x-3 flex-1">
-                  <div className="min-w-0">
-                    <Label htmlFor="automation-switch" className="font-medium">Automation</Label>
-                    <p className="text-sm text-muted-foreground">Automate workflows & tasks</p>
-                  </div>
-                </div>
-                <div className="flex flex-col sm:items-end space-y-2 sm:flex-shrink-0">
-                  <Switch
-                    id="automation-switch"
-                    checked={aiToolsEnabled.automation}
-                    onCheckedChange={() => handleToolToggle('automation', 'Workflow Automation')}
-                  />
-                  <Badge variant={aiToolsEnabled.automation ? "default" : "secondary"}>
-                    {aiToolsEnabled.automation ? "Active" : "Disabled"}
-                  </Badge>
-                </div>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-          <TabsList className="grid w-full grid-cols-2 sm:grid-cols-4 h-auto">
-            <TabsTrigger value="lead-scoring" className="flex items-center space-x-1 sm:space-x-2 p-2 sm:p-3">
-              <Target className="w-4 h-4 flex-shrink-0" />
-              <span className="text-xs sm:text-sm truncate">Lead Scoring</span>
-            </TabsTrigger>
-            <TabsTrigger value="forecasting" className="flex items-center space-x-1 sm:space-x-2 p-2 sm:p-3">
-              <TrendingUp className="w-4 h-4 flex-shrink-0" />
-              <span className="text-xs sm:text-sm truncate">Revenue Forecast</span>
-            </TabsTrigger>
-            <TabsTrigger value="analytics" className="flex items-center space-x-1 sm:space-x-2 p-2 sm:p-3">
-              <BarChart3 className="w-4 h-4 flex-shrink-0" />
-              <span className="text-xs sm:text-sm truncate">Predictive Analytics</span>
-            </TabsTrigger>
-            <TabsTrigger value="automation" className="flex items-center space-x-1 sm:space-x-2 p-2 sm:p-3">
-              <Bot className="w-4 h-4 flex-shrink-0" />
-              <span className="text-xs sm:text-sm truncate">Automation</span>
-            </TabsTrigger>
-          </TabsList>
-
-          <TabsContent value="lead-scoring">
-            {aiToolsEnabled.leadScoring ? (
+            <TabsContent value="lead-scoring">
               <LeadScoring />
-            ) : (
-              <Card>
-                <CardContent className="p-8 text-center">
-                  <Target className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
-                  <h3 className="text-lg font-semibold mb-2">Lead Scoring is Disabled</h3>
-                  <p className="text-muted-foreground mb-4">
-                    Enable Lead Scoring in the control panel above to access this tool.
-                  </p>
-                </CardContent>
-              </Card>
-            )}
-          </TabsContent>
+            </TabsContent>
 
-          <TabsContent value="forecasting">
-            {aiToolsEnabled.forecasting ? (
-              <RevenueForecast />
-            ) : (
-              <Card>
-                <CardContent className="p-8 text-center">
-                  <TrendingUp className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
-                  <h3 className="text-lg font-semibold mb-2">Revenue Forecasting is Disabled</h3>
-                  <p className="text-muted-foreground mb-4">
-                    Enable Revenue Forecasting in the control panel above to access this tool.
-                  </p>
-                </CardContent>
-              </Card>
-            )}
-          </TabsContent>
-
-          <TabsContent value="analytics">
-            {aiToolsEnabled.analytics ? (
+            <TabsContent value="forecasting">
               <PredictiveAnalytics />
-            ) : (
-              <Card>
-                <CardContent className="p-8 text-center">
-                  <BarChart3 className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
-                  <h3 className="text-lg font-semibold mb-2">Predictive Analytics is Disabled</h3>
-                  <p className="text-muted-foreground mb-4">
-                    Enable Predictive Analytics in the control panel above to access this tool.
-                  </p>
-                </CardContent>
-              </Card>
-            )}
-          </TabsContent>
+            </TabsContent>
 
-          <TabsContent value="automation">
-            {aiToolsEnabled.automation ? (
+            <TabsContent value="automation">
               <WorkflowAutomation />
-            ) : (
-              <Card>
-                <CardContent className="p-8 text-center">
-                  <Bot className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
-                  <h3 className="text-lg font-semibold mb-2">Workflow Automation is Disabled</h3>
-                  <p className="text-muted-foreground mb-4">
-                    Enable Workflow Automation in the control panel above to access this tool.
-                  </p>
-                </CardContent>
-              </Card>
-            )}
-          </TabsContent>
-        </Tabs>
+            </TabsContent>
+
+            <TabsContent value="analytics">
+              <PredictiveAnalytics />
+            </TabsContent>
+
+            <TabsContent value="configuration" className="space-y-6">
+              <div className="grid gap-6">
+                <Card className="border-0 bg-gradient-to-br from-card to-card/50 backdrop-blur-sm">
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
+                      <Sliders className="w-5 h-5" />
+                      AI Tools Configuration
+                    </CardTitle>
+                    <CardDescription>
+                      Configure individual AI tools and their parameters
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="grid gap-6">
+                      {configureToolId ? (
+                        renderToolConfiguration(configureToolId)
+                      ) : (
+                        <div className="grid gap-4">
+                          <p className="text-muted-foreground">
+                            Select an AI tool to configure its settings:
+                          </p>
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            {aiTools.map((tool) => (
+                              <Card 
+                                key={tool.id}
+                                className="cursor-pointer hover:shadow-lg transition-all duration-200 hover:scale-[1.02]"
+                                onClick={() => setConfigureToolId(tool.id)}
+                              >
+                                <CardContent className="p-4">
+                                  <div className="flex items-center gap-3">
+                                    <div className="p-2 bg-primary/10 rounded-lg">
+                                      <tool.icon className="w-5 h-5 text-primary" />
+                                    </div>
+                                    <div className="flex-1">
+                                      <h3 className="font-medium">{tool.name}</h3>
+                                      <p className="text-sm text-muted-foreground">{tool.description}</p>
+                                    </div>
+                                    <Badge variant={tool.status === "active" ? "default" : "secondary"}>
+                                      {tool.status === "active" ? (
+                                        <CheckCircle className="w-3 h-3 mr-1" />
+                                      ) : (
+                                        <AlertCircle className="w-3 h-3 mr-1" />
+                                      )}
+                                      {tool.status}
+                                    </Badge>
+                                  </div>
+                                </CardContent>
+                              </Card>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+                      
+                      {configureToolId && (
+                        <div className="mt-6">
+                          {renderToolConfiguration(configureToolId)}
+                          <div className="mt-4 flex justify-start">
+                            <Button 
+                              variant="outline" 
+                              onClick={() => setConfigureToolId(null)}
+                            >
+                              ← Back to Tool Selection
+                            </Button>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
+            </TabsContent>
+          </Tabs>
+        </div>
       </div>
     </Layout>
   )
