@@ -151,21 +151,6 @@ export function LeadTableRow({ lead, onEdit, onDelete, onConvert, hasAdminRole }
         </div>
       </td>
 
-      {/* Credit Score */}
-      <td className="p-4 text-center">
-        {lead.credit_score ? (
-          <span className={`font-medium ${
-            lead.credit_score >= 700 ? 'text-green-600' : 
-            lead.credit_score >= 600 ? 'text-yellow-600' : 
-            'text-red-600'
-          }`}>
-            {lead.credit_score}
-          </span>
-        ) : (
-          <span className="text-muted-foreground">-</span>
-        )}
-      </td>
-
       {/* Actions */}
       <td className="p-4">
         <div className="flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">

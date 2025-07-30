@@ -143,15 +143,6 @@ export function LeadCard({ lead, onEdit, onDelete, onConvert, hasAdminRole }: Le
               </div>
             )}
             
-            {lead.credit_score && (
-              <div className="flex items-center justify-between text-sm mb-2">
-                <span className="text-white">Credit Score</span>
-                <span className={`font-semibold ${lead.credit_score >= 700 ? 'text-green-600' : lead.credit_score >= 600 ? 'text-yellow-600' : 'text-red-600'}`}>
-                  {lead.credit_score}
-                </span>
-              </div>
-            )}
-            
             {lead.loan_type && (
               <div className="flex items-center justify-between text-sm">
                 <span className="text-white">Loan Type</span>
