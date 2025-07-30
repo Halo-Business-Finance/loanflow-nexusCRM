@@ -95,19 +95,35 @@ export default function Resources() {
           </CardHeader>
           <CardContent>
             <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-              <Button variant="outline" className="justify-start gap-2">
+              <Button 
+                variant="outline" 
+                className="justify-start gap-2"
+                onClick={() => window.open('https://docs.lovable.dev/', '_blank')}
+              >
                 <BookOpen className="w-4 h-4" />
                 Knowledge Base
               </Button>
-              <Button variant="outline" className="justify-start gap-2">
+              <Button 
+                variant="outline" 
+                className="justify-start gap-2"
+                onClick={() => window.open('https://www.youtube.com/playlist?list=PLbVHz4urQBZkJiAWdG8HWoJTdgEysigIO', '_blank')}
+              >
                 <Video className="w-4 h-4" />
                 Video Tutorials
               </Button>
-              <Button variant="outline" className="justify-start gap-2">
+              <Button 
+                variant="outline" 
+                className="justify-start gap-2"
+                onClick={() => window.open('https://docs.lovable.dev/user-guides/quickstart', '_blank')}
+              >
                 <FileText className="w-4 h-4" />
                 Template Library
               </Button>
-              <Button variant="outline" className="justify-start gap-2">
+              <Button 
+                variant="outline" 
+                className="justify-start gap-2"
+                onClick={() => window.open('https://discord.com/channels/1119885301872070706/1280461670979993613', '_blank')}
+              >
                 <Globe className="w-4 h-4" />
                 Community Forum
               </Button>
