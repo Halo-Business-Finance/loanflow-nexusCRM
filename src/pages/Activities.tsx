@@ -478,11 +478,9 @@ export default function Activities() {
                           {/* Timeline indicator */}
                           <div className="flex flex-col items-center">
                             <div className={`flex h-10 w-10 items-center justify-center rounded-full ${
-                              activity.status === 'Pending' ? 'bg-destructive/10' : 'bg-primary/10'
+                              activity.status === 'Pending' ? 'bg-blue-500/20' : 'bg-primary/10'
                             }`}>
-                              <IconComponent className={`h-4 w-4 ${
-                                activity.status === 'Pending' ? 'text-destructive' : 'text-primary'
-                              }`} />
+                              <IconComponent className="h-4 w-4 text-white" />
                             </div>
                           </div>
                           
