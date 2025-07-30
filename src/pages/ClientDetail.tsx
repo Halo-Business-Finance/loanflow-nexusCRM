@@ -266,15 +266,22 @@ export default function ClientDetail() {
     try {
       const updatedNotes = callNotes + (newCallNote ? `\n\n[${new Date().toLocaleString()}] ${newCallNote}` : "")
       
+      // Update the contact_entities table, not the clients table
       const { error } = await supabase
-        .from('clients')
+        .from('contact_entities')
         .update({ 
           call_notes: updatedNotes,
-          last_activity: new Date().toISOString()
+          updated_at: new Date().toISOString()
         })
-        .eq('id', client.id)
+        .eq('id', client.contact_entity_id)
 
       if (error) throw error
+
+      // Also update the client's last_activity
+      await supabase
+        .from('clients')
+        .update({ last_activity: new Date().toISOString() })
+        .eq('id', client.id)
 
       setCallNotes(updatedNotes)
       setNewCallNote("")
