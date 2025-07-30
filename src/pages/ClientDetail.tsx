@@ -1124,7 +1124,6 @@ export default function ClientDetail() {
                     </div>
                   </div>
                 </div>
-              </div>
             </CardContent>
           </Card>
 
@@ -1347,3 +1346,4 @@ export default function ClientDetail() {
     </Layout>
   )
 }
+
