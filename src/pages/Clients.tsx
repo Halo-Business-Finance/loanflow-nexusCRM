@@ -489,7 +489,7 @@ export default function Clients() {
                     <div className="flex gap-4">
                       <Avatar className="h-12 w-12">
                         <AvatarImage src={`https://api.dicebear.com/6/initials/svg?seed=${client.name}`} />
-                        <AvatarFallback>{client.name.split(' ').map(n => n[0]).join('')}</AvatarFallback>
+                        <AvatarFallback>{(client.name || 'Unknown').split(' ').map(n => n[0]).join('')}</AvatarFallback>
                       </Avatar>
                       
                       <div className="space-y-2">
