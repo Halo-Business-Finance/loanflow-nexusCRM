@@ -179,79 +179,8 @@ export function LeadTableRow({ lead, onEdit, onDelete, onConvert, hasAdminRole }
 
       {/* Actions */}
       <td className="p-4">
-        <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-          <PhoneDialer 
-            trigger={
-              <Button 
-                size="sm" 
-                variant="ghost" 
-                className="h-8 w-8 p-0"
-                onClick={(e) => e.stopPropagation()}
-              >
-                <Phone className="w-3 h-3 text-white" />
-              </Button>
-            }
-          />
-          <EmailComposer 
-            trigger={
-              <Button 
-                size="sm" 
-                variant="ghost" 
-                className="h-8 w-8 p-0"
-                onClick={(e) => e.stopPropagation()}
-              >
-                <Mail className="w-3 h-3 text-white" />
-              </Button>
-            }
-          />
-          
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button 
-                size="sm" 
-                variant="ghost" 
-                className="h-8 w-8 p-0"
-                onClick={(e) => e.stopPropagation()}
-              >
-                <MoreHorizontal className="w-4 h-4 text-white" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-40">
-              <DropdownMenuItem onClick={(e) => {
-                e.stopPropagation()
-                onEdit(lead)
-              }}>
-                <Edit className="w-4 h-4 mr-2 text-white" />
-                Edit Lead
-              </DropdownMenuItem>
-              
-              {!lead.is_converted_to_client && (
-                <DropdownMenuItem onClick={(e) => {
-                  e.stopPropagation()
-                  onConvert(lead)
-                }}>
-                  <ArrowRight className="w-4 h-4 mr-2 text-white" />
-                  Convert to Client
-                </DropdownMenuItem>
-              )}
-              
-              {hasAdminRole && (
-                <>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem 
-                    onClick={(e) => {
-                      e.stopPropagation()
-                      onDelete(lead.id, lead.name)
-                    }}
-                    className="text-destructive focus:text-destructive"
-                  >
-                    <Trash2 className="w-4 h-4 mr-2 text-white" />
-                    Delete Lead
-                  </DropdownMenuItem>
-                </>
-              )}
-            </DropdownMenuContent>
-          </DropdownMenu>
+        <div className="flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+          <span className="text-xs text-muted-foreground">Click to view details</span>
         </div>
       </td>
     </tr>

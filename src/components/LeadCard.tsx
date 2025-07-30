@@ -200,37 +200,6 @@ export function LeadCard({ lead, onEdit, onDelete, onConvert, hasAdminRole }: Le
               </span>
             )}
           </div>
-          
-          {/* Quick Actions */}
-          <div className="flex gap-2">
-            <PhoneDialer 
-              trigger={
-                <Button size="sm" variant="outline" className="flex-1 text-xs h-8 text-white border-white hover:bg-white hover:text-black">
-                  <Phone className="w-3 h-3 mr-1 text-white" />
-                  Call
-                </Button>
-              }
-            />
-            <EmailComposer 
-              trigger={
-                <Button size="sm" variant="outline" className="flex-1 text-xs h-8 text-white border-white hover:bg-white hover:text-black">
-                  <Mail className="w-3 h-3 mr-1 text-white" />
-                  Email
-                </Button>
-              }
-            />
-            <Button 
-              size="sm" 
-              variant="outline" 
-              className="flex-1 text-xs h-8 text-white border-white hover:bg-white hover:text-black"
-              onClick={(e) => {
-                e.stopPropagation()
-                onEdit(lead)
-              }}
-            >
-              Edit
-            </Button>
-          </div>
         </div>
       </CardContent>
     </Card>
