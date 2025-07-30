@@ -159,7 +159,7 @@ export function TodaysTasks() {
                   onClick={() => handleTaskClick(task)}
                 >
                   <div className="flex h-8 w-8 items-center justify-center rounded-full bg-destructive/10">
-                    <AlertCircle className="h-4 w-4 text-destructive" />
+                    <AlertCircle className="h-4 w-4 text-white" />
                   </div>
                   <div className="flex-1 min-w-0">
                     <div className="font-medium text-sm">{task.title}</div>
@@ -185,7 +185,7 @@ export function TodaysTasks() {
                   onClick={() => handleTaskClick(task)}
                 >
                   <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary/10">
-                    <IconComponent className="h-4 w-4 text-primary" />
+                    <IconComponent className="h-4 w-4 text-white" />
                   </div>
                   <div className="flex-1 min-w-0">
                     <div className="font-medium text-sm">{task.title}</div>
