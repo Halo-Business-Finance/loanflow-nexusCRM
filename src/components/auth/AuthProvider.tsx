@@ -116,7 +116,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       })
 
       console.log('Sign in response:', { error, data })
-      if (error) throw error
+      if (error) {
+        // Check for common auth errors and provide better messages
+        if (error.message === 'Invalid login credentials') {
+          throw new Error('Invalid email or password. If you just signed up, please check your email and confirm your account first.')
+        }
+        throw error
+      }
 
       // Log successful login
       await supabase.functions.invoke('audit-log', {
