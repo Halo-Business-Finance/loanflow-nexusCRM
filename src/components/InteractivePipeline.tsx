@@ -4,7 +4,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { DollarSign, User, Calendar, Phone, Mail, ArrowRight, Eye, Edit } from "lucide-react";
+import { DollarSign, User, Calendar, ArrowRight, Eye, Edit } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/components/auth/AuthProvider";
 import { useToast } from "@/hooks/use-toast";
@@ -52,26 +52,6 @@ const LeadCard = ({ lead, onStageChange, onViewDetails }: {
                 </span>
               </div>
             )}
-            
-            <div className="flex items-center gap-4">
-              {lead.email && (
-                <div className="flex items-center gap-1">
-                  <Mail className="h-3 w-3 text-muted-foreground dark:text-white" />
-                  <span className="text-xs text-muted-foreground dark:text-white truncate max-w-[120px]">
-                    {lead.email}
-                  </span>
-                </div>
-              )}
-              
-              {lead.phone && (
-                <div className="flex items-center gap-1">
-                  <Phone className="h-3 w-3 text-muted-foreground dark:text-white" />
-                  <span className="text-xs text-muted-foreground dark:text-white">
-                    {lead.phone}
-                  </span>
-                </div>
-              )}
-            </div>
             
             {lead.last_contact && (
               <div className="flex items-center gap-1">
