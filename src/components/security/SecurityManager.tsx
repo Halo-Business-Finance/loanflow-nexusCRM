@@ -13,6 +13,8 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/components/auth/AuthProvider";
 import { AdvancedThreatDetection } from "./AdvancedThreatDetection";
 import { SecurityMonitor } from "./SecurityMonitor";
+import { DarkWebSecurityBot } from "./DarkWebSecurityBot";
+import { HackerDetectionBot } from "./HackerDetectionBot";
 import Layout from "@/components/Layout";
 
 interface SecurityNotification {
@@ -303,7 +305,9 @@ export function SecurityManager() {
           <TabsList>
             <TabsTrigger value="overview">Overview</TabsTrigger>
             <TabsTrigger value="monitor">Security Monitor</TabsTrigger>
-            <TabsTrigger value="threats">AI Protection</TabsTrigger>
+            <TabsTrigger value="threats">AI Protection Bot</TabsTrigger>
+            <TabsTrigger value="darkweb">Dark Web Bot</TabsTrigger>
+            <TabsTrigger value="hacker">Hacker Detection Bot</TabsTrigger>
             <TabsTrigger value="mfa">Multi-Factor Auth</TabsTrigger>
             <TabsTrigger value="notifications">Security Alerts</TabsTrigger>
             {hasRole('admin') && <TabsTrigger value="policies">Password Policy</TabsTrigger>}
@@ -412,6 +416,14 @@ export function SecurityManager() {
 
         <TabsContent value="threats" className="space-y-4">
           <AdvancedThreatDetection />
+        </TabsContent>
+
+        <TabsContent value="darkweb" className="space-y-4">
+          <DarkWebSecurityBot />
+        </TabsContent>
+
+        <TabsContent value="hacker" className="space-y-4">
+          <HackerDetectionBot />
         </TabsContent>
 
         <TabsContent value="mfa" className="space-y-4">
