@@ -83,7 +83,7 @@ export function LeadTableRow({ lead, onEdit, onDelete, onConvert, hasAdminRole }
 
   return (
     <tr 
-      className={`group border-b border-muted/20 hover:bg-muted/30 transition-colors cursor-pointer ${
+      className={`group border-b border-muted/20 hover:bg-muted/30 hover:outline hover:outline-1 hover:outline-white transition-all cursor-pointer ${
         lead.is_converted_to_client ? 'opacity-60' : ''
       }`}
       onClick={() => navigate(`/leads/${lead.id}`)}

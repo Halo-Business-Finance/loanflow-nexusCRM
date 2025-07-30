@@ -89,7 +89,7 @@ export function LeadCard({ lead, onEdit, onDelete, onConvert, hasAdminRole }: Le
 
   return (
     <Card 
-      className={`group hover:shadow-lg hover:shadow-primary/20 transition-all duration-300 cursor-pointer animate-fade-in border-muted/20 hover:border-primary/30 bg-transparent ${lead.is_converted_to_client ? 'opacity-70' : 'hover:scale-[1.02]'}`}
+      className={`group hover:shadow-lg hover:shadow-white/20 transition-all duration-300 cursor-pointer animate-fade-in border-muted/20 hover:border-white bg-transparent ${lead.is_converted_to_client ? 'opacity-70' : 'hover:scale-[1.02]'}`}
       onClick={() => navigate(`/leads/${lead.id}`)}
     >
       <CardHeader className="pb-3">
