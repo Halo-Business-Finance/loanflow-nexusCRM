@@ -125,11 +125,11 @@ export function ActionReminder({ entityId, entityName, entityType, isOpen, onClo
 
   return (
     <div 
-      className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm"
+      className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4"
       onClick={onClose}
     >
       <div 
-        className="fixed top-4 left-1/2 transform -translate-x-1/2 w-full max-w-2xl px-4"
+        className="w-full max-w-2xl max-h-[90vh] overflow-y-auto"
         onClick={(e) => e.stopPropagation()}
       >
         <Card className="w-full shadow-xl border animate-in slide-in-from-top-4 duration-300">
