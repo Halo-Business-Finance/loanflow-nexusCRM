@@ -484,7 +484,7 @@ export default function Dashboard() {
         <Card className="col-span-2 shadow-soft">
           <CardHeader>
             <div className="flex justify-between items-center">
-              <CardTitle>Sales Pipeline</CardTitle>
+              <CardTitle className="dark:text-white">Sales Pipeline</CardTitle>
               <div className="flex gap-2">
                 <div className="relative">
                   <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground dark:text-white" />
@@ -507,14 +507,14 @@ export default function Dashboard() {
                   onClick={() => handlePipelineStageClick(stage)}
                 >
                   <div className="flex justify-between text-sm">
-                    <span className="text-foreground font-medium">{stage.name}</span>
+                    <span className="text-foreground font-medium dark:text-white">{stage.name}</span>
                     <div className="flex items-center gap-2">
-                      <span className="text-muted-foreground">{stage.count} leads</span>
-                      <Target className="h-3 w-3 text-muted-foreground" />
+                      <span className="text-muted-foreground dark:text-white">{stage.count} leads</span>
+                      <Target className="h-3 w-3 text-muted-foreground dark:text-white" />
                     </div>
                   </div>
                   <Progress value={stage.percentage} className="h-3 hover:h-4 transition-all" />
-                  <div className="text-xs text-muted-foreground text-right">{stage.percentage}% completion</div>
+                  <div className="text-xs text-muted-foreground dark:text-white text-right">{stage.percentage}% completion</div>
                 </div>
               ))}
             </div>
