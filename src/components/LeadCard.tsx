@@ -102,19 +102,19 @@ export function LeadCard({ lead, onEdit, onDelete, onConvert, hasAdminRole }: Le
             </Avatar>
             <div className="flex-1 min-w-0">
               <div className="flex items-center gap-2 mb-1">
-                <h3 className="font-semibold text-card-foreground truncate">{lead.name}</h3>
+                <h3 className="font-semibold text-white truncate">{lead.name}</h3>
                 {lead.is_converted_to_client && (
                   <Badge variant="default" className="text-xs">Client</Badge>
                 )}
               </div>
               {lead.business_name && (
-                <div className="flex items-center gap-1 text-sm text-muted-foreground mb-1">
-                  <Building className="w-3 h-3 text-muted-foreground" />
+                <div className="flex items-center gap-1 text-sm text-white mb-1">
+                  <Building className="w-3 h-3 text-white" />
                   <span className="truncate">{lead.business_name}</span>
                 </div>
               )}
-              <div className="flex items-center gap-1 text-xs text-muted-foreground">
-                <Calendar className="w-3 h-3 text-muted-foreground" />
+              <div className="flex items-center gap-1 text-xs text-white">
+                <Calendar className="w-3 h-3 text-white" />
                 <span>
                   {daysSinceContact === 0 ? 'Today' : 
                    daysSinceContact === 1 ? '1 day ago' : 
