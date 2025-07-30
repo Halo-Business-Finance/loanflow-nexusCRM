@@ -120,6 +120,9 @@ export default function LeadDetail() {
   const { user } = useAuth()
   const { toast } = useToast()
   const { createNotification } = useNotifications()
+
+  console.log('LeadDetail: User authenticated:', !!user)
+  console.log('LeadDetail: Lead ID from params:', id)
   
   const [lead, setLead] = useState<Lead | null>(null)
   const [client, setClient] = useState<Client | null>(null)
