@@ -49,35 +49,38 @@ export class DataFieldValidator {
       warnings: []
     }
 
+    // Handle both nested contact_entity and direct contact entity data
+    const contactEntity = leadData.contact_entity || leadData
+    
     // Check required fields from contact entity
-    if (!leadData.contact_entity?.name) {
+    if (!contactEntity?.name) {
       result.errors.push('Name is required')
       result.isValid = false
     }
 
-    if (!leadData.contact_entity?.email) {
+    if (!contactEntity?.email) {
       result.errors.push('Email is required')
       result.isValid = false
     }
 
     // Validate email format
-    if (leadData.contact_entity?.email && !this.isValidEmail(leadData.contact_entity.email)) {
+    if (contactEntity?.email && !this.isValidEmail(contactEntity.email)) {
       result.errors.push('Invalid email format')
       result.isValid = false
     }
 
     // Validate phone format
-    if (leadData.contact_entity?.phone && !this.isValidPhoneNumber(leadData.contact_entity.phone)) {
+    if (contactEntity?.phone && !this.isValidPhoneNumber(contactEntity.phone)) {
       result.warnings.push('Phone number format may be invalid')
     }
 
     // Check for missing important business fields
-    if (leadData.contact_entity?.loan_amount && leadData.contact_entity.loan_amount > 100000 && !leadData.contact_entity.business_name) {
+    if (contactEntity?.loan_amount && contactEntity.loan_amount > 100000 && !contactEntity.business_name) {
       result.warnings.push('Large loan amount without business name specified')
     }
 
     // Validate loan amount consistency
-    if (leadData.contact_entity?.loan_amount && leadData.contact_entity.loan_amount < 0) {
+    if (contactEntity?.loan_amount && contactEntity.loan_amount < 0) {
       result.errors.push('Loan amount cannot be negative')
       result.isValid = false
     }
@@ -92,17 +95,21 @@ export class DataFieldValidator {
       warnings: []
     }
 
+    // Handle both nested contact_entity and direct contact entity data
+    const leadContactEntity = leadData.contact_entity || leadData
+    const clientContactEntity = clientData.contact_entity || clientData
+
     // Check that essential data transferred from lead to client
-    if (leadData.contact_entity?.name !== clientData.contact_entity?.name) {
+    if (leadContactEntity?.name !== clientContactEntity?.name) {
       result.warnings.push('Name differs between lead and client')
     }
 
-    if (leadData.contact_entity?.email !== clientData.contact_entity?.email) {
+    if (leadContactEntity?.email !== clientContactEntity?.email) {
       result.warnings.push('Email differs between lead and client')
     }
 
     // Business logic checks
-    if (leadData.contact_entity?.stage !== 'Funded' && leadData.contact_entity?.stage !== 'Closed') {
+    if (leadContactEntity?.stage !== 'Funded' && leadContactEntity?.stage !== 'Closed') {
       result.warnings.push('Converting lead that is not in Funded or Closed stage')
     }
 
