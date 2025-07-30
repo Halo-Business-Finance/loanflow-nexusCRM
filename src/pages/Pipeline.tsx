@@ -196,19 +196,19 @@ export default function Pipeline() {
       {/* Header */}
       <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-3xl font-bold text-foreground">Sales Pipeline</h1>
-          <p className="text-muted-foreground">Track deals through your sales process</p>
+          <h1 className="text-3xl font-bold text-foreground dark:text-white">Sales Pipeline</h1>
+          <p className="text-muted-foreground dark:text-white">Track deals through your sales process</p>
         </div>
         <div className="flex gap-4">
           <div className="text-center">
-            <div className="text-2xl font-bold text-foreground">{totalLeads}</div>
-            <div className="text-sm text-muted-foreground">Total Leads</div>
+            <div className="text-2xl font-bold text-foreground dark:text-white">{totalLeads}</div>
+            <div className="text-sm text-muted-foreground dark:text-white">Total Leads</div>
           </div>
           <div className="text-center">
-            <div className="text-2xl font-bold text-foreground">
+            <div className="text-2xl font-bold text-foreground dark:text-white">
               ${(totalValue / 1000000).toFixed(1)}M
             </div>
-            <div className="text-sm text-muted-foreground">Pipeline Value</div>
+            <div className="text-sm text-muted-foreground dark:text-white">Pipeline Value</div>
           </div>
         </div>
       </div>
@@ -228,8 +228,8 @@ export default function Pipeline() {
           {/* Pipeline Value Trend */}
           <Card className="shadow-soft">
             <CardHeader>
-              <CardTitle>Pipeline Value Trend</CardTitle>
-              <p className="text-sm text-muted-foreground">Monthly pipeline value and lead count over time</p>
+              <CardTitle className="dark:text-white">Pipeline Value Trend</CardTitle>
+              <p className="text-sm text-muted-foreground dark:text-white">Monthly pipeline value and lead count over time</p>
             </CardHeader>
             <CardContent>
               <ChartContainer config={chartConfig} className="h-[350px]">
@@ -290,8 +290,8 @@ export default function Pipeline() {
           {/* Sales Velocity */}
           <Card className="shadow-soft">
             <CardHeader>
-              <CardTitle>Sales Velocity by Stage</CardTitle>
-              <p className="text-sm text-muted-foreground">Average days in each stage and lead count</p>
+              <CardTitle className="dark:text-white">Sales Velocity by Stage</CardTitle>
+              <p className="text-sm text-muted-foreground dark:text-white">Average days in each stage and lead count</p>
             </CardHeader>
             <CardContent>
               <ChartContainer config={chartConfig} className="h-[350px]">
@@ -350,8 +350,8 @@ export default function Pipeline() {
           {/* Performance Metrics */}
           <Card className="shadow-soft">
             <CardHeader>
-              <CardTitle>Performance Metrics</CardTitle>
-              <p className="text-sm text-muted-foreground">Key performance indicators by stage</p>
+              <CardTitle className="dark:text-white">Performance Metrics</CardTitle>
+              <p className="text-sm text-muted-foreground dark:text-white">Key performance indicators by stage</p>
             </CardHeader>
             <CardContent>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -379,8 +379,8 @@ export default function Pipeline() {
                   {performanceData.map((metric) => (
                     <div key={metric.name} className="space-y-2">
                       <div className="flex justify-between items-center">
-                        <span className="text-sm font-medium">{metric.name}</span>
-                        <span className="text-sm font-bold">{metric.value}%</span>
+                        <span className="text-sm font-medium dark:text-white">{metric.name}</span>
+                        <span className="text-sm font-bold dark:text-white">{metric.value}%</span>
                       </div>
                       <Progress value={metric.value} className="h-2" />
                     </div>
@@ -393,18 +393,18 @@ export default function Pipeline() {
           {/* Conversion Rates */}
           <Card className="shadow-soft">
             <CardHeader>
-              <CardTitle>Stage Conversion Rates</CardTitle>
+              <CardTitle className="dark:text-white">Stage Conversion Rates</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                 {conversionRates.map((conversion) => (
                   <div key={conversion.from} className="space-y-2">
-                    <div className="text-sm font-medium text-foreground">
+                    <div className="text-sm font-medium text-foreground dark:text-white">
                       {conversion.from} → {conversion.to}
                     </div>
                     <div className="flex items-center gap-2">
                       <Progress value={conversion.rate} className="flex-1" />
-                      <span className="text-sm font-medium text-foreground">{conversion.rate}%</span>
+                      <span className="text-sm font-medium text-foreground dark:text-white">{conversion.rate}%</span>
                     </div>
                   </div>
                 ))}
@@ -417,8 +417,8 @@ export default function Pipeline() {
           {/* Loan Close Performance */}
           <Card className="shadow-soft">
             <CardHeader>
-              <CardTitle>Loan Close Performance</CardTitle>
-              <p className="text-sm text-muted-foreground">Monthly closed loans vs targets and close percentage</p>
+              <CardTitle className="dark:text-white">Loan Close Performance</CardTitle>
+              <p className="text-sm text-muted-foreground dark:text-white">Monthly closed loans vs targets and close percentage</p>
             </CardHeader>
             <CardContent>
               <ChartContainer config={chartConfig} className="h-[350px]">
@@ -494,11 +494,11 @@ export default function Pipeline() {
                 {/* Stage Header */}
                 <Card className="shadow-soft">
                   <CardHeader className="pb-3">
-                    <CardTitle className="text-lg">{stage.name}</CardTitle>
+                    <CardTitle className="text-lg dark:text-white">{stage.name}</CardTitle>
                     <div className="space-y-1">
                       <div className="flex items-center gap-2 text-sm">
                         <Users className="w-4 h-4 text-primary" />
-                        <span className="font-medium">{stage.count} entries</span>
+                        <span className="font-medium dark:text-white">{stage.count} entries</span>
                       </div>
                       <div className="flex items-center gap-2 text-sm">
                         <DollarSign className="w-4 h-4 text-accent" />
@@ -518,10 +518,10 @@ export default function Pipeline() {
                         <div className="space-y-3">
                           <div className="flex justify-between items-start">
                             <div>
-                              <div className="font-medium text-foreground">
+                              <div className="font-medium text-foreground dark:text-white">
                                 {entry.lead?.name || entry.client?.name || 'Unknown'}
                               </div>
-                              <div className="text-sm text-muted-foreground">
+                              <div className="text-sm text-muted-foreground dark:text-white">
                                 {new Date(entry.last_contact).toLocaleDateString()}
                               </div>
                             </div>
@@ -554,7 +554,7 @@ export default function Pipeline() {
                   {stage.count > stage.entries.length && (
                     <Card className="shadow-soft border-dashed">
                       <CardContent className="p-4 text-center">
-                        <div className="text-sm text-muted-foreground">
+                        <div className="text-sm text-muted-foreground dark:text-white">
                           +{stage.count - stage.entries.length} more entries
                         </div>
                         <Button variant="ghost" size="sm" className="mt-2">
