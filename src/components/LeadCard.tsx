@@ -88,10 +88,13 @@ export function LeadCard({ lead, onEdit, onDelete, onConvert, hasAdminRole }: Le
   const daysSinceContact = Math.floor((Date.now() - new Date(lead.last_contact).getTime()) / (1000 * 60 * 60 * 24))
 
   return (
-    <Card className={`group hover:shadow-lg hover:shadow-primary/20 transition-all duration-300 cursor-pointer animate-fade-in border-muted/20 hover:border-primary/30 ${lead.is_converted_to_client ? 'opacity-70 bg-muted/30' : 'hover:scale-[1.02]'}`}>
+    <Card 
+      className={`group hover:shadow-lg hover:shadow-primary/20 transition-all duration-300 cursor-pointer animate-fade-in border-muted/20 hover:border-primary/30 ${lead.is_converted_to_client ? 'opacity-70 bg-muted/30' : 'hover:scale-[1.02]'}`}
+      onClick={() => navigate(`/leads/${lead.id}`)}
+    >
       <CardHeader className="pb-3">
         <div className="flex items-start justify-between">
-          <div className="flex items-center gap-3" onClick={() => navigate(`/leads/${lead.id}`)}>
+          <div className="flex items-center gap-3">
             <Avatar className="h-12 w-12 border-2 border-primary/20">
               <AvatarFallback className="bg-primary/10 text-white font-semibold">
                 {getInitials(lead.name)}
