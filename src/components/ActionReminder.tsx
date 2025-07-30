@@ -232,24 +232,6 @@ export function ActionReminder({ entityId, entityName, entityType, isOpen, onClo
           />
         </div>
 
-        {/* Preview */}
-        {selectedDate && reminderType && (
-          <div className="p-3 bg-muted rounded-lg">
-            <div className="text-sm font-medium mb-1">Preview:</div>
-            <div className="text-sm text-muted-foreground">
-              {reminderTypes.find(t => t.id === reminderType)?.label} for {entityName}
-            </div>
-            <div className="text-sm text-muted-foreground">
-              <Clock className="inline h-3 w-3 mr-1" />
-              {format(selectedDate, 'PPP')} at {selectedTime}
-            </div>
-            {customNote && (
-              <div className="text-sm text-muted-foreground mt-1">
-                Note: {customNote}
-              </div>
-            )}
-          </div>
-        )}
 
         {/* Actions */}
         <div className="flex gap-2">
