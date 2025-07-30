@@ -125,18 +125,20 @@ export function LeadTableRow({ lead, onEdit, onDelete, onConvert, hasAdminRole }
         </div>
       </td>
 
-      {/* Loan Amount */}
-      <td className="p-4 text-right">
-        <span className="font-medium text-foreground">
-          {lead.loan_amount ? `$${lead.loan_amount.toLocaleString()}` : '-'}
-        </span>
-      </td>
-
-      {/* Loan Type */}
+      {/* Loan Info */}
       <td className="p-4">
-        <span className="text-xs bg-muted/50 text-white px-2 py-1 rounded font-medium">
-          {lead.loan_type || '-'}
-        </span>
+        <div className="space-y-1">
+          {lead.loan_type && (
+            <div className="text-xs text-white bg-muted/50 px-2 py-1 rounded font-medium">
+              {lead.loan_type}
+            </div>
+          )}
+          {lead.loan_amount && (
+            <div className="font-medium text-white text-sm">
+              ${lead.loan_amount.toLocaleString()}
+            </div>
+          )}
+        </div>
       </td>
 
       {/* Stage & Priority */}
