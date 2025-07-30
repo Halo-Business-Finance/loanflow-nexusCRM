@@ -386,7 +386,7 @@ export default function Clients() {
         <div className="flex justify-between items-center">
           <div>
             <h1 className="text-3xl font-bold text-foreground dark:text-white">Clients</h1>
-            <p className="text-muted-foreground">Manage your client relationships</p>
+            <p className="text-muted-foreground dark:text-white">Manage your client relationships</p>
           </div>
           <Button className="bg-gradient-primary">
             Add Client
@@ -418,23 +418,23 @@ export default function Clients() {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
           <Card className="shadow-soft">
             <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium">Total Clients</CardTitle>
+              <CardTitle className="text-sm font-medium dark:text-white">Total Clients</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">{formatNumber(clients.length)}</div>
+              <div className="text-2xl font-bold dark:text-white">{formatNumber(clients.length)}</div>
             </CardContent>
           </Card>
           <Card className="shadow-soft">
             <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium">Active Clients</CardTitle>
+              <CardTitle className="text-sm font-medium dark:text-white">Active Clients</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">{formatNumber(activeClients)}</div>
+              <div className="text-2xl font-bold dark:text-white">{formatNumber(activeClients)}</div>
             </CardContent>
           </Card>
           <Card className="shadow-soft">
             <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium">Total Loan Value</CardTitle>
+              <CardTitle className="text-sm font-medium dark:text-white">Total Loan Value</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold text-accent">
@@ -447,10 +447,10 @@ export default function Clients() {
           </Card>
           <Card className="shadow-soft">
             <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium">Avg. Loan Size</CardTitle>
+              <CardTitle className="text-sm font-medium dark:text-white">Avg. Loan Size</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">
+              <div className="text-2xl font-bold dark:text-white">
                 {avgLoanSize >= 1000 
                   ? `${formatCurrency((avgLoanSize / 1000).toFixed(0))}K` 
                   : formatCurrency(avgLoanSize)
@@ -482,17 +482,17 @@ export default function Clients() {
                             onClick={() => navigate(`/clients/${client.id}`)}
                             className="hover:underline cursor-pointer"
                           >
-                            <h3 className="font-semibold text-foreground hover:text-primary transition-colors">{client.name}</h3>
+                            <h3 className="font-semibold text-foreground dark:text-white hover:text-primary transition-colors">{client.name}</h3>
                           </button>
-                          <p className="text-sm text-muted-foreground">
+                          <p className="text-sm text-muted-foreground dark:text-white">
                             Client since {new Date(client.join_date).toLocaleDateString()}
                           </p>
                         </div>
                         
-                         <div className="flex items-center gap-4 text-sm text-muted-foreground">
+                         <div className="flex items-center gap-4 text-sm text-muted-foreground dark:text-white">
                           <EmailComposer 
                             trigger={
-                              <button className="flex items-center gap-1 text-sm text-muted-foreground hover:text-primary transition-colors">
+                              <button className="flex items-center gap-1 text-sm text-muted-foreground dark:text-white hover:text-primary transition-colors">
                                 <Mail className="h-4 w-4" />
                                 {client.email}
                               </button>
@@ -501,7 +501,7 @@ export default function Clients() {
                           {client.phone && (
                             <PhoneDialer 
                               trigger={
-                                <button className="flex items-center gap-1 text-sm text-muted-foreground hover:text-primary transition-colors">
+                                <button className="flex items-center gap-1 text-sm text-muted-foreground dark:text-white hover:text-primary transition-colors">
                                   <Phone className="h-4 w-4" />
                                   {client.phone}
                                 </button>
@@ -509,7 +509,7 @@ export default function Clients() {
                             />
                           )}
                           {client.location && (
-                            <div className="flex items-center gap-1">
+                            <div className="flex items-center gap-1 dark:text-white">
                               <MapPin className="h-4 w-4" />
                               {client.location}
                             </div>
@@ -529,7 +529,7 @@ export default function Clients() {
                           </Badge>
                         )}
                       </div>
-                      <div className="text-sm text-muted-foreground">
+                      <div className="text-sm text-muted-foreground dark:text-white">
                         Last activity: {new Date(client.last_activity).toLocaleDateString()}
                       </div>
                     </div>
@@ -538,11 +538,11 @@ export default function Clients() {
                   <div className="mt-4 pt-4 border-t flex justify-between items-center">
                     <div className="flex gap-6">
                       <div className="text-center">
-                        <div className="text-sm text-muted-foreground">Total Loans</div>
-                        <div className="font-semibold">{formatNumber(client.total_loans)}</div>
+                        <div className="text-sm text-muted-foreground dark:text-white">Total Loans</div>
+                        <div className="font-semibold dark:text-white">{formatNumber(client.total_loans)}</div>
                       </div>
                       <div className="text-center">
-                        <div className="text-sm text-muted-foreground">Total Value</div>
+                        <div className="text-sm text-muted-foreground dark:text-white">Total Value</div>
                         <div className="font-semibold text-accent">
                           {formatCurrency(client.total_loan_value)}
                         </div>
@@ -619,8 +619,8 @@ export default function Clients() {
                           </AlertDialogTrigger>
                           <AlertDialogContent>
                             <AlertDialogHeader>
-                              <AlertDialogTitle>Delete Client</AlertDialogTitle>
-                              <AlertDialogDescription>
+                              <AlertDialogTitle className="dark:text-white">Delete Client</AlertDialogTitle>
+                              <AlertDialogDescription className="dark:text-white">
                                 Are you sure you want to delete <strong>{client.name}</strong>? This will also delete all associated loans and pipeline entries. This action cannot be undone.
                               </AlertDialogDescription>
                             </AlertDialogHeader>
@@ -667,7 +667,7 @@ export default function Clients() {
           {filteredClients.length === 0 && (
             <Card className="shadow-soft">
               <CardContent className="p-12 text-center">
-                <div className="text-muted-foreground">
+                <div className="text-muted-foreground dark:text-white">
                   {searchTerm ? 'No clients found matching your search.' : 'No clients yet. Convert some leads to get started!'}
                 </div>
               </CardContent>
