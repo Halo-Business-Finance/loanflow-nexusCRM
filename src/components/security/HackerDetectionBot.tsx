@@ -37,7 +37,9 @@ export function HackerDetectionBot() {
     vulnerability_scans: 0,
     threat_level: "low"
   });
-  const [isMonitoring, setIsMonitoring] = useState(false);
+  const [isMonitoring, setIsMonitoring] = useState(() => {
+    return localStorage.getItem('hacker-detection-monitoring') === 'true';
+  });
   const [loading, setLoading] = useState(true);
   const { toast } = useToast();
 
@@ -189,14 +191,16 @@ export function HackerDetectionBot() {
 
   const handleStartMonitoring = () => {
     setIsMonitoring(true);
+    localStorage.setItem('hacker-detection-monitoring', 'true');
     toast({
       title: "Hacker Detection Bot Activated",
-      description: "AI bot is now actively monitoring and blocking hacker attempts."
+      description: "AI bot is now actively monitoring and will persist across sessions."
     });
   };
 
   const handleStopMonitoring = () => {
     setIsMonitoring(false);
+    localStorage.setItem('hacker-detection-monitoring', 'false');
     toast({
       title: "Hacker Detection Bot Deactivated",
       description: "Monitoring has been stopped."

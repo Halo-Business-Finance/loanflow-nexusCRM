@@ -36,7 +36,9 @@ export function DarkWebSecurityBot() {
     credential_leaks: 0,
     threat_level: "low"
   });
-  const [isMonitoring, setIsMonitoring] = useState(false);
+  const [isMonitoring, setIsMonitoring] = useState(() => {
+    return localStorage.getItem('dark-web-monitoring') === 'true';
+  });
   const [loading, setLoading] = useState(true);
   const { toast } = useToast();
 
@@ -161,14 +163,16 @@ export function DarkWebSecurityBot() {
 
   const handleStartMonitoring = () => {
     setIsMonitoring(true);
+    localStorage.setItem('dark-web-monitoring', 'true');
     toast({
       title: "Dark Web Security Bot Activated",
-      description: "AI bot is now monitoring for dark web threats and suspicious activities."
+      description: "AI bot is now monitoring for dark web threats and will persist across sessions."
     });
   };
 
   const handleStopMonitoring = () => {
     setIsMonitoring(false);
+    localStorage.setItem('dark-web-monitoring', 'false');
     toast({
       title: "Dark Web Security Bot Deactivated",
       description: "Monitoring has been stopped."

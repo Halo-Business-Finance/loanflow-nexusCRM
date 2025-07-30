@@ -40,7 +40,9 @@ export function AdvancedThreatDetection() {
     threat_level: 'low'
   });
   const [loading, setLoading] = useState(true);
-  const [monitoring, setMonitoring] = useState(false);
+  const [monitoring, setMonitoring] = useState(() => {
+    return localStorage.getItem('ai-threat-monitoring') === 'true';
+  });
 
   // AI Behavior Detection Hook
   const detectAIBehavior = useCallback(async () => {
@@ -339,7 +341,17 @@ export function AdvancedThreatDetection() {
               </p>
             </div>
             <Button
-              onClick={() => setMonitoring(!monitoring)}
+              onClick={() => {
+                const newState = !monitoring;
+                setMonitoring(newState);
+                localStorage.setItem('ai-threat-monitoring', newState.toString());
+                toast({
+                  title: newState ? "AI Threat Monitoring Activated" : "AI Threat Monitoring Deactivated",
+                  description: newState 
+                    ? "Real-time monitoring is now active and will persist across sessions."
+                    : "Monitoring has been stopped."
+                });
+              }}
               variant={monitoring ? "destructive" : "default"}
             >
               {monitoring ? 'Stop Monitoring' : 'Start Monitoring'}
