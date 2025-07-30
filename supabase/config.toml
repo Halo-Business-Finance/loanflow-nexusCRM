@@ -1,4 +1,25 @@
 project_id = "gshxxsniwytjgcnthyfq"
 
+[functions.enhanced-auth]
+verify_jwt = false
+
 [functions.geo-security]
+verify_jwt = false
+
+[functions.microsoft-auth]
+verify_jwt = false
+
+[functions.audit-log]
+verify_jwt = false
+
+[functions.ringcentral-auth]
+verify_jwt = false
+
+[functions.threat-detection]
+verify_jwt = false
+
+[functions.google-maps-config]
+verify_jwt = false
+
+[functions.security-monitor]
 verify_jwt = false

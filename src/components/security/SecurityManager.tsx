@@ -12,6 +12,7 @@ import { Shield, Lock, AlertTriangle, Eye, Users, Key, Activity, Trash2 } from "
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/components/auth/AuthProvider";
 import { AdvancedThreatDetection } from "./AdvancedThreatDetection";
+import { SecurityMonitor } from "./SecurityMonitor";
 import Layout from "@/components/Layout";
 
 interface SecurityNotification {
@@ -301,6 +302,7 @@ export function SecurityManager() {
         <Tabs defaultValue="overview" className="space-y-4">
           <TabsList>
             <TabsTrigger value="overview">Overview</TabsTrigger>
+            <TabsTrigger value="monitor">Security Monitor</TabsTrigger>
             <TabsTrigger value="threats">AI Protection</TabsTrigger>
             <TabsTrigger value="mfa">Multi-Factor Auth</TabsTrigger>
             <TabsTrigger value="notifications">Security Alerts</TabsTrigger>
@@ -402,6 +404,10 @@ export function SecurityManager() {
               )}
             </CardContent>
           </Card>
+        </TabsContent>
+
+        <TabsContent value="monitor" className="space-y-4">
+          <SecurityMonitor />
         </TabsContent>
 
         <TabsContent value="threats" className="space-y-4">
