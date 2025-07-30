@@ -76,7 +76,7 @@ export default function AITools() {
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center space-x-2">
-              <Power className="w-5 h-5" />
+              <Power className="w-5 h-5 text-white" />
               <span>AI Tools Control Panel</span>
             </CardTitle>
             <CardDescription>
@@ -88,7 +88,7 @@ export default function AITools() {
               {/* Lead Scoring Switch */}
               <div className="flex flex-col sm:flex-row sm:items-center justify-between p-4 border rounded-lg space-y-2 sm:space-y-0">
                 <div className="flex items-center space-x-3 flex-1">
-                  <Target className="w-5 h-5 text-primary flex-shrink-0" />
+                  <Target className="w-5 h-5 text-white flex-shrink-0" />
                   <div className="min-w-0">
                     <Label htmlFor="lead-scoring-switch" className="font-medium">Lead Scoring</Label>
                     <p className="text-sm text-muted-foreground">AI-powered lead prioritization</p>
@@ -109,7 +109,7 @@ export default function AITools() {
               {/* Revenue Forecasting Switch */}
               <div className="flex flex-col sm:flex-row sm:items-center justify-between p-4 border rounded-lg space-y-2 sm:space-y-0">
                 <div className="flex items-center space-x-3 flex-1">
-                  <TrendingUp className="w-5 h-5 text-primary flex-shrink-0" />
+                  <TrendingUp className="w-5 h-5 text-white flex-shrink-0" />
                   <div className="min-w-0">
                     <Label htmlFor="forecasting-switch" className="font-medium">Revenue Forecast</Label>
                     <p className="text-sm text-muted-foreground">Predict future revenue</p>
@@ -130,7 +130,7 @@ export default function AITools() {
               {/* Predictive Analytics Switch */}
               <div className="flex flex-col sm:flex-row sm:items-center justify-between p-4 border rounded-lg space-y-2 sm:space-y-0">
                 <div className="flex items-center space-x-3 flex-1">
-                  <BarChart3 className="w-5 h-5 text-primary flex-shrink-0" />
+                  <BarChart3 className="w-5 h-5 text-white flex-shrink-0" />
                   <div className="min-w-0">
                     <Label htmlFor="analytics-switch" className="font-medium">Predictive Analytics</Label>
                     <p className="text-sm text-muted-foreground">AI insights & recommendations</p>
@@ -151,7 +151,7 @@ export default function AITools() {
               {/* Workflow Automation Switch */}
               <div className="flex flex-col sm:flex-row sm:items-center justify-between p-4 border rounded-lg space-y-2 sm:space-y-0">
                 <div className="flex items-center space-x-3 flex-1">
-                  <Bot className="w-5 h-5 text-primary flex-shrink-0" />
+                  <Bot className="w-5 h-5 text-white flex-shrink-0" />
                   <div className="min-w-0">
                     <Label htmlFor="automation-switch" className="font-medium">Automation</Label>
                     <p className="text-sm text-muted-foreground">Automate workflows & tasks</p>
