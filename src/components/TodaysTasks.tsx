@@ -30,13 +30,16 @@ export function TodaysTasks() {
     if (!user) return
 
     try {
-      const { data: notifications } = await supabase
+      console.log('Fetching tasks for user:', user.id)
+      const { data: notifications, error } = await supabase
         .from('notifications')
         .select('*')
         .eq('user_id', user.id)
         .eq('is_read', false)
         .order('created_at', { ascending: true })
         .limit(10)
+
+      console.log('Notifications query result:', { notifications, error })
 
       if (notifications) {
         const tasksData: Task[] = notifications.map(notification => ({
@@ -52,6 +55,9 @@ export function TodaysTasks() {
         }))
 
         setTasks(tasksData)
+        console.log('Mapped tasks data:', tasksData)
+      } else {
+        console.log('No notifications found')
       }
     } catch (error) {
       console.error('Error fetching tasks:', error)
@@ -87,13 +93,19 @@ export function TodaysTasks() {
 
   const todaysTasks = tasks.filter(task => {
     const taskDate = new Date(task.created_at)
-    return isToday(taskDate) || isBefore(taskDate, startOfDay(new Date()))
+    const isTaskToday = isToday(taskDate) || isBefore(taskDate, startOfDay(new Date()))
+    console.log('Filtering task:', task.title, 'Date:', taskDate, 'IsToday:', isTaskToday)
+    return isTaskToday
   })
 
   const overdueTasks = tasks.filter(task => {
     const taskDate = new Date(task.created_at)
-    return isBefore(taskDate, startOfDay(new Date())) && !isToday(taskDate)
+    const isOverdue = isBefore(taskDate, startOfDay(new Date())) && !isToday(taskDate)
+    console.log('Checking overdue for task:', task.title, 'IsOverdue:', isOverdue)
+    return isOverdue
   })
+
+  console.log('Final filtered results:', { todaysTasks, overdueTasks, totalTasks: tasks.length })
 
   if (loading) {
     return (
