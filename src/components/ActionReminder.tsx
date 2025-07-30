@@ -178,21 +178,7 @@ export function ActionReminder({ entityId, entityName, entityType, isOpen, onClo
         <div className="space-y-3">
           <Label className="text-sm font-medium">When?</Label>
           
-          {/* Quick Date Options */}
-          <div className="grid grid-cols-2 gap-2">
-            {quickDateOptions.map((option) => (
-              <Button
-                key={option.label}
-                variant={selectedDate && format(selectedDate, 'yyyy-MM-dd') === format(option.value, 'yyyy-MM-dd') ? "default" : "outline"}
-                size="sm"
-                onClick={() => setSelectedDate(option.value)}
-              >
-                {option.label}
-              </Button>
-            ))}
-          </div>
-
-          {/* Custom Date Picker */}
+          {/* Calendar Date Picker */}
           <Popover>
             <PopoverTrigger asChild>
               <Button
@@ -200,7 +186,7 @@ export function ActionReminder({ entityId, entityName, entityType, isOpen, onClo
                 className="w-full justify-start text-left font-normal"
               >
                 <CalendarIcon className="mr-2 h-4 w-4" />
-                {selectedDate ? format(selectedDate, 'PPP') : 'Pick a custom date'}
+                {selectedDate ? format(selectedDate, 'PPP') : 'Pick a date'}
               </Button>
             </PopoverTrigger>
             <PopoverContent className="w-auto p-0" align="start">
