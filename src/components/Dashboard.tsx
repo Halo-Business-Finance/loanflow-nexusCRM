@@ -234,10 +234,8 @@ export default function Dashboard() {
       "Qualified": 0, 
       "Application": 0,
       "Pre-approval": 0,
-      "Documentation": 0,
       "Closing": 0,
-      "Funded": 0,
-      "Rejected": 0
+      "Funded": 0
     }
 
     // Count active (non-converted) leads by their current stage
@@ -291,7 +289,7 @@ export default function Dashboard() {
       const leadDate = new Date(lead.created_at)
       return leadDate.getMonth() === currentMonth && 
              leadDate.getFullYear() === currentYear &&
-             ['Application', 'Pre-approval', 'Documentation'].includes(lead.stage)
+             ['Application', 'Pre-approval'].includes(lead.stage)
     }).length
 
     // Calculate conversion rate (converted leads / total leads)
