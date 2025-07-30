@@ -120,12 +120,6 @@ export function LeadCard({ lead, onEdit, onDelete, onConvert, hasAdminRole }: Le
               </div>
             </div>
           </div>
-          
-          <div className="flex flex-col items-end gap-2">
-            <Button variant="ghost" size="sm" className="opacity-0 group-hover:opacity-100 transition-opacity">
-              <MoreHorizontal className="w-4 h-4 text-white" />
-            </Button>
-          </div>
         </div>
       </CardHeader>
 

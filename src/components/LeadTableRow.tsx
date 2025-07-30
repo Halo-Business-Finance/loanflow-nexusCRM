@@ -153,12 +153,6 @@ export function LeadTableRow({ lead, onEdit, onDelete, onConvert, hasAdminRole }
         </div>
       </td>
 
-      {/* Actions */}
-      <td className="p-4">
-        <div className="flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-          <span className="text-xs text-muted-foreground">Click to view details</span>
-        </div>
-      </td>
     </tr>
   )
 }
