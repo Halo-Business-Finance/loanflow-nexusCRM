@@ -1066,28 +1066,6 @@ export default function LeadDetail() {
                   </div>
 
                   <div className="flex items-center gap-3">
-                    <DollarSign className="w-4 h-4 text-muted-foreground" />
-                    <div className="flex-1">
-                      <p className="text-sm text-muted-foreground">Annual Revenue</p>
-                      {isEditing ? (
-                        <Input
-                          type="number"
-                          value={editableFields.annual_revenue}
-                          onChange={(e) => setEditableFields({...editableFields, annual_revenue: e.target.value})}
-                          placeholder="Enter annual revenue"
-                        />
-                      ) : (
-                        <p className="font-medium text-foreground">
-                          {formatCurrency(lead.annual_revenue)}
-                        </p>
-                      )}
-                    </div>
-                  </div>
-                </div>
-
-                {/* Right Column */}
-                <div className="space-y-4">
-                  <div className="flex items-center gap-3">
                     <FileText className="w-4 h-4 text-muted-foreground" />
                     <div className="flex-1">
                       <p className="text-sm text-muted-foreground">NAICS Code</p>
@@ -1151,6 +1129,28 @@ export default function LeadDetail() {
                   </div>
 
                   <div className="flex items-center gap-3">
+                    <DollarSign className="w-4 h-4 text-muted-foreground" />
+                    <div className="flex-1">
+                      <p className="text-sm text-muted-foreground">Annual Revenue</p>
+                      {isEditing ? (
+                        <Input
+                          type="number"
+                          value={editableFields.annual_revenue}
+                          onChange={(e) => setEditableFields({...editableFields, annual_revenue: e.target.value})}
+                          placeholder="Enter annual revenue"
+                        />
+                      ) : (
+                        <p className="font-medium text-foreground">
+                          {formatCurrency(lead.annual_revenue)}
+                        </p>
+                      )}
+                    </div>
+                  </div>
+                </div>
+
+                {/* Right Column */}
+                <div className="space-y-4">
+                  <div className="flex items-center gap-3">
                     <div className="flex-1">
                       <p className="text-sm text-muted-foreground">Property Ownership</p>
                       {isEditing ? (
@@ -1178,11 +1178,10 @@ export default function LeadDetail() {
                     </div>
                   </div>
                 </div>
-              </div>
 
-              {/* Conditional property-related fields */}
-              {(lead.owns_property || editableFields.owns_property) && (
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-4 border-t border-gray-200/10">
+                {/* Conditional property-related fields */}
+                {(lead.owns_property || editableFields.owns_property) && (
+                  <div className="col-span-full">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-4 border-t border-gray-200/10">
                       {/* Property Fields Left Column */}
                       <div className="space-y-4">
@@ -1268,8 +1267,29 @@ export default function LeadDetail() {
                     </div>
                   </div>
                 )}
+              </div>
+
+              <div className="flex items-center gap-3">
+                <DollarSign className="w-4 h-4 text-muted-foreground" />
+                <div className="flex-1">
+                  <p className="text-sm text-muted-foreground">Annual Revenue</p>
+                  {isEditing ? (
+                    <Input
+                      type="number"
+                      value={editableFields.annual_revenue}
+                      onChange={(e) => setEditableFields({...editableFields, annual_revenue: e.target.value})}
+                      placeholder="Enter annual revenue"
+                    />
+                  ) : (
+                    <p className="font-medium text-foreground">
+                      {formatCurrency(lead.annual_revenue)}
+                    </p>
+                  )}
+                </div>
+              </div>
             </CardContent>
           </Card>
+        </div>
 
         <div className="grid grid-cols-1 gap-6">
           {/* POS Information */}

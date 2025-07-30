@@ -678,7 +678,6 @@ export default function ClientDetail() {
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                {/* Left Column */}
                 <div className="space-y-4">
                   <div className="flex items-center gap-3">
                     <Building className="w-4 h-4" />
@@ -730,26 +729,6 @@ export default function ClientDetail() {
                     </div>
                   </div>
 
-                  <div className="flex items-center gap-3">
-                    <DollarSign className="w-4 h-4" />
-                    <div className="flex-1">
-                      <p className="text-sm text-muted-foreground">Annual Revenue</p>
-                      {isEditing ? (
-                        <Input
-                          type="number"
-                          value={editableFields.annual_revenue}
-                          onChange={(e) => setEditableFields({...editableFields, annual_revenue: e.target.value})}
-                          placeholder="Enter annual revenue"
-                        />
-                      ) : (
-                        <p className="font-medium">{formatCurrency(client.annual_revenue)}</p>
-                      )}
-                    </div>
-                  </div>
-                </div>
-
-                {/* Right Column */}
-                <div className="space-y-4">
                   <div className="flex items-center gap-3">
                     <FileText className="w-4 h-4" />
                     <div className="flex-1">
@@ -807,6 +786,25 @@ export default function ClientDetail() {
                             : 'N/A'
                           }
                         </p>
+                      )}
+                    </div>
+                  </div>
+                </div>
+
+                <div className="space-y-4">
+                  <div className="flex items-center gap-3">
+                    <DollarSign className="w-4 h-4" />
+                    <div className="flex-1">
+                      <p className="text-sm text-muted-foreground">Annual Revenue</p>
+                      {isEditing ? (
+                        <Input
+                          type="number"
+                          value={editableFields.annual_revenue}
+                          onChange={(e) => setEditableFields({...editableFields, annual_revenue: e.target.value})}
+                          placeholder="Enter annual revenue"
+                        />
+                      ) : (
+                        <p className="font-medium">{formatCurrency(client.annual_revenue)}</p>
                       )}
                     </div>
                   </div>
