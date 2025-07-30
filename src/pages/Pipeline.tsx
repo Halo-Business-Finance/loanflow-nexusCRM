@@ -9,7 +9,7 @@ import { Progress } from "@/components/ui/progress"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { DollarSign, Users, Phone, Mail, Calendar } from "lucide-react"
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart"
-import { LineChart, Line, XAxis, YAxis, ResponsiveContainer, BarChart, Bar, PieChart, Pie, Cell, AreaChart, Area } from "recharts"
+import { LineChart, Line, XAxis, YAxis, ResponsiveContainer, BarChart, Bar, PieChart, Pie, Cell, AreaChart, Area, ComposedChart } from "recharts"
 import { InteractivePipeline } from "@/components/InteractivePipeline"
 
 
@@ -367,7 +367,7 @@ export default function Pipeline() {
             </CardHeader>
             <CardContent>
               <ChartContainer config={chartConfig} className="h-[350px]">
-                <BarChart data={velocityData}>
+                <ComposedChart data={velocityData}>
                   <XAxis 
                     dataKey="stage" 
                     tickLine={false}
@@ -414,7 +414,7 @@ export default function Pipeline() {
                     strokeWidth={3}
                     dot={{ fill: "var(--color-leads)", strokeWidth: 2, r: 6 }}
                   />
-                </BarChart>
+                </ComposedChart>
               </ChartContainer>
             </CardContent>
           </Card>
