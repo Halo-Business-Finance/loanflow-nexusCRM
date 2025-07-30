@@ -64,10 +64,10 @@ export function LeadFilters({
           )}
         </div>
         
-        <div className="flex items-center gap-2 text-sm text-muted-foreground">
-          <span className="font-medium text-foreground">{filteredCount}</span>
+        <div className="flex items-center gap-2 text-sm text-muted-foreground dark:text-white">
+          <span className="font-medium text-foreground dark:text-white">{filteredCount}</span>
           <span>of</span>
-          <span className="font-medium text-foreground">{totalLeads}</span>
+          <span className="font-medium text-foreground dark:text-white">{totalLeads}</span>
           <span>leads</span>
         </div>
       </div>
@@ -76,7 +76,7 @@ export function LeadFilters({
       <div className="flex flex-wrap gap-3 items-center">
         <div className="flex items-center gap-2">
           <SlidersHorizontal className="w-4 h-4 text-white" />
-          <span className="text-sm font-medium text-foreground">Filters:</span>
+          <span className="text-sm font-medium text-foreground dark:text-white">Filters:</span>
         </div>
         
         <Select value={selectedStage} onValueChange={setSelectedStage}>
