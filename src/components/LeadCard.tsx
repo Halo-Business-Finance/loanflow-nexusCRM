@@ -171,11 +171,18 @@ export function LeadCard({ lead, onEdit, onDelete, onConvert, hasAdminRole }: Le
             )}
             
             {lead.credit_score && (
-              <div className="flex items-center justify-between text-sm">
+              <div className="flex items-center justify-between text-sm mb-2">
                 <span className="text-white">Credit Score</span>
                 <span className={`font-semibold ${lead.credit_score >= 700 ? 'text-green-600' : lead.credit_score >= 600 ? 'text-yellow-600' : 'text-red-600'}`}>
                   {lead.credit_score}
                 </span>
+              </div>
+            )}
+            
+            {lead.loan_type && (
+              <div className="flex items-center justify-between text-sm">
+                <span className="text-white">Loan Type</span>
+                <span className="font-semibold text-white">{lead.loan_type}</span>
               </div>
             )}
           </div>
@@ -187,11 +194,6 @@ export function LeadCard({ lead, onEdit, onDelete, onConvert, hasAdminRole }: Le
             <Badge variant={getStageColor(lead.stage)} className="text-xs">
               {lead.stage}
             </Badge>
-            {lead.loan_type && (
-              <span className="text-xs text-white bg-muted/50 px-2 py-1 rounded">
-                {lead.loan_type}
-              </span>
-            )}
           </div>
         </div>
       </CardContent>
