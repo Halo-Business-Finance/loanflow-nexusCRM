@@ -113,6 +113,7 @@ export default function ClientDetail() {
   const [newCallNote, setNewCallNote] = useState("")
   const [generalNotes, setGeneralNotes] = useState("")
   const [showReminderDialog, setShowReminderDialog] = useState(false)
+  const [userProfile, setUserProfile] = useState<{first_name?: string, last_name?: string} | null>(null)
   const [editableFields, setEditableFields] = useState({
     name: "",
     email: "",
@@ -154,8 +155,24 @@ export default function ClientDetail() {
       fetchClient()
       fetchClientLoans()
       fetchLoanRequests()
+      fetchUserProfile()
     }
   }, [id, user])
+
+  const fetchUserProfile = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('profiles')
+        .select('first_name, last_name')
+        .eq('id', user?.id)
+        .single()
+
+      if (error) throw error
+      setUserProfile(data)
+    } catch (error) {
+      console.error('Error fetching user profile:', error)
+    }
+  }
 
   const fetchClient = async () => {
     try {
@@ -264,7 +281,8 @@ export default function ClientDetail() {
     if (!client) return
 
     try {
-      const updatedNotes = callNotes + (newCallNote ? `\n\n[${new Date().toLocaleString()}] ${newCallNote}` : "")
+      const userName = userProfile ? `${userProfile.first_name || ''} ${userProfile.last_name || ''}`.trim() : 'Unknown User'
+      const updatedNotes = callNotes + (newCallNote ? `\n\n${userName} [${new Date().toLocaleString()}]: ${newCallNote}` : "")
       
       // Update the contact_entities table, not the clients table
       const { error } = await supabase
