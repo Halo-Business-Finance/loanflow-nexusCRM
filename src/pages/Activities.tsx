@@ -10,7 +10,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
-import { Search, Filter, Phone, Mail, Calendar, FileText, DollarSign, Clock, User, Bell, AlertCircle, Plus, CheckCircle2, X, Users } from "lucide-react"
+import { Search, Filter, Phone, Mail, Calendar, FileText, DollarSign, Clock, User, Bell, AlertCircle, Plus, CheckCircle2, X, Users, Edit, Trash2 } from "lucide-react"
 import { supabase } from "@/integrations/supabase/client"
 import { useAuth } from "@/components/auth/AuthProvider"
 import { useToast } from "@/hooks/use-toast"
@@ -49,6 +49,8 @@ export default function Activities() {
   const [filterType, setFilterType] = useState("all")
   const [filterStatus, setFilterStatus] = useState("all")
   const [newActivityOpen, setNewActivityOpen] = useState(false)
+  const [editingActivity, setEditingActivity] = useState<Activity | null>(null)
+  const [editActivityOpen, setEditActivityOpen] = useState(false)
   const { user } = useAuth()
   const { toast } = useToast()
   const navigate = useNavigate()
@@ -222,6 +224,68 @@ export default function Activities() {
         variant: "destructive",
       });
     }
+  };
+
+  const editActivity = async (activityId: string, updates: { title?: string; message?: string; type?: string }) => {
+    try {
+      const { error } = await supabase
+        .from('notifications')
+        .update({
+          title: updates.title,
+          message: updates.message,
+          type: updates.type,
+          updated_at: new Date().toISOString()
+        })
+        .eq('id', activityId);
+
+      if (error) throw error;
+
+      toast({
+        title: "Success",
+        description: "Activity updated successfully",
+      });
+
+      setEditActivityOpen(false);
+      setEditingActivity(null);
+      fetchNotifications();
+    } catch (error) {
+      console.error('Error updating activity:', error);
+      toast({
+        title: "Error",
+        description: "Failed to update activity",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const deleteActivity = async (activityId: string) => {
+    try {
+      const { error } = await supabase
+        .from('notifications')
+        .delete()
+        .eq('id', activityId);
+
+      if (error) throw error;
+
+      toast({
+        title: "Success",
+        description: "Activity deleted successfully",
+      });
+
+      fetchNotifications();
+    } catch (error) {
+      console.error('Error deleting activity:', error);
+      toast({
+        title: "Error",
+        description: "Failed to delete activity",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const openEditDialog = (activity: Activity) => {
+    setEditingActivity(activity);
+    setEditActivityOpen(true);
   };
 
   const getActivityTypeFromNotification = (notificationType: string) => {
@@ -576,7 +640,36 @@ export default function Activities() {
                                     <DollarSign className="h-3 w-3 mr-1" />
                                     View Loan
                                   </Button>
-                                )}
+                                 )}
+                                 
+                                 {/* Edit and Delete buttons */}
+                                 <Button
+                                   size="sm"
+                                   variant="outline"
+                                   onClick={(e) => {
+                                     e.stopPropagation();
+                                     openEditDialog(activity);
+                                   }}
+                                   className="h-8 px-3"
+                                 >
+                                   <Edit className="h-3 w-3 mr-1" />
+                                   Edit
+                                 </Button>
+                                 
+                                 <Button
+                                   size="sm"
+                                   variant="outline"
+                                   onClick={(e) => {
+                                     e.stopPropagation();
+                                     if (window.confirm('Are you sure you want to delete this activity?')) {
+                                       deleteActivity(activity.id);
+                                     }
+                                   }}
+                                   className="h-8 px-3 text-red-600 hover:text-red-700"
+                                 >
+                                   <Trash2 className="h-3 w-3 mr-1" />
+                                   Delete
+                                 </Button>
                               </div>
                             </div>
                           </div>
@@ -589,6 +682,69 @@ export default function Activities() {
             )}
           </CardContent>
         </Card>
+
+        {/* Edit Activity Dialog */}
+        <Dialog open={editActivityOpen} onOpenChange={setEditActivityOpen}>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle className="dark:text-white">Edit Activity</DialogTitle>
+            </DialogHeader>
+            {editingActivity && (
+              <form onSubmit={(e) => {
+                e.preventDefault();
+                const formData = new FormData(e.target as HTMLFormElement);
+                editActivity(editingActivity.id, {
+                  title: formData.get('title') as string,
+                  message: formData.get('description') as string,
+                  type: formData.get('type') as string,
+                });
+              }} className="space-y-4">
+                <div>
+                  <Label htmlFor="edit-title">Title</Label>
+                  <Input 
+                    id="edit-title"
+                    name="title" 
+                    defaultValue={editingActivity.title}
+                    placeholder="Activity title" 
+                    required 
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="edit-description">Description</Label>
+                  <Textarea 
+                    id="edit-description"
+                    name="description" 
+                    defaultValue={editingActivity.description}
+                    placeholder="Activity description" 
+                    required 
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="edit-type">Type</Label>
+                  <Select name="type" defaultValue={editingActivity.notification_type || "notification"}>
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="call_reminder">Call Reminder</SelectItem>
+                      <SelectItem value="email_reminder">Email Reminder</SelectItem>
+                      <SelectItem value="follow_up_reminder">Follow-up Reminder</SelectItem>
+                      <SelectItem value="meeting_reminder">Meeting Reminder</SelectItem>
+                      <SelectItem value="document_reminder">Document Reminder</SelectItem>
+                      <SelectItem value="notification">General Notification</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="flex gap-2">
+                  <Button type="submit" className="flex-1">Update Activity</Button>
+                  <Button type="button" variant="outline" onClick={() => setEditActivityOpen(false)}>
+                    Cancel
+                  </Button>
+                </div>
+              </form>
+            )}
+          </DialogContent>
+        </Dialog>
       </div>
     </Layout>
   )
