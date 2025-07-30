@@ -237,7 +237,7 @@ export function DataIntegrityDashboard() {
           <TabsContent value="issues" className="space-y-4">
             <div className="space-y-2">
               {fieldIssues.map((issue) => (
-                <Card key={`${issue.fieldName}-${issue.description}`}>
+                <Card key={`${issue.recordId}-${issue.fieldName}-${issue.issueType}`}>
                   <CardContent className="p-4">
                     <div className="flex justify-between items-start">
                       <div className="space-y-2">
