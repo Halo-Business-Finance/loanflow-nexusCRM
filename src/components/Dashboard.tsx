@@ -434,8 +434,8 @@ export default function Dashboard() {
       <div className="flex justify-between items-center">
         <div>
           <h1 className="text-3xl font-bold text-foreground">Dashboard</h1>
-          <p className="text-muted-foreground">Welcome back! Here's your performance overview.</p>
-          <p className="text-sm text-muted-foreground mt-1">{formatDateTime(currentDateTime)}</p>
+          <p className="text-muted-foreground dark:text-white">Welcome back! Here's your performance overview.</p>
+          <p className="text-sm text-muted-foreground dark:text-white mt-1">{formatDateTime(currentDateTime)}</p>
         </div>
         <div className="flex gap-2">
           <Button 
