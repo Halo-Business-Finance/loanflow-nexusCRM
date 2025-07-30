@@ -440,6 +440,7 @@ export type Database = {
           name: string
           net_operating_income: number | null
           notes: string | null
+          ownership_structure: string | null
           owns_property: boolean | null
           phone: string | null
           pos_system: string | null
@@ -484,6 +485,7 @@ export type Database = {
           name: string
           net_operating_income?: number | null
           notes?: string | null
+          ownership_structure?: string | null
           owns_property?: boolean | null
           phone?: string | null
           pos_system?: string | null
@@ -528,6 +530,7 @@ export type Database = {
           name?: string
           net_operating_income?: number | null
           notes?: string | null
+          ownership_structure?: string | null
           owns_property?: boolean | null
           phone?: string | null
           pos_system?: string | null
@@ -1658,6 +1661,7 @@ export type Database = {
           name: string
           net_operating_income: number | null
           notes: string | null
+          ownership_structure: string | null
           owns_property: boolean | null
           phone: string | null
           pos_system: string | null
@@ -1699,6 +1703,7 @@ export type Database = {
           name: string
           net_operating_income?: number | null
           notes?: string | null
+          ownership_structure?: string | null
           owns_property?: boolean | null
           phone?: string | null
           pos_system?: string | null
@@ -1740,6 +1745,7 @@ export type Database = {
           name?: string
           net_operating_income?: number | null
           notes?: string | null
+          ownership_structure?: string | null
           owns_property?: boolean | null
           phone?: string | null
           pos_system?: string | null

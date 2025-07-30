@@ -32,6 +32,7 @@ interface Client {
   status: string
   stage?: string // Add stage field for synchronization
   naics_code?: string // Add NAICS code field
+  ownership_structure?: string // Add ownership structure field
   total_loans: number
   total_loan_value: number
   join_date: string

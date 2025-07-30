@@ -54,6 +54,7 @@ interface Client {
   business_name?: string
   business_address?: string
   naics_code?: string
+  ownership_structure?: string
   owns_property?: boolean
   property_payment_amount?: number
   year_established?: number
@@ -119,6 +120,7 @@ export default function ClientDetail() {
     business_name: "",
     business_address: "",
     naics_code: "",
+    ownership_structure: "",
     owns_property: false,
     property_payment_amount: "",
     year_established: "",
@@ -177,6 +179,7 @@ export default function ClientDetail() {
         business_name: data.business_name || "",
         business_address: data.business_address || "",
         naics_code: (data as any).naics_code || "",
+        ownership_structure: (data as any).ownership_structure || "",
         owns_property: data.owns_property || false,
         property_payment_amount: data.property_payment_amount?.toString() || "",
         year_established: data.year_established?.toString() || "",
@@ -323,6 +326,7 @@ export default function ClientDetail() {
         business_name: editableFields.business_name || null,
         business_address: editableFields.business_address || null,
         naics_code: editableFields.naics_code || null,
+        ownership_structure: editableFields.ownership_structure || null,
         owns_property: editableFields.owns_property,
         property_payment_amount: editableFields.property_payment_amount ? parseFloat(editableFields.property_payment_amount) : null,
         year_established: editableFields.year_established ? parseInt(editableFields.year_established) : null,
@@ -738,6 +742,50 @@ export default function ClientDetail() {
                         />
                       ) : (
                         <p className="font-medium">{client.naics_code || 'N/A'}</p>
+                      )}
+                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-3">
+                    <Building className="w-4 h-4" />
+                    <div className="flex-1">
+                      <p className="text-sm text-muted-foreground">Ownership Structure</p>
+                      {isEditing ? (
+                        <Select value={editableFields.ownership_structure} onValueChange={(value) => setEditableFields({...editableFields, ownership_structure: value})}>
+                          <SelectTrigger className="bg-background border-border z-50">
+                            <SelectValue placeholder="Select ownership structure" />
+                          </SelectTrigger>
+                          <SelectContent className="bg-background border-border shadow-lg z-50">
+                            <SelectItem value="sole_proprietorship">Sole Proprietorship</SelectItem>
+                            <SelectItem value="partnership">Partnership</SelectItem>
+                            <SelectItem value="llc">Limited Liability Company (LLC)</SelectItem>
+                            <SelectItem value="corporation">Corporation (C-Corp)</SelectItem>
+                            <SelectItem value="s_corporation">S Corporation (S-Corp)</SelectItem>
+                            <SelectItem value="limited_partnership">Limited Partnership (LP)</SelectItem>
+                            <SelectItem value="llp">Limited Liability Partnership (LLP)</SelectItem>
+                            <SelectItem value="professional_corporation">Professional Corporation (PC)</SelectItem>
+                            <SelectItem value="nonprofit">Nonprofit Corporation</SelectItem>
+                            <SelectItem value="cooperative">Cooperative</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      ) : (
+                        <p className="font-medium">
+                          {client.ownership_structure ? 
+                            {
+                              'sole_proprietorship': 'Sole Proprietorship',
+                              'partnership': 'Partnership',
+                              'llc': 'Limited Liability Company (LLC)',
+                              'corporation': 'Corporation (C-Corp)',
+                              's_corporation': 'S Corporation (S-Corp)',
+                              'limited_partnership': 'Limited Partnership (LP)',
+                              'llp': 'Limited Liability Partnership (LLP)',
+                              'professional_corporation': 'Professional Corporation (PC)',
+                              'nonprofit': 'Nonprofit Corporation',
+                              'cooperative': 'Cooperative'
+                            }[client.ownership_structure] || client.ownership_structure
+                            : 'N/A'
+                          }
+                        </p>
                       )}
                     </div>
                   </div>
