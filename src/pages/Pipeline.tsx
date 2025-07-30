@@ -495,18 +495,16 @@ export default function Pipeline() {
                 <Card className="shadow-soft">
                   <CardHeader className="pb-3">
                     <CardTitle className="text-lg dark:text-white">{stage.name}</CardTitle>
-                    <div className="space-y-1">
-                      <div className="flex items-center gap-2 text-sm">
-                        <Users className="w-4 h-4 text-primary" />
-                        <span className="font-medium dark:text-white">{stage.count} entries</span>
+                      <div className="space-y-1">
+                        <div className="flex items-center gap-2 text-sm">
+                          <span className="font-medium dark:text-white">{stage.count} entries</span>
+                        </div>
+                        <div className="flex items-center gap-2 text-sm">
+                          <span className="font-medium text-accent">
+                            ${stage.value.toLocaleString()}
+                          </span>
+                        </div>
                       </div>
-                      <div className="flex items-center gap-2 text-sm">
-                        <DollarSign className="w-4 h-4 text-accent" />
-                        <span className="font-medium text-accent">
-                          ${stage.value.toLocaleString()}
-                        </span>
-                      </div>
-                    </div>
                   </CardHeader>
                 </Card>
 
