@@ -411,139 +411,43 @@ export type Database = {
       }
       clients: {
         Row: {
-          annual_revenue: number | null
-          average_transaction_size: number | null
-          bank_lender_name: string | null
-          bdo_email: string | null
-          bdo_name: string | null
-          bdo_telephone: string | null
-          business_address: string | null
-          business_name: string | null
-          call_notes: string | null
+          contact_entity_id: string
           created_at: string
-          credit_score: number | null
-          current_processing_rate: number | null
-          email: string
-          existing_loan_amount: number | null
           id: string
-          income: number | null
-          interest_rate: number | null
           join_date: string | null
           last_activity: string | null
           lead_id: string | null
-          loan_amount: number | null
-          loan_type: string | null
-          location: string | null
-          maturity_date: string | null
-          monthly_processing_volume: number | null
-          naics_code: string | null
-          name: string
-          net_operating_income: number | null
-          notes: string | null
-          ownership_structure: string | null
-          owns_property: boolean | null
-          phone: string | null
-          pos_system: string | null
-          priority: string | null
-          processor_name: string | null
-          property_payment_amount: number | null
-          stage: string | null
           status: string
           total_loan_value: number | null
           total_loans: number | null
           updated_at: string
           user_id: string
-          year_established: number | null
         }
         Insert: {
-          annual_revenue?: number | null
-          average_transaction_size?: number | null
-          bank_lender_name?: string | null
-          bdo_email?: string | null
-          bdo_name?: string | null
-          bdo_telephone?: string | null
-          business_address?: string | null
-          business_name?: string | null
-          call_notes?: string | null
+          contact_entity_id: string
           created_at?: string
-          credit_score?: number | null
-          current_processing_rate?: number | null
-          email: string
-          existing_loan_amount?: number | null
           id?: string
-          income?: number | null
-          interest_rate?: number | null
           join_date?: string | null
           last_activity?: string | null
           lead_id?: string | null
-          loan_amount?: number | null
-          loan_type?: string | null
-          location?: string | null
-          maturity_date?: string | null
-          monthly_processing_volume?: number | null
-          naics_code?: string | null
-          name: string
-          net_operating_income?: number | null
-          notes?: string | null
-          ownership_structure?: string | null
-          owns_property?: boolean | null
-          phone?: string | null
-          pos_system?: string | null
-          priority?: string | null
-          processor_name?: string | null
-          property_payment_amount?: number | null
-          stage?: string | null
           status?: string
           total_loan_value?: number | null
           total_loans?: number | null
           updated_at?: string
           user_id: string
-          year_established?: number | null
         }
         Update: {
-          annual_revenue?: number | null
-          average_transaction_size?: number | null
-          bank_lender_name?: string | null
-          bdo_email?: string | null
-          bdo_name?: string | null
-          bdo_telephone?: string | null
-          business_address?: string | null
-          business_name?: string | null
-          call_notes?: string | null
+          contact_entity_id?: string
           created_at?: string
-          credit_score?: number | null
-          current_processing_rate?: number | null
-          email?: string
-          existing_loan_amount?: number | null
           id?: string
-          income?: number | null
-          interest_rate?: number | null
           join_date?: string | null
           last_activity?: string | null
           lead_id?: string | null
-          loan_amount?: number | null
-          loan_type?: string | null
-          location?: string | null
-          maturity_date?: string | null
-          monthly_processing_volume?: number | null
-          naics_code?: string | null
-          name?: string
-          net_operating_income?: number | null
-          notes?: string | null
-          ownership_structure?: string | null
-          owns_property?: boolean | null
-          phone?: string | null
-          pos_system?: string | null
-          priority?: string | null
-          processor_name?: string | null
-          property_payment_amount?: number | null
-          stage?: string | null
           status?: string
           total_loan_value?: number | null
           total_loans?: number | null
           updated_at?: string
           user_id?: string
-          year_established?: number | null
         }
         Relationships: [
           {
@@ -551,6 +455,13 @@ export type Database = {
             columns: ["lead_id"]
             isOneToOne: false
             referencedRelation: "leads"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fk_clients_contact_entity"
+            columns: ["contact_entity_id"]
+            isOneToOne: false
+            referencedRelation: "contact_entities"
             referencedColumns: ["id"]
           },
           {
@@ -685,6 +596,126 @@ export type Database = {
           report_data?: Json
           report_type?: string
           status?: string
+        }
+        Relationships: []
+      }
+      contact_entities: {
+        Row: {
+          annual_revenue: number | null
+          average_transaction_size: number | null
+          bank_lender_name: string | null
+          bdo_email: string | null
+          bdo_name: string | null
+          bdo_telephone: string | null
+          business_address: string | null
+          business_name: string | null
+          call_notes: string | null
+          created_at: string
+          credit_score: number | null
+          current_processing_rate: number | null
+          email: string
+          existing_loan_amount: number | null
+          id: string
+          income: number | null
+          interest_rate: number | null
+          loan_amount: number | null
+          loan_type: string | null
+          location: string | null
+          maturity_date: string | null
+          monthly_processing_volume: number | null
+          naics_code: string | null
+          name: string
+          net_operating_income: number | null
+          notes: string | null
+          ownership_structure: string | null
+          owns_property: boolean | null
+          phone: string | null
+          pos_system: string | null
+          priority: string | null
+          processor_name: string | null
+          property_payment_amount: number | null
+          stage: string | null
+          updated_at: string
+          user_id: string
+          year_established: number | null
+        }
+        Insert: {
+          annual_revenue?: number | null
+          average_transaction_size?: number | null
+          bank_lender_name?: string | null
+          bdo_email?: string | null
+          bdo_name?: string | null
+          bdo_telephone?: string | null
+          business_address?: string | null
+          business_name?: string | null
+          call_notes?: string | null
+          created_at?: string
+          credit_score?: number | null
+          current_processing_rate?: number | null
+          email: string
+          existing_loan_amount?: number | null
+          id?: string
+          income?: number | null
+          interest_rate?: number | null
+          loan_amount?: number | null
+          loan_type?: string | null
+          location?: string | null
+          maturity_date?: string | null
+          monthly_processing_volume?: number | null
+          naics_code?: string | null
+          name: string
+          net_operating_income?: number | null
+          notes?: string | null
+          ownership_structure?: string | null
+          owns_property?: boolean | null
+          phone?: string | null
+          pos_system?: string | null
+          priority?: string | null
+          processor_name?: string | null
+          property_payment_amount?: number | null
+          stage?: string | null
+          updated_at?: string
+          user_id: string
+          year_established?: number | null
+        }
+        Update: {
+          annual_revenue?: number | null
+          average_transaction_size?: number | null
+          bank_lender_name?: string | null
+          bdo_email?: string | null
+          bdo_name?: string | null
+          bdo_telephone?: string | null
+          business_address?: string | null
+          business_name?: string | null
+          call_notes?: string | null
+          created_at?: string
+          credit_score?: number | null
+          current_processing_rate?: number | null
+          email?: string
+          existing_loan_amount?: number | null
+          id?: string
+          income?: number | null
+          interest_rate?: number | null
+          loan_amount?: number | null
+          loan_type?: string | null
+          location?: string | null
+          maturity_date?: string | null
+          monthly_processing_volume?: number | null
+          naics_code?: string | null
+          name?: string
+          net_operating_income?: number | null
+          notes?: string | null
+          ownership_structure?: string | null
+          owns_property?: boolean | null
+          phone?: string | null
+          pos_system?: string | null
+          priority?: string | null
+          processor_name?: string | null
+          property_payment_amount?: number | null
+          stage?: string | null
+          updated_at?: string
+          user_id?: string
+          year_established?: number | null
         }
         Relationships: []
       }
@@ -1632,132 +1663,44 @@ export type Database = {
       }
       leads: {
         Row: {
-          annual_revenue: number | null
-          average_transaction_size: number | null
-          bank_lender_name: string | null
-          bdo_email: string | null
-          bdo_name: string | null
-          bdo_telephone: string | null
-          business_address: string | null
-          business_name: string | null
-          call_notes: string | null
+          contact_entity_id: string
           converted_at: string | null
           created_at: string
-          credit_score: number | null
-          current_processing_rate: number | null
-          email: string
-          existing_loan_amount: number | null
           id: string
-          income: number | null
-          interest_rate: number | null
           is_converted_to_client: boolean | null
           last_contact: string | null
-          loan_amount: number | null
-          loan_type: string | null
-          location: string | null
-          maturity_date: string | null
-          monthly_processing_volume: number | null
-          naics_code: string | null
-          name: string
-          net_operating_income: number | null
-          notes: string | null
-          ownership_structure: string | null
-          owns_property: boolean | null
-          phone: string | null
-          pos_system: string | null
-          priority: string
-          processor_name: string | null
-          property_payment_amount: number | null
-          stage: string
           updated_at: string
           user_id: string
-          year_established: number | null
         }
         Insert: {
-          annual_revenue?: number | null
-          average_transaction_size?: number | null
-          bank_lender_name?: string | null
-          bdo_email?: string | null
-          bdo_name?: string | null
-          bdo_telephone?: string | null
-          business_address?: string | null
-          business_name?: string | null
-          call_notes?: string | null
+          contact_entity_id: string
           converted_at?: string | null
           created_at?: string
-          credit_score?: number | null
-          current_processing_rate?: number | null
-          email: string
-          existing_loan_amount?: number | null
           id?: string
-          income?: number | null
-          interest_rate?: number | null
           is_converted_to_client?: boolean | null
           last_contact?: string | null
-          loan_amount?: number | null
-          loan_type?: string | null
-          location?: string | null
-          maturity_date?: string | null
-          monthly_processing_volume?: number | null
-          naics_code?: string | null
-          name: string
-          net_operating_income?: number | null
-          notes?: string | null
-          ownership_structure?: string | null
-          owns_property?: boolean | null
-          phone?: string | null
-          pos_system?: string | null
-          priority?: string
-          processor_name?: string | null
-          property_payment_amount?: number | null
-          stage?: string
           updated_at?: string
           user_id: string
-          year_established?: number | null
         }
         Update: {
-          annual_revenue?: number | null
-          average_transaction_size?: number | null
-          bank_lender_name?: string | null
-          bdo_email?: string | null
-          bdo_name?: string | null
-          bdo_telephone?: string | null
-          business_address?: string | null
-          business_name?: string | null
-          call_notes?: string | null
+          contact_entity_id?: string
           converted_at?: string | null
           created_at?: string
-          credit_score?: number | null
-          current_processing_rate?: number | null
-          email?: string
-          existing_loan_amount?: number | null
           id?: string
-          income?: number | null
-          interest_rate?: number | null
           is_converted_to_client?: boolean | null
           last_contact?: string | null
-          loan_amount?: number | null
-          loan_type?: string | null
-          location?: string | null
-          maturity_date?: string | null
-          monthly_processing_volume?: number | null
-          naics_code?: string | null
-          name?: string
-          net_operating_income?: number | null
-          notes?: string | null
-          ownership_structure?: string | null
-          owns_property?: boolean | null
-          phone?: string | null
-          pos_system?: string | null
-          priority?: string
-          processor_name?: string | null
-          property_payment_amount?: number | null
-          stage?: string
           updated_at?: string
           user_id?: string
-          year_established?: number | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "fk_leads_contact_entity"
+            columns: ["contact_entity_id"]
+            isOneToOne: false
+            referencedRelation: "contact_entities"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       loan_requests: {
         Row: {
