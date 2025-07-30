@@ -930,10 +930,10 @@ export default function Leads() {
                           </div>
                         </td>
                          <td className="p-4">
-                            <div className="text-sm">
-                               <div className="text-white">{lead.email}</div>
-                               <div className="text-white">{lead.phone ? formatPhoneNumber(lead.phone) : ''}</div>
-                            </div>
+                     <div className="text-sm">
+                                <div className="text-white font-medium">{lead.email}</div>
+                                <div className="text-white font-medium">{lead.phone ? formatPhoneNumber(lead.phone) : ''}</div>
+                             </div>
                          </td>
                           <td className="p-4 font-medium text-white">
                             {lead.loan_amount ? `$${lead.loan_amount.toLocaleString()}` : '-'}
