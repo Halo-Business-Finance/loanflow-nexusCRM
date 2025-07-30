@@ -538,20 +538,20 @@ export default function Dashboard() {
                 dataKey="month" 
                 tickLine={false}
                 axisLine={false}
-                className="text-muted-foreground dark:text-white"
+                tick={{ fill: 'var(--foreground)', fontSize: 12 }}
               />
               <YAxis 
                 yAxisId="left"
                 tickLine={false}
                 axisLine={false}
-                className="text-muted-foreground dark:text-white"
+                tick={{ fill: 'var(--foreground)', fontSize: 12 }}
               />
               <YAxis 
                 yAxisId="right"
                 orientation="right"
                 tickLine={false}
                 axisLine={false}
-                className="text-muted-foreground dark:text-white"
+                tick={{ fill: 'var(--foreground)', fontSize: 12 }}
                 tickFormatter={(value) => `${value}%`}
               />
               <ChartTooltip 
