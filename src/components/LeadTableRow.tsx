@@ -129,12 +129,12 @@ export function LeadTableRow({ lead, onEdit, onDelete, onConvert, hasAdminRole }
       <td className="p-4">
         <div className="space-y-1">
           {lead.loan_type && (
-            <div className="text-xs text-card-foreground bg-muted/50 px-2 py-1 rounded font-medium">
+            <div className="text-xs text-white bg-muted/50 px-2 py-1 rounded font-medium">
               {lead.loan_type}
             </div>
           )}
           {lead.loan_amount && (
-            <div className="font-medium text-card-foreground text-sm">
+            <div className="font-medium text-white text-sm">
               ${lead.loan_amount.toLocaleString()}
             </div>
           )}
