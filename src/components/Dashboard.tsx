@@ -177,14 +177,20 @@ export default function Dashboard() {
     if (!user) return
 
     try {
-      // Fetch leads with contact entity data
-      const { data: leadsData } = await supabase
+      // Fetch leads with contact entity data - admin users see all data
+      let leadsQuery = supabase
         .from('leads')
         .select(`
           *,
           contact_entity:contact_entities!contact_entity_id (*)
         `)
-        .eq('user_id', user.id)
+      
+      // Only filter by user_id if not admin
+      if (!hasRole('admin') && !hasRole('super_admin')) {
+        leadsQuery = leadsQuery.eq('user_id', user.id)
+      }
+      
+      const { data: leadsData } = await leadsQuery
         .order('created_at', { ascending: false })
         .limit(5)
 
