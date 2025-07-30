@@ -72,9 +72,9 @@ export function AppSidebar() {
               {navigationItems.map((item) => (
                 <SidebarMenuItem key={item.title}>
                   <SidebarMenuButton asChild>
-                    <NavLink to={item.url} end className={getNavClass}>
-                      <item.icon className="w-4 h-4 text-sidebar-foreground" />
-                      {state !== "collapsed" && <span>{item.title}</span>}
+                     <NavLink to={item.url} end className={getNavClass}>
+                       <item.icon className="w-4 h-4 text-blue-500" />
+                       {state !== "collapsed" && <span>{item.title}</span>}
                     </NavLink>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
