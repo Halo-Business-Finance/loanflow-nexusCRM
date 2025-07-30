@@ -153,15 +153,6 @@ export function LeadTableRow({ lead, onEdit, onDelete, onConvert, hasAdminRole }
         </Badge>
       </td>
 
-      {/* Credit Score */}
-      <td className="p-4 text-center">
-        {lead.credit_score && (
-          <span className="text-white text-sm font-medium">
-            {lead.credit_score}
-          </span>
-        )}
-      </td>
-
       {/* Actions - Empty placeholder for now */}
       <td className="p-4 text-center">
         {/* Actions would go here if needed */}

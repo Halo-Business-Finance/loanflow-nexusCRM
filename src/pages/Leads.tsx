@@ -789,7 +789,6 @@ export default function Leads() {
                           <th className="text-left p-4 font-semibold text-foreground">Loan Type</th>
                           <th className="text-left p-4 font-semibold text-foreground">Stage</th>
                           <th className="text-left p-4 font-semibold text-foreground">Priority</th>
-                          <th className="text-center p-4 font-semibold text-foreground">Credit</th>
                           <th className="text-center p-4 font-semibold text-foreground">Actions</th>
                         </tr>
                       </thead>
