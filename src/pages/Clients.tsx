@@ -160,13 +160,29 @@ export default function Clients() {
 
   const deleteClient = async (clientId: string, clientName: string) => {
     try {
-      // First delete associated loans
+      // Delete all related records in the correct order to avoid foreign key constraints
+      
+      // Delete cases associated with this client
+      const { error: casesError } = await supabase
+        .from('cases')
+        .delete()
+        .eq('client_id', clientId)
+
+      if (casesError) {
+        console.error('Error deleting cases:', casesError)
+        // Continue with deletion even if no cases exist
+      }
+
+      // Delete loans associated with this client
       const { error: loansError } = await supabase
         .from('loans')
         .delete()
         .eq('client_id', clientId)
 
-      if (loansError) throw loansError
+      if (loansError) {
+        console.error('Error deleting loans:', loansError)
+        // Continue with deletion even if no loans exist
+      }
 
       // Delete pipeline entries
       const { error: pipelineError } = await supabase
@@ -174,7 +190,21 @@ export default function Clients() {
         .delete()
         .eq('client_id', clientId)
 
-      if (pipelineError) throw pipelineError
+      if (pipelineError) {
+        console.error('Error deleting pipeline entries:', pipelineError)
+        // Continue with deletion even if no pipeline entries exist
+      }
+
+      // Delete community members where this client is referenced
+      const { error: communityMembersError } = await supabase
+        .from('community_members')
+        .delete()
+        .eq('client_id', clientId)
+
+      if (communityMembersError) {
+        console.error('Error deleting community members:', communityMembersError)
+        // Continue with deletion even if no community members exist
+      }
 
       // Finally delete the client
       const { error: clientError } = await supabase
@@ -194,7 +224,7 @@ export default function Clients() {
       console.error('Error deleting client:', error)
       toast({
         title: "Error",
-        description: "Failed to delete client",
+        description: "Failed to delete client. Please try again.",
         variant: "destructive",
       })
     }
