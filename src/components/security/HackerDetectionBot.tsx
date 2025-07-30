@@ -93,6 +93,32 @@ export function HackerDetectionBot() {
         user_agent: mockAttempt.metadata.user_agent,
         ip_address: mockAttempt.source_ip
       });
+
+      // Check for critical threats that should trigger emergency shutdown
+      if (mockAttempt.severity === 'critical') {
+        const criticalThreats = [
+          'SQL Injection Attempt',
+          'Command Injection',
+          'Authentication Bypass'
+        ];
+        
+        if (criticalThreats.some(threat => mockAttempt.type.includes(threat))) {
+          // Map to emergency shutdown threat types
+          let emergencyThreatType = 'critical_vulnerability_exploit';
+          if (mockAttempt.type.includes('SQL')) emergencyThreatType = 'data_exfiltration_detected';
+          if (mockAttempt.type.includes('Authentication')) emergencyThreatType = 'privilege_escalation';
+          
+          // Trigger emergency shutdown via global function
+          if ((window as any).emergencyShutdownTrigger) {
+            await (window as any).emergencyShutdownTrigger(
+              emergencyThreatType,
+              'critical',
+              'HackerDetectionBot',
+              mockAttempt
+            );
+          }
+        }
+      }
     } catch (error) {
       console.error('Error logging hacker attempt:', error);
     }

@@ -1059,6 +1059,75 @@ export type Database = {
         }
         Relationships: []
       }
+      emergency_events: {
+        Row: {
+          auto_shutdown: boolean
+          created_at: string
+          event_data: Json | null
+          id: string
+          manual_override: boolean
+          resolved_at: string | null
+          severity: string
+          threat_type: string
+          trigger_source: string
+        }
+        Insert: {
+          auto_shutdown?: boolean
+          created_at?: string
+          event_data?: Json | null
+          id?: string
+          manual_override?: boolean
+          resolved_at?: string | null
+          severity: string
+          threat_type: string
+          trigger_source: string
+        }
+        Update: {
+          auto_shutdown?: boolean
+          created_at?: string
+          event_data?: Json | null
+          id?: string
+          manual_override?: boolean
+          resolved_at?: string | null
+          severity?: string
+          threat_type?: string
+          trigger_source?: string
+        }
+        Relationships: []
+      }
+      emergency_shutdown: {
+        Row: {
+          auto_restore_at: string | null
+          created_at: string
+          id: string
+          is_active: boolean
+          reason: string
+          resolved_at: string | null
+          shutdown_level: string
+          triggered_by: string
+        }
+        Insert: {
+          auto_restore_at?: string | null
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          reason: string
+          resolved_at?: string | null
+          shutdown_level: string
+          triggered_by: string
+        }
+        Update: {
+          auto_restore_at?: string | null
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          reason?: string
+          resolved_at?: string | null
+          shutdown_level?: string
+          triggered_by?: string
+        }
+        Relationships: []
+      }
       encryption_keys: {
         Row: {
           algorithm: string
@@ -2924,6 +2993,10 @@ export type Database = {
         Args: { client_ip: unknown }
         Returns: boolean
       }
+      is_system_shutdown: {
+        Args: Record<PropertyKey, never>
+        Returns: Json
+      }
       lock_account: {
         Args: { user_email: string; lock_reason?: string }
         Returns: string
@@ -2951,6 +3024,15 @@ export type Database = {
           p_user_agent?: string
         }
         Returns: string
+      }
+      trigger_emergency_shutdown: {
+        Args: {
+          p_threat_type: string
+          p_severity: string
+          p_trigger_source: string
+          p_threat_data?: Json
+        }
+        Returns: boolean
       }
       validate_password_strength: {
         Args: { password: string }

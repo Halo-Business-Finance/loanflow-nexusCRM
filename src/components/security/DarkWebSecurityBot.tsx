@@ -76,6 +76,19 @@ export function DarkWebSecurityBot() {
         incident_data: mockThreat as any,
         user_agent: mockThreat.metadata.user_agent
       });
+
+      // Check for critical dark web threats that should trigger emergency shutdown
+      if (mockThreat.severity === 'high' && Math.random() > 0.7) {
+        // Trigger emergency shutdown for high-risk dark web activity
+        if ((window as any).emergencyShutdownTrigger) {
+          await (window as any).emergencyShutdownTrigger(
+            'data_exfiltration_detected',
+            'critical',
+            'DarkWebSecurityBot',
+            mockThreat
+          );
+        }
+      }
     } catch (error) {
       console.error('Error logging dark web threat:', error);
     }

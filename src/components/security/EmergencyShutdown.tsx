@@ -70,26 +70,17 @@ export function EmergencyShutdown() {
   // Initialize emergency shutdown system
   const initializeShutdownSystem = useCallback(async () => {
     try {
-      // Create emergency_shutdown table if it doesn't exist
-      await supabase.rpc('create_emergency_system_if_not_exists');
+      // Check current shutdown status using the database function
+      const { data: statusData } = await supabase.rpc('is_system_shutdown');
       
-      // Check current shutdown status
-      const { data: currentStatus } = await supabase
-        .from('emergency_shutdown')
-        .select('*')
-        .eq('is_active', true)
-        .order('created_at', { ascending: false })
-        .limit(1)
-        .single();
-
-      if (currentStatus) {
+      const status = statusData as any;
+      if (status?.is_shutdown) {
         setShutdownStatus({
           is_shutdown: true,
-          shutdown_reason: currentStatus.reason,
-          shutdown_level: currentStatus.shutdown_level,
-          triggered_by: currentStatus.triggered_by,
-          triggered_at: currentStatus.created_at,
-          auto_restore_at: currentStatus.auto_restore_at
+          shutdown_reason: status.reason,
+          shutdown_level: status.shutdown_level,
+          triggered_by: status.triggered_by,
+          triggered_at: status.triggered_at
         });
       }
 
@@ -104,7 +95,7 @@ export function EmergencyShutdown() {
         setEmergencyEvents(events.map(event => ({
           id: event.id,
           threat_type: event.threat_type,
-          severity: event.severity,
+          severity: event.severity as 'critical' | 'high',
           trigger_source: event.trigger_source,
           auto_shutdown: event.auto_shutdown,
           manual_override: event.manual_override,
