@@ -521,7 +521,7 @@ export default function Users() {
           <Dialog open={showNewUserDialog} onOpenChange={setShowNewUserDialog}>
             <DialogTrigger asChild>
               <Button className="gap-2">
-                <UserPlus className="h-4 w-4 text-primary-foreground" />
+                <UserPlus className="h-4 w-4 text-white" />
                 Add User
               </Button>
             </DialogTrigger>
@@ -621,7 +621,7 @@ export default function Users() {
           <CardContent className="p-4">
             <div className="flex gap-4 items-center">
               <div className="relative flex-1">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground dark:text-white" />
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-white" />
                 <Input
                   placeholder="Search users by name or email..."
                   className="pl-10"
@@ -630,7 +630,7 @@ export default function Users() {
                 />
               </div>
               <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                <UsersIcon className="h-4 w-4 text-muted-foreground" />
+                <UsersIcon className="h-4 w-4 text-white" />
                 {filteredUsers.length} users
               </div>
             </div>
@@ -641,7 +641,7 @@ export default function Users() {
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              <UsersIcon className="h-5 w-5 text-muted-foreground" />
+              <UsersIcon className="h-5 w-5 text-white" />
               Team Members
             </CardTitle>
           </CardHeader>
@@ -684,7 +684,7 @@ export default function Users() {
                             <PhoneDialer 
                               trigger={
                                 <button className="flex items-center gap-2 text-sm text-muted-foreground hover:text-primary transition-colors">
-                                  <Phone className="h-4 w-4 text-muted-foreground" />
+                                  <Phone className="h-4 w-4 text-white" />
                                   {user.phone_number}
                                 </button>
                               }
@@ -693,7 +693,7 @@ export default function Users() {
                             <span className="text-sm text-muted-foreground">No phone</span>
                           )}
                           <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                            <Calendar className="h-4 w-4 text-muted-foreground" />
+                            <Calendar className="h-4 w-4 text-white" />
                             {new Date(user.created_at).toLocaleDateString()}
                           </div>
                         </div>
@@ -731,7 +731,7 @@ export default function Users() {
                             }}
                             className="h-8 w-8 p-0"
                           >
-                            <Edit className="h-4 w-4 text-primary-foreground" />
+                            <Edit className="h-4 w-4 text-white" />
                           </Button>
                           
                           <Button
@@ -743,7 +743,7 @@ export default function Users() {
                             }}
                             className="h-8 w-8 p-0"
                           >
-                            <Key className="h-4 w-4 text-primary-foreground" />
+                            <Key className="h-4 w-4 text-white" />
                           </Button>
 
                           <Button
@@ -752,14 +752,14 @@ export default function Users() {
                             onClick={() => toggleUserStatus(user.id, user.is_active)}
                             className="h-8 w-8 p-0"
                           >
-                            {user.is_active ? <Shield className="h-4 w-4 text-primary-foreground" /> : <User className="h-4 w-4 text-primary-foreground" />}
+                            {user.is_active ? <Shield className="h-4 w-4 text-white" /> : <User className="h-4 w-4 text-white" />}
                           </Button>
 
                           {user.email !== currentUser?.email && (
                             <AlertDialog>
                               <AlertDialogTrigger asChild>
                                 <Button variant="ghost" size="sm" className="h-8 w-8 p-0 text-red-600 hover:text-red-700">
-                                  <Trash2 className="h-4 w-4 text-primary-foreground" />
+                                  <Trash2 className="h-4 w-4 text-white" />
                                 </Button>
                               </AlertDialogTrigger>
                               <AlertDialogContent>
