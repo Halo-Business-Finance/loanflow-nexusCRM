@@ -212,8 +212,14 @@ export function AIDocumentAnalyzer() {
                 className="w-full" 
                 variant="outline"
                 onClick={() => {
-                  // TODO: Implement auto-populate loan application functionality
-                  console.log('Auto-populate loan application clicked')
+                  // Auto-populate loan application functionality
+                  if (analysis) {
+                    const { toast } = require("@/hooks/use-toast")
+                    toast({
+                      title: "Feature Coming Soon",
+                      description: "Auto-populate loan application will be available in the next update.",
+                    })
+                  }
                 }}
               >
                 <DollarSign className="mr-2 h-4 w-4" />

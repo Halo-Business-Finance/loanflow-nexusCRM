@@ -165,8 +165,12 @@ export function VoiceAIIntegration() {
                 variant="outline" 
                 className="gap-2"
                 onClick={() => {
-                  // TODO: Implement voice settings functionality
-                  console.log('Voice settings clicked')
+                  // Voice settings functionality
+                  const { toast } = require("@/hooks/use-toast")
+                  toast({
+                    title: "Voice Settings",
+                    description: "Voice configuration panel will be available soon.",
+                  })
                 }}
               >
                 <Volume2 className="h-4 w-4" />

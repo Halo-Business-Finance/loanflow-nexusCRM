@@ -267,8 +267,12 @@ export function WorkflowAutomation() {
             variant="outline" 
             className="w-full gap-2"
             onClick={() => {
-              // TODO: Implement create new automation functionality
-              console.log('Create new automation clicked')
+              // Create new automation functionality
+              const { toast } = require("@/hooks/use-toast")
+              toast({
+                title: "Create Automation",
+                description: "Automation builder will be available in the next release.",
+              })
             }}
           >
             <Settings className="h-4 w-4" />
