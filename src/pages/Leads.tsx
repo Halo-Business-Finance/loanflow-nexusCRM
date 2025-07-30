@@ -162,18 +162,13 @@ export default function Leads() {
 
   const fetchLeads = async () => {
     try {
-      // Admin users see all leads, regular users see only their own
-      let leadsQuery = supabase
+      // All authenticated users can see all leads (universal access)
+      const leadsQuery = supabase
         .from('leads')
         .select(`
           *,
           contact_entity:contact_entities(*)
         `)
-
-      // Only filter by user_id if not admin
-      if (!hasRole('admin') && !hasRole('super_admin')) {
-        leadsQuery = leadsQuery.eq('user_id', user?.id)
-      }
 
       const { data, error } = await leadsQuery.order('created_at', { ascending: false })
 
