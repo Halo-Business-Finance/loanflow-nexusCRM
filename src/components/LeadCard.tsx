@@ -134,8 +134,8 @@ export function LeadCard({ lead, onEdit, onDelete, onConvert, hasAdminRole }: Le
           <div className="pt-2 border-t border-muted/30">
             {lead.loan_type && (
               <div className="flex items-center justify-between text-sm mb-2">
-                <span className="text-muted-foreground">Loan Type</span>
-                <span className="font-semibold text-foreground">{lead.loan_type}</span>
+                <span className="text-black">Loan Type</span>
+                <span className="font-semibold text-black">{lead.loan_type}</span>
               </div>
             )}
             
@@ -143,9 +143,9 @@ export function LeadCard({ lead, onEdit, onDelete, onConvert, hasAdminRole }: Le
               <div className="flex items-center justify-between text-sm">
                 <div className="flex items-center gap-2">
                   <DollarSign className="w-4 h-4 text-muted-foreground" />
-                  <span className="text-muted-foreground">Loan Amount</span>
+                  <span className="text-black">Loan Amount</span>
                 </div>
-                <span className="font-semibold text-foreground">${lead.loan_amount.toLocaleString()}</span>
+                <span className="font-semibold text-black">${lead.loan_amount.toLocaleString()}</span>
               </div>
             )}
           </div>
