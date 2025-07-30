@@ -110,13 +110,13 @@ export function LeadCard({ lead, onEdit, onDelete, onConvert, hasAdminRole }: Le
                 )}
               </div>
               {lead.business_name && (
-                <div className="flex items-center gap-1 text-sm text-muted-foreground mb-1">
-                  <Building className="w-3 h-3 text-muted-foreground" />
+                <div className="flex items-center gap-1 text-sm text-black mb-1">
+                  <Building className="w-3 h-3 text-black" />
                   <span className="truncate">{lead.business_name}</span>
                 </div>
               )}
-              <div className="flex items-center gap-1 text-xs text-muted-foreground">
-                <Calendar className="w-3 h-3 text-muted-foreground" />
+              <div className="flex items-center gap-1 text-xs text-black">
+                <Calendar className="w-3 h-3 text-black" />
                 <span>
                   {daysSinceContact === 0 ? 'Today' : 
                    daysSinceContact === 1 ? '1 day ago' : 
