@@ -116,8 +116,8 @@ export default function Pipeline() {
         .from('pipeline_entries')
         .select(`
           *,
-          lead:leads(name),
-          client:clients(name)
+          lead:leads(*, contact_entity:contact_entities(*)),
+          client:clients(*, contact_entity:contact_entities(*))
         `)
 
       if (error) throw error
@@ -130,7 +130,21 @@ export default function Pipeline() {
 
       data?.forEach(entry => {
         if (stageGroups[entry.stage]) {
-          stageGroups[entry.stage].push(entry)
+          // Merge lead/client data with contact entity
+          const enrichedEntry = {
+            ...entry,
+            lead: entry.lead ? {
+              ...entry.lead,
+              name: entry.lead.contact_entity?.name || '',
+              email: entry.lead.contact_entity?.email || ''
+            } : null,
+            client: entry.client ? {
+              ...entry.client,
+              name: entry.client.contact_entity?.name || '',
+              email: entry.client.contact_entity?.email || ''
+            } : null
+          }
+          stageGroups[entry.stage].push(enrichedEntry)
         }
       })
 

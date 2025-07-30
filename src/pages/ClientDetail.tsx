@@ -42,6 +42,7 @@ import {
 
 interface Client {
   id: string
+  contact_entity_id: string
   name: string
   email: string
   phone?: string
@@ -299,9 +300,9 @@ export default function ClientDetail() {
 
     try {
       const { error } = await supabase
-        .from('clients')
+        .from('contact_entities')
         .update({ notes: generalNotes })
-        .eq('id', client.id)
+        .eq('id', client.contact_entity_id)
 
       if (error) throw error
 

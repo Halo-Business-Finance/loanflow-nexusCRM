@@ -50,6 +50,8 @@ import {
 
 interface Lead {
   id: string
+  contact_entity_id: string
+  user_id: string
   name: string
   email: string
   phone?: string
@@ -252,7 +254,10 @@ export default function LeadDetail() {
     try {
       const { data, error } = await supabase
         .from('clients')
-        .select('*')
+        .select(`
+          *,
+          contact_entity:contact_entities(*)
+        `)
         .eq('lead_id', leadId)
         .single()
 
@@ -261,7 +266,13 @@ export default function LeadDetail() {
         return
       }
       
-      setClient(data)
+      // Merge client with contact entity data
+      const mergedClient = {
+        ...data,
+        name: data.contact_entity?.name || '',
+        email: data.contact_entity?.email || ''
+      }
+      setClient(mergedClient)
     } catch (error) {
       console.error('Error fetching client:', error)
     }
@@ -334,9 +345,9 @@ export default function LeadDetail() {
 
     try {
       const { error } = await supabase
-        .from('leads')
+        .from('contact_entities')
         .update({ notes: generalNotes })
-        .eq('id', lead.id)
+        .eq('id', lead.contact_entity_id)
 
       if (error) throw error
 
@@ -609,10 +620,19 @@ export default function LeadDetail() {
         current_processing_rate: editableFields.current_processing_rate ? parseFloat(editableFields.current_processing_rate) : null
       }
 
+      // Create client record with reference to existing contact entity
       const { data: newClient, error: clientError } = await supabase
         .from('clients')
-        .insert(clientData)
-        .select()
+        .insert({
+          user_id: lead.user_id,
+          contact_entity_id: lead.contact_entity_id,
+          lead_id: lead.id,
+          status: 'Active'
+        })
+        .select(`
+          *,
+          contact_entity:contact_entities(*)
+        `)
         .single()
 
       if (clientError) throw clientError
@@ -641,7 +661,13 @@ export default function LeadDetail() {
         }
       }
 
-      setClient(newClient)
+      // Merge client with contact entity data
+      const mergedClient = {
+        ...newClient,
+        name: newClient.contact_entity?.name || '',
+        email: newClient.contact_entity?.email || ''
+      }
+      setClient(mergedClient)
       
       console.log('Lead successfully converted to client:', newClient)
     } catch (error) {

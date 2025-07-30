@@ -21,6 +21,8 @@ import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, 
 
 interface Lead {
   id: string
+  contact_entity_id: string
+  user_id: string
   name: string
   email: string
   phone?: string
@@ -138,12 +140,28 @@ export default function Leads() {
     try {
       const { data, error } = await supabase
         .from('leads')
-        .select('*')
+        .select(`
+          *,
+          contact_entity:contact_entities(*)
+        `)
         .order('created_at', { ascending: false })
 
       if (error) throw error
       
-      setLeads(data || [])
+      // Merge leads with contact entity data
+      const mergedLeads = (data || []).map(lead => ({
+        ...lead,
+        name: lead.contact_entity?.name || '',
+        email: lead.contact_entity?.email || '',
+        phone: lead.contact_entity?.phone || '',
+        location: lead.contact_entity?.location || '',
+        stage: lead.contact_entity?.stage || 'New',
+        priority: lead.contact_entity?.priority || 'medium',
+        loan_amount: lead.contact_entity?.loan_amount || 0,
+        business_name: lead.contact_entity?.business_name || ''
+      }))
+      
+      setLeads(mergedLeads)
     } catch (error) {
       console.error('Error fetching leads:', error)
       toast({
@@ -158,27 +176,14 @@ export default function Leads() {
 
   const convertToClient = async (lead: Lead) => {
     try {
-      // Create client record with synchronized stage and additional fields
+      // Create client record with reference to existing contact entity
       const { data: client, error: clientError } = await supabase
         .from('clients')
         .insert({
           user_id: user?.id,
           lead_id: lead.id,
-          name: lead.name,
-          email: lead.email,
-          phone: lead.phone,
-          location: lead.location,
-          business_name: lead.business_name,
-          naics_code: lead.naics_code,
-          ownership_structure: lead.ownership_structure,
-          stage: lead.stage, // Sync stage from lead
-          status: 'Active',
-          total_loans: 0,
-          total_loan_value: 0,
-          priority: lead.priority,
-          credit_score: lead.credit_score,
-          loan_amount: lead.loan_amount,
-          net_operating_income: lead.net_operating_income
+          contact_entity_id: lead.contact_entity_id,
+          status: 'Active'
         })
         .select()
         .single()
@@ -229,8 +234,9 @@ export default function Leads() {
 
   const addNewLead = async () => {
     try {
-      const { error } = await supabase
-        .from('leads')
+      // First create contact entity
+      const { data: contactEntity, error: contactError } = await supabase
+        .from('contact_entities')
         .insert({
           user_id: user?.id,
           name: newLead.name,
@@ -255,8 +261,18 @@ export default function Leads() {
           processor_name: newLead.processor_name || null,
           current_processing_rate: newLead.current_processing_rate ? parseFloat(newLead.current_processing_rate) : null
         })
+        .select()
+        .single()
 
-      if (error) throw error
+      if (contactError) throw contactError
+
+      // Then create lead record
+      const { error } = await supabase
+        .from('leads')
+        .insert({
+          user_id: user?.id,
+          contact_entity_id: contactEntity.id
+        })
 
       toast({
         title: "Success!",
@@ -339,8 +355,9 @@ export default function Leads() {
     if (!editingLead) return
     
     try {
+      // Update contact entity
       const { error } = await supabase
-        .from('leads')
+        .from('contact_entities')
         .update({
           name: editLead.name,
           email: editLead.email,
@@ -354,7 +371,7 @@ export default function Leads() {
           priority: editLead.priority,
           stage: editLead.stage,
         })
-        .eq('id', editingLead.id)
+        .eq('id', editingLead.contact_entity_id)
 
       if (error) throw error
 
