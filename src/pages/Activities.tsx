@@ -293,13 +293,13 @@ export default function Activities() {
           </div>
           <div className="flex gap-4">
             <Button onClick={fetchNotifications} variant="outline" className="gap-2">
-              <Clock className="h-4 w-4" />
+              <Clock className="h-4 w-4 text-white" />
               Refresh
             </Button>
             <Dialog open={newActivityOpen} onOpenChange={setNewActivityOpen}>
               <DialogTrigger asChild>
                 <Button className="gap-2">
-                  <Plus className="h-4 w-4" />
+                  <Plus className="h-4 w-4 text-white" />
                   New Activity
                 </Button>
               </DialogTrigger>
@@ -350,7 +350,7 @@ export default function Activities() {
             </Dialog>
             {activityStats.unread > 0 && (
               <Button onClick={markAllAsRead} variant="outline" className="gap-2">
-                <CheckCircle2 className="h-4 w-4" />
+                <CheckCircle2 className="h-4 w-4 text-white" />
                 Mark All Read
               </Button>
             )}
@@ -361,7 +361,7 @@ export default function Activities() {
           <CardContent className="p-6">
             <div className="flex gap-4">
               <div className="relative flex-1">
-                <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                <Search className="absolute left-3 top-3 h-4 w-4 text-white" />
                 <Input
                   placeholder="Search activities..."
                   className="pl-10"
@@ -441,12 +441,12 @@ export default function Activities() {
           <CardContent className="p-6">
             {loading ? (
               <div className="flex items-center justify-center py-8">
-                <Clock className="h-6 w-6 animate-spin" />
+                <Clock className="h-6 w-6 animate-spin text-white" />
                 <span className="ml-2">Loading activities...</span>
               </div>
             ) : filteredActivities.length === 0 ? (
               <div className="text-center py-8">
-                <Bell className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+                <Bell className="h-12 w-12 text-white mx-auto mb-4" />
                 <p className="text-muted-foreground">
                   {searchTerm || filterType !== "all" || filterStatus !== "all" 
                     ? "No activities match your filters" 
