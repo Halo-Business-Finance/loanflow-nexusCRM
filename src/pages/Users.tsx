@@ -702,7 +702,7 @@ export default function Users() {
                       {/* Role Column */}
                       <td className="py-4 px-4">
                         <Badge variant={getRoleBadgeVariant(user.role)} className="capitalize">
-                          {user.role === 'super_admin' ? 'Super Admin' : 
+                          {user.role === 'super_admin' ? 'Super Administrator' : 
                            user.role === 'admin' ? 'Admin' :
                            user.role === 'manager' ? 'Manager' :
                            user.role === 'agent' ? 'Agent' : 'Viewer'}
