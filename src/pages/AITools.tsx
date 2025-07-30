@@ -66,7 +66,7 @@ export default function AITools() {
         <div className="flex justify-between items-center">
           <div>
             <h1 className="text-3xl font-bold tracking-tight">AI Tools</h1>
-            <p className="text-muted-foreground">
+            <p className="text-foreground">
               AI-powered tools to enhance your CRM workflows and decision-making
             </p>
           </div>

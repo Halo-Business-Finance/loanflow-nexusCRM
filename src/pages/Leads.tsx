@@ -454,7 +454,7 @@ export default function Leads() {
         <div className="flex items-center justify-center min-h-64">
           <div className="flex flex-col items-center gap-4">
             <Loader2 className="h-8 w-8 animate-spin text-primary" />
-            <p className="text-muted-foreground dark:text-white">Loading leads...</p>
+            <p className="text-foreground">Loading leads...</p>
           </div>
         </div>
       </Layout>
@@ -469,7 +469,7 @@ export default function Leads() {
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
             <div>
               <h1 className="text-4xl font-bold text-foreground dark:text-white mb-2">Leads Management</h1>
-              <p className="text-muted-foreground dark:text-white text-lg">Track and manage your loan prospects</p>
+              <p className="text-foreground text-lg">Track and manage your loan prospects</p>
             </div>
             <Dialog open={showAddDialog} onOpenChange={setShowAddDialog}>
               <DialogTrigger asChild>

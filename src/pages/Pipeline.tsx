@@ -197,18 +197,18 @@ export default function Pipeline() {
       <div className="flex justify-between items-center">
         <div>
           <h1 className="text-3xl font-bold text-foreground dark:text-white">Sales Pipeline</h1>
-          <p className="text-muted-foreground dark:text-white">Track deals through your sales process</p>
+          <p className="text-foreground">Track deals through your sales process</p>
         </div>
         <div className="flex gap-4">
           <div className="text-center">
             <div className="text-2xl font-bold text-foreground dark:text-white">{totalLeads}</div>
-            <div className="text-sm text-muted-foreground dark:text-white">Total Leads</div>
+            <div className="text-sm text-foreground">Total Leads</div>
           </div>
           <div className="text-center">
             <div className="text-2xl font-bold text-foreground dark:text-white">
               ${(totalValue / 1000000).toFixed(1)}M
             </div>
-            <div className="text-sm text-muted-foreground dark:text-white">Pipeline Value</div>
+            <div className="text-sm text-foreground">Pipeline Value</div>
           </div>
         </div>
       </div>
