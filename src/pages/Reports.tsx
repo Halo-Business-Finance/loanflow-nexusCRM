@@ -42,7 +42,7 @@ export default function Reports() {
               <div className="text-center">
                 <p className="text-muted-foreground">No data available</p>
                 <Button onClick={refetch} className="mt-4">
-                  <RefreshCw className="h-4 w-4 mr-2" />
+                  <RefreshCw className="h-4 w-4 mr-2 text-white" />
                   Retry
                 </Button>
               </div>
@@ -119,21 +119,21 @@ export default function Reports() {
                 <div className="text-2xl font-bold text-foreground">{reportData.applications.total}</div>
                 <div className="grid grid-cols-3 gap-2 text-xs">
                   <div className="text-center">
-                    <div className="font-medium text-green-600">{reportData.applications.approved}</div>
+                    <div className="font-medium text-green-400 dark:text-green-300">{reportData.applications.approved}</div>
                     <div className="text-muted-foreground">Approved</div>
                   </div>
                   <div className="text-center">
-                    <div className="font-medium text-orange-600">{reportData.applications.pending}</div>
+                    <div className="font-medium text-orange-400 dark:text-orange-300">{reportData.applications.pending}</div>
                     <div className="text-muted-foreground">Pending</div>
                   </div>
                   <div className="text-center">
-                    <div className="font-medium text-red-600">{reportData.applications.rejected}</div>
+                    <div className="font-medium text-red-400 dark:text-red-300">{reportData.applications.rejected}</div>
                     <div className="text-muted-foreground">Rejected</div>
                   </div>
                 </div>
                 <div className="pt-2 border-t">
                   <div className="text-sm text-muted-foreground">Approval Rate</div>
-                  <div className="text-lg font-bold">{reportData.applications.approvalRate}%</div>
+                  <div className="text-lg font-bold text-foreground">{reportData.applications.approvalRate}%</div>
                 </div>
               </div>
             </CardContent>
@@ -151,7 +151,7 @@ export default function Reports() {
                 <div>
                   <div className="text-sm text-muted-foreground">Avg Processing Time</div>
                   <div className="text-lg font-bold text-foreground">{reportData.performance.avgProcessingTime}</div>
-                  <div className="text-xs text-green-600">{reportData.performance.improvement} from target</div>
+                  <div className="text-xs text-green-400 dark:text-green-300">{reportData.performance.improvement} from target</div>
                 </div>
                 <div>
                   <div className="text-sm text-muted-foreground">Customer Satisfaction</div>
