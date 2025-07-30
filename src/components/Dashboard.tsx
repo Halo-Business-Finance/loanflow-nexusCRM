@@ -439,9 +439,9 @@ export default function Dashboard() {
       {/* Header */}
       <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-3xl font-bold text-foreground dark:text-white">Dashboard</h1>
-          <p className="text-muted-foreground dark:text-white">Welcome back! Here's your performance overview.</p>
-          <p className="text-sm text-muted-foreground dark:text-white mt-1">{formatDateTime(currentDateTime)}</p>
+          <h1 className="text-3xl font-bold text-foreground">Dashboard</h1>
+          <p className="text-muted-foreground">Welcome back! Here's your performance overview.</p>
+          <p className="text-sm text-muted-foreground mt-1">{formatDateTime(currentDateTime)}</p>
         </div>
         <div className="flex gap-2">
           <Button 
@@ -468,7 +468,7 @@ export default function Dashboard() {
             onClick={() => handleMetricClick(metric)}
           >
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium text-white">
+              <CardTitle className="text-sm font-medium text-foreground">
                 {metric.title}
               </CardTitle>
               <div className="flex items-center gap-2">
@@ -476,8 +476,8 @@ export default function Dashboard() {
               </div>
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold text-white">{metric.value}</div>
-              <p className="text-xs text-white">
+              <div className="text-2xl font-bold text-foreground">{metric.value}</div>
+              <p className="text-xs text-muted-foreground">
                 {metric.change} from last month
               </p>
             </CardContent>
@@ -490,10 +490,10 @@ export default function Dashboard() {
         <Card className="col-span-2 shadow-soft">
           <CardHeader>
             <div className="flex justify-between items-center">
-              <CardTitle className="dark:text-white">Sales Pipeline</CardTitle>
+              <CardTitle className="text-foreground">Sales Pipeline</CardTitle>
               <div className="flex gap-2">
                 <div className="relative">
-                  <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground dark:text-white" />
+                  <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
                   <Input
                     placeholder="Filter stages..."
                     value={pipelineFilter}
