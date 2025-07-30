@@ -515,7 +515,7 @@ export default function Users() {
         <div className="flex justify-between items-center">
           <div>
             <h1 className="text-3xl font-bold text-foreground">User Management</h1>
-            <p className="text-muted-foreground">Manage loan originators and team members</p>
+            <p className="text-white">Manage loan originators and team members</p>
           </div>
           
           <Dialog open={showNewUserDialog} onOpenChange={setShowNewUserDialog}>
