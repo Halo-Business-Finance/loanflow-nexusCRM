@@ -9,14 +9,29 @@ import { Input } from "@/components/ui/input"
 import { Badge } from "@/components/ui/badge"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter } from "@/components/ui/dialog"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
+import { Separator } from "@/components/ui/separator"
 import { useToast } from "@/hooks/use-toast"
 import { PhoneDialer } from "@/components/PhoneDialer"
 import { EmailComposer } from "@/components/EmailComposer"
-import { Search, Plus, Filter, Phone, Mail, User, MapPin, DollarSign, ArrowRight, Building, Trash2 } from "lucide-react"
+import { LeadCard } from "@/components/LeadCard"
+import { LeadTableRow } from "@/components/LeadTableRow"
+import { LeadFilters } from "@/components/LeadFilters"
+import { formatPhoneNumber } from "@/lib/utils"
+import { 
+  Plus, 
+  Grid3X3, 
+  List, 
+  TrendingUp, 
+  Users, 
+  DollarSign, 
+  Target,
+  Loader2,
+  ArrowRight,
+  AlertTriangle
+} from "lucide-react"
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog"
 
 interface Lead {
@@ -44,21 +59,6 @@ const stages = ["All", "Initial Contact", "Qualified", "Application", "Pre-appro
 const priorities = ["All", "High", "Medium", "Low"]
 const loanTypes = ["SBA 7(a) Loan", "SBA 504 Loan", "Bridge Loan", "Conventional Loan", "Equipment Financing", "USDA B&I Loan", "Working Capital Loan", "Line of Credit", "Land Loan", "Factoring"]
 
-// Phone number formatting function
-const formatPhoneNumber = (value: string) => {
-  // Remove all non-digits
-  const phoneNumber = value.replace(/\D/g, '')
-  
-  // Format based on length
-  if (phoneNumber.length < 4) {
-    return phoneNumber
-  } else if (phoneNumber.length < 7) {
-    return `(${phoneNumber.slice(0, 3)}) ${phoneNumber.slice(3)}`
-  } else {
-    return `(${phoneNumber.slice(0, 3)}) ${phoneNumber.slice(3, 6)}-${phoneNumber.slice(6, 10)}`
-  }
-}
-
 export default function Leads() {
   const navigate = useNavigate()
   const { user, hasRole } = useAuth()
@@ -68,6 +68,7 @@ export default function Leads() {
   const [searchTerm, setSearchTerm] = useState("")
   const [selectedStage, setSelectedStage] = useState("All")
   const [selectedPriority, setSelectedPriority] = useState("All")
+  const [viewMode, setViewMode] = useState<"grid" | "table">("grid")
   const [convertingLead, setConvertingLead] = useState<Lead | null>(null)
   const [showAddDialog, setShowAddDialog] = useState(false)
   const [showEditDialog, setShowEditDialog] = useState(false)
@@ -85,17 +86,14 @@ export default function Leads() {
     priority: "medium",
     stage: "Initial Contact",
     notes: "",
-    // Additional business fields
     business_address: "",
     annual_revenue: "",
     existing_loan_amount: "",
-    // POS Information fields
     pos_system: "",
     monthly_processing_volume: "",
     average_transaction_size: "",
     processor_name: "",
     current_processing_rate: "",
-    // BDO Information
     bdo_name: "",
     bdo_telephone: "",
     bdo_email: ""
@@ -114,17 +112,14 @@ export default function Leads() {
     priority: "medium",
     stage: "Initial Contact",
     notes: "",
-    // Additional business fields
     business_address: "",
     annual_revenue: "",
     existing_loan_amount: "",
-    // POS Information fields
     pos_system: "",
     monthly_processing_volume: "",
     average_transaction_size: "",
     processor_name: "",
     current_processing_rate: "",
-    // BDO Information
     bdo_name: "",
     bdo_telephone: "",
     bdo_email: ""
@@ -254,7 +249,6 @@ export default function Leads() {
           priority: newLead.priority,
           stage: newLead.stage,
           notes: newLead.notes || null,
-          // POS Information
           pos_system: newLead.pos_system || null,
           monthly_processing_volume: newLead.monthly_processing_volume ? parseFloat(newLead.monthly_processing_volume) : null,
           average_transaction_size: newLead.average_transaction_size ? parseFloat(newLead.average_transaction_size) : null,
@@ -293,17 +287,14 @@ export default function Leads() {
         priority: "medium",
         stage: "Initial Contact",
         notes: "",
-        // Additional business fields
         business_address: "",
         annual_revenue: "",
         existing_loan_amount: "",
-        // POS Information fields
         pos_system: "",
         monthly_processing_volume: "",
         average_transaction_size: "",
         processor_name: "",
         current_processing_rate: "",
-        // BDO Information
         bdo_name: "",
         bdo_telephone: "",
         bdo_email: ""
@@ -334,8 +325,7 @@ export default function Leads() {
       net_operating_income: lead.net_operating_income?.toString() || "",
       priority: lead.priority,
       stage: lead.stage,
-      notes: "", // notes field not shown in current interface
-      // Additional fields - will be empty for leads that don't have them
+      notes: "",
       business_address: "",
       annual_revenue: "",
       existing_loan_amount: "",
@@ -427,32 +417,22 @@ export default function Leads() {
     return matchesSearch && matchesStage && matchesPriority
   })
 
-  const getPriorityColor = (priority: string) => {
-    switch (priority.toLowerCase()) {
-      case 'high': return 'destructive'
-      case 'medium': return 'default'
-      case 'low': return 'secondary'
-      default: return 'secondary'
-    }
-  }
-
-  const getStageColor = (stage: string) => {
-    switch (stage) {
-      case 'Initial Contact': return 'secondary'
-      case 'Qualified': return 'default'
-      case 'Application': return 'default'
-      case 'Pre-approval': return 'default'
-      case 'Documentation': return 'default'
-      case 'Closing': return 'default'
-      default: return 'secondary'
-    }
-  }
+  // Calculate stats
+  const totalLeads = leads.length
+  const activeLeads = leads.filter(lead => !lead.is_converted_to_client).length
+  const convertedLeads = leads.filter(lead => lead.is_converted_to_client).length
+  const totalPipelineValue = leads
+    .filter(lead => !lead.is_converted_to_client)
+    .reduce((sum, lead) => sum + (lead.loan_amount || 0), 0)
 
   if (loading) {
     return (
       <Layout>
         <div className="flex items-center justify-center min-h-64">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+          <div className="flex flex-col items-center gap-4">
+            <Loader2 className="h-8 w-8 animate-spin text-primary" />
+            <p className="text-muted-foreground">Loading leads...</p>
+          </div>
         </div>
       </Layout>
     )
@@ -460,740 +440,529 @@ export default function Leads() {
 
   return (
     <Layout>
-      <div className="space-y-6">
-      {/* Header */}
-      <div className="flex justify-between items-center">
-        <div>
-          <h1 className="text-3xl font-bold text-foreground">Leads Management</h1>
-          <p className="text-foreground">Track and manage your loan prospects</p>
+      <div className="space-y-8 animate-fade-in">
+        {/* Enhanced Header */}
+        <div className="flex flex-col gap-6">
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+            <div>
+              <h1 className="text-4xl font-bold text-foreground mb-2">Leads Management</h1>
+              <p className="text-muted-foreground text-lg">Track and manage your loan prospects</p>
+            </div>
+            <Dialog open={showAddDialog} onOpenChange={setShowAddDialog}>
+              <DialogTrigger asChild>
+                <Button size="lg" className="bg-gradient-primary hover:shadow-lg transition-all duration-200 hover:scale-105">
+                  <Plus className="w-5 h-5 mr-2" />
+                  Add New Lead
+                </Button>
+              </DialogTrigger>
+              <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+                <DialogHeader>
+                  <DialogTitle className="text-xl">Add New Lead</DialogTitle>
+                </DialogHeader>
+                <div className="space-y-6">
+                  {/* Basic Information */}
+                  <div className="space-y-4">
+                    <h3 className="text-lg font-semibold text-foreground">Basic Information</h3>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div>
+                        <Label htmlFor="name">Name *</Label>
+                        <Input
+                          id="name"
+                          value={newLead.name}
+                          onChange={(e) => setNewLead(prev => ({ ...prev, name: e.target.value }))}
+                          placeholder="Full name"
+                        />
+                      </div>
+                      <div>
+                        <Label htmlFor="business_name">Business Name</Label>
+                        <Input
+                          id="business_name"
+                          value={newLead.business_name}
+                          onChange={(e) => setNewLead(prev => ({ ...prev, business_name: e.target.value }))}
+                          placeholder="Company or business name"
+                        />
+                      </div>
+                      <div>
+                        <Label htmlFor="email">Email *</Label>
+                        <Input
+                          id="email"
+                          type="email"
+                          value={newLead.email}
+                          onChange={(e) => setNewLead(prev => ({ ...prev, email: e.target.value }))}
+                          placeholder="email@example.com"
+                        />
+                      </div>
+                      <div>
+                        <Label htmlFor="phone">Phone</Label>
+                        <Input
+                          id="phone"
+                          value={newLead.phone}
+                          onChange={(e) => {
+                            const formatted = formatPhoneNumber(e.target.value)
+                            setNewLead(prev => ({ ...prev, phone: formatted }))
+                          }}
+                          placeholder="(555) 123-4567"
+                          maxLength={14}
+                        />
+                      </div>
+                      <div className="md:col-span-2">
+                        <Label htmlFor="location">Full Address</Label>
+                        <Input
+                          id="location"
+                          value={newLead.location}
+                          onChange={(e) => setNewLead(prev => ({ ...prev, location: e.target.value }))}
+                          placeholder="123 Main St, City, State, ZIP"
+                        />
+                      </div>
+                    </div>
+                  </div>
+
+                  <Separator />
+
+                  {/* Loan Information */}
+                  <div className="space-y-4">
+                    <h3 className="text-lg font-semibold text-foreground">Loan Information</h3>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div>
+                        <Label htmlFor="loan_amount">Loan Amount</Label>
+                        <Input
+                          id="loan_amount"
+                          type="number"
+                          value={newLead.loan_amount}
+                          onChange={(e) => setNewLead(prev => ({ ...prev, loan_amount: e.target.value }))}
+                          placeholder="250000"
+                        />
+                      </div>
+                      <div>
+                        <Label htmlFor="loan_type">Loan Type</Label>
+                        <Select value={newLead.loan_type} onValueChange={(value) => setNewLead(prev => ({ ...prev, loan_type: value }))}>
+                          <SelectTrigger>
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {loanTypes.map(type => (
+                              <SelectItem key={type} value={type}>{type}</SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
+                      <div>
+                        <Label htmlFor="credit_score">Credit Score</Label>
+                        <Input
+                          id="credit_score"
+                          type="number"
+                          value={newLead.credit_score}
+                          onChange={(e) => setNewLead(prev => ({ ...prev, credit_score: e.target.value }))}
+                          placeholder="750"
+                        />
+                      </div>
+                      <div>
+                        <Label htmlFor="net_operating_income">Net Operating Income</Label>
+                        <Input
+                          id="net_operating_income"
+                          type="number"
+                          value={newLead.net_operating_income}
+                          onChange={(e) => setNewLead(prev => ({ ...prev, net_operating_income: e.target.value }))}
+                          placeholder="500000"
+                        />
+                      </div>
+                    </div>
+                  </div>
+
+                  <Separator />
+
+                  {/* Lead Details */}
+                  <div className="space-y-4">
+                    <h3 className="text-lg font-semibold text-foreground">Lead Details</h3>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div>
+                        <Label htmlFor="priority">Priority</Label>
+                        <Select value={newLead.priority} onValueChange={(value) => setNewLead(prev => ({ ...prev, priority: value }))}>
+                          <SelectTrigger>
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="high">High</SelectItem>
+                            <SelectItem value="medium">Medium</SelectItem>
+                            <SelectItem value="low">Low</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+                      <div>
+                        <Label htmlFor="stage">Stage</Label>
+                        <Select value={newLead.stage} onValueChange={(value) => setNewLead(prev => ({ ...prev, stage: value }))}>
+                          <SelectTrigger>
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="Initial Contact">Initial Contact</SelectItem>
+                            <SelectItem value="Qualified">Qualified</SelectItem>
+                            <SelectItem value="Application">Application</SelectItem>
+                            <SelectItem value="Pre-approval">Pre-approval</SelectItem>
+                            <SelectItem value="Documentation">Documentation</SelectItem>
+                            <SelectItem value="Closing">Closing</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <DialogFooter className="pt-6">
+                  <Button variant="outline" onClick={() => setShowAddDialog(false)}>
+                    Cancel
+                  </Button>
+                  <Button 
+                    onClick={addNewLead}
+                    disabled={!newLead.name || !newLead.email}
+                    className="bg-gradient-primary"
+                  >
+                    Add Lead
+                  </Button>
+                </DialogFooter>
+              </DialogContent>
+            </Dialog>
+          </div>
+
+          {/* Stats Cards */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            <Card className="border-primary/20 hover:shadow-lg transition-shadow">
+              <CardContent className="p-6">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-sm font-medium text-muted-foreground">Total Leads</p>
+                    <p className="text-3xl font-bold text-foreground">{totalLeads}</p>
+                  </div>
+                  <Users className="h-8 w-8 text-primary/60" />
+                </div>
+              </CardContent>
+            </Card>
+            
+            <Card className="border-green-200 hover:shadow-lg transition-shadow">
+              <CardContent className="p-6">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-sm font-medium text-muted-foreground">Active Leads</p>
+                    <p className="text-3xl font-bold text-green-600">{activeLeads}</p>
+                  </div>
+                  <Target className="h-8 w-8 text-green-500/60" />
+                </div>
+              </CardContent>
+            </Card>
+            
+            <Card className="border-blue-200 hover:shadow-lg transition-shadow">
+              <CardContent className="p-6">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-sm font-medium text-muted-foreground">Converted</p>
+                    <p className="text-3xl font-bold text-blue-600">{convertedLeads}</p>
+                  </div>
+                  <TrendingUp className="h-8 w-8 text-blue-500/60" />
+                </div>
+              </CardContent>
+            </Card>
+            
+            <Card className="border-yellow-200 hover:shadow-lg transition-shadow">
+              <CardContent className="p-6">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-sm font-medium text-muted-foreground">Pipeline Value</p>
+                    <p className="text-2xl font-bold text-yellow-600">${totalPipelineValue.toLocaleString()}</p>
+                  </div>
+                  <DollarSign className="h-8 w-8 text-yellow-500/60" />
+                </div>
+              </CardContent>
+            </Card>
+          </div>
         </div>
-        <Dialog open={showAddDialog} onOpenChange={setShowAddDialog}>
-          <DialogTrigger asChild>
-            <Button className="bg-gradient-primary shadow-medium">
-              <Plus className="w-4 h-4 mr-2" />
-              Add New Lead
-            </Button>
-          </DialogTrigger>
-          <DialogContent className="max-w-md">
-            <DialogHeader>
-              <DialogTitle>Add New Lead</DialogTitle>
-            </DialogHeader>
-            <div className="space-y-4">
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <Label htmlFor="name">Name *</Label>
-                  <Input
-                    id="name"
-                    value={newLead.name}
-                    onChange={(e) => setNewLead(prev => ({ ...prev, name: e.target.value }))}
-                    placeholder="Full name"
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="business_name">Business Name</Label>
-                  <Input
-                    id="business_name"
-                    value={newLead.business_name}
-                    onChange={(e) => setNewLead(prev => ({ ...prev, business_name: e.target.value }))}
-                    placeholder="Company or business name"
-                  />
-                </div>
-              </div>
-              
-              <div>
-                <Label htmlFor="email">Email *</Label>
-                <Input
-                  id="email"
-                  type="email"
-                  value={newLead.email}
-                  onChange={(e) => setNewLead(prev => ({ ...prev, email: e.target.value }))}
-                  placeholder="email@example.com"
-                />
-              </div>
-              
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <Label htmlFor="phone">Phone</Label>
-                  <Input
-                    id="phone"
-                    value={newLead.phone}
-                    onChange={(e) => {
-                      const formatted = formatPhoneNumber(e.target.value)
-                      setNewLead(prev => ({ ...prev, phone: formatted }))
-                    }}
-                    placeholder="(555) 123-4567"
-                    maxLength={14}
-                  />
-                </div>
-                 <div>
-                   <Label htmlFor="location">Full Address</Label>
-                   <Input
-                     id="location"
-                     value={newLead.location}
-                     onChange={(e) => setNewLead(prev => ({ ...prev, location: e.target.value }))}
-                     placeholder="123 Main St, City, State, ZIP"
-                   />
-                 </div>
-              </div>
 
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <Label htmlFor="loan_amount">Loan Amount</Label>
-                  <Input
-                    id="loan_amount"
-                    type="number"
-                    value={newLead.loan_amount}
-                    onChange={(e) => setNewLead(prev => ({ ...prev, loan_amount: e.target.value }))}
-                    placeholder="250000"
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="loan_type">Loan Type</Label>
-                  <Select value={newLead.loan_type} onValueChange={(value) => setNewLead(prev => ({ ...prev, loan_type: value }))}>
-                    <SelectTrigger>
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {loanTypes.map(type => (
-                        <SelectItem key={type} value={type}>{type}</SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-              </div>
+        {/* Filters */}
+        <Card className="border-muted/30">
+          <CardContent className="p-6">
+            <LeadFilters
+              searchTerm={searchTerm}
+              setSearchTerm={setSearchTerm}
+              selectedStage={selectedStage}
+              setSelectedStage={setSelectedStage}
+              selectedPriority={selectedPriority}
+              setSelectedPriority={setSelectedPriority}
+              totalLeads={totalLeads}
+              filteredCount={filteredLeads.length}
+            />
+          </CardContent>
+        </Card>
 
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <Label htmlFor="credit_score">Credit Score</Label>
-                  <Input
-                    id="credit_score"
-                    type="number"
-                    value={newLead.credit_score}
-                    onChange={(e) => setNewLead(prev => ({ ...prev, credit_score: e.target.value }))}
-                    placeholder="750"
-                  />
-                </div>
-              </div>
-
-               <div className="grid grid-cols-2 gap-4">
-                 <div>
-                   <Label htmlFor="net_operating_income">Net Operating Income</Label>
-                   <Input
-                     id="net_operating_income"
-                     type="number"
-                     value={newLead.net_operating_income}
-                     onChange={(e) => setNewLead(prev => ({ ...prev, net_operating_income: e.target.value }))}
-                     placeholder="500000"
-                   />
-                 </div>
-                <div>
-                  <Label htmlFor="priority">Priority</Label>
-                  <Select value={newLead.priority} onValueChange={(value) => setNewLead(prev => ({ ...prev, priority: value }))}>
-                    <SelectTrigger>
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="high">High</SelectItem>
-                      <SelectItem value="medium">Medium</SelectItem>
-                      <SelectItem value="low">Low</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-              </div>
-
-              <div>
-                <Label htmlFor="stage">Stage</Label>
-                <Select value={newLead.stage} onValueChange={(value) => setNewLead(prev => ({ ...prev, stage: value }))}>
-                  <SelectTrigger>
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="New Lead">New Lead</SelectItem>
-                    <SelectItem value="Initial Contact">Initial Contact</SelectItem>
-                    <SelectItem value="Qualified">Qualified</SelectItem>
-                    <SelectItem value="Application">Application</SelectItem>
-                    <SelectItem value="Pre-approval">Pre-approval</SelectItem>
-                    <SelectItem value="Documentation">Documentation</SelectItem>
-                    <SelectItem value="Closing">Closing</SelectItem>
-                    <SelectItem value="Archive">Archive</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-
-              <div>
-                <Label htmlFor="notes">Notes</Label>
-                <Textarea
-                  id="notes"
-                  value={newLead.notes}
-                  onChange={(e) => setNewLead(prev => ({ ...prev, notes: e.target.value }))}
-                  placeholder="Additional notes about this lead..."
-                  rows={3}
-                />
-              </div>
-              
-              <div className="border-t pt-4">
-                <p className="text-sm text-muted-foreground mb-2">
-                  💡 Tip: You can add multiple loan requests after creating the lead
-                </p>
+        {/* View Toggle & Content */}
+        <div className="space-y-6">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <span className="text-sm font-medium text-muted-foreground">View:</span>
+              <div className="flex items-center border border-muted/30 rounded-lg p-1">
+                <Button
+                  variant={viewMode === "grid" ? "default" : "ghost"}
+                  size="sm"
+                  onClick={() => setViewMode("grid")}
+                  className="h-8 px-3"
+                >
+                  <Grid3X3 className="w-4 h-4 mr-1" />
+                  Grid
+                </Button>
+                <Button
+                  variant={viewMode === "table" ? "default" : "ghost"}
+                  size="sm"
+                  onClick={() => setViewMode("table")}
+                  className="h-8 px-3"
+                >
+                  <List className="w-4 h-4 mr-1" />
+                  Table
+                </Button>
               </div>
             </div>
-            <DialogFooter>
-              <Button variant="outline" onClick={() => setShowAddDialog(false)}>
+          </div>
+
+          {/* Content */}
+          {filteredLeads.length === 0 ? (
+            <Card className="border-dashed border-2 border-muted/50">
+              <CardContent className="flex flex-col items-center justify-center py-16">
+                <AlertTriangle className="h-12 w-12 text-muted-foreground/50 mb-4" />
+                <h3 className="text-lg font-semibold text-foreground mb-2">No leads found</h3>
+                <p className="text-muted-foreground text-center max-w-md">
+                  {searchTerm || selectedStage !== "All" || selectedPriority !== "All" 
+                    ? "Try adjusting your filters to see more leads."
+                    : "Get started by adding your first lead to begin tracking prospects."
+                  }
+                </p>
+                {(!searchTerm && selectedStage === "All" && selectedPriority === "All") && (
+                  <Button 
+                    onClick={() => setShowAddDialog(true)} 
+                    className="mt-4 bg-gradient-primary"
+                  >
+                    <Plus className="w-4 h-4 mr-2" />
+                    Add Your First Lead
+                  </Button>
+                )}
+              </CardContent>
+            </Card>
+          ) : (
+            <Card className="border-muted/30">
+              <CardContent className="p-0">
+                {viewMode === "grid" ? (
+                  <div className="p-6">
+                    <div className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-4">
+                      {filteredLeads.map((lead) => (
+                        <LeadCard
+                          key={lead.id}
+                          lead={lead}
+                          onEdit={openEditDialog}
+                          onDelete={deleteLead}
+                          onConvert={convertToClient}
+                          hasAdminRole={hasRole('admin')}
+                        />
+                      ))}
+                    </div>
+                  </div>
+                ) : (
+                  <div className="overflow-x-auto">
+                    <table className="w-full">
+                      <thead>
+                        <tr className="border-b border-muted/30 bg-muted/20">
+                          <th className="text-left p-4 font-semibold text-foreground">Lead</th>
+                          <th className="text-left p-4 font-semibold text-foreground">Contact</th>
+                          <th className="text-right p-4 font-semibold text-foreground">Loan Amount</th>
+                          <th className="text-left p-4 font-semibold text-foreground">Type</th>
+                          <th className="text-left p-4 font-semibold text-foreground">Stage</th>
+                          <th className="text-left p-4 font-semibold text-foreground">Priority</th>
+                          <th className="text-center p-4 font-semibold text-foreground">Credit</th>
+                          <th className="text-center p-4 font-semibold text-foreground">Actions</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {filteredLeads.map((lead) => (
+                          <LeadTableRow
+                            key={lead.id}
+                            lead={lead}
+                            onEdit={openEditDialog}
+                            onDelete={deleteLead}
+                            onConvert={convertToClient}
+                            hasAdminRole={hasRole('admin')}
+                          />
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          )}
+        </div>
+
+        {/* Edit Lead Dialog */}
+        <Dialog open={showEditDialog} onOpenChange={setShowEditDialog}>
+          <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+            <DialogHeader>
+              <DialogTitle className="text-xl">Edit Lead</DialogTitle>
+            </DialogHeader>
+            <div className="space-y-6">
+              {/* Basic Information */}
+              <div className="space-y-4">
+                <h3 className="text-lg font-semibold text-foreground">Basic Information</h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <Label htmlFor="edit-name">Name *</Label>
+                    <Input
+                      id="edit-name"
+                      value={editLead.name}
+                      onChange={(e) => setEditLead(prev => ({ ...prev, name: e.target.value }))}
+                      placeholder="Full name"
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="edit-business_name">Business Name</Label>
+                    <Input
+                      id="edit-business_name"
+                      value={editLead.business_name}
+                      onChange={(e) => setEditLead(prev => ({ ...prev, business_name: e.target.value }))}
+                      placeholder="Company or business name"
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="edit-email">Email *</Label>
+                    <Input
+                      id="edit-email"
+                      type="email"
+                      value={editLead.email}
+                      onChange={(e) => setEditLead(prev => ({ ...prev, email: e.target.value }))}
+                      placeholder="email@example.com"
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="edit-phone">Phone</Label>
+                    <Input
+                      id="edit-phone"
+                      value={editLead.phone}
+                      onChange={(e) => {
+                        const formatted = formatPhoneNumber(e.target.value)
+                        setEditLead(prev => ({ ...prev, phone: formatted }))
+                      }}
+                      placeholder="(555) 123-4567"
+                      maxLength={14}
+                    />
+                  </div>
+                  <div className="md:col-span-2">
+                    <Label htmlFor="edit-location">Full Address</Label>
+                    <Input
+                      id="edit-location"
+                      value={editLead.location}
+                      onChange={(e) => setEditLead(prev => ({ ...prev, location: e.target.value }))}
+                      placeholder="123 Main St, City, State, ZIP"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              <Separator />
+
+              {/* Loan Information */}
+              <div className="space-y-4">
+                <h3 className="text-lg font-semibold text-foreground">Loan Information</h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <Label htmlFor="edit-loan_amount">Loan Amount</Label>
+                    <Input
+                      id="edit-loan_amount"
+                      type="number"
+                      value={editLead.loan_amount}
+                      onChange={(e) => setEditLead(prev => ({ ...prev, loan_amount: e.target.value }))}
+                      placeholder="250000"
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="edit-loan_type">Loan Type</Label>
+                    <Select value={editLead.loan_type} onValueChange={(value) => setEditLead(prev => ({ ...prev, loan_type: value }))}>
+                      <SelectTrigger>
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {loanTypes.map(type => (
+                          <SelectItem key={type} value={type}>{type}</SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div>
+                    <Label htmlFor="edit-credit_score">Credit Score</Label>
+                    <Input
+                      id="edit-credit_score"
+                      type="number"
+                      value={editLead.credit_score}
+                      onChange={(e) => setEditLead(prev => ({ ...prev, credit_score: e.target.value }))}
+                      placeholder="750"
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="edit-net_operating_income">Net Operating Income</Label>
+                    <Input
+                      id="edit-net_operating_income"
+                      type="number"
+                      value={editLead.net_operating_income}
+                      onChange={(e) => setEditLead(prev => ({ ...prev, net_operating_income: e.target.value }))}
+                      placeholder="500000"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              <Separator />
+
+              {/* Lead Details */}
+              <div className="space-y-4">
+                <h3 className="text-lg font-semibold text-foreground">Lead Details</h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <Label htmlFor="edit-priority">Priority</Label>
+                    <Select value={editLead.priority} onValueChange={(value) => setEditLead(prev => ({ ...prev, priority: value }))}>
+                      <SelectTrigger>
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="high">High</SelectItem>
+                        <SelectItem value="medium">Medium</SelectItem>
+                        <SelectItem value="low">Low</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div>
+                    <Label htmlFor="edit-stage">Stage</Label>
+                    <Select value={editLead.stage} onValueChange={(value) => setEditLead(prev => ({ ...prev, stage: value }))}>
+                      <SelectTrigger>
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="Initial Contact">Initial Contact</SelectItem>
+                        <SelectItem value="Qualified">Qualified</SelectItem>
+                        <SelectItem value="Application">Application</SelectItem>
+                        <SelectItem value="Pre-approval">Pre-approval</SelectItem>
+                        <SelectItem value="Documentation">Documentation</SelectItem>
+                        <SelectItem value="Closing">Closing</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <DialogFooter className="pt-6">
+              <Button variant="outline" onClick={() => setShowEditDialog(false)}>
                 Cancel
               </Button>
               <Button 
-                onClick={addNewLead}
-                disabled={!newLead.name || !newLead.email}
+                onClick={updateLead}
+                disabled={!editLead.name || !editLead.email}
+                className="bg-gradient-primary"
               >
-                Add Lead
+                Update Lead
               </Button>
             </DialogFooter>
           </DialogContent>
         </Dialog>
-      </div>
-
-      {/* Filters */}
-      <Card className="shadow-soft">
-        <CardContent className="pt-6">
-          <div className="flex flex-col md:flex-row gap-4">
-            <div className="flex-1 relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
-              <Input
-                placeholder="Search leads by name or email..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-10"
-              />
-            </div>
-            <Select value={selectedStage} onValueChange={setSelectedStage}>
-              <SelectTrigger className="w-[180px]">
-                <Filter className="w-4 h-4 mr-2" />
-                <SelectValue placeholder="Stage" />
-              </SelectTrigger>
-              <SelectContent>
-                {stages.map(stage => (
-                  <SelectItem key={stage} value={stage}>{stage}</SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-            <Select value={selectedPriority} onValueChange={setSelectedPriority}>
-              <SelectTrigger className="w-[140px]">
-                <SelectValue placeholder="Priority" />
-              </SelectTrigger>
-              <SelectContent>
-                {priorities.map(priority => (
-                  <SelectItem key={priority} value={priority}>{priority}</SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Leads List */}
-      <Tabs defaultValue="grid" className="w-full">
-        <TabsList className="grid w-full max-w-[400px] grid-cols-2">
-          <TabsTrigger value="grid">Grid View</TabsTrigger>
-          <TabsTrigger value="table">Table View</TabsTrigger>
-        </TabsList>
-        
-        <TabsContent value="grid" className="space-y-4">
-          <div className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-2 md:gap-3 lg:gap-4">
-            {filteredLeads.map((lead) => (
-              <Card key={lead.id} className={`shadow-soft hover:shadow-medium transition-shadow cursor-pointer ${lead.is_converted_to_client ? 'opacity-60' : ''}`} onClick={() => navigate(`/leads/${lead.id}`)}>
-                <CardHeader className="pb-3">
-                  <div className="flex justify-between items-start">
-                    <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center">
-                        <User className="w-5 h-5 text-primary" />
-                      </div>
-                      <div>
-                        <CardTitle className="text-lg flex items-center gap-2 text-white">
-                          {lead.name}
-                          {lead.is_converted_to_client && (
-                            <Badge variant="default" className="text-xs">Client</Badge>
-                          )}
-                        </CardTitle>
-                        <p className="text-sm text-white">{new Date(lead.last_contact).toLocaleDateString()}</p>
-                      </div>
-                    </div>
-                    <Badge variant={getPriorityColor(lead.priority)}>
-                      {lead.priority}
-                    </Badge>
-                  </div>
-                </CardHeader>
-                <CardContent className="space-y-3">
-                  <div className="space-y-2">
-                    {lead.business_name && (
-                      <div className="flex items-center gap-2 text-sm">
-                        <Building className="w-4 h-4 text-white" />
-                        <span className="font-medium text-white">{lead.business_name}</span>
-                      </div>
-                    )}
-                     <EmailComposer 
-                       trigger={
-                         <button className="flex items-center gap-2 text-sm hover:text-primary transition-colors">
-                           <Mail className="w-4 h-4 text-white" />
-                           <span className="text-white">{lead.email}</span>
-                         </button>
-                       }
-                     />
-                     {lead.phone && (
-                       <PhoneDialer 
-                         trigger={
-                           <button className="flex items-center gap-2 text-sm hover:text-primary transition-colors">
-                             <Phone className="w-4 h-4 text-white" />
-                             <span className="text-white">{formatPhoneNumber(lead.phone)}</span>
-                           </button>
-                         }
-                       />
-                     )}
-                      {lead.location && (
-                        <div className="flex items-center gap-2 text-sm">
-                          <MapPin className="w-4 h-4 text-white" />
-                          <span className="text-white">{lead.location}</span>
-                        </div>
-                      )}
-                    {lead.loan_amount && (
-                      <div className="flex items-center gap-2 text-sm">
-                        <DollarSign className="w-4 h-4 text-white" />
-                        <span className="font-medium text-white">${lead.loan_amount.toLocaleString()}</span>
-                      </div>
-                    )}
-                    {lead.loan_type && (
-                      <div className="flex items-center gap-2 text-sm">
-                        <span className="text-xs bg-muted px-2 py-1 rounded font-medium text-white">{lead.loan_type}</span>
-                      </div>
-                    )}
-                  </div>
-                  
-                  <div className="flex justify-between items-center pt-2 border-t">
-                    <Badge variant={getStageColor(lead.stage)}>
-                      {lead.stage}
-                    </Badge>
-                       {lead.credit_score && (
-                        <div className="text-sm text-white">
-                          Credit: {lead.credit_score}
-                        </div>
-                      )}
-                  </div>
-                  
-                   <div className="flex gap-1 pt-2 flex-wrap">
-                    <PhoneDialer 
-                      trigger={
-                        <Button 
-                          size="sm" 
-                          variant="outline" 
-                          className="px-2 text-xs"
-                          onClick={(e) => e.stopPropagation()}
-                        >
-                          <Phone className="w-3 h-3 mr-1" />
-                          Call
-                        </Button>
-                      }
-                    />
-                    <EmailComposer 
-                      trigger={
-                        <Button 
-                          size="sm" 
-                          variant="outline" 
-                          className="px-2 text-xs"
-                          onClick={(e) => e.stopPropagation()}
-                        >
-                          <Mail className="w-3 h-3 mr-1" />
-                          Email
-                        </Button>
-                      }
-                    />
-                     <Button 
-                       size="sm" 
-                       variant="outline" 
-                       className="px-2 text-xs"
-                      onClick={(e) => {
-                        e.stopPropagation()
-                        openEditDialog(lead)
-                      }}
-                    >
-                      Edit
-                    </Button>
-                    {!lead.is_converted_to_client && (
-                      <Dialog>
-                        <DialogTrigger asChild>
-                          <Button 
-                            size="sm" 
-                            variant="default" 
-                            className="px-2 py-1 text-xs h-6" 
-                            onClick={(e) => {
-                              e.stopPropagation()
-                              setConvertingLead(lead)
-                            }}
-                          >
-                            <ArrowRight className="w-3 h-3 mr-1" />
-                            Convert
-                          </Button>
-                        </DialogTrigger>
-                        <DialogContent>
-                          <DialogHeader>
-                            <DialogTitle>Convert Lead to Client</DialogTitle>
-                          </DialogHeader>
-                          <div className="space-y-4">
-                            <p>Are you sure you want to convert <strong>{lead.name}</strong> to a client?</p>
-                              <p className="text-sm text-white">
-                               This will create a new client record and add them to your pipeline.
-                             </p>
-                          </div>
-                          <DialogFooter>
-                            <Button variant="outline" onClick={() => setConvertingLead(null)}>
-                              Cancel
-                            </Button>
-                            <Button onClick={() => convertToClient(lead)}>
-                              Convert to Client
-                            </Button>
-                          </DialogFooter>
-                        </DialogContent>
-                      </Dialog>
-                    )}
-                    {hasRole('admin') && (
-                      <AlertDialog>
-                        <AlertDialogTrigger asChild>
-                          <Button 
-                            size="sm" 
-                            variant="destructive" 
-                            onClick={(e) => e.stopPropagation()}
-                          >
-                            <Trash2 className="w-3 h-3" />
-                          </Button>
-                        </AlertDialogTrigger>
-                        <AlertDialogContent>
-                          <AlertDialogHeader>
-                            <AlertDialogTitle>Delete Lead</AlertDialogTitle>
-                            <AlertDialogDescription>
-                              Are you sure you want to delete <strong>{lead.name}</strong>? This action cannot be undone.
-                            </AlertDialogDescription>
-                          </AlertDialogHeader>
-                          <AlertDialogFooter>
-                            <AlertDialogCancel>Cancel</AlertDialogCancel>
-                            <AlertDialogAction
-                              onClick={() => deleteLead(lead.id, lead.name)}
-                              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-                            >
-                              Delete
-                            </AlertDialogAction>
-                          </AlertDialogFooter>
-                        </AlertDialogContent>
-                      </AlertDialog>
-                    )}
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        </TabsContent>
-        
-        <TabsContent value="table">
-          <Card className="shadow-soft">
-            <CardContent className="p-0">
-              <div className="overflow-x-auto">
-                <table className="w-full">
-                   <thead>
-                     <tr className="border-b bg-muted/30">
-                        <th className="text-left p-4 font-medium text-white">Name</th>
-                        <th className="text-left p-4 font-medium text-white">Contact</th>
-                        <th className="text-left p-4 font-medium text-white">Loan Amount</th>
-                        <th className="text-left p-4 font-medium text-white">Loan Type</th>
-                        <th className="text-left p-4 font-medium text-white">Stage</th>
-                        <th className="text-left p-4 font-medium text-white">Priority</th>
-                        <th className="text-left p-4 font-medium text-white">Credit Score</th>
-                        <th className="text-left p-4 font-medium text-white">Actions</th>
-                     </tr>
-                   </thead>
-                  <tbody>
-                    {filteredLeads.map((lead) => (
-                      <tr key={lead.id} className={`border-b hover:bg-muted/20 cursor-pointer ${lead.is_converted_to_client ? 'opacity-60' : ''}`} onClick={() => navigate(`/leads/${lead.id}`)}>
-                        <td className="p-4">
-                          <div className="flex items-center gap-3">
-                            <div className="w-8 h-8 bg-primary/10 rounded-full flex items-center justify-center">
-                              <User className="w-4 h-4 text-primary" />
-                            </div>
-                              <div>
-                                 <div className="font-medium flex items-center gap-2 text-white">
-                                   {lead.name}
-                                   {lead.is_converted_to_client && (
-                                     <Badge variant="default" className="text-xs">Client</Badge>
-                                   )}
-                                 </div>
-                                 {lead.business_name && (
-                                   <div className="text-sm text-white font-medium">{lead.business_name}</div>
-                                 )}
-                                 <div className="text-sm text-white">{lead.location}</div>
-                              </div>
-                          </div>
-                        </td>
-                         <td className="p-4">
-                     <div className="text-sm">
-                                <div className="text-white font-medium">{lead.email}</div>
-                                <div className="text-white font-medium">{lead.phone ? formatPhoneNumber(lead.phone) : ''}</div>
-                             </div>
-                         </td>
-                          <td className="p-4 font-medium text-white">
-                            {lead.loan_amount ? `$${lead.loan_amount.toLocaleString()}` : '-'}
-                          </td>
-                         <td className="p-4">
-                           <span className="text-xs bg-muted px-2 py-1 rounded font-medium text-white">{lead.loan_type || '-'}</span>
-                         </td>
-                        <td className="p-4">
-                          <Badge variant={getStageColor(lead.stage)}>
-                            {lead.stage}
-                          </Badge>
-                        </td>
-                        <td className="p-4">
-                          <Badge variant={getPriorityColor(lead.priority)}>
-                            {lead.priority}
-                          </Badge>
-                        </td>
-                        <td className="p-4 text-white">{lead.credit_score || '-'}</td>
-                         <td className="p-4">
-                           <div className="flex gap-2">
-                             <PhoneDialer 
-                               trigger={
-                                 <Button size="sm" variant="outline">
-                                   <Phone className="w-3 h-3" />
-                                 </Button>
-                               }
-                             />
-                             <EmailComposer 
-                               trigger={
-                                 <Button size="sm" variant="outline">
-                                   <Mail className="w-3 h-3" />
-                                 </Button>
-                               }
-                              />
-                             {!lead.is_converted_to_client && (
-                               <Dialog>
-                                 <DialogTrigger asChild>
-                                   <Button size="sm" variant="default">
-                                     <ArrowRight className="w-3 h-3" />
-                                   </Button>
-                                 </DialogTrigger>
-                                 <DialogContent>
-                                   <DialogHeader>
-                                     <DialogTitle>Convert Lead to Client</DialogTitle>
-                                   </DialogHeader>
-                                   <div className="space-y-4">
-                                     <p>Are you sure you want to convert <strong>{lead.name}</strong> to a client?</p>
-                                      <p className="text-sm text-white">
-                                        This will create a new client record and add them to your pipeline.
-                                      </p>
-                                   </div>
-                                   <DialogFooter>
-                                     <Button variant="outline">Cancel</Button>
-                                     <Button onClick={() => convertToClient(lead)}>
-                                       Convert to Client
-                                     </Button>
-                                   </DialogFooter>
-                                 </DialogContent>
-                               </Dialog>
-                             )}
-                             {hasRole('admin') && (
-                               <AlertDialog>
-                                 <AlertDialogTrigger asChild>
-                                   <Button size="sm" variant="destructive">
-                                     <Trash2 className="w-3 h-3" />
-                                   </Button>
-                                 </AlertDialogTrigger>
-                                 <AlertDialogContent>
-                                   <AlertDialogHeader>
-                                     <AlertDialogTitle>Delete Lead</AlertDialogTitle>
-                                     <AlertDialogDescription>
-                                       Are you sure you want to delete <strong>{lead.name}</strong>? This action cannot be undone.
-                                     </AlertDialogDescription>
-                                   </AlertDialogHeader>
-                                   <AlertDialogFooter>
-                                     <AlertDialogCancel>Cancel</AlertDialogCancel>
-                                     <AlertDialogAction
-                                       onClick={() => deleteLead(lead.id, lead.name)}
-                                       className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-                                     >
-                                       Delete
-                                     </AlertDialogAction>
-                                   </AlertDialogFooter>
-                                 </AlertDialogContent>
-                               </AlertDialog>
-                             )}
-                          </div>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            </CardContent>
-          </Card>
-        </TabsContent>
-      </Tabs>
-
-      {/* Edit Lead Dialog */}
-      <Dialog open={showEditDialog} onOpenChange={setShowEditDialog}>
-        <DialogContent className="max-w-md">
-          <DialogHeader>
-            <DialogTitle>Edit Lead</DialogTitle>
-          </DialogHeader>
-          <div className="space-y-4">
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <Label htmlFor="edit-name">Name *</Label>
-                <Input
-                  id="edit-name"
-                  value={editLead.name}
-                  onChange={(e) => setEditLead(prev => ({ ...prev, name: e.target.value }))}
-                  placeholder="Full name"
-                />
-              </div>
-              <div>
-                <Label htmlFor="edit-business_name">Business Name</Label>
-                <Input
-                  id="edit-business_name"
-                  value={editLead.business_name}
-                  onChange={(e) => setEditLead(prev => ({ ...prev, business_name: e.target.value }))}
-                  placeholder="Company or business name"
-                />
-              </div>
-            </div>
-            
-            <div>
-              <Label htmlFor="edit-email">Email *</Label>
-              <Input
-                id="edit-email"
-                type="email"
-                value={editLead.email}
-                onChange={(e) => setEditLead(prev => ({ ...prev, email: e.target.value }))}
-                placeholder="email@example.com"
-              />
-            </div>
-            
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <Label htmlFor="edit-phone">Phone</Label>
-                <Input
-                  id="edit-phone"
-                  value={editLead.phone}
-                  onChange={(e) => {
-                    const formatted = formatPhoneNumber(e.target.value)
-                    setEditLead(prev => ({ ...prev, phone: formatted }))
-                  }}
-                  placeholder="(555) 123-4567"
-                  maxLength={14}
-                />
-              </div>
-               <div>
-                  <Label htmlFor="edit-location">Full Address</Label>
-                  <Input
-                    id="edit-location"
-                    value={editLead.location}
-                    onChange={(e) => setEditLead(prev => ({ ...prev, location: e.target.value }))}
-                    placeholder="123 Main St, City, State, ZIP"
-                 />
-               </div>
-            </div>
-
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <Label htmlFor="edit-loan_amount">Loan Amount</Label>
-                <Input
-                  id="edit-loan_amount"
-                  type="number"
-                  value={editLead.loan_amount}
-                  onChange={(e) => setEditLead(prev => ({ ...prev, loan_amount: e.target.value }))}
-                  placeholder="250000"
-                />
-              </div>
-              <div>
-                <Label htmlFor="edit-loan_type">Loan Type</Label>
-                <Select value={editLead.loan_type} onValueChange={(value) => setEditLead(prev => ({ ...prev, loan_type: value }))}>
-                  <SelectTrigger>
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {loanTypes.map(type => (
-                      <SelectItem key={type} value={type}>{type}</SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-            </div>
-
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <Label htmlFor="edit-credit_score">Credit Score</Label>
-                <Input
-                  id="edit-credit_score"
-                  type="number"
-                  value={editLead.credit_score}
-                  onChange={(e) => setEditLead(prev => ({ ...prev, credit_score: e.target.value }))}
-                  placeholder="750"
-                />
-              </div>
-            </div>
-
-            <div className="grid grid-cols-2 gap-4">
-               <div>
-                 <Label htmlFor="edit-net_operating_income">Net Operating Income</Label>
-                 <Input
-                   id="edit-net_operating_income"
-                   type="number"
-                   value={editLead.net_operating_income}
-                   onChange={(e) => setEditLead(prev => ({ ...prev, net_operating_income: e.target.value }))}
-                   placeholder="500000"
-                 />
-               </div>
-              <div>
-                <Label htmlFor="edit-priority">Priority</Label>
-                <Select value={editLead.priority} onValueChange={(value) => setEditLead(prev => ({ ...prev, priority: value }))}>
-                  <SelectTrigger>
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="high">High</SelectItem>
-                    <SelectItem value="medium">Medium</SelectItem>
-                    <SelectItem value="low">Low</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-            </div>
-
-            <div>
-              <Label htmlFor="edit-stage">Stage</Label>
-              <Select value={editLead.stage} onValueChange={(value) => setEditLead(prev => ({ ...prev, stage: value }))}>
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
-                 <SelectContent>
-                   <SelectItem value="New Lead">New Lead</SelectItem>
-                   <SelectItem value="Initial Contact">Initial Contact</SelectItem>
-                   <SelectItem value="Qualified">Qualified</SelectItem>
-                   <SelectItem value="Application">Application</SelectItem>
-                   <SelectItem value="Pre-approval">Pre-approval</SelectItem>
-                   <SelectItem value="Documentation">Documentation</SelectItem>
-                   <SelectItem value="Closing">Closing</SelectItem>
-                   <SelectItem value="Archive">Archive</SelectItem>
-                 </SelectContent>
-              </Select>
-            </div>
-          </div>
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setShowEditDialog(false)}>
-              Cancel
-            </Button>
-            <Button 
-              onClick={updateLead}
-              disabled={!editLead.name || !editLead.email}
-            >
-              Update Lead
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
-
       </div>
     </Layout>
   )

@@ -1,0 +1,259 @@
+import React from "react"
+import { useNavigate } from "react-router-dom"
+import { Badge } from "@/components/ui/badge"
+import { Button } from "@/components/ui/button"
+import { Avatar, AvatarFallback } from "@/components/ui/avatar"
+import { PhoneDialer } from "@/components/PhoneDialer"
+import { EmailComposer } from "@/components/EmailComposer"
+import { 
+  User, 
+  Mail, 
+  Phone, 
+  ArrowRight, 
+  Trash2,
+  Edit,
+  MoreHorizontal,
+  Calendar
+} from "lucide-react"
+import { formatPhoneNumber } from "@/lib/utils"
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
+
+interface Lead {
+  id: string
+  contact_entity_id: string
+  user_id: string
+  name: string
+  email: string
+  phone?: string
+  location?: string
+  business_name?: string
+  loan_amount?: number
+  loan_type?: string
+  stage: string
+  priority: string
+  credit_score?: number
+  last_contact: string
+  is_converted_to_client: boolean
+}
+
+interface LeadTableRowProps {
+  lead: Lead
+  onEdit: (lead: Lead) => void
+  onDelete: (leadId: string, leadName: string) => void
+  onConvert: (lead: Lead) => void
+  hasAdminRole: boolean
+}
+
+const getPriorityColor = (priority: string) => {
+  switch (priority.toLowerCase()) {
+    case 'high': return 'destructive'
+    case 'medium': return 'default'
+    case 'low': return 'secondary'
+    default: return 'secondary'
+  }
+}
+
+const getStageColor = (stage: string) => {
+  switch (stage) {
+    case 'Initial Contact': return 'secondary'
+    case 'Qualified': return 'default'
+    case 'Application': return 'default'
+    case 'Pre-approval': return 'default'
+    case 'Documentation': return 'default'
+    case 'Closing': return 'default'
+    case 'Funded': return 'default'
+    default: return 'secondary'
+  }
+}
+
+export function LeadTableRow({ lead, onEdit, onDelete, onConvert, hasAdminRole }: LeadTableRowProps) {
+  const navigate = useNavigate()
+
+  const getInitials = (name: string) => {
+    return name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2)
+  }
+
+  const daysSinceContact = Math.floor((Date.now() - new Date(lead.last_contact).getTime()) / (1000 * 60 * 60 * 24))
+
+  return (
+    <tr 
+      className={`group border-b border-muted/20 hover:bg-muted/30 transition-colors cursor-pointer ${
+        lead.is_converted_to_client ? 'opacity-60' : ''
+      }`}
+      onClick={() => navigate(`/leads/${lead.id}`)}
+    >
+      {/* Name & Business */}
+      <td className="p-4">
+        <div className="flex items-center gap-3">
+          <Avatar className="h-10 w-10 border border-muted/30">
+            <AvatarFallback className="bg-primary/10 text-primary font-medium text-sm">
+              {getInitials(lead.name)}
+            </AvatarFallback>
+          </Avatar>
+          <div className="min-w-0 flex-1">
+            <div className="flex items-center gap-2 mb-1">
+              <span className="font-medium text-foreground truncate">{lead.name}</span>
+              {lead.is_converted_to_client && (
+                <Badge variant="default" className="text-xs">Client</Badge>
+              )}
+            </div>
+            {lead.business_name && (
+              <div className="text-sm text-muted-foreground truncate">{lead.business_name}</div>
+            )}
+            <div className="flex items-center gap-1 text-xs text-muted-foreground mt-1">
+              <Calendar className="w-3 h-3" />
+              <span>
+                {daysSinceContact === 0 ? 'Today' : 
+                 daysSinceContact === 1 ? '1 day ago' : 
+                 `${daysSinceContact} days ago`}
+              </span>
+            </div>
+          </div>
+        </div>
+      </td>
+
+      {/* Contact Info */}
+      <td className="p-4">
+        <div className="space-y-1">
+          <div className="flex items-center gap-2 text-sm">
+            <Mail className="w-3 h-3 text-muted-foreground" />
+            <span className="text-foreground truncate">{lead.email}</span>
+          </div>
+          {lead.phone && (
+            <div className="flex items-center gap-2 text-sm">
+              <Phone className="w-3 h-3 text-muted-foreground" />
+              <span className="text-foreground">{formatPhoneNumber(lead.phone)}</span>
+            </div>
+          )}
+        </div>
+      </td>
+
+      {/* Loan Amount */}
+      <td className="p-4 text-right">
+        <span className="font-medium text-foreground">
+          {lead.loan_amount ? `$${lead.loan_amount.toLocaleString()}` : '-'}
+        </span>
+      </td>
+
+      {/* Loan Type */}
+      <td className="p-4">
+        <span className="text-xs bg-muted/50 text-foreground px-2 py-1 rounded font-medium">
+          {lead.loan_type || '-'}
+        </span>
+      </td>
+
+      {/* Stage */}
+      <td className="p-4">
+        <Badge variant={getStageColor(lead.stage)} className="text-xs">
+          {lead.stage}
+        </Badge>
+      </td>
+
+      {/* Priority */}
+      <td className="p-4">
+        <Badge variant={getPriorityColor(lead.priority)} className="text-xs">
+          {lead.priority}
+        </Badge>
+      </td>
+
+      {/* Credit Score */}
+      <td className="p-4 text-center">
+        {lead.credit_score ? (
+          <span className={`font-medium ${
+            lead.credit_score >= 700 ? 'text-green-600' : 
+            lead.credit_score >= 600 ? 'text-yellow-600' : 
+            'text-red-600'
+          }`}>
+            {lead.credit_score}
+          </span>
+        ) : (
+          <span className="text-muted-foreground">-</span>
+        )}
+      </td>
+
+      {/* Actions */}
+      <td className="p-4">
+        <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+          <PhoneDialer 
+            trigger={
+              <Button 
+                size="sm" 
+                variant="ghost" 
+                className="h-8 w-8 p-0"
+                onClick={(e) => e.stopPropagation()}
+              >
+                <Phone className="w-3 h-3" />
+              </Button>
+            }
+          />
+          <EmailComposer 
+            trigger={
+              <Button 
+                size="sm" 
+                variant="ghost" 
+                className="h-8 w-8 p-0"
+                onClick={(e) => e.stopPropagation()}
+              >
+                <Mail className="w-3 h-3" />
+              </Button>
+            }
+          />
+          
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button 
+                size="sm" 
+                variant="ghost" 
+                className="h-8 w-8 p-0"
+                onClick={(e) => e.stopPropagation()}
+              >
+                <MoreHorizontal className="w-4 h-4" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="w-40">
+              <DropdownMenuItem onClick={(e) => {
+                e.stopPropagation()
+                onEdit(lead)
+              }}>
+                <Edit className="w-4 h-4 mr-2" />
+                Edit Lead
+              </DropdownMenuItem>
+              
+              {!lead.is_converted_to_client && (
+                <DropdownMenuItem onClick={(e) => {
+                  e.stopPropagation()
+                  onConvert(lead)
+                }}>
+                  <ArrowRight className="w-4 h-4 mr-2" />
+                  Convert to Client
+                </DropdownMenuItem>
+              )}
+              
+              {hasAdminRole && (
+                <>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem 
+                    onClick={(e) => {
+                      e.stopPropagation()
+                      onDelete(lead.id, lead.name)
+                    }}
+                    className="text-destructive focus:text-destructive"
+                  >
+                    <Trash2 className="w-4 h-4 mr-2" />
+                    Delete Lead
+                  </DropdownMenuItem>
+                </>
+              )}
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
+      </td>
+    </tr>
+  )
+}
