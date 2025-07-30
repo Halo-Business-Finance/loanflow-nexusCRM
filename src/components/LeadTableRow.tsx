@@ -148,18 +148,16 @@ export function LeadTableRow({ lead, onEdit, onDelete, onConvert, hasAdminRole }
         </span>
       </td>
 
-      {/* Stage */}
+      {/* Stage & Priority */}
       <td className="p-4">
-        <Badge variant={getStageColor(lead.stage)} className="text-xs">
-          {lead.stage}
-        </Badge>
-      </td>
-
-      {/* Priority */}
-      <td className="p-4">
-        <Badge variant={getPriorityColor(lead.priority)} className="text-xs">
-          {lead.priority}
-        </Badge>
+        <div className="flex items-center gap-2 flex-wrap">
+          <Badge variant={getStageColor(lead.stage)} className="text-xs">
+            {lead.stage}
+          </Badge>
+          <Badge variant={getPriorityColor(lead.priority)} className="text-xs">
+            {lead.priority}
+          </Badge>
+        </div>
       </td>
 
       {/* Credit Score */}

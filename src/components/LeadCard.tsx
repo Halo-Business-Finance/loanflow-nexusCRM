@@ -122,10 +122,6 @@ export function LeadCard({ lead, onEdit, onDelete, onConvert, hasAdminRole }: Le
           </div>
           
           <div className="flex flex-col items-end gap-2">
-            <Badge variant={getPriorityColor(lead.priority)} className="flex items-center gap-1">
-              {getPriorityIcon(lead.priority)}
-              {lead.priority}
-            </Badge>
             <Button variant="ghost" size="sm" className="opacity-0 group-hover:opacity-100 transition-opacity">
               <MoreHorizontal className="w-4 h-4 text-white" />
             </Button>
@@ -188,11 +184,15 @@ export function LeadCard({ lead, onEdit, onDelete, onConvert, hasAdminRole }: Le
           </div>
         )}
 
-        {/* Stage & Actions */}
+        {/* Stage & Priority */}
         <div className="pt-3 border-t border-muted/30">
-          <div className="flex items-center justify-between mb-3">
+          <div className="flex items-center gap-2 mb-3">
             <Badge variant={getStageColor(lead.stage)} className="text-xs">
               {lead.stage}
+            </Badge>
+            <Badge variant={getPriorityColor(lead.priority)} className="flex items-center gap-1 text-xs">
+              {getPriorityIcon(lead.priority)}
+              {lead.priority}
             </Badge>
           </div>
         </div>
