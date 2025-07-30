@@ -125,23 +125,23 @@ export function ActionReminder({ entityId, entityName, entityType, isOpen, onClo
 
   return (
     <div 
-      className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4"
+      className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm flex items-center justify-center p-2"
       onClick={onClose}
     >
       <div 
-        className="w-full max-w-2xl max-h-[90vh] overflow-y-auto"
+        className="w-full max-w-md max-h-[85vh] overflow-y-auto"
         onClick={(e) => e.stopPropagation()}
       >
         <Card className="w-full shadow-xl border animate-in slide-in-from-top-4 duration-300">
-      <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-        <CardTitle className="text-lg font-semibold">
-          Create Action Reminder
+      <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 px-4 pt-4">
+        <CardTitle className="text-base font-semibold">
+          Create Reminder
         </CardTitle>
         <Button variant="ghost" size="sm" onClick={onClose}>
           <X className="h-4 w-4" />
         </Button>
       </CardHeader>
-      <CardContent className="space-y-6">
+      <CardContent className="space-y-4 px-4 pb-4">
         <div className="flex items-center gap-2 text-sm text-muted-foreground">
           <span>For:</span>
           <Badge variant="outline">{entityName}</Badge>
