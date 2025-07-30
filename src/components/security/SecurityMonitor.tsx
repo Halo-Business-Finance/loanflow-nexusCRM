@@ -54,10 +54,7 @@ export function SecurityMonitor() {
   const loadDashboard = async () => {
     try {
       setLoading(true)
-      const { data, error } = await supabase.functions.invoke('security-monitor', {
-        body: {},
-        method: 'GET'
-      })
+      const { data, error } = await supabase.functions.invoke('security-monitor')
 
       if (error) throw error
 
