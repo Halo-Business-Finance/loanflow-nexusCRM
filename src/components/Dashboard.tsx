@@ -41,28 +41,24 @@ const initialMetrics = [
     title: "Total Pipeline Value",
     value: "$0",
     change: "0%",
-    icon: DollarSign,
     trend: "neutral"
   },
   {
     title: "Active Leads",
     value: "0",
     change: "0%",
-    icon: Users,
     trend: "neutral"
   },
   {
     title: "Applications This Month",
     value: "0",
     change: "0%",
-    icon: FileText,
     trend: "neutral"
   },
   {
     title: "Conversion Rate",
     value: "0%",
     change: "0%",
-    icon: TrendingUp,
     trend: "neutral"
   }
 ]
@@ -306,28 +302,28 @@ export default function Dashboard() {
         title: "Total Pipeline Value",
         value: formatCurrency(totalPipelineValue),
         change: "+0%", // Could calculate based on previous period
-        icon: DollarSign,
+        
         trend: "neutral"
       },
       {
         title: "Active Leads", 
         value: formatNumber(activeLeadsCount),
         change: "+0%",
-        icon: Users,
+        
         trend: "neutral"
       },
       {
         title: "Applications This Month",
         value: formatNumber(applicationsThisMonth),
         change: "+0%",
-        icon: FileText,
+        
         trend: "neutral"
       },
       {
         title: "Conversion Rate",
         value: `${formatNumber(conversionRate)}%`,
         change: "+0%",
-        icon: TrendingUp,
+        
         trend: "neutral"
       }
     ])
@@ -470,7 +466,6 @@ export default function Dashboard() {
                 {metric.title}
               </CardTitle>
               <div className="flex items-center gap-2">
-                <metric.icon className="h-4 w-4 text-primary-foreground" />
                 <ChevronRight className="h-3 w-3 text-muted-foreground" />
               </div>
             </CardHeader>
