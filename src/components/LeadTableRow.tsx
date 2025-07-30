@@ -120,17 +120,8 @@ export function LeadTableRow({ lead, onEdit, onDelete, onConvert, hasAdminRole }
 
       {/* Contact Info */}
       <td className="p-4">
-        <div className="space-y-1">
-          <div className="flex items-center gap-2 text-sm">
-            <Mail className="w-3 h-3 text-white" />
-            <span className="text-foreground truncate">{lead.email}</span>
-          </div>
-          {lead.phone && (
-            <div className="flex items-center gap-2 text-sm">
-              <Phone className="w-3 h-3 text-white" />
-              <span className="text-foreground">{formatPhoneNumber(lead.phone)}</span>
-            </div>
-          )}
+        <div className="text-sm text-white truncate">
+          Contact info available in details
         </div>
       </td>
 

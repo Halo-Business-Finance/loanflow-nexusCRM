@@ -130,29 +130,6 @@ export function LeadCard({ lead, onEdit, onDelete, onConvert, hasAdminRole }: Le
       </CardHeader>
 
       <CardContent className="space-y-3">
-        {/* Contact Info */}
-        <div className="space-y-2">
-          <EmailComposer 
-            trigger={
-              <button className="flex items-center gap-2 text-sm hover:text-primary transition-colors w-full text-left">
-                <Mail className="w-4 h-4 text-white" />
-                <span className="text-white truncate">{lead.email}</span>
-              </button>
-            }
-          />
-          
-          {lead.phone && (
-            <PhoneDialer 
-              trigger={
-                <button className="flex items-center gap-2 text-sm hover:text-primary transition-colors w-full text-left">
-                  <Phone className="w-4 h-4 text-white" />
-                  <span className="text-white">{formatPhoneNumber(lead.phone)}</span>
-                </button>
-              }
-            />
-          )}
-        </div>
-
         {/* Financial Info */}
         {(lead.loan_amount || lead.credit_score) && (
           <div className="pt-2 border-t border-muted/30">
