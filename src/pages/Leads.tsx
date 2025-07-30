@@ -652,8 +652,8 @@ export default function Leads() {
               <CardContent className="p-6">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm font-medium text-white">Total Leads</p>
-                    <p className="text-3xl font-bold text-white">{totalLeads}</p>
+                     <p className="text-sm font-medium text-muted-foreground">Total Leads</p>
+                     <p className="text-3xl font-bold text-foreground">{totalLeads}</p>
                   </div>
                 </div>
               </CardContent>
@@ -663,8 +663,8 @@ export default function Leads() {
               <CardContent className="p-6">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm font-medium text-white">Active Leads</p>
-                    <p className="text-3xl font-bold text-white">{activeLeads}</p>
+                     <p className="text-sm font-medium text-muted-foreground">Active Leads</p>
+                     <p className="text-3xl font-bold text-foreground">{activeLeads}</p>
                   </div>
                 </div>
               </CardContent>
@@ -674,8 +674,8 @@ export default function Leads() {
               <CardContent className="p-6">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm font-medium text-white">Converted Leads</p>
-                    <p className="text-3xl font-bold text-white">{convertedLeads}</p>
+                     <p className="text-sm font-medium text-muted-foreground">Converted Leads</p>
+                     <p className="text-3xl font-bold text-foreground">{convertedLeads}</p>
                   </div>
                 </div>
               </CardContent>
@@ -685,8 +685,8 @@ export default function Leads() {
               <CardContent className="p-6">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm font-medium text-white">Pipeline Value</p>
-                    <p className="text-2xl font-bold text-white">${totalPipelineValue.toLocaleString()}</p>
+                     <p className="text-sm font-medium text-muted-foreground">Pipeline Value</p>
+                     <p className="text-2xl font-bold text-foreground">${totalPipelineValue.toLocaleString()}</p>
                   </div>
                 </div>
               </CardContent>
@@ -722,7 +722,7 @@ export default function Leads() {
                   onClick={() => setViewMode("grid")}
                   className="h-8 px-3"
                 >
-                  <Grid3X3 className="w-4 h-4 mr-1 text-white" />
+                  <Grid3X3 className="w-4 h-4 mr-1" />
                   Grid
                 </Button>
                 <Button
@@ -731,7 +731,7 @@ export default function Leads() {
                   onClick={() => setViewMode("table")}
                   className="h-8 px-3"
                 >
-                  <List className="w-4 h-4 mr-1 text-white" />
+                  <List className="w-4 h-4 mr-1" />
                   Table
                 </Button>
               </div>
@@ -742,7 +742,7 @@ export default function Leads() {
           {filteredLeads.length === 0 ? (
             <Card className="border-dashed border-2 border-muted/50">
               <CardContent className="flex flex-col items-center justify-center py-16">
-                <AlertTriangle className="h-12 w-12 text-white mb-4" />
+                <AlertTriangle className="h-12 w-12 text-muted-foreground mb-4" />
                 <h3 className="text-lg font-semibold text-foreground mb-2">No leads found</h3>
                 <p className="text-muted-foreground text-center max-w-md">
                   {searchTerm || selectedStage !== "All" || selectedPriority !== "All" 
@@ -755,7 +755,7 @@ export default function Leads() {
                     onClick={() => setShowAddDialog(true)} 
                     className="mt-4 bg-gradient-primary"
                   >
-                    <Plus className="w-4 h-4 mr-2 text-white" />
+                    <Plus className="w-4 h-4 mr-2" />
                     Add Your First Lead
                   </Button>
                 )}
