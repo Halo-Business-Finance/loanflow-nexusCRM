@@ -78,14 +78,14 @@ export default function Layout({ children }: LayoutProps) {
               <div className="hidden md:block w-80">
                 <GlobalSearch />
               </div>
+              <ThemeToggle />
+              <NotificationBell />
               <div className="flex items-center gap-2">
                 <Clock className="w-4 h-4 text-muted-foreground dark:text-white" />
                 <span className="text-sm font-medium text-muted-foreground dark:text-white">
                   {formatDateTime(currentDateTime)}
                 </span>
               </div>
-              <ThemeToggle />
-              <NotificationBell />
             </div>
           </header>
           <main className="flex-1 p-6 bg-muted/30">
