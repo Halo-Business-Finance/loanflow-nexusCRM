@@ -1070,6 +1070,7 @@ export type Database = {
           severity: string
           threat_type: string
           trigger_source: string
+          updated_at: string
         }
         Insert: {
           auto_shutdown?: boolean
@@ -1081,6 +1082,7 @@ export type Database = {
           severity: string
           threat_type: string
           trigger_source: string
+          updated_at?: string
         }
         Update: {
           auto_shutdown?: boolean
@@ -1092,6 +1094,7 @@ export type Database = {
           severity?: string
           threat_type?: string
           trigger_source?: string
+          updated_at?: string
         }
         Relationships: []
       }
@@ -1105,6 +1108,7 @@ export type Database = {
           resolved_at: string | null
           shutdown_level: string
           triggered_by: string
+          updated_at: string
         }
         Insert: {
           auto_restore_at?: string | null
@@ -1115,6 +1119,7 @@ export type Database = {
           resolved_at?: string | null
           shutdown_level: string
           triggered_by: string
+          updated_at?: string
         }
         Update: {
           auto_restore_at?: string | null
@@ -1125,6 +1130,7 @@ export type Database = {
           resolved_at?: string | null
           shutdown_level?: string
           triggered_by?: string
+          updated_at?: string
         }
         Relationships: []
       }
