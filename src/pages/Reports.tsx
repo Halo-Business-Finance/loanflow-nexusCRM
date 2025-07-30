@@ -94,12 +94,12 @@ export default function Reports() {
                   <Badge variant="default" className="text-xs">
                     {reportData.loanVolume.growth}
                   </Badge>
-                  <span className="text-sm text-muted-foreground">vs last month</span>
+                  <span className="text-sm text-foreground">vs last month</span>
                 </div>
                 <div className="space-y-1">
                   <div className="flex justify-between text-sm">
-                    <span className="text-muted-foreground">Target: {reportData.loanVolume.target}</span>
-                    <span>{reportData.loanVolume.completion}%</span>
+                    <span className="text-foreground">Target: {reportData.loanVolume.target}</span>
+                    <span className="text-foreground">{reportData.loanVolume.completion}%</span>
                   </div>
                   <Progress value={reportData.loanVolume.completion} />
                 </div>
@@ -120,19 +120,19 @@ export default function Reports() {
                 <div className="grid grid-cols-3 gap-2 text-xs">
                   <div className="text-center">
                     <div className="font-medium text-green-400 dark:text-green-300">{reportData.applications.approved}</div>
-                    <div className="text-muted-foreground">Approved</div>
+                    <div className="text-foreground">Approved</div>
                   </div>
                   <div className="text-center">
                     <div className="font-medium text-orange-400 dark:text-orange-300">{reportData.applications.pending}</div>
-                    <div className="text-muted-foreground">Pending</div>
+                    <div className="text-foreground">Pending</div>
                   </div>
                   <div className="text-center">
                     <div className="font-medium text-red-400 dark:text-red-300">{reportData.applications.rejected}</div>
-                    <div className="text-muted-foreground">Rejected</div>
+                    <div className="text-foreground">Rejected</div>
                   </div>
                 </div>
                 <div className="pt-2 border-t">
-                  <div className="text-sm text-muted-foreground">Approval Rate</div>
+                  <div className="text-sm text-foreground">Approval Rate</div>
                   <div className="text-lg font-bold text-foreground">{reportData.applications.approvalRate}%</div>
                 </div>
               </div>
@@ -149,12 +149,12 @@ export default function Reports() {
             <CardContent>
               <div className="space-y-3">
                 <div>
-                  <div className="text-sm text-muted-foreground">Avg Processing Time</div>
+                  <div className="text-sm text-foreground">Avg Processing Time</div>
                   <div className="text-lg font-bold text-foreground">{reportData.performance.avgProcessingTime}</div>
                   <div className="text-xs text-green-400 dark:text-green-300">{reportData.performance.improvement} from target</div>
                 </div>
                 <div>
-                  <div className="text-sm text-muted-foreground">Customer Satisfaction</div>
+                  <div className="text-sm text-foreground">Customer Satisfaction</div>
                   <div className="text-lg font-bold text-foreground">{reportData.performance.customerSatisfaction}/5.0</div>
                 </div>
               </div>
@@ -171,17 +171,17 @@ export default function Reports() {
             <CardContent>
               <div className="space-y-2">
                 <div className="text-2xl font-bold text-foreground">{reportData.teamActivity.activeLoanOfficers}</div>
-                <div className="text-sm text-muted-foreground">Active Loan Officers</div>
+                <div className="text-sm text-foreground">Active Loan Officers</div>
                 <div className="space-y-1">
-                  <div className="text-xs text-muted-foreground">This Month's Activity</div>
+                  <div className="text-xs text-foreground">This Month's Activity</div>
                   <div className="grid grid-cols-2 gap-2 text-xs">
                     <div>
                       <div className="font-medium text-foreground">{reportData.teamActivity.loansProcessed}</div>
-                      <div className="text-muted-foreground">Loans Processed</div>
+                      <div className="text-foreground">Loans Processed</div>
                     </div>
                     <div>
                       <div className="font-medium text-foreground">{reportData.teamActivity.customerContacts}</div>
-                      <div className="text-muted-foreground">Customer Contacts</div>
+                      <div className="text-foreground">Customer Contacts</div>
                     </div>
                   </div>
                 </div>
