@@ -629,10 +629,10 @@ export default function Leads() {
               <CardContent className="p-6">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm font-medium text-muted-foreground">Total Leads</p>
-                    <p className="text-3xl font-bold text-foreground">{totalLeads}</p>
+                    <p className="text-sm font-medium text-white">Total Leads</p>
+                    <p className="text-3xl font-bold text-white">{totalLeads}</p>
                   </div>
-                  <Users className="h-8 w-8 text-primary/60" />
+                  <Users className="h-8 w-8 text-white" />
                 </div>
               </CardContent>
             </Card>
@@ -641,10 +641,10 @@ export default function Leads() {
               <CardContent className="p-6">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm font-medium text-muted-foreground">Active Leads</p>
-                    <p className="text-3xl font-bold text-green-600">{activeLeads}</p>
+                    <p className="text-sm font-medium text-white">Active Leads</p>
+                    <p className="text-3xl font-bold text-white">{activeLeads}</p>
                   </div>
-                  <Target className="h-8 w-8 text-green-500/60" />
+                  <Target className="h-8 w-8 text-white" />
                 </div>
               </CardContent>
             </Card>
@@ -653,8 +653,8 @@ export default function Leads() {
               <CardContent className="p-6">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm font-medium text-muted-foreground">Converted</p>
-                    <p className="text-3xl font-bold text-blue-600">{convertedLeads}</p>
+                    <p className="text-sm font-medium text-white">Converted</p>
+                    <p className="text-3xl font-bold text-white">{convertedLeads}</p>
                   </div>
                   <TrendingUp className="h-8 w-8 text-white" />
                 </div>
@@ -666,7 +666,7 @@ export default function Leads() {
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="text-sm font-medium text-white">Pipeline Value</p>
-                    <p className="text-2xl font-bold text-yellow-600">${totalPipelineValue.toLocaleString()}</p>
+                    <p className="text-2xl font-bold text-white">${totalPipelineValue.toLocaleString()}</p>
                   </div>
                   <DollarSign className="h-8 w-8 text-white" />
                 </div>
