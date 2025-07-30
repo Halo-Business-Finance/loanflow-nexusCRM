@@ -153,7 +153,9 @@ export default function Leads() {
         stage: lead.contact_entity?.stage || 'New',
         priority: lead.contact_entity?.priority || 'medium',
         loan_amount: lead.contact_entity?.loan_amount || 0,
-        business_name: lead.contact_entity?.business_name || ''
+        loan_type: lead.contact_entity?.loan_type || '',
+        business_name: lead.contact_entity?.business_name || '',
+        credit_score: lead.contact_entity?.credit_score || 0
       }))
       
       setLeads(mergedLeads)
