@@ -708,13 +708,13 @@ export default function Leads() {
                         <User className="w-5 h-5 text-primary" />
                       </div>
                       <div>
-                        <CardTitle className="text-lg flex items-center gap-2 text-foreground">
+                        <CardTitle className="text-lg flex items-center gap-2 text-white">
                           {lead.name}
                           {lead.is_converted_to_client && (
                             <Badge variant="default" className="text-xs">Client</Badge>
                           )}
                         </CardTitle>
-                        <p className="text-sm text-muted-foreground">{new Date(lead.last_contact).toLocaleDateString()}</p>
+                        <p className="text-sm text-white">{new Date(lead.last_contact).toLocaleDateString()}</p>
                       </div>
                     </div>
                     <Badge variant={getPriorityColor(lead.priority)}>
@@ -726,15 +726,15 @@ export default function Leads() {
                   <div className="space-y-2">
                     {lead.business_name && (
                       <div className="flex items-center gap-2 text-sm">
-                        <Building className="w-4 h-4 text-muted-foreground" />
-                        <span className="font-medium text-foreground">{lead.business_name}</span>
+                        <Building className="w-4 h-4 text-white" />
+                        <span className="font-medium text-white">{lead.business_name}</span>
                       </div>
                     )}
                      <EmailComposer 
                        trigger={
                          <button className="flex items-center gap-2 text-sm hover:text-primary transition-colors">
-                           <Mail className="w-4 h-4 text-muted-foreground" />
-                           <span className="text-foreground">{lead.email}</span>
+                           <Mail className="w-4 h-4 text-white" />
+                           <span className="text-white">{lead.email}</span>
                          </button>
                        }
                      />
@@ -742,27 +742,27 @@ export default function Leads() {
                        <PhoneDialer 
                          trigger={
                            <button className="flex items-center gap-2 text-sm hover:text-primary transition-colors">
-                             <Phone className="w-4 h-4 text-muted-foreground" />
-                             <span className="text-foreground">{formatPhoneNumber(lead.phone)}</span>
+                             <Phone className="w-4 h-4 text-white" />
+                             <span className="text-white">{formatPhoneNumber(lead.phone)}</span>
                            </button>
                          }
                        />
                      )}
                       {lead.location && (
                         <div className="flex items-center gap-2 text-sm">
-                          <MapPin className="w-4 h-4 text-muted-foreground" />
-                          <span className="text-foreground">{lead.location}</span>
+                          <MapPin className="w-4 h-4 text-white" />
+                          <span className="text-white">{lead.location}</span>
                         </div>
                       )}
                     {lead.loan_amount && (
                       <div className="flex items-center gap-2 text-sm">
-                        <DollarSign className="w-4 h-4 text-muted-foreground" />
-                        <span className="font-medium text-foreground">${lead.loan_amount.toLocaleString()}</span>
+                        <DollarSign className="w-4 h-4 text-white" />
+                        <span className="font-medium text-white">${lead.loan_amount.toLocaleString()}</span>
                       </div>
                     )}
                     {lead.loan_type && (
                       <div className="flex items-center gap-2 text-sm">
-                        <span className="text-xs bg-muted px-2 py-1 rounded font-medium text-foreground">{lead.loan_type}</span>
+                        <span className="text-xs bg-muted px-2 py-1 rounded font-medium text-white">{lead.loan_type}</span>
                       </div>
                     )}
                   </div>
@@ -772,7 +772,7 @@ export default function Leads() {
                       {lead.stage}
                     </Badge>
                        {lead.credit_score && (
-                        <div className="text-sm text-foreground">
+                        <div className="text-sm text-white">
                           Credit: {lead.credit_score}
                         </div>
                       )}
@@ -838,9 +838,9 @@ export default function Leads() {
                           </DialogHeader>
                           <div className="space-y-4">
                             <p>Are you sure you want to convert <strong>{lead.name}</strong> to a client?</p>
-                             <p className="text-sm text-foreground">
-                              This will create a new client record and add them to your pipeline.
-                            </p>
+                              <p className="text-sm text-white">
+                               This will create a new client record and add them to your pipeline.
+                             </p>
                           </div>
                           <DialogFooter>
                             <Button variant="outline" onClick={() => setConvertingLead(null)}>
@@ -895,18 +895,18 @@ export default function Leads() {
             <CardContent className="p-0">
               <div className="overflow-x-auto">
                 <table className="w-full">
-                  <thead>
-                    <tr className="border-b bg-muted/30">
-                       <th className="text-left p-4 font-medium text-foreground">Name</th>
-                       <th className="text-left p-4 font-medium text-foreground">Contact</th>
-                       <th className="text-left p-4 font-medium text-foreground">Loan Amount</th>
-                       <th className="text-left p-4 font-medium text-foreground">Loan Type</th>
-                       <th className="text-left p-4 font-medium text-foreground">Stage</th>
-                       <th className="text-left p-4 font-medium text-foreground">Priority</th>
-                       <th className="text-left p-4 font-medium text-foreground">Credit Score</th>
-                       <th className="text-left p-4 font-medium text-foreground">Actions</th>
-                    </tr>
-                  </thead>
+                   <thead>
+                     <tr className="border-b bg-muted/30">
+                        <th className="text-left p-4 font-medium text-white">Name</th>
+                        <th className="text-left p-4 font-medium text-white">Contact</th>
+                        <th className="text-left p-4 font-medium text-white">Loan Amount</th>
+                        <th className="text-left p-4 font-medium text-white">Loan Type</th>
+                        <th className="text-left p-4 font-medium text-white">Stage</th>
+                        <th className="text-left p-4 font-medium text-white">Priority</th>
+                        <th className="text-left p-4 font-medium text-white">Credit Score</th>
+                        <th className="text-left p-4 font-medium text-white">Actions</th>
+                     </tr>
+                   </thead>
                   <tbody>
                     {filteredLeads.map((lead) => (
                       <tr key={lead.id} className={`border-b hover:bg-muted/20 cursor-pointer ${lead.is_converted_to_client ? 'opacity-60' : ''}`} onClick={() => navigate(`/leads/${lead.id}`)}>
@@ -915,32 +915,32 @@ export default function Leads() {
                             <div className="w-8 h-8 bg-primary/10 rounded-full flex items-center justify-center">
                               <User className="w-4 h-4 text-primary" />
                             </div>
-                             <div>
-                                <div className="font-medium flex items-center gap-2 text-foreground">
-                                  {lead.name}
-                                  {lead.is_converted_to_client && (
-                                    <Badge variant="default" className="text-xs">Client</Badge>
-                                  )}
-                                </div>
-                                {lead.business_name && (
-                                  <div className="text-sm text-foreground font-medium">{lead.business_name}</div>
-                                )}
-                                <div className="text-sm text-foreground">{lead.location}</div>
-                             </div>
+                              <div>
+                                 <div className="font-medium flex items-center gap-2 text-white">
+                                   {lead.name}
+                                   {lead.is_converted_to_client && (
+                                     <Badge variant="default" className="text-xs">Client</Badge>
+                                   )}
+                                 </div>
+                                 {lead.business_name && (
+                                   <div className="text-sm text-white font-medium">{lead.business_name}</div>
+                                 )}
+                                 <div className="text-sm text-white">{lead.location}</div>
+                              </div>
                           </div>
                         </td>
-                        <td className="p-4">
-                           <div className="text-sm">
-                              <div className="text-foreground">{lead.email}</div>
-                              <div className="text-foreground">{lead.phone ? formatPhoneNumber(lead.phone) : ''}</div>
-                           </div>
-                        </td>
-                         <td className="p-4 font-medium text-foreground">
-                           {lead.loan_amount ? `$${lead.loan_amount.toLocaleString()}` : '-'}
+                         <td className="p-4">
+                            <div className="text-sm">
+                               <div className="text-white">{lead.email}</div>
+                               <div className="text-white">{lead.phone ? formatPhoneNumber(lead.phone) : ''}</div>
+                            </div>
                          </td>
-                        <td className="p-4">
-                          <span className="text-xs bg-muted px-2 py-1 rounded font-medium text-foreground">{lead.loan_type || '-'}</span>
-                        </td>
+                          <td className="p-4 font-medium text-white">
+                            {lead.loan_amount ? `$${lead.loan_amount.toLocaleString()}` : '-'}
+                          </td>
+                         <td className="p-4">
+                           <span className="text-xs bg-muted px-2 py-1 rounded font-medium text-white">{lead.loan_type || '-'}</span>
+                         </td>
                         <td className="p-4">
                           <Badge variant={getStageColor(lead.stage)}>
                             {lead.stage}
@@ -951,7 +951,7 @@ export default function Leads() {
                             {lead.priority}
                           </Badge>
                         </td>
-                        <td className="p-4 text-foreground">{lead.credit_score || '-'}</td>
+                        <td className="p-4 text-white">{lead.credit_score || '-'}</td>
                          <td className="p-4">
                            <div className="flex gap-2">
                              <PhoneDialer 
@@ -981,9 +981,9 @@ export default function Leads() {
                                    </DialogHeader>
                                    <div className="space-y-4">
                                      <p>Are you sure you want to convert <strong>{lead.name}</strong> to a client?</p>
-                                     <p className="text-sm text-foreground">
-                                       This will create a new client record and add them to your pipeline.
-                                     </p>
+                                      <p className="text-sm text-white">
+                                        This will create a new client record and add them to your pipeline.
+                                      </p>
                                    </div>
                                    <DialogFooter>
                                      <Button variant="outline">Cancel</Button>
