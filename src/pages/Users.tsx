@@ -621,7 +621,7 @@ export default function Users() {
           <CardContent className="p-4">
             <div className="flex gap-4 items-center">
               <div className="relative flex-1">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground dark:text-white" />
                 <Input
                   placeholder="Search users by name or email..."
                   className="pl-10"

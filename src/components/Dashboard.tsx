@@ -487,7 +487,7 @@ export default function Dashboard() {
               <CardTitle>Sales Pipeline</CardTitle>
               <div className="flex gap-2">
                 <div className="relative">
-                  <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                  <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground dark:text-white" />
                   <Input
                     placeholder="Filter stages..."
                     value={pipelineFilter}
@@ -604,7 +604,7 @@ export default function Dashboard() {
           <div className="flex justify-between items-center">
             <CardTitle>Recent Leads</CardTitle>
             <div className="relative">
-              <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+              <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground dark:text-white" />
               <Input
                 placeholder="Search leads..."
                 value={leadsFilter}
