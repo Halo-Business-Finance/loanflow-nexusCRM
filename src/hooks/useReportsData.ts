@@ -85,16 +85,21 @@ export function useReportsData() {
       const target = 5000000 // $5M target
       const completion = target > 0 ? Math.round((currentMonthVolume / target) * 100) : 0
 
-      // Get leads data for applications metrics (using leads table instead of non-existent loan_requests)
+      // Get leads data for applications metrics (using leads table with contact entities)
       const { data: allLeads } = await supabase
         .from('leads')
-        .select('stage, created_at')
+        .select(`
+          created_at,
+          contact_entity:contact_entities!contact_entity_id (
+            stage
+          )
+        `)
         .gte('created_at', `${currentYear}-${currentMonth.toString().padStart(2, '0')}-01`)
 
       const total = allLeads?.length || 0
-      const approved = allLeads?.filter(lead => lead.stage === 'Funded' || lead.stage === 'Closed').length || 0
-      const pending = allLeads?.filter(lead => ['Application', 'Pre-approval', 'Documentation', 'Closing'].includes(lead.stage)).length || 0
-      const rejected = allLeads?.filter(lead => lead.stage === 'Rejected').length || 0
+      const approved = allLeads?.filter(lead => lead.contact_entity?.stage === 'Funded' || lead.contact_entity?.stage === 'Closed').length || 0
+      const pending = allLeads?.filter(lead => ['Application', 'Pre-approval', 'Documentation', 'Closing'].includes(lead.contact_entity?.stage || '')).length || 0
+      const rejected = allLeads?.filter(lead => lead.contact_entity?.stage === 'Rejected').length || 0
       const approvalRate = total > 0 ? Math.round((approved / total) * 100) : 0
 
       // Get cases data for performance metrics

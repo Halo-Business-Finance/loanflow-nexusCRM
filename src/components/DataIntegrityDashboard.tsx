@@ -27,7 +27,8 @@ export function DataIntegrityDashboard() {
   const runDataAudit = async () => {
     setLoading(true);
     try {
-      const results = await DataFieldValidator.performDataAudit();
+      const validator = new DataFieldValidator();
+      const results = await validator.performDataAudit();
       setAuditResults(results);
       
       // Convert audit results to field issues format
@@ -112,7 +113,7 @@ export function DataIntegrityDashboard() {
       
       toast({
         title: "Data Audit Complete",
-        description: `Found ${results.summary.totalIssues} total issues across your data.`
+        description: `Found ${issues.length} total issues across your data.`
       });
     } catch (error) {
       console.error('Data audit error:', error);
@@ -129,7 +130,8 @@ export function DataIntegrityDashboard() {
   const runAutoFix = async () => {
     setLoading(true);
     try {
-      const results = await DataFieldValidator.autoFixDataIssues();
+      const validator = new DataFieldValidator();
+      const results = await validator.autoFixDataIssues();
       setAutoFixResults(results);
       
       toast({

@@ -181,11 +181,16 @@ export default function Dashboard() {
     if (!user) return
 
     try {
-      // Fetch leads
+      // Fetch leads with contact entity data
       const { data: leadsData } = await supabase
         .from('leads')
-        .select('*')
+        .select(`
+          *,
+          contact_entity:contact_entities!contact_entity_id (*)
+        `)
+        .eq('user_id', user.id)
         .order('created_at', { ascending: false })
+        .limit(5)
 
       // Fetch pipeline entries  
       const { data: pipelineData } = await supabase
@@ -197,15 +202,21 @@ export default function Dashboard() {
         .from('clients')
         .select('id, total_loan_value')
 
-      if (leadsData) setLeads(leadsData)
+      // Transform leads data to merge contact entity fields
+      const transformedLeads = leadsData?.map(lead => ({
+        ...lead,
+        ...lead.contact_entity
+      })) || []
+
+      if (transformedLeads) setLeads(transformedLeads)
       if (pipelineData) setPipelineEntries(pipelineData)
       if (clientsData) setTotalClients(clientsData.length)
 
       // Calculate pipeline stages
-      calculatePipelineStages(leadsData || [], pipelineData || [])
+      calculatePipelineStages(transformedLeads, pipelineData || [])
       
       // Calculate metrics
-      calculateMetrics(leadsData || [], clientsData || [], pipelineData || [])
+      calculateMetrics(transformedLeads, clientsData || [], pipelineData || [])
 
     } catch (error) {
       console.error('Error fetching dashboard data:', error)

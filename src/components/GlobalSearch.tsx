@@ -39,26 +39,43 @@ export function GlobalSearch() {
 
     setLoading(true)
     try {
-      // Search leads
+      // Search leads with contact entity data
       const { data: leads } = await supabase
         .from('leads')
-        .select('id, name, email, stage, loan_amount')
+        .select(`
+          id, user_id,
+          contact_entity:contact_entities!contact_entity_id (
+            name, email, stage, loan_amount
+          )
+        `)
         .eq('user_id', user.id)
-        .or(`name.ilike.%${searchQuery}%,email.ilike.%${searchQuery}%`)
+        .or(`contact_entities.name.ilike.%${searchQuery}%,contact_entities.email.ilike.%${searchQuery}%`)
         .limit(5)
 
-      // Search clients
+      // Search clients with contact entity data
       const { data: clients } = await supabase
         .from('clients')
-        .select('id, name, email, status')
+        .select(`
+          id, user_id, status,
+          contact_entity:contact_entities!contact_entity_id (
+            name, email
+          )
+        `)
         .eq('user_id', user.id)
-        .or(`name.ilike.%${searchQuery}%,email.ilike.%${searchQuery}%`)
+        .or(`contact_entities.name.ilike.%${searchQuery}%,contact_entities.email.ilike.%${searchQuery}%`)
         .limit(5)
 
       // Search loans
       const { data: loans } = await supabase
         .from('loans')
-        .select('id, loan_amount, loan_type, status, clients(name)')
+        .select(`
+          id, loan_amount, loan_type, status,
+          clients!inner(
+            contact_entity:contact_entities!contact_entity_id (
+              name
+            )
+          )
+        `)
         .eq('user_id', user.id)
         .or(`loan_type.ilike.%${searchQuery}%`)
         .limit(5)
@@ -70,10 +87,10 @@ export function GlobalSearch() {
         searchResults.push({
           id: lead.id,
           type: 'lead',
-          title: lead.name,
-          subtitle: lead.email,
-          stage: lead.stage,
-          amount: lead.loan_amount
+          title: lead.contact_entity?.name || 'Unknown Lead',
+          subtitle: lead.contact_entity?.email || '',
+          stage: lead.contact_entity?.stage,
+          amount: lead.contact_entity?.loan_amount
         })
       })
 
@@ -82,8 +99,8 @@ export function GlobalSearch() {
         searchResults.push({
           id: client.id,
           type: 'client',
-          title: client.name,
-          subtitle: client.email,
+          title: client.contact_entity?.name || 'Unknown Client',
+          subtitle: client.contact_entity?.email || '',
           stage: client.status
         })
       })
@@ -94,7 +111,7 @@ export function GlobalSearch() {
           id: loan.id,
           type: 'loan',
           title: `${loan.loan_type} - $${loan.loan_amount?.toLocaleString()}`,
-          subtitle: loan.clients?.name || 'Unknown Client',
+          subtitle: loan.clients?.contact_entity?.name || 'Unknown Client',
           stage: loan.status
         })
       })

@@ -103,11 +103,21 @@ export default function Clients() {
     try {
       const { data, error } = await supabase
         .from('clients')
-        .select('*')
+        .select(`
+          *,
+          contact_entity:contact_entities!contact_entity_id (*)
+        `)
         .order('created_at', { ascending: false })
 
       if (error) throw error
-      setClients(data || [])
+      
+      // Transform clients data to merge contact entity fields
+      const transformedClients = data?.map(client => ({
+        ...client,
+        ...client.contact_entity
+      })) || []
+      
+      setClients(transformedClients)
       
       // Fetch loans for all clients
       if (data && data.length > 0) {

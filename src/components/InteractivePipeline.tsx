@@ -161,12 +161,21 @@ export function InteractivePipeline() {
       setLoading(true);
       const { data, error } = await supabase
         .from('leads')
-        .select('*')
+        .select(`
+          *,
+          contact_entity:contact_entities!contact_entity_id (*)
+        `)
         .eq('user_id', user?.id);
 
       if (error) throw error;
 
-      setLeads(data || []);
+      // Transform leads data to merge contact entity fields
+      const transformedLeads = data?.map(lead => ({
+        ...lead,
+        ...lead.contact_entity
+      })) || []
+
+      setLeads(transformedLeads);
     } catch (error) {
       console.error('Error fetching leads:', error);
       toast({
