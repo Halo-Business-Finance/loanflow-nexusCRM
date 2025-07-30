@@ -97,7 +97,7 @@ const chartConfig = {
   },
 }
 
-const stageOrder = ["Initial Contact", "Qualified", "Application", "Pre-approval", "Documentation", "Closing", "Funded"]
+const stageOrder = ["Initial Contact", "Qualified", "Application", "Pre-approval", "Closing", "Funded"]
 
 export default function Pipeline() {
   const { user } = useAuth()
