@@ -91,7 +91,7 @@ export default function Users() {
       <Layout>
         <div className="flex items-center justify-center min-h-[400px]">
           <div className="text-center">
-            <Shield className="h-12 w-12 mx-auto mb-4" color="white" />
+            <Shield className="h-12 w-12 mx-auto mb-4 text-muted-foreground" />
             <h2 className="text-xl font-semibold mb-2">Access Denied</h2>
             <p className="text-muted-foreground">You need admin privileges to access user management.</p>
           </div>
@@ -521,7 +521,7 @@ export default function Users() {
           <Dialog open={showNewUserDialog} onOpenChange={setShowNewUserDialog}>
             <DialogTrigger asChild>
               <Button className="gap-2">
-                <UserPlus className="h-4 w-4" color="white" />
+                <UserPlus className="h-4 w-4 text-primary-foreground" />
                 Add User
               </Button>
             </DialogTrigger>
@@ -621,7 +621,7 @@ export default function Users() {
           <CardContent className="p-4">
             <div className="flex gap-4 items-center">
               <div className="relative flex-1">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4" color="white" />
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                 <Input
                   placeholder="Search users by name or email..."
                   className="pl-10"
@@ -630,7 +630,7 @@ export default function Users() {
                 />
               </div>
               <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                <UsersIcon className="h-4 w-4" color="white" />
+                <UsersIcon className="h-4 w-4 text-muted-foreground" />
                 {filteredUsers.length} users
               </div>
             </div>
@@ -641,7 +641,7 @@ export default function Users() {
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              <UsersIcon className="h-5 w-5" color="white" />
+              <UsersIcon className="h-5 w-5 text-muted-foreground" />
               Team Members
             </CardTitle>
           </CardHeader>
@@ -684,7 +684,7 @@ export default function Users() {
                             <PhoneDialer 
                               trigger={
                                 <button className="flex items-center gap-2 text-sm text-muted-foreground hover:text-primary transition-colors">
-                                  <Phone className="h-4 w-4" color="white" />
+                                  <Phone className="h-4 w-4 text-muted-foreground" />
                                   {user.phone_number}
                                 </button>
                               }
@@ -693,7 +693,7 @@ export default function Users() {
                             <span className="text-sm text-muted-foreground">No phone</span>
                           )}
                           <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                            <Calendar className="h-4 w-4" color="white" />
+                            <Calendar className="h-4 w-4 text-muted-foreground" />
                             {new Date(user.created_at).toLocaleDateString()}
                           </div>
                         </div>
@@ -731,7 +731,7 @@ export default function Users() {
                             }}
                             className="h-8 w-8 p-0"
                           >
-                            <Edit className="h-4 w-4" color="white" />
+                            <Edit className="h-4 w-4 text-muted-foreground" />
                           </Button>
                           
                           <Button
@@ -743,7 +743,7 @@ export default function Users() {
                             }}
                             className="h-8 w-8 p-0"
                           >
-                            <Key className="h-4 w-4" color="white" />
+                            <Key className="h-4 w-4 text-muted-foreground" />
                           </Button>
 
                           <Button
@@ -752,14 +752,14 @@ export default function Users() {
                             onClick={() => toggleUserStatus(user.id, user.is_active)}
                             className={`h-8 w-8 p-0 ${user.is_active ? 'text-red-600 hover:text-red-700' : 'text-green-600 hover:text-green-700'}`}
                           >
-                            {user.is_active ? <Shield className="h-4 w-4" color="white" /> : <User className="h-4 w-4" color="white" />}
+                            {user.is_active ? <Shield className="h-4 w-4 text-primary-foreground" /> : <User className="h-4 w-4 text-primary-foreground" />}
                           </Button>
 
                           {user.email !== currentUser?.email && (
                             <AlertDialog>
                               <AlertDialogTrigger asChild>
                                 <Button variant="ghost" size="sm" className="h-8 w-8 p-0 text-red-600 hover:text-red-700">
-                                  <Trash2 className="h-4 w-4" color="white" />
+                                  <Trash2 className="h-4 w-4 text-primary-foreground" />
                                 </Button>
                               </AlertDialogTrigger>
                               <AlertDialogContent>
@@ -925,7 +925,7 @@ export default function Users() {
                     className="flex-1"
                     disabled={!newPassword || !confirmPassword}
                   >
-                    <Key className="h-4 w-4 mr-2" color="white" />
+                    <Key className="h-4 w-4 mr-2 text-primary-foreground" />
                     Change Password
                   </Button>
                   <Button 

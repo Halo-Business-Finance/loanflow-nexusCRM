@@ -234,8 +234,8 @@ export function DataIntegrityDashboard() {
 
           <TabsContent value="issues" className="space-y-4">
             <div className="space-y-2">
-              {fieldIssues.map((issue, index) => (
-                <Card key={index}>
+              {fieldIssues.map((issue) => (
+                <Card key={`${issue.fieldName}-${issue.description}`}>
                   <CardContent className="p-4">
                     <div className="flex justify-between items-start">
                       <div className="space-y-2">
@@ -324,8 +324,8 @@ export function DataIntegrityDashboard() {
                   {autoFixResults.errors.length > 0 && (
                     <div className="space-y-2">
                       <h4 className="font-medium">Errors:</h4>
-                      {autoFixResults.errors.map((error: string, index: number) => (
-                        <Alert key={index} variant="destructive">
+                      {autoFixResults.errors.map((error: string) => (
+                        <Alert key={error} variant="destructive">
                           <AlertTriangle className="h-4 w-4" />
                           <AlertDescription>{error}</AlertDescription>
                         </Alert>

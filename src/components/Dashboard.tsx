@@ -614,7 +614,7 @@ export default function Dashboard() {
           <div className="space-y-4">
             {filteredLeads.map((lead, index) => (
               <div 
-                key={index} 
+                key={`lead-${index}-${lead.name}`}
                 className="flex items-center justify-between p-4 rounded-lg bg-gradient-card border hover:shadow-medium transition-all cursor-pointer hover:scale-[1.02]"
                 onClick={() => handleLeadClick(lead)}
               >
