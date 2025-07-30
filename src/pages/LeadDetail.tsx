@@ -175,19 +175,27 @@ export default function LeadDetail() {
     try {
       const { data, error } = await supabase
         .from('leads')
-        .select('*')
+        .select(`
+          *,
+          contact_entity:contact_entities!contact_entity_id (*)
+        `)
         .eq('id', id)
         .single()
 
       if (error) throw error
       
-      setLead(data)
-      setCallNotes(data.call_notes || "")
-      setGeneralNotes(data.notes || "")
+      // Merge contact entity data with lead data
+      const mergedLead = {
+        ...data,
+        ...data.contact_entity
+      }
+      setLead(mergedLead)
+      setCallNotes(mergedLead.call_notes || "")
+      setGeneralNotes(mergedLead.notes || "")
       
       // Set editable fields for edit mode
       setEditableFields({
-        name: data.name || "",
+        name: mergedLead.name || "",
         email: data.email || "",
         phone: data.phone || "",
         location: data.location || "",

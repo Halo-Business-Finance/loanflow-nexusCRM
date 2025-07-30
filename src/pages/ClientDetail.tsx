@@ -160,19 +160,27 @@ export default function ClientDetail() {
     try {
       const { data, error } = await supabase
         .from('clients')
-        .select('*')
+        .select(`
+          *,
+          contact_entity:contact_entities!contact_entity_id (*)
+        `)
         .eq('id', id)
         .single()
 
       if (error) throw error
       
-      setClient(data)
-      setCallNotes(data.call_notes || "")
-      setGeneralNotes(data.notes || "")
+      // Merge contact entity data with client data
+      const mergedClient = {
+        ...data,
+        ...data.contact_entity
+      }
+      setClient(mergedClient)
+      setCallNotes(mergedClient.call_notes || "")
+      setGeneralNotes(mergedClient.notes || "")
       
       // Set editable fields for edit mode
       setEditableFields({
-        name: data.name || "",
+        name: mergedClient.name || "",
         email: data.email || "",
         phone: data.phone || "",
         location: data.location || "",
