@@ -866,21 +866,6 @@ export default function ClientDetail() {
                     </div>
                   </div>
 
-                  <div className="flex items-center gap-3">
-                    <Building className="w-4 h-4" />
-                    <div className="flex-1">
-                      <p className="text-sm text-muted-foreground">Bank/Lender Name</p>
-                      {isEditing ? (
-                        <Input
-                          value={editableFields.bank_lender_name}
-                          onChange={(e) => setEditableFields({...editableFields, bank_lender_name: e.target.value})}
-                          placeholder="Enter bank or lender name"
-                        />
-                      ) : (
-                        <p className="font-medium">{client.bank_lender_name || 'N/A'}</p>
-                      )}
-                    </div>
-                  </div>
 
                   <div className="flex items-center gap-3">
                     <DollarSign className="w-4 h-4" />
@@ -935,30 +920,6 @@ export default function ClientDetail() {
                     </div>
                   </div>
 
-                  <div className="flex items-center gap-3">
-                    <Target className="w-4 h-4" />
-                     <div className="flex-1">
-                       <p className="text-sm text-muted-foreground">Loan Stage</p>
-                      {isEditing ? (
-                        <Select value={editableFields.stage} onValueChange={(value) => setEditableFields({...editableFields, stage: value})}>
-                          <SelectTrigger>
-                            <SelectValue placeholder="Select stage" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="Initial Contact">Initial Contact</SelectItem>
-                            <SelectItem value="Qualified">Qualified</SelectItem>
-                            <SelectItem value="Application">Application</SelectItem>
-                            <SelectItem value="Pre-approval">Pre-approval</SelectItem>
-                            <SelectItem value="Documentation">Documentation</SelectItem>
-                            <SelectItem value="Closing">Closing</SelectItem>
-                            <SelectItem value="Funded">Funded</SelectItem>
-                          </SelectContent>
-                        </Select>
-                      ) : (
-                        <p className="font-medium">{client.stage || 'N/A'}</p>
-                      )}
-                    </div>
-                  </div>
                 </div>
               </div>
             </CardContent>
@@ -1081,6 +1042,22 @@ export default function ClientDetail() {
                     ) : (
                       <p className="font-medium">{client.stage || 'N/A'}</p>
                     )}
+                  </div>
+
+                  <div className="flex items-center gap-3">
+                    <Building className="w-4 h-4" />
+                    <div className="flex-1">
+                      <p className="text-sm text-muted-foreground">Bank/Lender Name</p>
+                      {isEditing ? (
+                        <Input
+                          value={editableFields.bank_lender_name}
+                          onChange={(e) => setEditableFields({...editableFields, bank_lender_name: e.target.value})}
+                          placeholder="Enter bank or lender name"
+                        />
+                      ) : (
+                        <p className="font-medium">{client.bank_lender_name || 'N/A'}</p>
+                      )}
+                    </div>
                   </div>
                 </div>
 
