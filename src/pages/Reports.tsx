@@ -64,15 +64,15 @@ export default function Reports() {
           </div>
           <div className="flex gap-2">
             <Button variant="outline" className="gap-2" onClick={refetch}>
-              <RefreshCw className="h-4 w-4" />
+              <RefreshCw className="h-4 w-4 text-white" />
               Refresh
             </Button>
             <Button variant="outline" className="gap-2">
-              <Filter className="h-4 w-4" />
+              <Filter className="h-4 w-4 text-white" />
               Filter
             </Button>
             <Button variant="outline" className="gap-2">
-              <Download className="h-4 w-4" />
+              <Download className="h-4 w-4 text-white" />
               Export
             </Button>
           </div>
@@ -82,14 +82,14 @@ export default function Reports() {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
           <Card className="shadow-soft">
             <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium flex items-center gap-2">
-                <DollarSign className="h-4 w-4 text-accent" />
+              <CardTitle className="text-sm font-medium flex items-center gap-2 text-foreground">
+                <DollarSign className="h-4 w-4 text-white" />
                 Loan Volume
               </CardTitle>
             </CardHeader>
             <CardContent>
               <div className="space-y-2">
-                <div className="text-2xl font-bold text-accent">{reportData.loanVolume.thisMonth}</div>
+                <div className="text-2xl font-bold text-foreground">{reportData.loanVolume.thisMonth}</div>
                 <div className="flex items-center gap-2">
                   <Badge variant="default" className="text-xs">
                     {reportData.loanVolume.growth}
@@ -109,14 +109,14 @@ export default function Reports() {
 
           <Card className="shadow-soft">
             <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium flex items-center gap-2">
-                <FileText className="h-4 w-4 text-primary" />
+              <CardTitle className="text-sm font-medium flex items-center gap-2 text-foreground">
+                <FileText className="h-4 w-4 text-white" />
                 Applications
               </CardTitle>
             </CardHeader>
             <CardContent>
               <div className="space-y-2">
-                <div className="text-2xl font-bold">{reportData.applications.total}</div>
+                <div className="text-2xl font-bold text-foreground">{reportData.applications.total}</div>
                 <div className="grid grid-cols-3 gap-2 text-xs">
                   <div className="text-center">
                     <div className="font-medium text-green-600">{reportData.applications.approved}</div>
@@ -141,8 +141,8 @@ export default function Reports() {
 
           <Card className="shadow-soft">
             <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium flex items-center gap-2">
-                <TrendingUp className="h-4 w-4 text-green-600" />
+              <CardTitle className="text-sm font-medium flex items-center gap-2 text-foreground">
+                <TrendingUp className="h-4 w-4 text-white" />
                 Performance
               </CardTitle>
             </CardHeader>
@@ -150,12 +150,12 @@ export default function Reports() {
               <div className="space-y-3">
                 <div>
                   <div className="text-sm text-muted-foreground">Avg Processing Time</div>
-                  <div className="text-lg font-bold">{reportData.performance.avgProcessingTime}</div>
+                  <div className="text-lg font-bold text-foreground">{reportData.performance.avgProcessingTime}</div>
                   <div className="text-xs text-green-600">{reportData.performance.improvement} from target</div>
                 </div>
                 <div>
                   <div className="text-sm text-muted-foreground">Customer Satisfaction</div>
-                  <div className="text-lg font-bold">{reportData.performance.customerSatisfaction}/5.0</div>
+                  <div className="text-lg font-bold text-foreground">{reportData.performance.customerSatisfaction}/5.0</div>
                 </div>
               </div>
             </CardContent>
@@ -163,24 +163,24 @@ export default function Reports() {
 
           <Card className="shadow-soft">
             <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium flex items-center gap-2">
-                <Users className="h-4 w-4 text-purple-600" />
+              <CardTitle className="text-sm font-medium flex items-center gap-2 text-foreground">
+                <Users className="h-4 w-4 text-white" />
                 Team Activity
               </CardTitle>
             </CardHeader>
             <CardContent>
               <div className="space-y-2">
-                <div className="text-2xl font-bold">{reportData.teamActivity.activeLoanOfficers}</div>
+                <div className="text-2xl font-bold text-foreground">{reportData.teamActivity.activeLoanOfficers}</div>
                 <div className="text-sm text-muted-foreground">Active Loan Officers</div>
                 <div className="space-y-1">
                   <div className="text-xs text-muted-foreground">This Month's Activity</div>
                   <div className="grid grid-cols-2 gap-2 text-xs">
                     <div>
-                      <div className="font-medium">{reportData.teamActivity.loansProcessed}</div>
+                      <div className="font-medium text-foreground">{reportData.teamActivity.loansProcessed}</div>
                       <div className="text-muted-foreground">Loans Processed</div>
                     </div>
                     <div>
-                      <div className="font-medium">{reportData.teamActivity.customerContacts}</div>
+                      <div className="font-medium text-foreground">{reportData.teamActivity.customerContacts}</div>
                       <div className="text-muted-foreground">Customer Contacts</div>
                     </div>
                   </div>
@@ -193,8 +193,8 @@ export default function Reports() {
         {/* Monthly Trends */}
         <Card className="shadow-soft">
           <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <BarChart3 className="h-5 w-5" />
+            <CardTitle className="flex items-center gap-2 text-foreground">
+              <BarChart3 className="h-5 w-5 text-white" />
               Monthly Trends
             </CardTitle>
           </CardHeader>
@@ -205,18 +205,18 @@ export default function Reports() {
                   <CartesianGrid strokeDasharray="3 3" className="opacity-30" />
                   <XAxis 
                     dataKey="month" 
-                    className="text-muted-foreground text-sm"
+                    tick={{ fill: 'var(--foreground)', fontSize: 12 }}
                   />
                   <YAxis 
                     yAxisId="loans"
                     orientation="left"
-                    className="text-muted-foreground text-sm"
+                    tick={{ fill: 'var(--foreground)', fontSize: 12 }}
                     tickFormatter={(value) => `${value}`}
                   />
                   <YAxis 
                     yAxisId="volume"
                     orientation="right"
-                    className="text-muted-foreground text-sm"
+                    tick={{ fill: 'var(--foreground)', fontSize: 12 }}
                     tickFormatter={(value) => `$${(value / 1000000).toFixed(1)}M`}
                   />
                   <Tooltip 
@@ -258,7 +258,7 @@ export default function Reports() {
         {/* Top Performers */}
         <Card className="shadow-soft">
           <CardHeader>
-            <CardTitle>Top Performers</CardTitle>
+            <CardTitle className="text-foreground">Top Performers</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
@@ -270,22 +270,22 @@ export default function Reports() {
                         #{index + 1}
                       </div>
                       <div>
-                        <div className="font-medium">{performer.name}</div>
+                        <div className="font-medium text-foreground">{performer.name}</div>
                         <div className="text-sm text-muted-foreground">Loan Officer</div>
                       </div>
                     </div>
                     
                     <div className="flex items-center gap-8">
                       <div className="text-center">
-                        <div className="font-bold">{performer.loans}</div>
+                        <div className="font-bold text-foreground">{performer.loans}</div>
                         <div className="text-xs text-muted-foreground">Loans</div>
                       </div>
                       <div className="text-center">
-                        <div className="font-bold text-accent">{performer.volume}</div>
+                        <div className="font-bold text-foreground">{performer.volume}</div>
                         <div className="text-xs text-muted-foreground">Volume</div>
                       </div>
                       <div className="text-center">
-                        <div className="font-bold">{Math.round(performer.rate)}%</div>
+                        <div className="font-bold text-foreground">{Math.round(performer.rate)}%</div>
                         <div className="text-xs text-muted-foreground">Success Rate</div>
                       </div>
                     </div>
