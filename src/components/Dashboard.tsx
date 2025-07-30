@@ -223,23 +223,23 @@ export default function Dashboard() {
       "Qualified": 0, 
       "Application": 0,
       "Pre-approval": 0,
-      "Closing": 0
+      "Documentation": 0,
+      "Closing": 0,
+      "Funded": 0,
+      "Rejected": 0
     }
 
-    // Count all leads by their current stage (including converted ones)
+    // Count active (non-converted) leads by their current stage
     leadsData.forEach(lead => {
-      if (stageCounts.hasOwnProperty(lead.stage)) {
+      // Only count leads that haven't been converted to clients for active pipeline
+      if (!lead.is_converted_to_client && stageCounts.hasOwnProperty(lead.stage)) {
         stageCounts[lead.stage as keyof typeof stageCounts]++
       }
     })
 
-    // Only count pipeline entries for leads that are NOT already counted
-    // (i.e., pipeline entries that don't have corresponding leads)
+    // Count pipeline entries (these represent active deals)
     pipelineData.forEach(entry => {
-      // Check if this pipeline entry corresponds to a converted lead
-      const correspondingLead = leadsData.find(lead => lead.id === entry.lead_id)
-      
-      if (stageCounts.hasOwnProperty(entry.stage) && !correspondingLead) {
+      if (stageCounts.hasOwnProperty(entry.stage)) {
         stageCounts[entry.stage as keyof typeof stageCounts]++
       }
     })
@@ -258,39 +258,38 @@ export default function Dashboard() {
   }
 
   const calculateMetrics = (leadsData: Lead[], clientsData: any[], pipelineData: PipelineEntry[]) => {
-    // Calculate total pipeline value avoiding double-counting
-    // 1. Count non-converted leads that don't have pipeline entries
-    const nonConvertedLeadsValue = leadsData.reduce((sum, lead) => {
+    // Calculate total pipeline value for ACTIVE deals only
+    // 1. Count non-converted leads (active pipeline)
+    const activeLeadsValue = leadsData.reduce((sum, lead) => {
       if (lead.is_converted_to_client) return sum // Skip converted leads
-      
-      // Check if this lead has a corresponding pipeline entry
-      const hasPipelineEntry = pipelineData.some(entry => entry.lead_id === lead.id)
-      if (hasPipelineEntry) return sum // Skip if pipeline entry exists
-      
       return sum + (lead.loan_amount || 0)
     }, 0)
     
-    // 2. Count all pipeline entries (these represent active deals in the pipeline)
+    // 2. Count all pipeline entries (these represent additional active deals)
     const pipelineValue = pipelineData.reduce((sum, entry) => {
       return sum + (entry.amount || 0)
     }, 0)
     
-    // Total is the sum without double-counting
-    const totalPipelineValue = nonConvertedLeadsValue + pipelineValue
+    // Total active pipeline value
+    const totalPipelineValue = activeLeadsValue + pipelineValue
 
-    // Calculate applications this month
+    // Calculate applications this month (include all application-stage activities)
     const currentMonth = new Date().getMonth()
     const currentYear = new Date().getFullYear()
     const applicationsThisMonth = leadsData.filter(lead => {
       const leadDate = new Date(lead.created_at)
       return leadDate.getMonth() === currentMonth && 
              leadDate.getFullYear() === currentYear &&
-             lead.stage === 'Application'
+             ['Application', 'Pre-approval', 'Documentation'].includes(lead.stage)
     }).length
 
-    // Calculate conversion rate (clients / total leads)
+    // Calculate conversion rate (converted leads / total leads)
+    const convertedLeads = leadsData.filter(lead => lead.is_converted_to_client).length
     const conversionRate = leadsData.length > 0 ? 
-      Math.round((clientsData.length / leadsData.length) * 100) : 0
+      Math.round((convertedLeads / leadsData.length) * 100) : 0
+
+    // Count only active (non-converted) leads for "Active Leads" metric
+    const activeLeadsCount = leadsData.filter(lead => !lead.is_converted_to_client).length
 
     // Update metrics
     setMetrics([
@@ -303,7 +302,7 @@ export default function Dashboard() {
       },
       {
         title: "Active Leads", 
-        value: formatNumber(leadsData.length),
+        value: formatNumber(activeLeadsCount),
         change: "+0%",
         icon: Users,
         trend: "neutral"

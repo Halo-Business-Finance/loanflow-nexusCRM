@@ -85,16 +85,16 @@ export function useReportsData() {
       const target = 5000000 // $5M target
       const completion = target > 0 ? Math.round((currentMonthVolume / target) * 100) : 0
 
-      // Get loan requests data for applications metrics
-      const { data: loanRequests } = await supabase
-        .from('loan_requests')
-        .select('status')
+      // Get leads data for applications metrics (using leads table instead of non-existent loan_requests)
+      const { data: allLeads } = await supabase
+        .from('leads')
+        .select('stage, created_at')
         .gte('created_at', `${currentYear}-${currentMonth.toString().padStart(2, '0')}-01`)
 
-      const total = loanRequests?.length || 0
-      const approved = loanRequests?.filter(req => req.status === 'approved').length || 0
-      const pending = loanRequests?.filter(req => req.status === 'pending' || req.status === 'submitted').length || 0
-      const rejected = loanRequests?.filter(req => req.status === 'rejected').length || 0
+      const total = allLeads?.length || 0
+      const approved = allLeads?.filter(lead => lead.stage === 'Funded' || lead.stage === 'Closed').length || 0
+      const pending = allLeads?.filter(lead => ['Application', 'Pre-approval', 'Documentation', 'Closing'].includes(lead.stage)).length || 0
+      const rejected = allLeads?.filter(lead => lead.stage === 'Rejected').length || 0
       const approvalRate = total > 0 ? Math.round((approved / total) * 100) : 0
 
       // Get cases data for performance metrics
@@ -116,24 +116,24 @@ export function useReportsData() {
         ? cases.reduce((sum, case_item) => sum + (case_item.customer_satisfaction_score || 0), 0) / cases.length
         : 4.6
 
-      // Get team activity data - count unique users who have created loans/loan_requests
+      // Get team activity data - count unique users who have created loans/leads
       const { data: loanCreators } = await supabase
         .from('loans')
         .select('user_id')
         .gte('created_at', `${currentYear}-${currentMonth.toString().padStart(2, '0')}-01`)
 
-      const { data: requestCreators } = await supabase
-        .from('loan_requests')
+      const { data: leadCreators } = await supabase
+        .from('leads')
         .select('user_id')
         .gte('created_at', `${currentYear}-${currentMonth.toString().padStart(2, '0')}-01`)
 
       const uniqueUsers = new Set([
         ...(loanCreators?.map(l => l.user_id) || []),
-        ...(requestCreators?.map(r => r.user_id) || [])
+        ...(leadCreators?.map(l => l.user_id) || [])
       ])
 
       const activeLoanOfficers = uniqueUsers.size || 1
-      const loansProcessed = (currentMonthLoans?.length || 0) + (loanRequests?.filter(req => req.status === 'approved').length || 0)
+      const loansProcessed = (currentMonthLoans?.length || 0) + approved
       const customerContacts = total * 3 // Estimate 3 contacts per application
 
       // Get monthly data for charts (last 6 months)
