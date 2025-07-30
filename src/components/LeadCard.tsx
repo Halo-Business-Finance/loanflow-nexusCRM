@@ -99,18 +99,18 @@ export function LeadCard({ lead, onEdit, onDelete, onConvert, hasAdminRole }: Le
             </Avatar>
             <div className="flex-1 min-w-0">
               <div className="flex items-center gap-2 mb-1">
-                <h3 className="font-semibold text-foreground truncate">{lead.name}</h3>
+                <h3 className="font-semibold text-white truncate">{lead.name}</h3>
                 {lead.is_converted_to_client && (
                   <Badge variant="default" className="text-xs">Client</Badge>
                 )}
               </div>
               {lead.business_name && (
-                <div className="flex items-center gap-1 text-sm text-muted-foreground mb-1">
+                <div className="flex items-center gap-1 text-sm text-white mb-1">
                   <Building className="w-3 h-3 text-white" />
                   <span className="truncate">{lead.business_name}</span>
                 </div>
               )}
-              <div className="flex items-center gap-1 text-xs text-muted-foreground">
+              <div className="flex items-center gap-1 text-xs text-white">
                 <Calendar className="w-3 h-3 text-white" />
                 <span>
                   {daysSinceContact === 0 ? 'Today' : 
@@ -140,7 +140,7 @@ export function LeadCard({ lead, onEdit, onDelete, onConvert, hasAdminRole }: Le
             trigger={
               <button className="flex items-center gap-2 text-sm hover:text-primary transition-colors w-full text-left">
                 <Mail className="w-4 h-4 text-white" />
-                <span className="text-foreground truncate">{lead.email}</span>
+                <span className="text-white truncate">{lead.email}</span>
               </button>
             }
           />
@@ -150,7 +150,7 @@ export function LeadCard({ lead, onEdit, onDelete, onConvert, hasAdminRole }: Le
               trigger={
                 <button className="flex items-center gap-2 text-sm hover:text-primary transition-colors w-full text-left">
                   <Phone className="w-4 h-4 text-white" />
-                  <span className="text-foreground">{formatPhoneNumber(lead.phone)}</span>
+                  <span className="text-white">{formatPhoneNumber(lead.phone)}</span>
                 </button>
               }
             />
@@ -164,15 +164,15 @@ export function LeadCard({ lead, onEdit, onDelete, onConvert, hasAdminRole }: Le
               <div className="flex items-center justify-between text-sm mb-2">
                 <div className="flex items-center gap-2">
                   <DollarSign className="w-4 h-4 text-white" />
-                  <span className="text-muted-foreground">Loan Amount</span>
+                  <span className="text-white">Loan Amount</span>
                 </div>
-                <span className="font-semibold text-foreground">${lead.loan_amount.toLocaleString()}</span>
+                <span className="font-semibold text-white">${lead.loan_amount.toLocaleString()}</span>
               </div>
             )}
             
             {lead.credit_score && (
               <div className="flex items-center justify-between text-sm">
-                <span className="text-muted-foreground">Credit Score</span>
+                <span className="text-white">Credit Score</span>
                 <span className={`font-semibold ${lead.credit_score >= 700 ? 'text-green-600' : lead.credit_score >= 600 ? 'text-yellow-600' : 'text-red-600'}`}>
                   {lead.credit_score}
                 </span>
