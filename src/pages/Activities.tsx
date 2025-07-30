@@ -579,7 +579,7 @@ export default function Activities() {
                               </div>
                               
                               {/* Action Buttons */}
-                              <div className="flex items-start gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                              <div className="flex items-start gap-2 transition-opacity">
                                 {activity.status === 'Pending' && (
                                    <Button
                                      size="sm"
