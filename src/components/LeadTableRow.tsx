@@ -107,7 +107,7 @@ export function LeadTableRow({ lead, onEdit, onDelete, onConvert, hasAdminRole }
               <div className="text-sm text-muted-foreground truncate">{lead.business_name}</div>
             )}
             <div className="flex items-center gap-1 text-xs text-muted-foreground mt-1">
-              <Calendar className="w-3 h-3" />
+              <Calendar className="w-3 h-3 text-white" />
               <span>
                 {daysSinceContact === 0 ? 'Today' : 
                  daysSinceContact === 1 ? '1 day ago' : 
@@ -122,12 +122,12 @@ export function LeadTableRow({ lead, onEdit, onDelete, onConvert, hasAdminRole }
       <td className="p-4">
         <div className="space-y-1">
           <div className="flex items-center gap-2 text-sm">
-            <Mail className="w-3 h-3 text-muted-foreground" />
+            <Mail className="w-3 h-3 text-white" />
             <span className="text-foreground truncate">{lead.email}</span>
           </div>
           {lead.phone && (
             <div className="flex items-center gap-2 text-sm">
-              <Phone className="w-3 h-3 text-muted-foreground" />
+              <Phone className="w-3 h-3 text-white" />
               <span className="text-foreground">{formatPhoneNumber(lead.phone)}</span>
             </div>
           )}
@@ -188,7 +188,7 @@ export function LeadTableRow({ lead, onEdit, onDelete, onConvert, hasAdminRole }
                 className="h-8 w-8 p-0"
                 onClick={(e) => e.stopPropagation()}
               >
-                <Phone className="w-3 h-3" />
+                <Phone className="w-3 h-3 text-white" />
               </Button>
             }
           />
@@ -200,7 +200,7 @@ export function LeadTableRow({ lead, onEdit, onDelete, onConvert, hasAdminRole }
                 className="h-8 w-8 p-0"
                 onClick={(e) => e.stopPropagation()}
               >
-                <Mail className="w-3 h-3" />
+                <Mail className="w-3 h-3 text-white" />
               </Button>
             }
           />
@@ -213,7 +213,7 @@ export function LeadTableRow({ lead, onEdit, onDelete, onConvert, hasAdminRole }
                 className="h-8 w-8 p-0"
                 onClick={(e) => e.stopPropagation()}
               >
-                <MoreHorizontal className="w-4 h-4" />
+                <MoreHorizontal className="w-4 h-4 text-white" />
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-40">
@@ -221,7 +221,7 @@ export function LeadTableRow({ lead, onEdit, onDelete, onConvert, hasAdminRole }
                 e.stopPropagation()
                 onEdit(lead)
               }}>
-                <Edit className="w-4 h-4 mr-2" />
+                <Edit className="w-4 h-4 mr-2 text-white" />
                 Edit Lead
               </DropdownMenuItem>
               
@@ -230,7 +230,7 @@ export function LeadTableRow({ lead, onEdit, onDelete, onConvert, hasAdminRole }
                   e.stopPropagation()
                   onConvert(lead)
                 }}>
-                  <ArrowRight className="w-4 h-4 mr-2" />
+                  <ArrowRight className="w-4 h-4 mr-2 text-white" />
                   Convert to Client
                 </DropdownMenuItem>
               )}
@@ -245,7 +245,7 @@ export function LeadTableRow({ lead, onEdit, onDelete, onConvert, hasAdminRole }
                     }}
                     className="text-destructive focus:text-destructive"
                   >
-                    <Trash2 className="w-4 h-4 mr-2" />
+                    <Trash2 className="w-4 h-4 mr-2 text-white" />
                     Delete Lead
                   </DropdownMenuItem>
                 </>

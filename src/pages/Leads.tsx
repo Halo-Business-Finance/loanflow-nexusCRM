@@ -656,7 +656,7 @@ export default function Leads() {
                     <p className="text-sm font-medium text-muted-foreground">Converted</p>
                     <p className="text-3xl font-bold text-blue-600">{convertedLeads}</p>
                   </div>
-                  <TrendingUp className="h-8 w-8 text-blue-500/60" />
+                  <TrendingUp className="h-8 w-8 text-white" />
                 </div>
               </CardContent>
             </Card>
@@ -668,7 +668,7 @@ export default function Leads() {
                     <p className="text-sm font-medium text-muted-foreground">Pipeline Value</p>
                     <p className="text-2xl font-bold text-yellow-600">${totalPipelineValue.toLocaleString()}</p>
                   </div>
-                  <DollarSign className="h-8 w-8 text-yellow-500/60" />
+                  <DollarSign className="h-8 w-8 text-white" />
                 </div>
               </CardContent>
             </Card>
@@ -703,7 +703,7 @@ export default function Leads() {
                   onClick={() => setViewMode("grid")}
                   className="h-8 px-3"
                 >
-                  <Grid3X3 className="w-4 h-4 mr-1" />
+                  <Grid3X3 className="w-4 h-4 mr-1 text-white" />
                   Grid
                 </Button>
                 <Button
@@ -712,7 +712,7 @@ export default function Leads() {
                   onClick={() => setViewMode("table")}
                   className="h-8 px-3"
                 >
-                  <List className="w-4 h-4 mr-1" />
+                  <List className="w-4 h-4 mr-1 text-white" />
                   Table
                 </Button>
               </div>
@@ -723,7 +723,7 @@ export default function Leads() {
           {filteredLeads.length === 0 ? (
             <Card className="border-dashed border-2 border-muted/50">
               <CardContent className="flex flex-col items-center justify-center py-16">
-                <AlertTriangle className="h-12 w-12 text-muted-foreground/50 mb-4" />
+                <AlertTriangle className="h-12 w-12 text-white mb-4" />
                 <h3 className="text-lg font-semibold text-foreground mb-2">No leads found</h3>
                 <p className="text-muted-foreground text-center max-w-md">
                   {searchTerm || selectedStage !== "All" || selectedPriority !== "All" 
@@ -736,7 +736,7 @@ export default function Leads() {
                     onClick={() => setShowAddDialog(true)} 
                     className="mt-4 bg-gradient-primary"
                   >
-                    <Plus className="w-4 h-4 mr-2" />
+                    <Plus className="w-4 h-4 mr-2 text-white" />
                     Add Your First Lead
                   </Button>
                 )}

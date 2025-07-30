@@ -106,12 +106,12 @@ export function LeadCard({ lead, onEdit, onDelete, onConvert, hasAdminRole }: Le
               </div>
               {lead.business_name && (
                 <div className="flex items-center gap-1 text-sm text-muted-foreground mb-1">
-                  <Building className="w-3 h-3" />
+                  <Building className="w-3 h-3 text-white" />
                   <span className="truncate">{lead.business_name}</span>
                 </div>
               )}
               <div className="flex items-center gap-1 text-xs text-muted-foreground">
-                <Calendar className="w-3 h-3" />
+                <Calendar className="w-3 h-3 text-white" />
                 <span>
                   {daysSinceContact === 0 ? 'Today' : 
                    daysSinceContact === 1 ? '1 day ago' : 
@@ -127,7 +127,7 @@ export function LeadCard({ lead, onEdit, onDelete, onConvert, hasAdminRole }: Le
               {lead.priority}
             </Badge>
             <Button variant="ghost" size="sm" className="opacity-0 group-hover:opacity-100 transition-opacity">
-              <MoreHorizontal className="w-4 h-4" />
+              <MoreHorizontal className="w-4 h-4 text-white" />
             </Button>
           </div>
         </div>
@@ -139,7 +139,7 @@ export function LeadCard({ lead, onEdit, onDelete, onConvert, hasAdminRole }: Le
           <EmailComposer 
             trigger={
               <button className="flex items-center gap-2 text-sm hover:text-primary transition-colors w-full text-left">
-                <Mail className="w-4 h-4 text-muted-foreground" />
+                <Mail className="w-4 h-4 text-white" />
                 <span className="text-foreground truncate">{lead.email}</span>
               </button>
             }
@@ -149,7 +149,7 @@ export function LeadCard({ lead, onEdit, onDelete, onConvert, hasAdminRole }: Le
             <PhoneDialer 
               trigger={
                 <button className="flex items-center gap-2 text-sm hover:text-primary transition-colors w-full text-left">
-                  <Phone className="w-4 h-4 text-muted-foreground" />
+                  <Phone className="w-4 h-4 text-white" />
                   <span className="text-foreground">{formatPhoneNumber(lead.phone)}</span>
                 </button>
               }
@@ -158,7 +158,7 @@ export function LeadCard({ lead, onEdit, onDelete, onConvert, hasAdminRole }: Le
           
           {lead.location && (
             <div className="flex items-center gap-2 text-sm">
-              <MapPin className="w-4 h-4 text-muted-foreground" />
+              <MapPin className="w-4 h-4 text-white" />
               <span className="text-foreground truncate">{lead.location}</span>
             </div>
           )}
@@ -170,7 +170,7 @@ export function LeadCard({ lead, onEdit, onDelete, onConvert, hasAdminRole }: Le
             {lead.loan_amount && (
               <div className="flex items-center justify-between text-sm mb-2">
                 <div className="flex items-center gap-2">
-                  <DollarSign className="w-4 h-4 text-muted-foreground" />
+                  <DollarSign className="w-4 h-4 text-white" />
                   <span className="text-muted-foreground">Loan Amount</span>
                 </div>
                 <span className="font-semibold text-foreground">${lead.loan_amount.toLocaleString()}</span>
@@ -205,16 +205,16 @@ export function LeadCard({ lead, onEdit, onDelete, onConvert, hasAdminRole }: Le
           <div className="flex gap-2">
             <PhoneDialer 
               trigger={
-                <Button size="sm" variant="outline" className="flex-1 text-xs h-8">
-                  <Phone className="w-3 h-3 mr-1" />
+                <Button size="sm" variant="outline" className="flex-1 text-xs h-8 text-white border-white hover:bg-white hover:text-black">
+                  <Phone className="w-3 h-3 mr-1 text-white" />
                   Call
                 </Button>
               }
             />
             <EmailComposer 
               trigger={
-                <Button size="sm" variant="outline" className="flex-1 text-xs h-8">
-                  <Mail className="w-3 h-3 mr-1" />
+                <Button size="sm" variant="outline" className="flex-1 text-xs h-8 text-white border-white hover:bg-white hover:text-black">
+                  <Mail className="w-3 h-3 mr-1 text-white" />
                   Email
                 </Button>
               }
@@ -222,7 +222,7 @@ export function LeadCard({ lead, onEdit, onDelete, onConvert, hasAdminRole }: Le
             <Button 
               size="sm" 
               variant="outline" 
-              className="flex-1 text-xs h-8"
+              className="flex-1 text-xs h-8 text-white border-white hover:bg-white hover:text-black"
               onClick={(e) => {
                 e.stopPropagation()
                 onEdit(lead)
