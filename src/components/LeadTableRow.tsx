@@ -3,8 +3,6 @@ import { useNavigate } from "react-router-dom"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
-import { PhoneDialer } from "@/components/PhoneDialer"
-import { EmailComposer } from "@/components/EmailComposer"
 import { 
   User, 
   Mail, 
@@ -79,7 +77,9 @@ export function LeadTableRow({ lead, onEdit, onDelete, onConvert, hasAdminRole }
     return name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2)
   }
 
-  const daysSinceContact = Math.floor((Date.now() - new Date(lead.last_contact).getTime()) / (1000 * 60 * 60 * 24))
+  const daysSinceContact = lead.last_contact 
+    ? Math.floor((Date.now() - new Date(lead.last_contact).getTime()) / (1000 * 60 * 60 * 24))
+    : 0
 
   return (
     <tr 
@@ -92,7 +92,7 @@ export function LeadTableRow({ lead, onEdit, onDelete, onConvert, hasAdminRole }
       <td className="p-4">
         <div className="flex items-center gap-3">
           <Avatar className="h-10 w-10 border border-muted/30">
-            <AvatarFallback className="bg-primary/10 text-white font-medium text-sm">
+            <AvatarFallback className="bg-primary/10 text-primary font-medium text-sm">
               {getInitials(lead.name)}
             </AvatarFallback>
           </Avatar>
@@ -122,7 +122,7 @@ export function LeadTableRow({ lead, onEdit, onDelete, onConvert, hasAdminRole }
       {/* Loan Amount */}
       <td className="p-4 text-right">
         {lead.loan_amount && (
-          <div className="font-medium text-white text-sm">
+          <div className="font-medium text-foreground text-sm">
             ${lead.loan_amount.toLocaleString()}
           </div>
         )}
@@ -131,7 +131,7 @@ export function LeadTableRow({ lead, onEdit, onDelete, onConvert, hasAdminRole }
       {/* Loan Type */}
       <td className="p-4">
         {lead.loan_type && (
-          <div className="text-sm text-white">
+          <div className="text-sm text-foreground">
             {lead.loan_type}
           </div>
         )}
