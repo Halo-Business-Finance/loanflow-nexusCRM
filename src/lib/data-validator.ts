@@ -171,6 +171,8 @@ export class DataFieldValidator {
       
       if (leads) {
         for (const lead of leads) {
+          console.log('Lead data structure:', lead);
+          console.log('Contact entity:', lead.contact_entity);
           const validation = await this.validateLeadData(lead)
           if (!validation.isValid || validation.warnings.length > 0) {
             leadIssues.push({
