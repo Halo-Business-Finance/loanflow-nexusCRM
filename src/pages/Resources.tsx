@@ -78,7 +78,7 @@ export default function Resources() {
                           <p className="text-sm text-muted-foreground">{item.type}</p>
                         </div>
                       </div>
-                      <Button variant="ghost" size="sm" onClick={() => window.open(item.url, '_blank')}>
+                      <Button variant="ghost" size="sm" onClick={() => window.open(item.url, '_blank', 'noopener,noreferrer')}>
                         <ExternalLink className="w-4 h-4" />
                       </Button>
                     </div>
@@ -98,7 +98,7 @@ export default function Resources() {
               <Button 
                 variant="outline" 
                 className="justify-start gap-2"
-                onClick={() => window.open('https://docs.lovable.dev/', '_blank')}
+                onClick={() => window.open('https://docs.lovable.dev/', '_blank', 'noopener,noreferrer')}
               >
                 <BookOpen className="w-4 h-4" />
                 Knowledge Base
@@ -106,7 +106,7 @@ export default function Resources() {
               <Button 
                 variant="outline" 
                 className="justify-start gap-2"
-                onClick={() => window.open('https://www.youtube.com/playlist?list=PLbVHz4urQBZkJiAWdG8HWoJTdgEysigIO', '_blank')}
+                onClick={() => window.open('https://www.youtube.com/playlist?list=PLbVHz4urQBZkJiAWdG8HWoJTdgEysigIO', '_blank', 'noopener,noreferrer')}
               >
                 <Video className="w-4 h-4" />
                 Video Tutorials
@@ -114,7 +114,7 @@ export default function Resources() {
               <Button 
                 variant="outline" 
                 className="justify-start gap-2"
-                onClick={() => window.open('https://docs.lovable.dev/user-guides/quickstart', '_blank')}
+                onClick={() => window.open('https://docs.lovable.dev/user-guides/quickstart', '_blank', 'noopener,noreferrer')}
               >
                 <FileText className="w-4 h-4" />
                 Template Library
@@ -122,7 +122,7 @@ export default function Resources() {
               <Button 
                 variant="outline" 
                 className="justify-start gap-2"
-                onClick={() => window.open('https://discord.com/channels/1119885301872070706/1280461670979993613', '_blank')}
+                onClick={() => window.open('https://discord.com/channels/1119885301872070706/1280461670979993613', '_blank', 'noopener,noreferrer')}
               >
                 <Globe className="w-4 h-4" />
                 Community Forum

@@ -70,19 +70,18 @@ serve(async (req) => {
         
         console.log('DEBUG: Geolocation result:', { ip: clientIP, country: countryCode, fullData: geoData });
 
-        // TEMPORARILY ALLOW ALL - Check if country is allowed (US only)
-        // isAllowed = countryCode === 'US' && !isSuspicious;
-        isAllowed = true; // Temporary override
+        // Check if country is allowed (US only)
+        isAllowed = countryCode === 'US' && !isSuspicious;
         
         console.log('DEBUG: Access decision - Country:', countryCode, 'Suspicious:', isSuspicious, 'Allowed:', isAllowed);
       }
       
     } catch (geoError) {
       console.error('DEBUG: Geolocation check failed:', geoError);
-      // Temporarily allow access on any error
-      isAllowed = true;
-      countryCode = 'US';
-      console.log('DEBUG: Error occurred, temporarily allowing access');
+      // Default to blocked on errors for security
+      isAllowed = false;
+      countryCode = 'UNKNOWN';
+      console.log('DEBUG: Error occurred, blocking access for security');
     }
 
     // Log the IP restriction
