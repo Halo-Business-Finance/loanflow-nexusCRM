@@ -391,20 +391,15 @@ export default function Integrations() {
                     <CardHeader className="pb-4 relative">
                       <div className="absolute -top-6 -right-6 w-24 h-24 bg-gradient-primary opacity-5 rounded-full blur-xl group-hover:opacity-10 transition-opacity" />
                       <div className="flex items-start justify-between relative">
-                        <div className="flex items-center space-x-4">
-                          <div className="p-3 bg-gradient-to-br from-primary/10 to-primary/5 rounded-2xl group-hover:scale-110 transition-transform">
-                            <integration.icon className="w-6 h-6 text-primary" />
-                          </div>
-                          <div className="space-y-1">
-                            <CardTitle className="text-lg text-foreground group-hover:text-primary transition-colors">
-                              {integration.name}
-                            </CardTitle>
-                            <div className="flex items-center space-x-2">
-                              {getStatusIcon(integration.status)}
-                              <Badge className={`${getStatusColor(integration.status)} border text-xs px-2 py-1 rounded-full`}>
-                                {integration.status}
-                              </Badge>
-                            </div>
+                        <div className="space-y-1">
+                          <CardTitle className="text-lg text-foreground group-hover:text-primary transition-colors">
+                            {integration.name}
+                          </CardTitle>
+                          <div className="flex items-center space-x-2">
+                            {getStatusIcon(integration.status)}
+                            <Badge className={`${getStatusColor(integration.status)} border text-xs px-2 py-1 rounded-full`}>
+                              {integration.status}
+                            </Badge>
                           </div>
                         </div>
                         <Switch 
@@ -490,35 +485,30 @@ export default function Integrations() {
                   >
                     <CardHeader className="pb-4 relative">
                       <div className="absolute -top-6 -right-6 w-32 h-32 bg-gradient-to-br from-accent/5 to-primary/5 rounded-full blur-2xl group-hover:opacity-20 transition-opacity" />
-                      <div className="flex items-start justify-between relative">
-                        <div className="flex items-center space-x-4">
-                          <div className="p-3 bg-gradient-to-br from-accent/10 to-accent/5 rounded-2xl group-hover:scale-110 transition-transform">
-                            <tool.icon className="w-7 h-7 text-accent" />
-                          </div>
-                          <div className="space-y-1">
-                            <CardTitle className="text-xl text-foreground group-hover:text-accent transition-colors">
-                              {tool.name}
-                            </CardTitle>
-                            <div className="flex items-center space-x-2">
-                              {getStatusIcon(tool.status)}
-                              <Badge className={`${getStatusColor(tool.status)} border text-xs px-2 py-1 rounded-full`}>
-                                {tool.status}
-                              </Badge>
-                              {tool.status === "active" && (
-                                <div className="flex items-center">
-                                  <div className="w-2 h-2 bg-accent rounded-full animate-pulse" />
-                                  <span className="text-xs text-accent ml-1">Live</span>
-                                </div>
-                              )}
-                            </div>
-                          </div>
-                        </div>
-                        <Switch 
-                          checked={tool.status === "active"}
-                          onCheckedChange={(enabled) => handleAIToolToggle(tool.id, enabled)}
-                          className="data-[state=checked]:bg-accent"
-                        />
-                      </div>
+                       <div className="flex items-start justify-between relative">
+                         <div className="space-y-1">
+                           <CardTitle className="text-xl text-foreground group-hover:text-accent transition-colors">
+                             {tool.name}
+                           </CardTitle>
+                           <div className="flex items-center space-x-2">
+                             {getStatusIcon(tool.status)}
+                             <Badge className={`${getStatusColor(tool.status)} border text-xs px-2 py-1 rounded-full`}>
+                               {tool.status}
+                             </Badge>
+                             {tool.status === "active" && (
+                               <div className="flex items-center">
+                                 <div className="w-2 h-2 bg-accent rounded-full animate-pulse" />
+                                 <span className="text-xs text-accent ml-1">Live</span>
+                               </div>
+                             )}
+                           </div>
+                         </div>
+                         <Switch 
+                           checked={tool.status === "active"}
+                           onCheckedChange={(enabled) => handleAIToolToggle(tool.id, enabled)}
+                           className="data-[state=checked]:bg-accent"
+                         />
+                       </div>
                     </CardHeader>
                     <CardContent className="space-y-5">
                       <CardDescription className="text-foreground/70 leading-relaxed text-base">
