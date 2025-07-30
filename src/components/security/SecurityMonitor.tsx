@@ -54,7 +54,9 @@ export function SecurityMonitor() {
   const loadDashboard = async () => {
     try {
       setLoading(true)
-      const { data, error } = await supabase.functions.invoke('security-monitor')
+      const { data, error } = await supabase.functions.invoke('security-monitor', {
+        body: { action: 'dashboard' }
+      })
 
       if (error) throw error
 
@@ -212,7 +214,7 @@ export function SecurityMonitor() {
             <TabsTrigger value="dashboard">Dashboard</TabsTrigger>
             <TabsTrigger value="alerts">
               Active Alerts
-              {dashboardData.summary.active_alerts > 0 && (
+              {dashboardData.summary?.active_alerts > 0 && (
                 <Badge variant="destructive" className="ml-2">
                   {dashboardData.summary.active_alerts}
                 </Badge>
@@ -229,7 +231,7 @@ export function SecurityMonitor() {
                   <Globe className="h-4 w-4 text-muted-foreground" />
                 </CardHeader>
                 <CardContent>
-                  <div className="text-2xl font-bold">{dashboardData.summary.geo_blocks_24h}</div>
+                  <div className="text-2xl font-bold">{dashboardData.summary?.geo_blocks_24h || 0}</div>
                 </CardContent>
               </Card>
 
@@ -239,7 +241,7 @@ export function SecurityMonitor() {
                   <Lock className="h-4 w-4 text-muted-foreground" />
                 </CardHeader>
                 <CardContent>
-                  <div className="text-2xl font-bold">{dashboardData.summary.failed_logins_24h}</div>
+                  <div className="text-2xl font-bold">{dashboardData.summary?.failed_logins_24h || 0}</div>
                 </CardContent>
               </Card>
 
@@ -249,7 +251,7 @@ export function SecurityMonitor() {
                   <Activity className="h-4 w-4 text-muted-foreground" />
                 </CardHeader>
                 <CardContent>
-                  <div className="text-2xl font-bold">{dashboardData.summary.rate_limit_violations_24h}</div>
+                  <div className="text-2xl font-bold">{dashboardData.summary?.rate_limit_violations_24h || 0}</div>
                 </CardContent>
               </Card>
 
@@ -259,7 +261,7 @@ export function SecurityMonitor() {
                   <Shield className="h-4 w-4 text-muted-foreground" />
                 </CardHeader>
                 <CardContent>
-                  <div className="text-2xl font-bold">{dashboardData.summary.security_events_24h}</div>
+                  <div className="text-2xl font-bold">{dashboardData.summary?.security_events_24h || 0}</div>
                 </CardContent>
               </Card>
             </div>
@@ -270,7 +272,7 @@ export function SecurityMonitor() {
                   <CardTitle>Top Blocked Countries</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  {dashboardData.top_blocked_countries.length > 0 ? (
+                  {dashboardData.top_blocked_countries?.length > 0 ? (
                     <div className="space-y-2">
                       {dashboardData.top_blocked_countries.map((country, index) => (
                         <div key={index} className="flex justify-between items-center">
@@ -290,7 +292,7 @@ export function SecurityMonitor() {
                   <CardTitle>Top Suspicious IPs</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  {dashboardData.top_suspicious_ips.length > 0 ? (
+                  {dashboardData.top_suspicious_ips?.length > 0 ? (
                     <div className="space-y-2">
                       {dashboardData.top_suspicious_ips.map((ip, index) => (
                         <div key={index} className="flex justify-between items-center">
@@ -311,7 +313,7 @@ export function SecurityMonitor() {
           </TabsContent>
 
           <TabsContent value="alerts" className="space-y-4">
-            {dashboardData.recent_alerts.length > 0 ? (
+            {dashboardData.recent_alerts?.length > 0 ? (
               <div className="space-y-4">
                 {dashboardData.recent_alerts.map((alert, index) => (
                   <Alert key={index} className="border-l-4 border-l-destructive">
