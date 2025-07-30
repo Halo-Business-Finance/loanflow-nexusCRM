@@ -1570,7 +1570,10 @@ export default function LeadDetail() {
                       )}
                     </div>
                   </div>
+                </div>
 
+                {/* Right Column */}
+                <div className="space-y-4">
                   <div className="flex items-center gap-3">
                     <Calendar className="w-4 h-4 text-muted-foreground" />
                     <div className="flex-1">
@@ -1631,8 +1634,8 @@ export default function LeadDetail() {
                       )}
                     </div>
                   </div>
-
                 </div>
+              </div>
 
                 {/* BDO Information Section */}
                 <div className="col-span-full mt-6">
@@ -1698,7 +1701,6 @@ export default function LeadDetail() {
                   </div>
                 </div>
 
-              </div>
             </CardContent>
           </Card>
         </div>
