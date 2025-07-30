@@ -178,6 +178,7 @@ export default function LeadDetail() {
 
   const fetchLead = async () => {
     try {
+      console.log('fetchLead: Fetching lead with ID:', id)
       const { data, error } = await supabase
         .from('leads')
         .select(`
@@ -185,9 +186,23 @@ export default function LeadDetail() {
           contact_entity:contact_entities!contact_entity_id (*)
         `)
         .eq('id', id)
-        .single()
+        .maybeSingle()
 
-      if (error) throw error
+      if (error) {
+        console.error('fetchLead: Error fetching lead:', error)
+        throw error
+      }
+      
+      if (!data) {
+        console.log('fetchLead: No lead found with ID:', id)
+        toast({
+          title: "Error",
+          description: "Lead not found or you don't have permission to view it",
+          variant: "destructive",
+        })
+        navigate('/leads')
+        return
+      }
       
       // Merge contact entity data with lead data
       const mergedLead = {
@@ -698,7 +713,12 @@ export default function LeadDetail() {
   }
 
   const deleteLead = async () => {
-    if (!lead) return
+    if (!lead) {
+      console.log('deleteLead: No lead found')
+      return
+    }
+
+    console.log('deleteLead: Starting deletion for lead:', lead.id, 'name:', lead.name)
 
     try {
       const { error } = await supabase
@@ -706,13 +726,19 @@ export default function LeadDetail() {
         .delete()
         .eq('id', lead.id)
 
-      if (error) throw error
+      if (error) {
+        console.error('deleteLead: Database error:', error)
+        throw error
+      }
 
+      console.log('deleteLead: Lead deleted successfully from database')
+      
       toast({
         title: "Success!",
-        description: `${lead.name} has been deleted successfully.`,
+        description: `${lead.name || 'Lead'} has been deleted successfully.`,
       })
 
+      console.log('deleteLead: Navigating to /leads')
       // Navigate back to leads page
       navigate('/leads')
     } catch (error) {
@@ -864,7 +890,7 @@ export default function LeadDetail() {
                 <AlertDialogHeader>
                   <AlertDialogTitle>Delete Lead</AlertDialogTitle>
                   <AlertDialogDescription>
-                    Are you sure you want to delete <strong>{lead.name}</strong>? This action cannot be undone and you will be redirected back to the leads page.
+                    Are you sure you want to delete <strong>{lead?.name || 'this lead'}</strong>? This action cannot be undone and you will be redirected back to the leads page.
                   </AlertDialogDescription>
                 </AlertDialogHeader>
                 <AlertDialogFooter>
