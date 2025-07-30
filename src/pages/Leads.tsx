@@ -30,7 +30,8 @@ import {
   Target,
   Loader2,
   ArrowRight,
-  AlertTriangle
+  AlertTriangle,
+  Eye
 } from "lucide-react"
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog"
 
@@ -739,28 +740,42 @@ export default function Leads() {
         {/* View Toggle & Content */}
         <div className="space-y-6">
           <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <span className="text-sm font-medium text-muted-foreground dark:text-white">View:</span>
-              <div className="flex items-center border border-muted/30 rounded-lg p-1">
-                <Button
-                  variant={viewMode === "grid" ? "default" : "ghost"}
-                  size="sm"
-                  onClick={() => handleViewModeChange("grid")}
-                  className="h-8 px-3"
-                >
-                  <Grid3X3 className="w-4 h-4 mr-1" />
-                  Grid
-                </Button>
-                <Button
-                  variant={viewMode === "table" ? "default" : "ghost"}
-                  size="sm"
-                  onClick={() => handleViewModeChange("table")}
-                  className="h-8 px-3"
-                >
-                  <List className="w-4 h-4 mr-1" />
-                  Table
-                </Button>
+            <div className="flex items-center gap-4">
+              <div className="flex items-center gap-2">
+                <span className="text-sm font-medium text-muted-foreground dark:text-white">View:</span>
+                <div className="flex items-center border border-muted/30 rounded-lg p-1">
+                  <Button
+                    variant={viewMode === "grid" ? "default" : "ghost"}
+                    size="sm"
+                    onClick={() => handleViewModeChange("grid")}
+                    className="h-8 px-3"
+                  >
+                    <Grid3X3 className="w-4 h-4 mr-1" />
+                    Grid
+                  </Button>
+                  <Button
+                    variant={viewMode === "table" ? "default" : "ghost"}
+                    size="sm"
+                    onClick={() => handleViewModeChange("table")}
+                    className="h-8 px-3"
+                  >
+                    <List className="w-4 h-4 mr-1" />
+                    Table
+                  </Button>
+                </div>
               </div>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => navigate('/leads/all')}
+                className="h-8 px-4 gap-2 border-primary/20 hover:border-primary/50"
+              >
+                <Eye className="w-4 h-4" />
+                View All Details
+              </Button>
+            </div>
+            <div className="text-sm text-muted-foreground dark:text-white">
+              Showing {filteredLeads.length} of {totalLeads} leads
             </div>
           </div>
 
