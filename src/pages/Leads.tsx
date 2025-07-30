@@ -786,7 +786,7 @@ export default function Leads() {
                         <tr className="border-b border-muted/30 bg-muted/20">
                           <th className="text-left p-4 font-semibold text-foreground">Lead</th>
                           <th className="text-right p-4 font-semibold text-foreground">Loan Amount</th>
-                          <th className="text-left p-4 font-semibold text-foreground">Type</th>
+                          <th className="text-left p-4 font-semibold text-foreground">Loan Type</th>
                           <th className="text-left p-4 font-semibold text-foreground">Stage</th>
                           <th className="text-left p-4 font-semibold text-foreground">Priority</th>
                           <th className="text-center p-4 font-semibold text-foreground">Credit</th>

@@ -119,20 +119,22 @@ export function LeadTableRow({ lead, onEdit, onDelete, onConvert, hasAdminRole }
       </td>
 
 
-      {/* Loan Info */}
+      {/* Loan Amount */}
+      <td className="p-4 text-right">
+        {lead.loan_amount && (
+          <div className="font-medium text-white text-sm">
+            ${lead.loan_amount.toLocaleString()}
+          </div>
+        )}
+      </td>
+
+      {/* Loan Type */}
       <td className="p-4">
-        <div className="space-y-1">
-          {lead.loan_type && (
-            <div className="text-xs text-white bg-muted/50 px-2 py-1 rounded font-medium">
-              {lead.loan_type}
-            </div>
-          )}
-          {lead.loan_amount && (
-            <div className="font-medium text-white text-sm">
-              ${lead.loan_amount.toLocaleString()}
-            </div>
-          )}
-        </div>
+        {lead.loan_type && (
+          <div className="text-sm text-white">
+            {lead.loan_type}
+          </div>
+        )}
       </td>
 
       {/* Stage & Priority */}
@@ -141,10 +143,28 @@ export function LeadTableRow({ lead, onEdit, onDelete, onConvert, hasAdminRole }
           <Badge variant={getStageColor(lead.stage)} className="text-xs">
             {lead.stage}
           </Badge>
-          <Badge variant={getPriorityColor(lead.priority)} className="text-xs">
-            {lead.priority}
-          </Badge>
         </div>
+      </td>
+
+      {/* Priority */}
+      <td className="p-4">
+        <Badge variant={getPriorityColor(lead.priority)} className="text-xs">
+          {lead.priority}
+        </Badge>
+      </td>
+
+      {/* Credit Score */}
+      <td className="p-4 text-center">
+        {lead.credit_score && (
+          <span className="text-white text-sm font-medium">
+            {lead.credit_score}
+          </span>
+        )}
+      </td>
+
+      {/* Actions - Empty placeholder for now */}
+      <td className="p-4 text-center">
+        {/* Actions would go here if needed */}
       </td>
 
     </tr>
