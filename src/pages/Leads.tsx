@@ -665,7 +665,7 @@ export default function Leads() {
               <CardContent className="p-6">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm font-medium text-muted-foreground">Pipeline Value</p>
+                    <p className="text-sm font-medium text-white">Pipeline Value</p>
                     <p className="text-2xl font-bold text-yellow-600">${totalPipelineValue.toLocaleString()}</p>
                   </div>
                   <DollarSign className="h-8 w-8 text-white" />
