@@ -45,7 +45,7 @@ export function LeadFilters({
       {/* Search and Quick Stats */}
       <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
         <div className="relative flex-1 max-w-md">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
+          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-white w-4 h-4" />
           <Input
             placeholder="Search leads by name or email..."
             value={searchTerm}
@@ -59,7 +59,7 @@ export function LeadFilters({
               className="absolute right-2 top-1/2 transform -translate-y-1/2 h-6 w-6 p-0"
               onClick={() => setSearchTerm("")}
             >
-              <X className="w-4 h-4" />
+              <X className="w-4 h-4 text-white" />
             </Button>
           )}
         </div>
@@ -75,7 +75,7 @@ export function LeadFilters({
       {/* Filters */}
       <div className="flex flex-wrap gap-3 items-center">
         <div className="flex items-center gap-2">
-          <SlidersHorizontal className="w-4 h-4 text-muted-foreground" />
+          <SlidersHorizontal className="w-4 h-4 text-white" />
           <span className="text-sm font-medium text-foreground">Filters:</span>
         </div>
         
