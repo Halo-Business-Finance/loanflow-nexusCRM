@@ -298,7 +298,7 @@ export function SecurityManager() {
       <div className="container mx-auto space-y-6">
         <div className="flex items-center space-x-2">
           <Shield className="h-6 w-6" />
-          <h1 className="text-2xl font-bold">Security Center</h1>
+          <h1 className="text-2xl font-bold text-foreground">Security Center</h1>
         </div>
 
         <Tabs defaultValue="overview" className="space-y-4">
@@ -325,8 +325,8 @@ export function SecurityManager() {
                 <Shield className="h-4 w-4 text-muted-foreground" />
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold text-green-600">Secure</div>
-                <p className="text-xs text-muted-foreground">
+                <div className="text-2xl font-bold text-accent">Secure</div>
+                <p className="text-xs text-foreground/70">
                   All security features are active
                 </p>
               </CardContent>
@@ -338,10 +338,10 @@ export function SecurityManager() {
                 <Lock className="h-4 w-4 text-muted-foreground" />
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold">
+                <div className="text-2xl font-bold text-foreground">
                   {mfaSettings.is_enabled ? 'Enabled' : 'Disabled'}
                 </div>
-                <p className="text-xs text-muted-foreground">
+                <p className="text-xs text-foreground/70">
                   {mfaSettings.is_enabled ? 'Two-factor authentication active' : 'Enable for extra security'}
                 </p>
               </CardContent>
@@ -353,10 +353,10 @@ export function SecurityManager() {
                 <AlertTriangle className="h-4 w-4 text-muted-foreground" />
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold">
+                <div className="text-2xl font-bold text-foreground">
                   {securityNotifications.filter(n => !n.is_read).length}
                 </div>
-                <p className="text-xs text-muted-foreground">
+                <p className="text-xs text-foreground/70">
                   Unread security notifications
                 </p>
               </CardContent>
@@ -369,8 +369,8 @@ export function SecurityManager() {
                   <Users className="h-4 w-4 text-muted-foreground" />
                 </CardHeader>
                 <CardContent>
-                  <div className="text-2xl font-bold">{userRoles.filter(r => r.is_active).length}</div>
-                  <p className="text-xs text-muted-foreground">
+                  <div className="text-2xl font-bold text-foreground">{userRoles.filter(r => r.is_active).length}</div>
+                  <p className="text-xs text-foreground/70">
                     System-wide user count
                   </p>
                 </CardContent>
@@ -387,15 +387,15 @@ export function SecurityManager() {
             </CardHeader>
             <CardContent>
               {securityNotifications.length === 0 ? (
-                <p className="text-muted-foreground">No recent security activity</p>
+                <p className="text-foreground/70">No recent security activity</p>
               ) : (
                 <div className="space-y-2">
                   {securityNotifications.slice(0, 5).map((notification) => (
                     <div key={notification.id} className="flex items-center justify-between p-2 border rounded">
                       <div className="flex-1">
-                        <div className="font-medium">{notification.title}</div>
-                        <div className="text-sm text-muted-foreground">{notification.message}</div>
-                        <div className="text-xs text-muted-foreground">
+                        <div className="font-medium text-foreground">{notification.title}</div>
+                        <div className="text-sm text-foreground/70">{notification.message}</div>
+                        <div className="text-xs text-foreground/50">
                           {new Date(notification.created_at).toLocaleDateString()}
                         </div>
                       </div>
