@@ -30,6 +30,7 @@ interface Client {
   phone?: string
   location?: string
   status: string
+  stage?: string // Add stage field for synchronization
   total_loans: number
   total_loan_value: number
   join_date: string
@@ -338,6 +339,20 @@ export default function Clients() {
     }
   }
 
+  const getStageColor = (stage?: string) => {
+    if (!stage) return 'secondary'
+    switch (stage) {
+      case 'Initial Contact': return 'secondary'
+      case 'Qualified': return 'default'
+      case 'Application': return 'default'
+      case 'Pre-approval': return 'default'
+      case 'Documentation': return 'default'
+      case 'Closing': return 'default'
+      case 'Funded': return 'default'
+      default: return 'secondary'
+    }
+  }
+
   const totalLoanValue = clients.reduce((sum, client) => sum + (client.total_loan_value || 0), 0)
   const activeClients = clients.filter(c => c.status === 'Active').length
   const avgLoanSize = clients.length > 0 ? totalLoanValue / clients.length : 0
@@ -492,9 +507,16 @@ export default function Clients() {
                     </div>
                     
                     <div className="text-right space-y-2">
-                      <Badge variant={getStatusColor(client.status)}>
-                        {client.status}
-                      </Badge>
+                      <div className="flex gap-2">
+                        <Badge variant={getStatusColor(client.status)}>
+                          {client.status}
+                        </Badge>
+                        {client.stage && (
+                          <Badge variant={getStageColor(client.stage)}>
+                            {client.stage}
+                          </Badge>
+                        )}
+                      </div>
                       <div className="text-sm text-muted-foreground">
                         Last activity: {new Date(client.last_activity).toLocaleDateString()}
                       </div>

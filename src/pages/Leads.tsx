@@ -156,7 +156,7 @@ export default function Leads() {
 
   const convertToClient = async (lead: Lead) => {
     try {
-      // Create client record
+      // Create client record with synchronized stage and additional fields
       const { data: client, error: clientError } = await supabase
         .from('clients')
         .insert({
@@ -166,9 +166,15 @@ export default function Leads() {
           email: lead.email,
           phone: lead.phone,
           location: lead.location,
+          business_name: lead.business_name,
+          stage: lead.stage, // Sync stage from lead
           status: 'Active',
           total_loans: 0,
-          total_loan_value: 0
+          total_loan_value: 0,
+          priority: lead.priority,
+          credit_score: lead.credit_score,
+          loan_amount: lead.loan_amount,
+          net_operating_income: lead.net_operating_income
         })
         .select()
         .single()
