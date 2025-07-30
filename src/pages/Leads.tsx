@@ -68,7 +68,16 @@ export default function Leads() {
   const [searchTerm, setSearchTerm] = useState("")
   const [selectedStage, setSelectedStage] = useState("All")
   const [selectedPriority, setSelectedPriority] = useState("All")
-  const [viewMode, setViewMode] = useState<"grid" | "table">("grid")
+  const [viewMode, setViewMode] = useState<"grid" | "table">(() => {
+    const savedViewMode = localStorage.getItem('leads-view-mode')
+    return (savedViewMode === 'grid' || savedViewMode === 'table') ? savedViewMode : 'grid'
+  })
+
+  // Function to handle view mode change with persistence
+  const handleViewModeChange = (mode: "grid" | "table") => {
+    setViewMode(mode)
+    localStorage.setItem('leads-view-mode', mode)
+  }
   const [convertingLead, setConvertingLead] = useState<Lead | null>(null)
   const [showAddDialog, setShowAddDialog] = useState(false)
   const [showEditDialog, setShowEditDialog] = useState(false)
@@ -729,7 +738,7 @@ export default function Leads() {
                 <Button
                   variant={viewMode === "grid" ? "default" : "ghost"}
                   size="sm"
-                  onClick={() => setViewMode("grid")}
+                  onClick={() => handleViewModeChange("grid")}
                   className="h-8 px-3"
                 >
                   <Grid3X3 className="w-4 h-4 mr-1" />
@@ -738,7 +747,7 @@ export default function Leads() {
                 <Button
                   variant={viewMode === "table" ? "default" : "ghost"}
                   size="sm"
-                  onClick={() => setViewMode("table")}
+                  onClick={() => handleViewModeChange("table")}
                   className="h-8 px-3"
                 >
                   <List className="w-4 h-4 mr-1" />
