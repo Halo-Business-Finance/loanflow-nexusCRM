@@ -462,7 +462,7 @@ export default function Dashboard() {
             onClick={() => handleMetricClick(metric)}
           >
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium text-muted-foreground">
+              <CardTitle className={`text-sm font-medium ${metric.title === 'Total Pipeline Value' ? 'text-white' : 'text-muted-foreground'}`}>
                 {metric.title}
               </CardTitle>
               <div className="flex items-center gap-2">
@@ -470,8 +470,8 @@ export default function Dashboard() {
               </div>
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold text-foreground">{metric.value}</div>
-              <p className="text-xs text-accent">
+              <div className={`text-2xl font-bold ${metric.title === 'Total Pipeline Value' ? 'text-white' : 'text-foreground'}`}>{metric.value}</div>
+              <p className={`text-xs ${metric.title === 'Total Pipeline Value' ? 'text-white' : 'text-accent'}`}>
                 {metric.change} from last month
               </p>
             </CardContent>
