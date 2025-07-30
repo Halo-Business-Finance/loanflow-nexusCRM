@@ -89,10 +89,10 @@ export function LeadCard({ lead, onEdit, onDelete, onConvert, hasAdminRole }: Le
 
   return (
     <Card 
-      className={`group hover:shadow-lg hover:shadow-white/20 transition-all duration-300 cursor-pointer animate-fade-in border-muted/20 hover:border-white bg-transparent ${lead.is_converted_to_client ? 'opacity-70' : 'hover:scale-[1.02]'}`}
+      className={`group hover:shadow-lg hover:shadow-white/20 transition-all duration-300 cursor-pointer animate-fade-in border-muted/20 hover:border-white bg-transparent overflow-hidden ${lead.is_converted_to_client ? 'opacity-70' : 'hover:scale-[1.02]'}`}
       onClick={() => navigate(`/leads/${lead.id}`)}
     >
-      <CardHeader className="pb-3">
+      <CardHeader className="pb-3 px-4 pt-4">
         <div className="flex items-start justify-between">
           <div className="flex items-center gap-3">
             <Avatar className="h-12 w-12 border-2 border-primary/20">
@@ -100,7 +100,7 @@ export function LeadCard({ lead, onEdit, onDelete, onConvert, hasAdminRole }: Le
                 {getInitials(lead.name)}
               </AvatarFallback>
             </Avatar>
-            <div className="flex-1 min-w-0">
+            <div className="flex-1 min-w-0 pr-2">
               <div className="flex items-center gap-2 mb-1">
                 <h3 className="font-semibold text-white truncate">{lead.name}</h3>
                 {lead.is_converted_to_client && (
@@ -126,7 +126,7 @@ export function LeadCard({ lead, onEdit, onDelete, onConvert, hasAdminRole }: Le
         </div>
       </CardHeader>
 
-      <CardContent className="space-y-3">
+      <CardContent className="space-y-3 px-4 pb-4">
         {/* Financial Info */}
         {(lead.loan_amount || lead.loan_type) && (
           <div className="pt-2 border-t border-muted/30">
