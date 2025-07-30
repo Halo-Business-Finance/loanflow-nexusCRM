@@ -581,95 +581,95 @@ export default function Activities() {
                               {/* Action Buttons */}
                               <div className="flex items-start gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
                                 {activity.status === 'Pending' && (
-                                  <Button
-                                    size="sm"
-                                    variant="outline"
-                                    onClick={(e) => {
-                                      e.stopPropagation();
-                                      markAsRead(activity.id);
-                                    }}
-                                    className="h-8 px-3"
-                                  >
-                                    <CheckCircle2 className="h-3 w-3 mr-1" />
-                                    Mark Read
-                                  </Button>
+                                   <Button
+                                     size="sm"
+                                     variant="outline"
+                                     onClick={(e) => {
+                                       e.stopPropagation();
+                                       markAsRead(activity.id);
+                                     }}
+                                     className="h-8 px-3"
+                                   >
+                                     <CheckCircle2 className="h-3 w-3 mr-1 text-white" />
+                                     Mark Read
+                                   </Button>
                                 )}
                                 {activity.notification_type && ['lead_created', 'lead_status_change', 'follow_up_reminder'].includes(activity.notification_type) && (
-                                  <Button
-                                    size="sm"
-                                    variant="outline"
-                                    onClick={(e) => {
-                                      e.stopPropagation();
-                                       const notification = notifications.find(n => n.id === activity.id);
-                                       if (notification?.related_type === 'lead' && notification?.related_id) {
-                                         navigate(`/leads/${notification.related_id}`);
-                                       } else {
-                                         navigate('/leads');
-                                       }
-                                    }}
-                                    className="h-8 px-3"
-                                  >
-                                    <User className="h-3 w-3 mr-1" />
-                                    View Lead
-                                  </Button>
+                                   <Button
+                                     size="sm"
+                                     variant="outline"
+                                     onClick={(e) => {
+                                       e.stopPropagation();
+                                        const notification = notifications.find(n => n.id === activity.id);
+                                        if (notification?.related_type === 'lead' && notification?.related_id) {
+                                          navigate(`/leads/${notification.related_id}`);
+                                        } else {
+                                          navigate('/leads');
+                                        }
+                                     }}
+                                     className="h-8 px-3"
+                                   >
+                                     <User className="h-3 w-3 mr-1 text-white" />
+                                     View Lead
+                                   </Button>
                                 )}
-                                {activity.notification_type === 'client_created' && (
-                                  <Button
-                                    size="sm"
-                                    variant="outline"
-                                    onClick={(e) => {
-                                      e.stopPropagation();
-                                       navigate('/clients');
-                                    }}
-                                    className="h-8 px-3"
-                                  >
-                                    <Users className="h-3 w-3 mr-1" />
-                                    View Client
-                                  </Button>
-                                )}
-                                {activity.notification_type === 'loan_created' && (
-                                  <Button
-                                    size="sm"
-                                    variant="outline"
-                                    onClick={(e) => {
-                                      e.stopPropagation();
-                                      navigate('/clients');
-                                    }}
-                                    className="h-8 px-3"
-                                  >
-                                    <DollarSign className="h-3 w-3 mr-1" />
-                                    View Loan
-                                  </Button>
+                                 {activity.notification_type === 'client_created' && (
+                                   <Button
+                                     size="sm"
+                                     variant="outline"
+                                     onClick={(e) => {
+                                       e.stopPropagation();
+                                        navigate('/clients');
+                                     }}
+                                     className="h-8 px-3"
+                                   >
+                                     <Users className="h-3 w-3 mr-1 text-white" />
+                                     View Client
+                                   </Button>
                                  )}
+                                 {activity.notification_type === 'loan_created' && (
+                                   <Button
+                                     size="sm"
+                                     variant="outline"
+                                     onClick={(e) => {
+                                       e.stopPropagation();
+                                       navigate('/clients');
+                                     }}
+                                     className="h-8 px-3"
+                                   >
+                                     <DollarSign className="h-3 w-3 mr-1 text-white" />
+                                     View Loan
+                                   </Button>
+                                  )}
                                  
                                  {/* Edit and Delete buttons */}
-                                 <Button
-                                   size="sm"
-                                   variant="outline"
-                                   onClick={(e) => {
-                                     e.stopPropagation();
-                                     openEditDialog(activity);
-                                   }}
-                                   className="h-8 px-3"
-                                 >
-                                   <Edit className="h-3 w-3 mr-1" />
-                                   Edit
-                                 </Button>
+                                  <Button
+                                    size="sm"
+                                    variant="outline"
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      openEditDialog(activity);
+                                    }}
+                                    className="h-8 px-3"
+                                  >
+                                    <Edit className="h-3 w-3 mr-1 text-white" />
+                                    Edit
+                                  </Button>
                                  
-                                 <Button
-                                   size="sm"
-                                   variant="outline"
-                                   onClick={(e) => {
-                                     e.stopPropagation();
-                                     if (window.confirm('Are you sure you want to delete this activity?')) {
-                                       deleteActivity(activity.id);
-                                     }
-                                   }}
-                                   className="h-8 px-3 text-red-600 hover:text-red-700"
-                                 >
-                                   <Trash2 className="h-3 w-3 mr-1" />
-                                   Delete
-                                 </Button>
+                                  <Button
+                                    size="sm"
+                                    variant="outline"
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      if (window.confirm('Are you sure you want to delete this activity?')) {
+                                        deleteActivity(activity.id);
+                                      }
+                                    }}
+                                    className="h-8 px-3 text-red-600 hover:text-red-700"
+                                  >
+                                    <Trash2 className="h-3 w-3 mr-1 text-white" />
+                                    Delete
+                                  </Button>
                               </div>
                             </div>
                           </div>
