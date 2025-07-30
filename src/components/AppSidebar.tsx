@@ -33,6 +33,7 @@ const navigationItems = [
 const settingsItems = [
   { title: "Settings", url: "/settings", icon: Settings },
   { title: "Users", url: "/users", icon: UserCheck },
+  { title: "Users & Leads", url: "/users-leads", icon: Users },
   { title: "Enterprise", url: "/enterprise", icon: Building2 },
   { title: "Integrations", url: "/integrations", icon: Zap },
   { title: "AI Tools", url: "/ai-tools", icon: Target },

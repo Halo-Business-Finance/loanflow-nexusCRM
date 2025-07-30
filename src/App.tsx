@@ -22,6 +22,7 @@ import Activities from "./pages/Activities";
 import Reports from "./pages/Reports";
 import Settings from "./pages/Settings";
 import Users from "./pages/Users";
+import UsersLeads from "./pages/UsersLeads";
 import Resources from "./pages/Resources";
 import Enterprise from "./pages/Enterprise";
 import Integrations from "./pages/Integrations";
@@ -69,6 +70,7 @@ function AuthenticatedApp() {
             <Route path="/reports" element={<Reports />} errorElement={<RouteErrorBoundary />} />
             <Route path="/settings" element={<Settings />} errorElement={<RouteErrorBoundary />} />
             <Route path="/users" element={<Users />} errorElement={<RouteErrorBoundary />} />
+            <Route path="/users-leads" element={<UsersLeads />} errorElement={<RouteErrorBoundary />} />
             <Route path="/security" element={<SecurityManager />} errorElement={<RouteErrorBoundary />} />
             <Route path="/enterprise" element={<Enterprise />} errorElement={<RouteErrorBoundary />} />
             <Route path="/integrations" element={<Integrations />} errorElement={<RouteErrorBoundary />} />
