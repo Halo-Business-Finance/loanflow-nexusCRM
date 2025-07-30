@@ -96,7 +96,7 @@ export function AppSidebar() {
                   <SidebarMenuItem key={item.title}>
                     <SidebarMenuButton asChild>
                        <NavLink to={item.url} className={getNavClass}>
-                         <item.icon className={`w-4 h-4 ${item.title === "AI Tools" ? "text-blue-500" : "text-sidebar-foreground"}`} />
+                         <item.icon className="w-4 h-4 text-blue-500" />
                          {state !== "collapsed" && <span>{item.title}</span>}
                       </NavLink>
                     </SidebarMenuButton>
