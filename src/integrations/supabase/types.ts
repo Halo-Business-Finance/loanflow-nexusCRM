@@ -232,6 +232,13 @@ export type Database = {
             referencedRelation: "approval_requests"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "fk_approval_steps_request_id"
+            columns: ["request_id"]
+            isOneToOne: false
+            referencedRelation: "approval_requests"
+            referencedColumns: ["id"]
+          },
         ]
       }
       audit_logs: {
@@ -318,6 +325,13 @@ export type Database = {
             referencedRelation: "cases"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "fk_case_comments_case_id"
+            columns: ["case_id"]
+            isOneToOne: false
+            referencedRelation: "cases"
+            referencedColumns: ["id"]
+          },
         ]
       }
       cases: {
@@ -381,6 +395,13 @@ export type Database = {
         Relationships: [
           {
             foreignKeyName: "cases_client_id_fkey"
+            columns: ["client_id"]
+            isOneToOne: false
+            referencedRelation: "clients"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fk_cases_client_id"
             columns: ["client_id"]
             isOneToOne: false
             referencedRelation: "clients"
@@ -521,6 +542,13 @@ export type Database = {
         Relationships: [
           {
             foreignKeyName: "clients_lead_id_fkey"
+            columns: ["lead_id"]
+            isOneToOne: false
+            referencedRelation: "leads"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fk_clients_lead_id"
             columns: ["lead_id"]
             isOneToOne: false
             referencedRelation: "leads"
@@ -1706,6 +1734,20 @@ export type Database = {
           user_id?: string
         }
         Relationships: [
+          {
+            foreignKeyName: "fk_loan_requests_client_id"
+            columns: ["client_id"]
+            isOneToOne: false
+            referencedRelation: "clients"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fk_loan_requests_lead_id"
+            columns: ["lead_id"]
+            isOneToOne: false
+            referencedRelation: "leads"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "loan_requests_client_id_fkey"
             columns: ["client_id"]
