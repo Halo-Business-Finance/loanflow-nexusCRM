@@ -21,24 +21,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-
-interface Lead {
-  id: string
-  contact_entity_id: string
-  user_id: string
-  name: string
-  email: string
-  phone?: string
-  location?: string
-  business_name?: string
-  loan_amount?: number
-  loan_type?: string
-  stage: string
-  priority: string
-  credit_score?: number
-  last_contact: string
-  is_converted_to_client: boolean
-}
+import { Lead } from "@/types/lead"
 
 interface LeadTableRowProps {
   lead: Lead
