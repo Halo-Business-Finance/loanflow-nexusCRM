@@ -86,7 +86,7 @@ export default function Enterprise() {
       <div className="space-y-6">
         <div>
           <h1 className="text-3xl font-bold tracking-tight">Enterprise Features</h1>
-          <p className="text-muted-foreground">
+          <p className="text-primary-foreground">
             Advanced CRM capabilities for enterprise-level sales management.
           </p>
         </div>
@@ -118,11 +118,11 @@ export default function Enterprise() {
                 >
                   <CardHeader className="pb-3">
                     <div className="flex items-center justify-between">
-                      <Icon className={`h-5 w-5 ${isActive ? 'text-primary-foreground' : 'text-muted-foreground'}`} />
+                      <Icon className={`h-5 w-5 ${isActive ? 'text-primary-foreground' : 'text-primary-foreground'}`} />
                       {isActive && <Badge variant="secondary">Active</Badge>}
                     </div>
                     <CardTitle className="text-sm">{feature.label}</CardTitle>
-                    <CardDescription className="text-xs">
+                    <CardDescription className={`text-xs ${isActive ? 'text-primary-foreground/80' : 'text-primary-foreground/80'}`}>
                       {feature.description}
                     </CardDescription>
                   </CardHeader>
