@@ -446,7 +446,6 @@ export default function Clients() {
                 <Button
                   variant="outline"
                   size="sm"
-                  onClick={() => navigate('/clients/all')}
                   className="gap-2 border-primary/20 hover:border-primary/50"
                 >
                   <Eye className="w-4 h-4" />
