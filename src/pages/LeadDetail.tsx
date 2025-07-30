@@ -1178,26 +1178,6 @@ export default function LeadDetail() {
                     </div>
                   </div>
 
-                  <div className="flex items-center gap-3">
-                    <CreditCard className="w-4 h-4 text-muted-foreground" />
-                    <div className="flex-1">
-                      <p className="text-sm text-muted-foreground">Credit Score</p>
-                      {isEditing ? (
-                        <Input
-                          type="number"
-                          value={editableFields.credit_score}
-                          onChange={(e) => setEditableFields({...editableFields, credit_score: e.target.value})}
-                          placeholder="Enter credit score"
-                          min="300"
-                          max="850"
-                        />
-                      ) : (
-                        <p className="font-medium text-foreground">
-                          {lead.credit_score || 'N/A'}
-                        </p>
-                      )}
-                    </div>
-                  </div>
 
                   <div className="flex items-center gap-3">
                     <DollarSign className="w-4 h-4 text-muted-foreground" />

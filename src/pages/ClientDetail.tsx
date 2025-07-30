@@ -538,10 +538,6 @@ export default function ClientDetail() {
                   <div className="text-sm text-muted-foreground">Last Activity</div>
                   <div className="text-lg font-semibold">{new Date(client.last_activity).toLocaleDateString()}</div>
                 </div>
-                <div className="text-center">
-                  <div className="text-sm text-muted-foreground">Credit Score</div>
-                  <div className="text-lg font-semibold">{client.credit_score || 'N/A'}</div>
-                </div>
               </div>
             </CardContent>
           </Card>
@@ -809,22 +805,6 @@ export default function ClientDetail() {
                     </div>
                   </div>
 
-                  <div className="flex items-center gap-3">
-                    <CreditCard className="w-4 h-4" />
-                    <div className="flex-1">
-                      <p className="text-sm text-muted-foreground">Credit Score</p>
-                      {isEditing ? (
-                        <Input
-                          type="number"
-                          value={editableFields.credit_score}
-                          onChange={(e) => setEditableFields({...editableFields, credit_score: e.target.value})}
-                          placeholder="Enter credit score"
-                        />
-                      ) : (
-                        <p className="font-medium">{client.credit_score || 'N/A'}</p>
-                      )}
-                    </div>
-                  </div>
 
                   <div className="flex items-center gap-3">
                     <div className="flex-1">
