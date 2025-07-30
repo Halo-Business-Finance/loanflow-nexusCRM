@@ -92,7 +92,7 @@ export function LeadTableRow({ lead, onEdit, onDelete, onConvert, hasAdminRole }
       <td className="p-4">
         <div className="flex items-center gap-3">
           <Avatar className="h-10 w-10 border border-muted/30">
-            <AvatarFallback className="bg-primary/10 text-primary font-medium text-sm">
+            <AvatarFallback className="bg-primary/10 text-white font-medium text-sm">
               {getInitials(lead.name)}
             </AvatarFallback>
           </Avatar>

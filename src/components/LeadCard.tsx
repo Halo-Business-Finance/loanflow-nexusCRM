@@ -96,7 +96,7 @@ export function LeadCard({ lead, onEdit, onDelete, onConvert, hasAdminRole }: Le
         <div className="flex items-start justify-between">
           <div className="flex items-center gap-3">
             <Avatar className="h-12 w-12 border-2 border-primary/20">
-              <AvatarFallback className="bg-primary/10 text-primary font-semibold">
+              <AvatarFallback className="bg-primary/10 text-white font-semibold">
                 {getInitials(lead.name)}
               </AvatarFallback>
             </Avatar>
