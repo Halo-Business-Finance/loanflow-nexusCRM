@@ -413,15 +413,15 @@ export default function Dashboard() {
   )
 
   const filteredLeads = leads.filter(lead =>
-    lead.name.toLowerCase().includes(leadsFilter.toLowerCase()) ||
-    lead.stage.toLowerCase().includes(leadsFilter.toLowerCase())
+    (lead.name || '').toLowerCase().includes(leadsFilter.toLowerCase()) ||
+    (lead.stage || '').toLowerCase().includes(leadsFilter.toLowerCase())
   ).map(lead => ({
-    name: lead.name,
-    amount: formatCurrency(lead.loan_amount),
+    name: lead.name || 'N/A',
+    amount: formatCurrency(lead.loan_amount || 0),
     loanType: lead.loan_type || 'N/A',
-    stage: lead.stage,
+    stage: lead.stage || 'N/A',
     lastContact: lead.last_contact ? new Date(lead.last_contact).toLocaleDateString() : 'N/A',
-    priority: lead.priority
+    priority: lead.priority || 'medium'
   }))
 
   const handlePipelineStageClick = (stage: typeof pipelineStages[0]) => {
