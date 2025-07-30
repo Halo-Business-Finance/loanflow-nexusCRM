@@ -55,18 +55,18 @@ export default function Layout({ children }: LayoutProps) {
             <div className="flex items-center gap-2">
               <SidebarTrigger className="mr-2" />
               <Button 
-                variant="ghost" 
+                variant="default" 
                 size="sm" 
                 onClick={handleGoBack}
-                className="text-foreground hover:bg-accent/10"
+                className="text-primary-foreground hover:bg-primary/90"
               >
                 <ArrowLeft className="w-4 h-4" />
               </Button>
               <Button 
-                variant="ghost" 
+                variant="default" 
                 size="sm" 
                 onClick={handleGoForward}
-                className="text-foreground hover:bg-accent/10"
+                className="text-primary-foreground hover:bg-primary/90"
               >
                 <ArrowRight className="w-4 h-4" />
               </Button>

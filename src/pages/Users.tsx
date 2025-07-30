@@ -723,7 +723,7 @@ export default function Users() {
                       <td className="py-4 px-4">
                         <div className="flex items-center justify-end gap-2">
                           <Button
-                            variant="ghost"
+                            variant="default"
                             size="sm"
                             onClick={() => {
                               setEditingUser(user)
@@ -731,11 +731,11 @@ export default function Users() {
                             }}
                             className="h-8 w-8 p-0"
                           >
-                            <Edit className="h-4 w-4 text-muted-foreground" />
+                            <Edit className="h-4 w-4 text-primary-foreground" />
                           </Button>
                           
                           <Button
-                            variant="ghost"
+                            variant="default"
                             size="sm"
                             onClick={() => {
                               setPasswordChangeUser(user)
@@ -743,14 +743,14 @@ export default function Users() {
                             }}
                             className="h-8 w-8 p-0"
                           >
-                            <Key className="h-4 w-4 text-muted-foreground" />
+                            <Key className="h-4 w-4 text-primary-foreground" />
                           </Button>
 
                           <Button
-                            variant="ghost"
+                            variant="default"
                             size="sm"
                             onClick={() => toggleUserStatus(user.id, user.is_active)}
-                            className={`h-8 w-8 p-0 ${user.is_active ? 'text-red-600 hover:text-red-700' : 'text-green-600 hover:text-green-700'}`}
+                            className="h-8 w-8 p-0"
                           >
                             {user.is_active ? <Shield className="h-4 w-4 text-primary-foreground" /> : <User className="h-4 w-4 text-primary-foreground" />}
                           </Button>
