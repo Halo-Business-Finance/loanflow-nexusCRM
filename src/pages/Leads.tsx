@@ -26,6 +26,7 @@ interface Lead {
   phone?: string
   location?: string
   business_name?: string
+  naics_code?: string
   loan_amount?: number
   loan_type?: string
   stage: string
@@ -167,6 +168,7 @@ export default function Leads() {
           phone: lead.phone,
           location: lead.location,
           business_name: lead.business_name,
+          naics_code: lead.naics_code,
           stage: lead.stage, // Sync stage from lead
           status: 'Active',
           total_loans: 0,

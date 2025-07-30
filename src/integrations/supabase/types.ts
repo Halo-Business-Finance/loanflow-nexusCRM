@@ -436,6 +436,7 @@ export type Database = {
           location: string | null
           maturity_date: string | null
           monthly_processing_volume: number | null
+          naics_code: string | null
           name: string
           net_operating_income: number | null
           notes: string | null
@@ -479,6 +480,7 @@ export type Database = {
           location?: string | null
           maturity_date?: string | null
           monthly_processing_volume?: number | null
+          naics_code?: string | null
           name: string
           net_operating_income?: number | null
           notes?: string | null
@@ -522,6 +524,7 @@ export type Database = {
           location?: string | null
           maturity_date?: string | null
           monthly_processing_volume?: number | null
+          naics_code?: string | null
           name?: string
           net_operating_income?: number | null
           notes?: string | null
@@ -1651,6 +1654,7 @@ export type Database = {
           location: string | null
           maturity_date: string | null
           monthly_processing_volume: number | null
+          naics_code: string | null
           name: string
           net_operating_income: number | null
           notes: string | null
@@ -1691,6 +1695,7 @@ export type Database = {
           location?: string | null
           maturity_date?: string | null
           monthly_processing_volume?: number | null
+          naics_code?: string | null
           name: string
           net_operating_income?: number | null
           notes?: string | null
@@ -1731,6 +1736,7 @@ export type Database = {
           location?: string | null
           maturity_date?: string | null
           monthly_processing_volume?: number | null
+          naics_code?: string | null
           name?: string
           net_operating_income?: number | null
           notes?: string | null

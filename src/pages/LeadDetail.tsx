@@ -56,6 +56,7 @@ interface Lead {
   location?: string
   business_name?: string
   business_address?: string
+  naics_code?: string
   owns_property?: boolean
   property_payment_amount?: number
   year_established?: number
@@ -136,6 +137,7 @@ export default function LeadDetail() {
     location: "",
     business_name: "",
     business_address: "",
+    naics_code: "",
     owns_property: false,
     property_payment_amount: "",
     year_established: "",
@@ -189,6 +191,7 @@ export default function LeadDetail() {
         location: data.location || "",
         business_name: data.business_name || "",
         business_address: data.business_address || "",
+        naics_code: (data as any).naics_code || "",
         owns_property: data.owns_property || false,
         property_payment_amount: (data as any).property_payment_amount?.toString() || "",
         year_established: (data as any).year_established?.toString() || "",
@@ -491,6 +494,7 @@ export default function LeadDetail() {
         location: editableFields.location || null,
         business_name: editableFields.business_name || null,
         business_address: editableFields.business_address || null,
+        naics_code: editableFields.naics_code || null,
         owns_property: editableFields.owns_property,
         property_payment_amount: editableFields.property_payment_amount ? parseFloat(editableFields.property_payment_amount) : null,
         year_established: editableFields.year_established ? parseInt(editableFields.year_established) : null,
@@ -1052,6 +1056,25 @@ export default function LeadDetail() {
                       ) : (
                         <p className="font-medium text-foreground">
                           {(lead as any).year_established || 'N/A'}
+                        </p>
+                      )}
+                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-3">
+                    <FileText className="w-4 h-4 text-muted-foreground" />
+                    <div className="flex-1">
+                      <p className="text-sm text-muted-foreground">NAICS Code</p>
+                      {isEditing ? (
+                        <Input
+                          value={editableFields.naics_code}
+                          onChange={(e) => setEditableFields({...editableFields, naics_code: e.target.value})}
+                          placeholder="Enter NAICS code (e.g., 541110)"
+                          maxLength={6}
+                        />
+                      ) : (
+                        <p className="font-medium text-foreground">
+                          {(lead as any).naics_code || 'N/A'}
                         </p>
                       )}
                     </div>
