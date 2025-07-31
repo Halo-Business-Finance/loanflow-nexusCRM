@@ -300,46 +300,112 @@ export class SecurityManager {
     );
   }
 
-  // Encryption utilities (client-side)
+  // Enhanced encryption utilities with key derivation
   static async encryptSensitiveData(data: string, key?: string): Promise<string> {
     try {
-      // Use Web Crypto API for client-side encryption
       const encoder = new TextEncoder();
       const dataBuffer = encoder.encode(data);
       
-      // Generate or use provided key
-      const keyMaterial = key ? 
-        await crypto.subtle.importKey(
-          'raw',
-          encoder.encode(key),
-          { name: 'PBKDF2' },
-          false,
-          ['deriveKey']
-        ) :
-        await crypto.subtle.generateKey(
-          { name: 'AES-GCM', length: 256 },
-          true,
-          ['encrypt', 'decrypt']
-        );
+      // Use PBKDF2 for proper key derivation
+      const salt = crypto.getRandomValues(new Uint8Array(16));
+      const keyMaterial = await crypto.subtle.importKey(
+        'raw',
+        encoder.encode(key || await this.generateMasterKey()),
+        { name: 'PBKDF2' },
+        false,
+        ['deriveKey']
+      );
+
+      const derivedKey = await crypto.subtle.deriveKey(
+        {
+          name: 'PBKDF2',
+          salt,
+          iterations: 100000,
+          hash: 'SHA-256'
+        },
+        keyMaterial,
+        { name: 'AES-GCM', length: 256 },
+        false,
+        ['encrypt', 'decrypt']
+      );
 
       const iv = crypto.getRandomValues(new Uint8Array(12));
-      
       const encryptedData = await crypto.subtle.encrypt(
         { name: 'AES-GCM', iv },
-        keyMaterial,
+        derivedKey,
         dataBuffer
       );
 
-      // Combine IV and encrypted data
-      const combined = new Uint8Array(iv.length + encryptedData.byteLength);
-      combined.set(iv);
-      combined.set(new Uint8Array(encryptedData), iv.length);
+      // Combine salt, IV and encrypted data
+      const combined = new Uint8Array(salt.length + iv.length + encryptedData.byteLength);
+      combined.set(salt);
+      combined.set(iv, salt.length);
+      combined.set(new Uint8Array(encryptedData), salt.length + iv.length);
 
       return btoa(String.fromCharCode(...combined));
     } catch (error) {
-      console.error('Encryption error:', error);
+      console.error('Enhanced encryption error:', error);
       throw new Error('Encryption failed');
     }
+  }
+
+  // Decrypt with enhanced security
+  static async decryptSensitiveData(encryptedData: string, key?: string): Promise<string> {
+    try {
+      const combined = new Uint8Array(
+        atob(encryptedData).split('').map(char => char.charCodeAt(0))
+      );
+      
+      const salt = combined.slice(0, 16);
+      const iv = combined.slice(16, 28);
+      const encrypted = combined.slice(28);
+      
+      const encoder = new TextEncoder();
+      const keyMaterial = await crypto.subtle.importKey(
+        'raw',
+        encoder.encode(key || await this.generateMasterKey()),
+        { name: 'PBKDF2' },
+        false,
+        ['deriveKey']
+      );
+
+      const derivedKey = await crypto.subtle.deriveKey(
+        {
+          name: 'PBKDF2',
+          salt,
+          iterations: 100000,
+          hash: 'SHA-256'
+        },
+        keyMaterial,
+        { name: 'AES-GCM', length: 256 },
+        false,
+        ['encrypt', 'decrypt']
+      );
+      
+      const decrypted = await crypto.subtle.decrypt(
+        { name: 'AES-GCM', iv },
+        derivedKey,
+        encrypted
+      );
+      
+      return new TextDecoder().decode(decrypted);
+    } catch (error) {
+      console.error('Decryption error:', error);
+      throw new Error('Decryption failed');
+    }
+  }
+
+  // Generate or retrieve master encryption key
+  private static async generateMasterKey(): Promise<string> {
+    const stored = localStorage.getItem('_master_security_key');
+    if (stored) return stored;
+    
+    const key = Array.from(crypto.getRandomValues(new Uint8Array(64)))
+      .map(b => b.toString(16).padStart(2, '0'))
+      .join('');
+    
+    localStorage.setItem('_master_security_key', key);
+    return key;
   }
 
   // Audit logging for frontend actions
