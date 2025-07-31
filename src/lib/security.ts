@@ -199,13 +199,85 @@ export class SecurityManager {
     return password.split('').sort(() => Math.random() - 0.5).join('');
   }
 
-  // Input sanitization
-  static sanitizeInput(input: string): string {
-    return input
-      .replace(/[<>]/g, '') // Remove potential HTML tags
-      .replace(/javascript:/gi, '') // Remove javascript protocols
-      .replace(/on\w+=/gi, '') // Remove event handlers
-      .trim();
+  // Advanced input sanitization with comprehensive security measures
+  static sanitizeInput(input: string, options: {
+    allowHtml?: boolean;
+    maxLength?: number;
+    allowedChars?: RegExp;
+    stripDangerous?: boolean;
+  } = {}): string {
+    if (!input || typeof input !== 'string') return '';
+
+    const { 
+      allowHtml = false, 
+      maxLength = 1000, 
+      allowedChars = null,
+      stripDangerous = true 
+    } = options;
+
+    let sanitized = input;
+
+    // Length validation
+    if (sanitized.length > maxLength) {
+      sanitized = sanitized.substring(0, maxLength);
+    }
+
+    // Strip dangerous patterns if enabled
+    if (stripDangerous) {
+      // SQL injection patterns
+      sanitized = sanitized.replace(/(\b(SELECT|INSERT|UPDATE|DELETE|DROP|CREATE|ALTER|EXEC|UNION|SCRIPT)\b)/gi, '');
+      
+      // Command injection patterns
+      sanitized = sanitized.replace(/[;&|`$(){}[\]\\]/g, '');
+      
+      // Path traversal patterns
+      sanitized = sanitized.replace(/\.\.[\/\\]/g, '');
+      
+      // Null bytes and control characters
+      sanitized = sanitized.replace(/[\x00-\x1F\x7F]/g, '');
+    }
+
+    // HTML/XSS sanitization
+    if (!allowHtml) {
+      sanitized = sanitized
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#x27;')
+        .replace(/\//g, '&#x2F;')
+        .replace(/javascript:/gi, '')
+        .replace(/vbscript:/gi, '')
+        .replace(/data:/gi, '')
+        .replace(/on\w+=/gi, '');
+    }
+
+    // Character whitelist if provided
+    if (allowedChars) {
+      sanitized = sanitized.replace(new RegExp(`[^${allowedChars.source}]`, 'g'), '');
+    }
+
+    return sanitized.trim();
+  }
+
+  // Specialized sanitization methods
+  static sanitizeEmail(email: string): string {
+    if (!email) return '';
+    const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+    const sanitized = SecurityManager.sanitizeInput(email.toLowerCase().trim(), {
+      allowedChars: /[a-zA-Z0-9._%+-@]/,
+      maxLength: 254
+    });
+    return emailRegex.test(sanitized) ? sanitized : '';
+  }
+
+  static sanitizePhone(phone: string): string {
+    if (!phone) return '';
+    return SecurityManager.sanitizeInput(phone, {
+      allowedChars: /[0-9+\s()-]/,
+      maxLength: 20,
+      stripDangerous: false
+    }).replace(/[^\d+]/g, '');
   }
 
   // CSRF token management
