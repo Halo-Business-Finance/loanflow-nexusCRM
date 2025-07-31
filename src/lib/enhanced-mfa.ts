@@ -140,9 +140,10 @@ export class EnhancedMFA {
       
       if (credential) {
         // Store biometric credential securely
+        const pkCredential = credential as PublicKeyCredential;
         const credentialData = {
           id: credential.id,
-          rawId: Array.from(new Uint8Array(credential.rawId)),
+          rawId: Array.from(new Uint8Array(pkCredential.rawId)),
           type: credential.type
         };
         
@@ -322,9 +323,10 @@ export class EnhancedMFA {
       });
       
       if (credential) {
+        const pkCredential = credential as PublicKeyCredential;
         const credentialData = {
           id: credential.id,
-          rawId: Array.from(new Uint8Array(credential.rawId)),
+          rawId: Array.from(new Uint8Array(pkCredential.rawId)),
           type: credential.type
         };
         

@@ -521,4 +521,23 @@ export class SecurityManager {
 
     return { score, checks };
   }
+
+  // Generate secure token (alias for generateCSRFToken)
+  static generateSecureToken(length: number = 32): string {
+    return Array.from(crypto.getRandomValues(new Uint8Array(length)))
+      .map(b => b.toString(16).padStart(2, '0'))
+      .join('');
+  }
+
+  // Secure constant-time string comparison
+  static secureCompare(a: string, b: string): boolean {
+    if (a.length !== b.length) return false;
+    
+    let result = 0;
+    for (let i = 0; i < a.length; i++) {
+      result |= a.charCodeAt(i) ^ b.charCodeAt(i);
+    }
+    
+    return result === 0;
+  }
 }

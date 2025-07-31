@@ -86,15 +86,16 @@ export class ZeroTrustManager {
 
   private monitorClickPatterns(): void {
     document.addEventListener('click', (event) => {
+      const target = event.target as HTMLElement;
       const clickData = {
         timestamp: Date.now(),
         x: event.clientX,
         y: event.clientY,
-        target: event.target?.tagName,
+        target: target?.tagName,
         button: event.button
       };
       
-      this.recordBehavioralData('click_pattern', clickData);
+      this.recordBehavioralData('click_pattern', clickData).catch(console.error);
     });
   }
 
@@ -109,7 +110,7 @@ export class ZeroTrustManager {
         timestamp: now,
         timeSinceLastNav: timeDiff,
         url: window.location.href
-      });
+      }).catch(console.error);
       
       lastNavigation = now;
     });
@@ -123,7 +124,9 @@ export class ZeroTrustManager {
     
     window.fetch = async (input, init) => {
       const startTime = Date.now();
-      const url = typeof input === 'string' ? input : input.url;
+      const url = typeof input === 'string' ? input : 
+                 input instanceof URL ? input.toString() : 
+                 (input as Request).url;
       
       try {
         const response = await originalFetch(input, init);
@@ -134,7 +137,7 @@ export class ZeroTrustManager {
           method: init?.method || 'GET',
           responseTime: Date.now() - startTime,
           status: response.status
-        });
+        }).catch(console.error);
         
         return response;
       } catch (error) {
@@ -142,7 +145,7 @@ export class ZeroTrustManager {
           timestamp: startTime,
           url,
           error: error.message
-        });
+        }).catch(console.error);
         throw error;
       }
     };
@@ -183,11 +186,11 @@ export class ZeroTrustManager {
       avgKeystrokeTime: avgTime,
       variance: variance,
       pattern: keystrokes.slice(-10) // Last 10 for pattern analysis
-    });
+    }).catch(console.error);
   }
 
-  private recordBehavioralData(type: string, data: any): void {
-    const { data: { session } } = supabase.auth.getSession();
+  private async recordBehavioralData(type: string, data: any): Promise<void> {
+    const { data: { session } } = await supabase.auth.getSession();
     if (!session?.user) return;
     
     const userId = session.user.id;
