@@ -7,6 +7,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Shield, AlertTriangle, Eye, Globe, Users, Activity } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import { secureStorage } from "@/lib/secure-storage";
 
 interface DarkWebThreat {
   id: string;
@@ -36,9 +37,20 @@ export function DarkWebSecurityBot() {
     credential_leaks: 0,
     threat_level: "low"
   });
-  const [isMonitoring, setIsMonitoring] = useState(() => {
-    return localStorage.getItem('dark-web-monitoring') === 'true';
-  });
+  const [isMonitoring, setIsMonitoring] = useState(false);
+
+  // Load monitoring state from secure storage
+  useEffect(() => {
+    const loadMonitoringState = async () => {
+      try {
+        const storedState = await secureStorage.getItem('dark-web-monitoring');
+        setIsMonitoring(storedState === 'true');
+      } catch (error) {
+        console.error("Error loading monitoring state:", error);
+      }
+    };
+    loadMonitoringState();
+  }, []);
   const [loading, setLoading] = useState(true);
   const { toast } = useToast();
 
@@ -174,18 +186,18 @@ export function DarkWebSecurityBot() {
     };
   }, [isMonitoring, detectDarkWebActivity]);
 
-  const handleStartMonitoring = () => {
+  const handleStartMonitoring = async () => {
     setIsMonitoring(true);
-    localStorage.setItem('dark-web-monitoring', 'true');
+    await secureStorage.setItem('dark-web-monitoring', 'true');
     toast({
       title: "Dark Web Security Bot Activated",
       description: "AI bot is now monitoring for dark web threats and will persist across sessions."
     });
   };
 
-  const handleStopMonitoring = () => {
+  const handleStopMonitoring = async () => {
     setIsMonitoring(false);
-    localStorage.setItem('dark-web-monitoring', 'false');
+    await secureStorage.setItem('dark-web-monitoring', 'false');
     toast({
       title: "Dark Web Security Bot Deactivated",
       description: "Monitoring has been stopped."

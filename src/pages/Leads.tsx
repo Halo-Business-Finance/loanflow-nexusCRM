@@ -9,6 +9,7 @@ import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 import { useToast } from "@/hooks/use-toast"
 import { ErrorBoundary } from "@/components/ErrorBoundary"
+import { secureStorage } from "@/lib/secure-storage"
 
 // New modular components
 import { LeadStats } from "@/components/leads/LeadStats"
@@ -38,10 +39,22 @@ export default function Leads() {
   const [searchTerm, setSearchTerm] = useState("")
   const [selectedStage, setSelectedStage] = useState("All")
   const [selectedPriority, setSelectedPriority] = useState("All")
-  const [viewMode, setViewMode] = useState<"grid" | "table">(() => {
-    const savedViewMode = localStorage.getItem('leads-view-mode')
-    return (savedViewMode === 'grid' || savedViewMode === 'table') ? savedViewMode : 'grid'
-  })
+  const [viewMode, setViewMode] = useState<"grid" | "table">("grid")
+  
+  // Load view mode from secure storage
+  useEffect(() => {
+    const loadViewMode = async () => {
+      try {
+        const savedViewMode = await secureStorage.getItem('leads-view-mode');
+        if (savedViewMode === 'grid' || savedViewMode === 'table') {
+          setViewMode(savedViewMode);
+        }
+      } catch (error) {
+        console.error("Error loading view mode:", error);
+      }
+    };
+    loadViewMode();
+  }, []);
   
   // Dialog states
   const [convertingLead, setConvertingLead] = useState<Lead | null>(null)
@@ -51,9 +64,9 @@ export default function Leads() {
   const [isSubmitting, setIsSubmitting] = useState(false)
 
   // Function to handle view mode change with persistence
-  const handleViewModeChange = (mode: "grid" | "table") => {
+  const handleViewModeChange = async (mode: "grid" | "table") => {
     setViewMode(mode)
-    localStorage.setItem('leads-view-mode', mode)
+    await secureStorage.setItem('leads-view-mode', mode)
   }
 
   // Effects

@@ -76,12 +76,17 @@ export function AddressAutocomplete({
 
   const getGoogleMapsApiKey = async (): Promise<string> => {
     try {
-      // Try to get API key from Supabase edge function
-      const response = await fetch(`https://gshxxsniwytjgcnthyfq.supabase.co/functions/v1/google-maps-config`, {
-        method: 'GET',
+      // Get API key securely from edge function
+      const signature = 'secure-api-call-' + new Date().toDateString();
+      const response = await fetch(`https://gshxxsniwytjgcnthyfq.supabase.co/functions/v1/secure-external-api`, {
+        method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-        }
+        },
+        body: JSON.stringify({
+          action: 'get_google_maps_key',
+          signature
+        })
       })
 
       if (response.ok) {
@@ -89,23 +94,10 @@ export function AddressAutocomplete({
         return data.apiKey
       }
     } catch (error) {
-      console.log('Could not fetch API key from edge function, using fallback')
+      console.warn('Failed to get API key from edge function:', error)
     }
 
-    // Fallback: check localStorage or prompt user
-    const localKey = localStorage.getItem('google_maps_api_key')
-    if (localKey) {
-      return localKey
-    }
-
-    // Prompt user for API key (development mode)
-    const key = prompt('Please enter your Google Maps API Key (this will be stored locally for development):')
-    if (key) {
-      localStorage.setItem('google_maps_api_key', key)
-      return key
-    }
-    
-    throw new Error('Google Maps API key is required')
+    throw new Error('Google Maps API key is required for address autocomplete. Please configure it in Supabase secrets.')
   }
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {

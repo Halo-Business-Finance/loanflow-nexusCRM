@@ -7,6 +7,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Shield, AlertTriangle, Bug, Target, Zap, Activity } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import { secureStorage } from "@/lib/secure-storage";
 
 interface HackerAttempt {
   id: string;
@@ -37,9 +38,20 @@ export function HackerDetectionBot() {
     vulnerability_scans: 0,
     threat_level: "low"
   });
-  const [isMonitoring, setIsMonitoring] = useState(() => {
-    return localStorage.getItem('hacker-detection-monitoring') === 'true';
-  });
+  const [isMonitoring, setIsMonitoring] = useState(false);
+
+  // Load monitoring state from secure storage
+  useEffect(() => {
+    const loadMonitoringState = async () => {
+      try {
+        const storedState = await secureStorage.getItem('hacker-detection-monitoring');
+        setIsMonitoring(storedState === 'true');
+      } catch (error) {
+        console.error("Error loading monitoring state:", error);
+      }
+    };
+    loadMonitoringState();
+  }, []);
   const [loading, setLoading] = useState(true);
   const { toast } = useToast();
 
@@ -215,18 +227,18 @@ export function HackerDetectionBot() {
     };
   }, [isMonitoring, detectHackerActivity]);
 
-  const handleStartMonitoring = () => {
+  const handleStartMonitoring = async () => {
     setIsMonitoring(true);
-    localStorage.setItem('hacker-detection-monitoring', 'true');
+    await secureStorage.setItem('hacker-detection-monitoring', 'true');
     toast({
       title: "Hacker Detection Bot Activated",
       description: "AI bot is now actively monitoring and will persist across sessions."
     });
   };
 
-  const handleStopMonitoring = () => {
+  const handleStopMonitoring = async () => {
     setIsMonitoring(false);
-    localStorage.setItem('hacker-detection-monitoring', 'false');
+    await secureStorage.setItem('hacker-detection-monitoring', 'false');
     toast({
       title: "Hacker Detection Bot Deactivated",
       description: "Monitoring has been stopped."

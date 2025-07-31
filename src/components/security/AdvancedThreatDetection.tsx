@@ -6,6 +6,7 @@ import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Progress } from "@/components/ui/progress";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import { secureStorage } from "@/lib/secure-storage";
 import { Shield, AlertTriangle, Bot, Eye, TrendingUp, Zap } from "lucide-react";
 
 interface ThreatIncident {
@@ -40,9 +41,20 @@ export function AdvancedThreatDetection() {
     threat_level: 'low'
   });
   const [loading, setLoading] = useState(true);
-  const [monitoring, setMonitoring] = useState(() => {
-    return localStorage.getItem('ai-threat-monitoring') === 'true';
-  });
+  const [monitoring, setMonitoring] = useState(false);
+
+  // Load monitoring state from secure storage
+  useEffect(() => {
+    const loadMonitoringState = async () => {
+      try {
+        const storedState = await secureStorage.getItem('ai-threat-monitoring');
+        setMonitoring(storedState === 'true');
+      } catch (error) {
+        console.error("Error loading monitoring state:", error);
+      }
+    };
+    loadMonitoringState();
+  }, []);
 
   // AI Behavior Detection Hook
   const detectAIBehavior = useCallback(async () => {
@@ -344,10 +356,10 @@ export function AdvancedThreatDetection() {
               </p>
             </div>
             <Button
-              onClick={() => {
+              onClick={async () => {
                 const newState = !monitoring;
                 setMonitoring(newState);
-                localStorage.setItem('ai-threat-monitoring', newState.toString());
+                await secureStorage.setItem('ai-threat-monitoring', newState.toString());
                 toast({
                   title: newState ? "AI Threat Monitoring Activated" : "AI Threat Monitoring Deactivated",
                   description: newState 
