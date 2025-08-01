@@ -51,7 +51,7 @@ interface UserProfile {
   last_name: string | null
   phone_number: string | null
   created_at: string
-  role: 'super_admin' | 'admin' | 'manager' | 'agent' | 'viewer'
+  role: 'super_admin' | 'admin' | 'manager' | 'agent' | 'funder' | 'loan_processor' | 'underwriter' | 'viewer'
   is_active: boolean
 }
 
@@ -67,7 +67,7 @@ export default function Users() {
     first_name: "",
     last_name: "",
     phone_number: "",
-    role: "agent" as 'super_admin' | 'admin' | 'manager' | 'agent' | 'viewer'
+    role: "agent" as 'super_admin' | 'admin' | 'manager' | 'agent' | 'funder' | 'loan_processor' | 'underwriter' | 'viewer'
   })
   const [editingUser, setEditingUser] = useState<UserProfile | null>(null)
   const [showNewUserDialog, setShowNewUserDialog] = useState(false)
@@ -493,6 +493,9 @@ export default function Users() {
       case 'admin': return 'default'
       case 'manager': return 'default'
       case 'agent': return 'secondary'
+      case 'funder': return 'secondary'
+      case 'loan_processor': return 'secondary'
+      case 'underwriter': return 'secondary'
       case 'viewer': return 'outline'
       default: return 'outline'
     }
@@ -705,7 +708,10 @@ export default function Users() {
                           {user.role === 'super_admin' ? 'Super Administrator' : 
                            user.role === 'admin' ? 'Admin' :
                            user.role === 'manager' ? 'Manager' :
-                           user.role === 'agent' ? 'Agent' : 'Viewer'}
+                           user.role === 'agent' ? 'Agent' :
+                           user.role === 'funder' ? 'Funder' :
+                           user.role === 'loan_processor' ? 'Processor' :
+                           user.role === 'underwriter' ? 'Underwriter' : 'Viewer'}
                         </Badge>
                       </td>
 
@@ -857,6 +863,9 @@ export default function Users() {
                       )}
                       <SelectItem value="manager">Manager</SelectItem>
                       <SelectItem value="agent">Loan Originator (Agent)</SelectItem>
+                      <SelectItem value="funder">Funder</SelectItem>
+                      <SelectItem value="loan_processor">Processor</SelectItem>
+                      <SelectItem value="underwriter">Underwriter</SelectItem>
                       <SelectItem value="viewer">Viewer</SelectItem>
                     </SelectContent>
                   </Select>
