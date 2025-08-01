@@ -196,15 +196,19 @@ export default function Users() {
       if (!data.user) throw new Error('Failed to create user')
 
       // The profile will be created automatically by the trigger
-      // Just need to assign role
+      // The trigger also creates a default 'agent' role, so we need to update it if different
+      console.log('Updating user role to:', newUser.role)
+      
       const { error: roleError } = await supabase
         .from('user_roles')
-        .insert({
-          user_id: data.user.id,
-          role: newUser.role
-        })
+        .update({ role: newUser.role })
+        .eq('user_id', data.user.id)
+        .eq('is_active', true)
 
-      if (roleError) throw roleError
+      if (roleError) {
+        console.error('Role update error:', roleError)
+        throw roleError
+      }
 
       // Update the profile with phone number (in case trigger didn't handle it)
       const { error: profileError } = await supabase
