@@ -118,21 +118,24 @@ export default function Users() {
       const { data: roles, error: rolesError } = await supabase
         .from('user_roles')
         .select('user_id, role, is_active')
-        .eq('is_active', true)
 
       if (rolesError) throw rolesError
 
-      // Combine the data - use email from profiles table instead of auth admin API
-      const combinedUsers: UserProfile[] = profiles.map(profile => {
-        const role = roles.find(r => r.user_id === profile.id)
-        
-        return {
-          ...profile,
-          email: profile.email || '',
-          role: role?.role || 'agent',
-          is_active: role?.is_active || false
-        }
-      })
+      // Combine the data - only show users with active roles and existing profiles
+      const combinedUsers: UserProfile[] = profiles
+        .map(profile => {
+          const role = roles.find(r => r.user_id === profile.id && r.is_active === true)
+          
+          if (!role) return null // Skip users without active roles
+          
+          return {
+            ...profile,
+            email: profile.email || '',
+            role: role.role || 'agent',
+            is_active: role.is_active || false
+          }
+        })
+        .filter(Boolean) as UserProfile[] // Remove null entries
 
       setUsers(combinedUsers)
     } catch (error) {
@@ -764,8 +767,8 @@ export default function Users() {
                           {user.email !== currentUser?.email && (
                             <AlertDialog>
                               <AlertDialogTrigger asChild>
-                                <Button variant="ghost" size="sm" className="h-8 w-8 p-0 text-red-600 hover:text-red-700">
-                                  <Trash2 className="h-4 w-4 text-white" />
+                                <Button variant="ghost" size="sm" className="h-8 w-8 p-0 text-red-600 hover:text-red-700 hover:bg-red-50">
+                                  <Trash2 className="h-4 w-4" />
                                 </Button>
                               </AlertDialogTrigger>
                               <AlertDialogContent>
