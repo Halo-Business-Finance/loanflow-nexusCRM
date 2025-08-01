@@ -151,6 +151,8 @@ export default function Users() {
   }
 
   const createUser = async () => {
+    console.log('Starting user creation with data:', newUser)
+    
     try {
       // Check if trying to create super_admin without being super_admin
       if (newUser.role === 'super_admin' && currentUserRole !== 'super_admin') {
@@ -172,6 +174,8 @@ export default function Users() {
         return
       }
 
+      console.log('Attempting to sign up user...')
+      
       // Sign up the user first
       const { data, error } = await supabase.auth.signUp({
         email: newUser.email,
@@ -185,6 +189,8 @@ export default function Users() {
           emailRedirectTo: `${window.location.origin}/`
         }
       })
+
+      console.log('Signup result:', { data, error })
 
       if (error) throw error
       if (!data.user) throw new Error('Failed to create user')
