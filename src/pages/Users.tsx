@@ -608,6 +608,9 @@ export default function Users() {
                       )}
                       <SelectItem value="manager">Manager</SelectItem>
                       <SelectItem value="agent">Loan Originator (Agent)</SelectItem>
+                      <SelectItem value="funder">Funder</SelectItem>
+                      <SelectItem value="loan_processor">Processor</SelectItem>
+                      <SelectItem value="underwriter">Underwriter</SelectItem>
                       <SelectItem value="viewer">Viewer</SelectItem>
                     </SelectContent>
                   </Select>
