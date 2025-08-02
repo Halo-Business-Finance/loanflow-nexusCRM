@@ -165,7 +165,7 @@ export default function AITools() {
         <CardContent className="space-y-6">
           <div className="flex items-center justify-between">
             <div>
-              <Label className="text-base font-medium">Enable {tool.name}</Label>
+              <Label className="text-base font-medium text-foreground">Enable {tool.name}</Label>
               <p className="text-sm text-muted-foreground">Activate this AI tool for your organization</p>
             </div>
             <Switch 
@@ -181,7 +181,7 @@ export default function AITools() {
               {toolId === "lead-scoring" && (
                 <>
                   <div>
-                    <Label>Scoring Threshold ({config.scoringThreshold[0]}%)</Label>
+                    <Label className="text-foreground">Scoring Threshold ({config.scoringThreshold[0]}%)</Label>
                     <p className="text-sm text-muted-foreground mb-2">Minimum score for high-quality leads</p>
                     <Slider
                       value={config.scoringThreshold}
@@ -198,7 +198,7 @@ export default function AITools() {
                   
                   <div className="grid grid-cols-3 gap-4">
                     <div>
-                      <Label>Demographic Weight (%)</Label>
+                      <Label className="text-foreground">Demographic Weight (%)</Label>
                       <Input 
                         type="number" 
                         value={config.weightFactors.demographic}
@@ -217,7 +217,7 @@ export default function AITools() {
                       />
                     </div>
                     <div>
-                      <Label>Behavioral Weight (%)</Label>
+                      <Label className="text-foreground">Behavioral Weight (%)</Label>
                       <Input 
                         type="number" 
                         value={config.weightFactors.behavioral}
@@ -236,7 +236,7 @@ export default function AITools() {
                       />
                     </div>
                     <div>
-                      <Label>Engagement Weight (%)</Label>
+                      <Label className="text-foreground">Engagement Weight (%)</Label>
                       <Input 
                         type="number" 
                         value={config.weightFactors.engagement}
@@ -261,7 +261,7 @@ export default function AITools() {
               {toolId === "forecasting" && (
                 <>
                   <div>
-                    <Label>Forecast Period</Label>
+                    <Label className="text-foreground">Forecast Period</Label>
                     <Select 
                       value={config.forecastPeriod} 
                       onValueChange={(value) => setToolConfigs(prev => ({
@@ -281,7 +281,7 @@ export default function AITools() {
                   </div>
                   
                   <div>
-                    <Label>Confidence Level ({config.confidenceLevel[0]}%)</Label>
+                    <Label className="text-foreground">Confidence Level ({config.confidenceLevel[0]}%)</Label>
                     <Slider
                       value={config.confidenceLevel}
                       onValueChange={(value) => setToolConfigs(prev => ({
@@ -300,7 +300,7 @@ export default function AITools() {
               {toolId === "automation" && (
                 <>
                   <div>
-                    <Label>Trigger Delay (hours)</Label>
+                    <Label className="text-foreground">Trigger Delay (hours)</Label>
                     <Slider
                       value={config.triggerDelay}
                       onValueChange={(value) => setToolConfigs(prev => ({
@@ -317,7 +317,7 @@ export default function AITools() {
                   
                   <div className="space-y-3">
                     <div className="flex items-center justify-between">
-                      <Label>Enable Email Sequences</Label>
+                      <Label className="text-foreground">Enable Email Sequences</Label>
                       <Switch 
                         checked={config.enableEmailSequence}
                         onCheckedChange={(checked) => setToolConfigs(prev => ({
@@ -327,7 +327,7 @@ export default function AITools() {
                       />
                     </div>
                     <div className="flex items-center justify-between">
-                      <Label>Enable Task Creation</Label>
+                      <Label className="text-foreground">Enable Task Creation</Label>
                       <Switch 
                         checked={config.enableTaskCreation}
                         onCheckedChange={(checked) => setToolConfigs(prev => ({
@@ -343,7 +343,7 @@ export default function AITools() {
               {toolId === "analytics" && (
                 <>
                   <div>
-                    <Label>Report Frequency</Label>
+                    <Label className="text-foreground">Report Frequency</Label>
                     <Select 
                       value={config.reportFrequency} 
                       onValueChange={(value) => setToolConfigs(prev => ({
@@ -363,7 +363,7 @@ export default function AITools() {
                   </div>
                   
                   <div>
-                    <Label>Data Retention (days)</Label>
+                    <Label className="text-foreground">Data Retention (days)</Label>
                     <Slider
                       value={config.dataRetention}
                       onValueChange={(value) => setToolConfigs(prev => ({
@@ -484,7 +484,7 @@ export default function AITools() {
                                        <tool.icon className="w-5 h-5 text-white" />
                                      </div>
                                     <div className="flex-1">
-                                      <h3 className="font-medium">{tool.name}</h3>
+                                      <h3 className="font-medium text-foreground">{tool.name}</h3>
                                       <p className="text-sm text-muted-foreground">{tool.description}</p>
                                     </div>
                                     <Badge variant={tool.status === "active" ? "default" : "secondary"}>
