@@ -149,9 +149,9 @@ export default function AITools() {
         <CardHeader>
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <div className="p-2 bg-primary/10 rounded-lg">
-                <tool.icon className="w-5 h-5 text-primary" />
-              </div>
+               <div className="p-2 bg-primary/10 rounded-lg">
+                 <tool.icon className="w-5 h-5 text-white" />
+               </div>
               <div>
                 <CardTitle>{tool.name} Configuration</CardTitle>
                 <CardDescription>{tool.description}</CardDescription>
@@ -480,9 +480,9 @@ export default function AITools() {
                               >
                                 <CardContent className="p-4">
                                   <div className="flex items-center gap-3">
-                                    <div className="p-2 bg-primary/10 rounded-lg">
-                                      <tool.icon className="w-5 h-5 text-primary" />
-                                    </div>
+                                     <div className="p-2 bg-primary/10 rounded-lg">
+                                       <tool.icon className="w-5 h-5 text-white" />
+                                     </div>
                                     <div className="flex-1">
                                       <h3 className="font-medium">{tool.name}</h3>
                                       <p className="text-sm text-muted-foreground">{tool.description}</p>
