@@ -315,9 +315,13 @@ export default function Leads() {
       fetchLeads() // Refresh the leads list
     } catch (error) {
       console.error('Error updating lead:', error)
+      console.error('Error details:', JSON.stringify(error, null, 2))
+      console.error('Contact data being updated:', contactData)
+      console.error('Editing lead:', editingLead)
+      
       toast({
         title: "Error",
-        description: "Failed to update lead",
+        description: `Failed to update lead: ${error?.message || 'Unknown error'}`,
         variant: "destructive",
       })
     } finally {
