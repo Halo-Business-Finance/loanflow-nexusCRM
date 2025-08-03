@@ -2183,6 +2183,9 @@ export type Database = {
       }
       profiles: {
         Row: {
+          archive_reason: string | null
+          archived_at: string | null
+          archived_by: string | null
           created_at: string
           daily_summary_reports: boolean | null
           email: string | null
@@ -2200,6 +2203,9 @@ export type Database = {
           updated_at: string
         }
         Insert: {
+          archive_reason?: string | null
+          archived_at?: string | null
+          archived_by?: string | null
           created_at?: string
           daily_summary_reports?: boolean | null
           email?: string | null
@@ -2217,6 +2223,9 @@ export type Database = {
           updated_at?: string
         }
         Update: {
+          archive_reason?: string | null
+          archived_at?: string | null
+          archived_by?: string | null
           created_at?: string
           daily_summary_reports?: boolean | null
           email?: string | null
@@ -2721,6 +2730,9 @@ export type Database = {
       }
       user_roles: {
         Row: {
+          archive_reason: string | null
+          archived_at: string | null
+          archived_by: string | null
           assigned_at: string | null
           assigned_by: string | null
           created_at: string | null
@@ -2731,6 +2743,9 @@ export type Database = {
           user_id: string
         }
         Insert: {
+          archive_reason?: string | null
+          archived_at?: string | null
+          archived_by?: string | null
           assigned_at?: string | null
           assigned_by?: string | null
           created_at?: string | null
@@ -2741,6 +2756,9 @@ export type Database = {
           user_id: string
         }
         Update: {
+          archive_reason?: string | null
+          archived_at?: string | null
+          archived_by?: string | null
           assigned_at?: string | null
           assigned_by?: string | null
           created_at?: string | null
@@ -2876,6 +2894,10 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      archive_user: {
+        Args: { p_user_id: string; p_archived_by?: string; p_reason?: string }
+        Returns: boolean
+      }
       check_rate_limit: {
         Args: {
           p_identifier: string
@@ -2985,6 +3007,10 @@ export type Database = {
           p_user_agent?: string
         }
         Returns: string
+      }
+      restore_user: {
+        Args: { p_user_id: string; p_restored_by?: string }
+        Returns: boolean
       }
       trigger_emergency_shutdown: {
         Args: {

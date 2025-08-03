@@ -10,6 +10,8 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Separator } from "@/components/ui/separator"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { Textarea } from "@/components/ui/textarea"
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog"
 import { supabase } from "@/integrations/supabase/client"
 import { useToast } from "@/hooks/use-toast"
@@ -26,7 +28,9 @@ import {
   Calendar,
   Shield,
   User,
-  Key
+  Key,
+  Archive,
+  RotateCcw
 } from "lucide-react"
 
 // Phone number formatting function
@@ -53,14 +57,21 @@ interface UserProfile {
   created_at: string
   role: 'super_admin' | 'admin' | 'manager' | 'agent' | 'funder' | 'loan_processor' | 'underwriter' | 'viewer'
   is_active: boolean
+  archived_at?: string | null
+  archived_by?: string | null
+  archive_reason?: string | null
 }
 
 export default function Users() {
   const { hasRole, user: currentUser, userRole: currentUserRole } = useAuth()
   const { toast } = useToast()
   const [users, setUsers] = useState<UserProfile[]>([])
+  const [archivedUsers, setArchivedUsers] = useState<UserProfile[]>([])
   const [loading, setLoading] = useState(true)
   const [searchTerm, setSearchTerm] = useState("")
+  const [archiveReason, setArchiveReason] = useState("")
+  const [showArchiveDialog, setShowArchiveDialog] = useState(false)
+  const [userToArchive, setUserToArchive] = useState<UserProfile | null>(null)
   const [newUser, setNewUser] = useState({
     email: "",
     password: "",
@@ -80,6 +91,7 @@ export default function Users() {
   useEffect(() => {
     if (hasRole('admin') || hasRole('super_admin')) {
       fetchUsers()
+      fetchArchivedUsers()
     } else {
       setLoading(false)
     }
@@ -110,8 +122,12 @@ export default function Users() {
           last_name,
           phone_number,
           email,
-          created_at
+          created_at,
+          archived_at,
+          archived_by,
+          archive_reason
         `)
+        .is('archived_at', null)
 
       if (profilesError) throw profilesError
 
@@ -121,18 +137,21 @@ export default function Users() {
 
       if (rolesError) throw rolesError
 
-      // Combine the data - only show users with active roles and existing profiles
+      // Combine the data - only show users with active roles and existing profiles (not archived)
       const combinedUsers: UserProfile[] = profiles
         .map(profile => {
           const role = roles.find(r => r.user_id === profile.id && r.is_active === true)
           
-          if (!role) return null // Skip users without active roles
+          if (!role || profile.archived_at) return null // Skip users without active roles or archived users
           
           return {
             ...profile,
             email: profile.email || '',
             role: role.role || 'agent',
-            is_active: role.is_active || false
+            is_active: role.is_active || false,
+            archived_at: profile.archived_at,
+            archived_by: profile.archived_by,
+            archive_reason: profile.archive_reason
           }
         })
         .filter(Boolean) as UserProfile[] // Remove null entries
@@ -147,6 +166,112 @@ export default function Users() {
       })
     } finally {
       setLoading(false)
+    }
+  }
+
+  const fetchArchivedUsers = async () => {
+    try {
+      const { data: profiles, error: profilesError } = await supabase
+        .from('profiles')
+        .select(`
+          id,
+          first_name,
+          last_name,
+          phone_number,
+          email,
+          created_at,
+          archived_at,
+          archived_by,
+          archive_reason
+        `)
+        .not('archived_at', 'is', null)
+
+      if (profilesError) throw profilesError
+
+      const { data: roles, error: rolesError } = await supabase
+        .from('user_roles')
+        .select('user_id, role, is_active')
+
+      if (rolesError) throw rolesError
+
+      // Combine the data for archived users
+      const combinedArchivedUsers: UserProfile[] = profiles
+        .map(profile => {
+          const role = roles.find(r => r.user_id === profile.id)
+          
+          if (!role) return null
+          
+          return {
+            ...profile,
+            email: profile.email || '',
+            role: role.role || 'agent',
+            is_active: role.is_active || false,
+            archived_at: profile.archived_at,
+            archived_by: profile.archived_by,
+            archive_reason: profile.archive_reason
+          }
+        })
+        .filter(Boolean) as UserProfile[]
+
+      setArchivedUsers(combinedArchivedUsers)
+    } catch (error) {
+      console.error('Error fetching archived users:', error)
+    }
+  }
+
+  const archiveUser = async () => {
+    if (!userToArchive) return
+
+    try {
+      const { error } = await supabase.rpc('archive_user', {
+        p_user_id: userToArchive.id,
+        p_reason: archiveReason || 'User archived by administrator'
+      })
+
+      if (error) throw error
+
+      toast({
+        title: "Success",
+        description: `User ${userToArchive.first_name} ${userToArchive.last_name} has been archived`
+      })
+
+      setShowArchiveDialog(false)
+      setUserToArchive(null)
+      setArchiveReason("")
+      fetchUsers()
+      fetchArchivedUsers()
+    } catch (error) {
+      console.error('Error archiving user:', error)
+      toast({
+        title: "Error",
+        description: "Failed to archive user",
+        variant: "destructive"
+      })
+    }
+  }
+
+  const restoreUser = async (userId: string, userName: string) => {
+    try {
+      const { error } = await supabase.rpc('restore_user', {
+        p_user_id: userId
+      })
+
+      if (error) throw error
+
+      toast({
+        title: "Success",
+        description: `User ${userName} has been restored from archive`
+      })
+
+      fetchUsers()
+      fetchArchivedUsers()
+    } catch (error) {
+      console.error('Error restoring user:', error)
+      toast({
+        title: "Error",
+        description: "Failed to restore user",
+        variant: "destructive"
+      })
     }
   }
 
@@ -656,7 +781,7 @@ export default function Users() {
           </CardContent>
         </Card>
 
-        {/* Users Table */}
+        {/* Users Table with Tabs */}
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
@@ -665,158 +790,269 @@ export default function Users() {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="overflow-x-auto">
-              <table className="w-full">
-                <thead>
-                  <tr className="border-b border-border">
-                    <th className="text-left py-3 px-4 font-medium text-white">User</th>
-                    <th className="text-left py-3 px-4 font-medium text-white">Contact</th>
-                    <th className="text-left py-3 px-4 font-medium text-white">Role</th>
-                    <th className="text-left py-3 px-4 font-medium text-white">Status</th>
-                    <th className="text-right py-3 px-4 font-medium text-white">Actions</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {filteredUsers.map((user) => (
-                    <tr key={user.id} className="border-b border-border hover:bg-muted/50 transition-colors">
-                      {/* User Column */}
-                      <td className="py-4 px-4">
-                        <div className="flex items-center gap-3">
-                           <Avatar className="h-10 w-10">
-                             <AvatarFallback className="bg-primary/10 text-white font-medium">
-                               {user.first_name?.[0]}{user.last_name?.[0]}
-                             </AvatarFallback>
-                           </Avatar>
-                          <div>
-                            <p className="font-medium text-foreground">
-                              {user.first_name} {user.last_name}
-                            </p>
-                            <p className="text-sm text-white">{user.email}</p>
-                          </div>
-                        </div>
-                      </td>
-
-                      {/* Contact Column */}
-                      <td className="py-4 px-4">
-                        <div className="space-y-1">
-                          {user.phone_number ? (
-                            <PhoneDialer 
-                              trigger={
-                                <button className="flex items-center gap-2 text-sm text-white hover:text-primary transition-colors">
-                                  <Phone className="h-4 w-4 text-white" />
-                                  {user.phone_number}
-                                </button>
-                              }
-                            />
-                          ) : (
-                            <span className="text-sm text-white">No phone</span>
-                          )}
-                          <div className="flex items-center gap-2 text-sm text-white">
-                            <Calendar className="h-4 w-4 text-white" />
-                            {new Date(user.created_at).toLocaleDateString()}
-                          </div>
-                        </div>
-                      </td>
-
-                      {/* Role Column */}
-                      <td className="py-4 px-4">
-                        <Badge variant={getRoleBadgeVariant(user.role)} className="capitalize">
-                          {user.role === 'super_admin' ? 'Super Administrator' : 
-                           user.role === 'admin' ? 'Admin' :
-                           user.role === 'manager' ? 'Manager' :
-                           user.role === 'agent' ? 'Agent' :
-                           user.role === 'funder' ? 'Funder' :
-                           user.role === 'loan_processor' ? 'Processor' :
-                           user.role === 'underwriter' ? 'Underwriter' : 'Viewer'}
-                        </Badge>
-                      </td>
-
-                      {/* Status Column */}
-                      <td className="py-4 px-4">
-                        <div className="flex items-center gap-2">
-                          <div className={`h-2 w-2 rounded-full ${user.is_active ? 'bg-green-500' : 'bg-red-500'}`} />
-                          <span className={`text-sm font-medium ${user.is_active ? 'text-green-700' : 'text-red-700'}`}>
-                            {user.is_active ? 'Active' : 'Inactive'}
-                          </span>
-                        </div>
-                      </td>
-
-                      {/* Actions Column */}
-                      <td className="py-4 px-4">
-                        <div className="flex items-center justify-end gap-2">
-                          <Button
-                            variant="default"
-                            size="sm"
-                            onClick={() => {
-                              setEditingUser(user)
-                              setShowEditDialog(true)
-                            }}
-                            className="h-8 w-8 p-0"
-                          >
-                            <Edit className="h-4 w-4 text-white" />
-                          </Button>
-                          
-                          <Button
-                            variant="default"
-                            size="sm"
-                            onClick={() => {
-                              setPasswordChangeUser(user)
-                              setShowPasswordDialog(true)
-                            }}
-                            className="h-8 w-8 p-0"
-                          >
-                            <Key className="h-4 w-4 text-white" />
-                          </Button>
-
-                          <Button
-                            variant="default"
-                            size="sm"
-                            onClick={() => toggleUserStatus(user.id, user.is_active)}
-                            className="h-8 w-8 p-0"
-                          >
-                            {user.is_active ? <Shield className="h-4 w-4 text-white" /> : <User className="h-4 w-4 text-white" />}
-                          </Button>
-
-                          {user.email !== currentUser?.email && (
-                            <AlertDialog>
-                              <AlertDialogTrigger asChild>
-                                <Button variant="ghost" size="sm" className="h-8 w-8 p-0 text-red-600 hover:text-red-700 hover:bg-red-50">
-                                  <Trash2 className="h-4 w-4" />
-                                </Button>
-                              </AlertDialogTrigger>
-                              <AlertDialogContent>
-                                <AlertDialogHeader>
-                                  <AlertDialogTitle>Delete User</AlertDialogTitle>
-                                  <AlertDialogDescription>
-                                    Are you sure you want to delete <strong>{user.first_name} {user.last_name}</strong> ({user.email})? 
-                                    This will remove all their data including profile, roles, sessions, and notifications. This action cannot be undone.
-                                  </AlertDialogDescription>
-                                </AlertDialogHeader>
-                                <AlertDialogFooter>
-                                  <AlertDialogCancel>Cancel</AlertDialogCancel>
-                                  <AlertDialogAction
-                                    onClick={() => deleteUser(user.id, user.email)}
-                                    className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-                                  >
-                                    Delete User
-                                  </AlertDialogAction>
-                                </AlertDialogFooter>
-                              </AlertDialogContent>
-                            </AlertDialog>
-                          )}
-                        </div>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
+            <Tabs defaultValue="active" className="w-full">
+              <TabsList className="grid w-full grid-cols-2">
+                <TabsTrigger value="active">Active Users ({users.length})</TabsTrigger>
+                <TabsTrigger value="archived">Archived Users ({archivedUsers.length})</TabsTrigger>
+              </TabsList>
               
-              {filteredUsers.length === 0 && (
-                <div className="text-center py-8">
-                  <p className="text-muted-foreground">No users found matching your search.</p>
+              <TabsContent value="active" className="mt-6">
+                <div className="overflow-x-auto">
+                  <table className="w-full">
+                    <thead>
+                      <tr className="border-b border-border">
+                        <th className="text-left py-3 px-4 font-medium text-white">User</th>
+                        <th className="text-left py-3 px-4 font-medium text-white">Contact</th>
+                        <th className="text-left py-3 px-4 font-medium text-white">Role</th>
+                        <th className="text-left py-3 px-4 font-medium text-white">Status</th>
+                        <th className="text-right py-3 px-4 font-medium text-white">Actions</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {filteredUsers.map((user) => (
+                        <tr key={user.id} className="border-b border-border hover:bg-muted/50 transition-colors">
+                          {/* User Column */}
+                          <td className="py-4 px-4">
+                            <div className="flex items-center gap-3">
+                               <Avatar className="h-10 w-10">
+                                 <AvatarFallback className="bg-primary/10 text-white font-medium">
+                                   {user.first_name?.[0]}{user.last_name?.[0]}
+                                 </AvatarFallback>
+                               </Avatar>
+                              <div>
+                                <p className="font-medium text-foreground">
+                                  {user.first_name} {user.last_name}
+                                </p>
+                                <p className="text-sm text-white">{user.email}</p>
+                              </div>
+                            </div>
+                          </td>
+
+                          {/* Contact Column */}
+                          <td className="py-4 px-4">
+                            <div className="space-y-1">
+                              {user.phone_number ? (
+                                <PhoneDialer 
+                                  trigger={
+                                    <button className="flex items-center gap-2 text-sm text-white hover:text-primary transition-colors">
+                                      <Phone className="h-4 w-4 text-white" />
+                                      {user.phone_number}
+                                    </button>
+                                  }
+                                />
+                              ) : (
+                                <span className="text-sm text-white">No phone</span>
+                              )}
+                              <div className="flex items-center gap-2 text-sm text-white">
+                                <Calendar className="h-4 w-4 text-white" />
+                                {new Date(user.created_at).toLocaleDateString()}
+                              </div>
+                            </div>
+                          </td>
+
+                          {/* Role Column */}
+                          <td className="py-4 px-4">
+                            <Badge variant={getRoleBadgeVariant(user.role)} className="capitalize">
+                              {user.role === 'super_admin' ? 'Super Administrator' : 
+                               user.role === 'admin' ? 'Admin' :
+                               user.role === 'manager' ? 'Manager' :
+                               user.role === 'agent' ? 'Agent' :
+                               user.role === 'funder' ? 'Funder' :
+                               user.role === 'loan_processor' ? 'Processor' :
+                               user.role === 'underwriter' ? 'Underwriter' : 'Viewer'}
+                            </Badge>
+                          </td>
+
+                          {/* Status Column */}
+                          <td className="py-4 px-4">
+                            <div className="flex items-center gap-2">
+                              <div className={`h-2 w-2 rounded-full ${user.is_active ? 'bg-green-500' : 'bg-red-500'}`} />
+                              <span className={`text-sm font-medium ${user.is_active ? 'text-green-700' : 'text-red-700'}`}>
+                                {user.is_active ? 'Active' : 'Inactive'}
+                              </span>
+                            </div>
+                          </td>
+
+                          {/* Actions Column */}
+                          <td className="py-4 px-4">
+                            <div className="flex items-center justify-end gap-2">
+                              <Button
+                                variant="default"
+                                size="sm"
+                                onClick={() => {
+                                  setEditingUser(user)
+                                  setShowEditDialog(true)
+                                }}
+                                className="h-8 w-8 p-0"
+                              >
+                                <Edit className="h-4 w-4 text-white" />
+                              </Button>
+                              
+                              <Button
+                                variant="default"
+                                size="sm"
+                                onClick={() => {
+                                  setPasswordChangeUser(user)
+                                  setShowPasswordDialog(true)
+                                }}
+                                className="h-8 w-8 p-0"
+                              >
+                                <Key className="h-4 w-4 text-white" />
+                              </Button>
+
+                              <Button
+                                variant="default"
+                                size="sm"
+                                onClick={() => toggleUserStatus(user.id, user.is_active)}
+                                className="h-8 w-8 p-0"
+                              >
+                                {user.is_active ? <Shield className="h-4 w-4 text-white" /> : <User className="h-4 w-4 text-white" />}
+                              </Button>
+
+                              {user.email !== currentUser?.email && (
+                                <>
+                                  <Button
+                                    variant="default"
+                                    size="sm"
+                                    onClick={() => {
+                                      setUserToArchive(user)
+                                      setShowArchiveDialog(true)
+                                    }}
+                                    className="h-8 w-8 p-0"
+                                  >
+                                    <Archive className="h-4 w-4 text-white" />
+                                  </Button>
+                                  
+                                  <AlertDialog>
+                                    <AlertDialogTrigger asChild>
+                                      <Button variant="ghost" size="sm" className="h-8 w-8 p-0 text-red-600 hover:text-red-700 hover:bg-red-50">
+                                        <Trash2 className="h-4 w-4" />
+                                      </Button>
+                                    </AlertDialogTrigger>
+                                    <AlertDialogContent>
+                                      <AlertDialogHeader>
+                                        <AlertDialogTitle>Delete User</AlertDialogTitle>
+                                        <AlertDialogDescription>
+                                          Are you sure you want to permanently delete <strong>{user.first_name} {user.last_name}</strong> ({user.email})? 
+                                          This will remove all their data including profile, roles, sessions, and notifications. This action cannot be undone.
+                                          <br /><br />
+                                          <strong>Tip:</strong> Consider archiving the user instead, which allows you to restore them later.
+                                        </AlertDialogDescription>
+                                      </AlertDialogHeader>
+                                      <AlertDialogFooter>
+                                        <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                        <AlertDialogAction
+                                          onClick={() => deleteUser(user.id, user.email)}
+                                          className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                                        >
+                                          Permanently Delete
+                                        </AlertDialogAction>
+                                      </AlertDialogFooter>
+                                    </AlertDialogContent>
+                                  </AlertDialog>
+                                </>
+                              )}
+                            </div>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                  
+                  {filteredUsers.length === 0 && (
+                    <div className="text-center py-8">
+                      <p className="text-muted-foreground">No active users found matching your search.</p>
+                    </div>
+                  )}
                 </div>
-              )}
-            </div>
+              </TabsContent>
+              
+              <TabsContent value="archived" className="mt-6">
+                <div className="overflow-x-auto">
+                  <table className="w-full">
+                    <thead>
+                      <tr className="border-b border-border">
+                        <th className="text-left py-3 px-4 font-medium text-white">User</th>
+                        <th className="text-left py-3 px-4 font-medium text-white">Archived Date</th>
+                        <th className="text-left py-3 px-4 font-medium text-white">Role</th>
+                        <th className="text-left py-3 px-4 font-medium text-white">Reason</th>
+                        <th className="text-right py-3 px-4 font-medium text-white">Actions</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {archivedUsers.map((user) => (
+                        <tr key={user.id} className="border-b border-border hover:bg-muted/50 transition-colors opacity-75">
+                          {/* User Column */}
+                          <td className="py-4 px-4">
+                            <div className="flex items-center gap-3">
+                               <Avatar className="h-10 w-10">
+                                 <AvatarFallback className="bg-muted text-muted-foreground font-medium">
+                                   {user.first_name?.[0]}{user.last_name?.[0]}
+                                 </AvatarFallback>
+                               </Avatar>
+                              <div>
+                                <p className="font-medium text-muted-foreground">
+                                  {user.first_name} {user.last_name}
+                                </p>
+                                <p className="text-sm text-muted-foreground">{user.email}</p>
+                              </div>
+                            </div>
+                          </td>
+
+                          {/* Archived Date Column */}
+                          <td className="py-4 px-4">
+                            <div className="text-sm text-muted-foreground">
+                              {user.archived_at ? new Date(user.archived_at).toLocaleDateString() : 'Unknown'}
+                            </div>
+                          </td>
+
+                          {/* Role Column */}
+                          <td className="py-4 px-4">
+                            <Badge variant="outline" className="capitalize">
+                              {user.role === 'super_admin' ? 'Super Administrator' : 
+                               user.role === 'admin' ? 'Admin' :
+                               user.role === 'manager' ? 'Manager' :
+                               user.role === 'agent' ? 'Agent' :
+                               user.role === 'funder' ? 'Funder' :
+                               user.role === 'loan_processor' ? 'Processor' :
+                               user.role === 'underwriter' ? 'Underwriter' : 'Viewer'}
+                            </Badge>
+                          </td>
+
+                          {/* Reason Column */}
+                          <td className="py-4 px-4">
+                            <div className="text-sm text-muted-foreground max-w-xs truncate">
+                              {user.archive_reason || 'No reason provided'}
+                            </div>
+                          </td>
+
+                          {/* Actions Column */}
+                          <td className="py-4 px-4">
+                            <div className="flex items-center justify-end gap-2">
+                              <Button
+                                variant="outline"
+                                size="sm"
+                                onClick={() => restoreUser(user.id, `${user.first_name} ${user.last_name}`)}
+                                className="h-8 px-3"
+                              >
+                                <RotateCcw className="h-4 w-4 mr-1" />
+                                Restore
+                              </Button>
+                            </div>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                  
+                  {archivedUsers.length === 0 && (
+                    <div className="text-center py-8">
+                      <p className="text-muted-foreground">No archived users found.</p>
+                    </div>
+                  )}
+                </div>
+              </TabsContent>
+            </Tabs>
           </CardContent>
         </Card>
 
@@ -960,6 +1196,69 @@ export default function Users() {
                       setNewPassword("")
                       setConfirmPassword("")
                       setPasswordChangeUser(null)
+                    }}
+                  >
+                    Cancel
+                  </Button>
+                </div>
+              </div>
+            )}
+          </DialogContent>
+        </Dialog>
+
+        {/* Archive User Dialog */}
+        <Dialog open={showArchiveDialog} onOpenChange={setShowArchiveDialog}>
+          <DialogContent className="sm:max-w-[500px]">
+            <DialogHeader>
+              <DialogTitle>Archive User</DialogTitle>
+            </DialogHeader>
+            {userToArchive && (
+              <div className="space-y-4">
+                <div className="p-4 bg-muted/20 rounded-lg">
+                  <p className="text-sm text-muted-foreground mb-2">
+                    You are about to archive:
+                  </p>
+                  <p className="font-semibold">
+                    {userToArchive.first_name} {userToArchive.last_name}
+                  </p>
+                  <p className="text-sm text-muted-foreground">
+                    {userToArchive.email}
+                  </p>
+                </div>
+                
+                <div className="space-y-2">
+                  <Label htmlFor="archiveReason">Reason for archiving (optional)</Label>
+                  <Textarea
+                    id="archiveReason"
+                    value={archiveReason}
+                    onChange={(e) => setArchiveReason(e.target.value)}
+                    placeholder="Enter reason for archiving this user..."
+                    rows={3}
+                  />
+                </div>
+                
+                <div className="p-3 bg-blue-50 dark:bg-blue-950/20 rounded-lg border border-blue-200 dark:border-blue-800">
+                  <p className="text-xs text-blue-700 dark:text-blue-300">
+                    Archiving will deactivate the user and move them to the archived users section. 
+                    You can restore them later if needed. This is a safer alternative to permanent deletion.
+                  </p>
+                </div>
+                
+                <div className="flex gap-2 pt-4">
+                  <Button 
+                    onClick={archiveUser} 
+                    className="flex-1"
+                    variant="secondary"
+                  >
+                    <Archive className="h-4 w-4 mr-2" />
+                    Archive User
+                  </Button>
+                  <Button 
+                    variant="outline" 
+                    onClick={() => {
+                      setShowArchiveDialog(false)
+                      setArchiveReason("")
+                      setUserToArchive(null)
                     }}
                   >
                     Cancel
