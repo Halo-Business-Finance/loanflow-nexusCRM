@@ -5,6 +5,7 @@ import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import { useNavigate } from "react-router-dom";
 import { 
   Shield, 
   AlertTriangle, 
@@ -37,6 +38,7 @@ interface ShutdownStatus {
 }
 
 export function EmergencyShutdown() {
+  const navigate = useNavigate();
   const { toast } = useToast();
   const [shutdownStatus, setShutdownStatus] = useState<ShutdownStatus | null>(null);
   const [emergencyEvents, setEmergencyEvents] = useState<EmergencyEvent[]>([]);
@@ -168,10 +170,10 @@ export function EmergencyShutdown() {
         variant: "destructive"
       });
 
-      // If complete shutdown, redirect after short delay
+      // If complete shutdown, redirect after short delay using React Router
       if (level === 'complete') {
         setTimeout(() => {
-          window.location.href = '/emergency-maintenance';
+          navigate('/emergency-maintenance');
         }, 3000);
       }
 

@@ -197,7 +197,7 @@ export default function APIDocs() {
                     <div className="p-4 bg-muted/30 rounded-lg">
                       <h3 className="font-medium mb-2">Base URL</h3>
                       <code className="text-sm bg-background px-2 py-1 rounded">
-                        https://api.loanflow.com/v1
+                        https://gshxxsniwytjgcnthyfq.supabase.co/rest/v1
                       </code>
                     </div>
                     <div className="p-4 bg-muted/30 rounded-lg">
@@ -350,7 +350,7 @@ export default function APIDocs() {
                         <code>{`const axios = require('axios');
 
 const api = axios.create({
-  baseURL: 'https://api.loanflow.com/v1',
+  baseURL: 'https://gshxxsniwytjgcnthyfq.supabase.co/rest/v1',
   headers: {
     'Authorization': 'Bearer YOUR_API_KEY',
     'Content-Type': 'application/json'
@@ -385,7 +385,7 @@ const createLead = async (leadData) => {
                       onClick={() => copyToClipboard(`const axios = require('axios');
 
 const api = axios.create({
-  baseURL: 'https://api.loanflow.com/v1',
+  baseURL: 'https://gshxxsniwytjgcnthyfq.supabase.co/rest/v1',
   headers: {
     'Authorization': 'Bearer YOUR_API_KEY',
     'Content-Type': 'application/json'
@@ -428,7 +428,7 @@ import json
 
 class LoanFlowAPI:
     def __init__(self, api_key):
-        self.base_url = 'https://api.loanflow.com/v1'
+        self.base_url = 'https://gshxxsniwytjgcnthyfq.supabase.co/rest/v1'
         self.headers = {
             'Authorization': f'Bearer {api_key}',
             'Content-Type': 'application/json'
@@ -464,7 +464,7 @@ import json
 
 class LoanFlowAPI:
     def __init__(self, api_key):
-        self.base_url = 'https://api.loanflow.com/v1'
+        self.base_url = 'https://gshxxsniwytjgcnthyfq.supabase.co/rest/v1'
         self.headers = {
             'Authorization': f'Bearer {api_key}',
             'Content-Type': 'application/json'

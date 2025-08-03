@@ -1,11 +1,12 @@
 import React from 'react'
-import { useRouteError, isRouteErrorResponse } from 'react-router-dom'
+import { useRouteError, isRouteErrorResponse, useNavigate } from 'react-router-dom'
 import { AlertTriangle, Home, ArrowLeft } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 
 export function RouteErrorBoundary() {
   const error = useRouteError()
+  const navigate = useNavigate()
 
   let title = 'Something went wrong'
   let description = 'An unexpected error occurred while loading this page.'
@@ -31,11 +32,11 @@ export function RouteErrorBoundary() {
   }
 
   const handleGoHome = () => {
-    window.location.href = '/'
+    navigate('/')
   }
 
   const handleGoBack = () => {
-    window.history.back()
+    navigate(-1)
   }
 
   return (
