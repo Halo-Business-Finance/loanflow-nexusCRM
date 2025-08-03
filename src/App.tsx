@@ -43,8 +43,11 @@ function KeyboardShortcutsProvider() {
 
 function AuthenticatedApp() {
   const { user, loading } = useAuth();
+  
+  console.log('AuthenticatedApp state:', { user: !!user, loading });
 
   if (loading) {
+    console.log('AuthenticatedApp: showing loading spinner');
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
@@ -95,23 +98,27 @@ function AuthenticatedApp() {
   );
 }
 
-const App = () => (
-  <AsyncErrorBoundary>
-    <QueryClientProvider client={queryClient}>
-      <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-        <CSPHeaders />
-        <GeoSecurityCheck>
-          <AuthProvider>
-            <TooltipProvider>
-              <Toaster />
-              <Sonner />
-              <AuthenticatedApp />
-            </TooltipProvider>
-          </AuthProvider>
-        </GeoSecurityCheck>
-      </ThemeProvider>
-    </QueryClientProvider>
-  </AsyncErrorBoundary>
-);
+const App = () => {
+  console.log('App component rendering...');
+  
+  return (
+    <AsyncErrorBoundary onError={(error) => console.error('AsyncErrorBoundary caught:', error)}>
+      <QueryClientProvider client={queryClient}>
+        <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+          <CSPHeaders />
+          <GeoSecurityCheck>
+            <AuthProvider>
+              <TooltipProvider>
+                <Toaster />
+                <Sonner />
+                <AuthenticatedApp />
+              </TooltipProvider>
+            </AuthProvider>
+          </GeoSecurityCheck>
+        </ThemeProvider>
+      </QueryClientProvider>
+    </AsyncErrorBoundary>
+  );
+};
 
 export default App;
