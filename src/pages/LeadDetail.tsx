@@ -537,9 +537,10 @@ export default function LeadDetail() {
 
       if (contactError) throw contactError
 
-      // Update the lead table only with lead-specific fields
+      // Update the lead table only with lead-specific fields (NO STAGE - stage is in contact_entities)
       const leadUpdateData: any = {
-        last_contact: new Date().toISOString()
+        last_contact: new Date().toISOString(),
+        updated_at: new Date().toISOString()
       }
 
       if (isBeingFunded) {
@@ -552,7 +553,6 @@ export default function LeadDetail() {
         .from('leads')
         .update(leadUpdateData)
         .eq('id', lead.id)
-        .select()
 
       console.log('Lead update result:', { leadUpdateData, leadError })
 
