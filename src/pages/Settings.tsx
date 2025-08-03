@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Input } from "@/components/ui/input"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Label } from "@/components/ui/label"
 import { Switch } from "@/components/ui/switch"
 import { useToast } from "@/hooks/use-toast"
@@ -22,14 +23,18 @@ export default function Settings() {
   const { user } = useAuth()
   const { toast } = useToast()
   const [displayName, setDisplayName] = useState("")
+  const [phoneNumber, setPhoneNumber] = useState("")
+  const [timeZone, setTimeZone] = useState("")
   const [emailNotifications, setEmailNotifications] = useState(true)
   const [leadStatusNotifications, setLeadStatusNotifications] = useState(true)
   const [followUpReminders, setFollowUpReminders] = useState(true)
   const [isLoading, setIsLoading] = useState(false)
 
   useEffect(() => {
-    if (user?.user_metadata?.display_name) {
-      setDisplayName(user.user_metadata.display_name)
+    if (user?.user_metadata) {
+      setDisplayName(user.user_metadata.display_name || "")
+      setPhoneNumber(user.user_metadata.phone_number || "")
+      setTimeZone(user.user_metadata.time_zone || "")
     }
   }, [user])
 
@@ -39,7 +44,11 @@ export default function Settings() {
     setIsLoading(true)
     try {
       const { error } = await supabase.auth.updateUser({
-        data: { display_name: displayName }
+        data: { 
+          display_name: displayName,
+          phone_number: phoneNumber,
+          time_zone: timeZone
+        }
       })
 
       if (error) throw error
@@ -132,6 +141,43 @@ export default function Settings() {
                     onChange={(e) => setDisplayName(e.target.value)}
                     placeholder="Enter your display name"
                   />
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="phoneNumber">Phone Number</Label>
+                  <Input 
+                    id="phoneNumber" 
+                    type="tel"
+                    value={phoneNumber}
+                    onChange={(e) => setPhoneNumber(e.target.value)}
+                    placeholder="Enter your phone number"
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="timeZone">Time Zone</Label>
+                  <Select value={timeZone} onValueChange={setTimeZone}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select your time zone" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="America/New_York">Eastern Time (ET)</SelectItem>
+                      <SelectItem value="America/Chicago">Central Time (CT)</SelectItem>
+                      <SelectItem value="America/Denver">Mountain Time (MT)</SelectItem>
+                      <SelectItem value="America/Los_Angeles">Pacific Time (PT)</SelectItem>
+                      <SelectItem value="America/Phoenix">Arizona Time (MST)</SelectItem>
+                      <SelectItem value="America/Anchorage">Alaska Time (AKT)</SelectItem>
+                      <SelectItem value="Pacific/Honolulu">Hawaii Time (HST)</SelectItem>
+                      <SelectItem value="Europe/London">London (GMT)</SelectItem>
+                      <SelectItem value="Europe/Paris">Paris (CET)</SelectItem>
+                      <SelectItem value="Europe/Berlin">Berlin (CET)</SelectItem>
+                      <SelectItem value="Asia/Tokyo">Tokyo (JST)</SelectItem>
+                      <SelectItem value="Asia/Shanghai">Shanghai (CST)</SelectItem>
+                      <SelectItem value="Asia/Kolkata">Mumbai (IST)</SelectItem>
+                      <SelectItem value="Australia/Sydney">Sydney (AEDT)</SelectItem>
+                      <SelectItem value="UTC">UTC</SelectItem>
+                    </SelectContent>
+                  </Select>
                 </div>
 
                 <Button 
