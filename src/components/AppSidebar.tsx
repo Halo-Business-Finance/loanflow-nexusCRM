@@ -7,6 +7,8 @@ import { PhoneDialer } from "@/components/PhoneDialer"
 import { EmailSetup } from "@/components/EmailSetup"
 import { EmailComposer } from "@/components/EmailComposer"
 import { useAuth } from "@/components/auth/AuthProvider"
+import { useState, useEffect } from "react"
+import { supabase } from "@/integrations/supabase/client"
 
 import {
   Sidebar,
@@ -47,6 +49,25 @@ export function AppSidebar() {
   const navigate = useNavigate()
   const currentPath = location.pathname
   const { signOut, user, userRole, hasRole } = useAuth()
+  const [userProfile, setUserProfile] = useState<{ first_name?: string } | null>(null)
+
+  useEffect(() => {
+    const fetchUserProfile = async () => {
+      if (user?.id) {
+        const { data } = await supabase
+          .from('profiles')
+          .select('first_name')
+          .eq('id', user.id)
+          .single()
+        
+        if (data) {
+          setUserProfile(data)
+        }
+      }
+    }
+
+    fetchUserProfile()
+  }, [user?.id])
 
   const isActive = (path: string) => currentPath === path
   const getNavClass = ({ isActive }: { isActive: boolean }) =>
@@ -173,7 +194,7 @@ export function AppSidebar() {
                 <span className="font-bold text-lg text-foreground dark:text-white">LoanFlow</span>
                 {user && (
                   <span className="text-xs text-muted-foreground dark:text-white truncate max-w-[140px]">
-                    {user.user_metadata?.first_name || user.email}
+                    {userProfile?.first_name || user.user_metadata?.first_name || user.email}
                   </span>
                 )}
               </div>
