@@ -288,8 +288,11 @@ export default function Leads() {
         throw new Error('User not authenticated')
       }
       
+      console.log('Attempting to update contact entity:', editingLead.contact_entity_id)
+      console.log('Update data:', contactData)
+      
       // Update contact entity
-      const { error } = await supabase
+      const { data, error } = await supabase
         .from('contact_entities')
         .update({
           name: contactData.name,
@@ -307,11 +310,18 @@ export default function Leads() {
           stage: contactData.stage,
           notes: contactData.notes || null,
           naics_code: contactData.naics_code || null,
-          ownership_structure: contactData.ownership_structure || null
+          ownership_structure: contactData.ownership_structure || null,
+          updated_at: new Date().toISOString()
         })
         .eq('id', editingLead.contact_entity_id)
+        .select()
 
-      if (error) throw error
+      console.log('Update result:', { data, error })
+
+      if (error) {
+        console.error('Supabase error details:', error)
+        throw error
+      }
 
       toast({
         title: "Success!",
