@@ -187,7 +187,7 @@ export function LeadForm({ lead, onSubmit, onCancel, isSubmitting = false }: Lea
               <SelectItem value="Qualified">Qualified</SelectItem>
               <SelectItem value="Loan Approved">Loan Approved</SelectItem>
               <SelectItem value="Closing">Closing</SelectItem>
-              <SelectItem value="Funded">Funded</SelectItem>
+              <SelectItem value="Loan Funded">Loan Funded</SelectItem>
             </SelectContent>
           </Select>
         </div>

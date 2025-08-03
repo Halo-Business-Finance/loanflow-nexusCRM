@@ -63,7 +63,7 @@ export const STAGES = [
   "Qualified", 
   "Loan Approved", 
   "Closing", 
-  "Funded", 
+  "Loan Funded", 
   "Archive"
 ] as const
 
