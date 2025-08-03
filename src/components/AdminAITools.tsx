@@ -42,7 +42,7 @@ export function AdminAITools() {
   return (
     <div className="space-y-6">
       <div className="flex items-center gap-3">
-        <Cpu className="h-6 w-6 text-primary" />
+        <Cpu className="h-6 w-6 text-white" />
         <div>
           <h2 className="text-2xl font-bold text-foreground underline">AI & Automation Tools</h2>
           <p className="text-muted-foreground">Advanced tools to boost loan origination efficiency</p>
