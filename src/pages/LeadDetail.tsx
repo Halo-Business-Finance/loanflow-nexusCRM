@@ -93,7 +93,7 @@ export default function LeadDetail() {
   console.log('LeadDetail: Lead ID from params:', id)
   
   const [lead, setLead] = useState<Lead | null>(null)
-  const [client, setClient] = useState<Client | null>(null)
+  const [client, setClient] = useState<ClientType | null>(null)
   const [loading, setLoading] = useState(true)
   const [loanRequests, setLoanRequests] = useState<any[]>([])
   const [isEditing, setIsEditing] = useState(false)
