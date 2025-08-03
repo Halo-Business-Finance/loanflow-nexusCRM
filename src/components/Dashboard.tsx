@@ -261,6 +261,7 @@ export default function Dashboard() {
     // 1. Count non-converted leads (active pipeline)
     const activeLeadsValue = leadsData.reduce((sum, lead) => {
       if (lead.is_converted_to_client) return sum // Skip converted leads
+      // Use the loan_amount from the merged contact entity data
       return sum + (lead.loan_amount || 0)
     }, 0)
     
@@ -279,7 +280,8 @@ export default function Dashboard() {
       const leadDate = new Date(lead.created_at)
       return leadDate.getMonth() === currentMonth && 
              leadDate.getFullYear() === currentYear &&
-             ['Application', 'Pre-approval'].includes(lead.stage)
+             // Use the stage from the merged contact entity data
+             ['Application', 'Pre-approval'].includes(lead.stage || '')
     }).length
 
     // Calculate conversion rate (converted leads / total leads)
