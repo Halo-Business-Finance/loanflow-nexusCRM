@@ -129,7 +129,7 @@ export function AppSidebar() {
         </div>
 
         <SidebarGroup>
-          <SidebarGroupLabel className="text-foreground dark:text-white font-semibold">Navigation</SidebarGroupLabel>
+          <SidebarGroupLabel className="text-foreground dark:text-white font-semibold underline">Navigation</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
               {navigationItems.map((item) => (
@@ -149,7 +149,7 @@ export function AppSidebar() {
         <Separator className="my-2" />
 
         <SidebarGroup>
-          <SidebarGroupLabel className="text-foreground dark:text-white font-semibold">System Settings</SidebarGroupLabel>
+          <SidebarGroupLabel className="text-foreground dark:text-white font-semibold underline">System Settings</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
               {settingsItems.map((item) => {
