@@ -40,8 +40,9 @@ export default function Layout({ children }: LayoutProps) {
       weekday: 'short',
       month: 'short',
       day: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit'
+      hour: 'numeric',
+      minute: '2-digit',
+      hour12: true
     }
     return date.toLocaleDateString('en-US', options)
   }

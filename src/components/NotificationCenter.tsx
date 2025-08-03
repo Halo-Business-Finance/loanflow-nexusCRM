@@ -145,7 +145,13 @@ export function NotificationCenter({
                           {notification.title}
                         </h4>
                         <span className="text-xs text-muted-foreground flex-shrink-0">
-                          {formatDistanceToNow(new Date(notification.created_at), { addSuffix: true })}
+                          {new Date(notification.created_at).toLocaleString('en-US', {
+                            month: 'short',
+                            day: 'numeric',
+                            hour: 'numeric',
+                            minute: '2-digit',
+                            hour12: true
+                          })}
                         </span>
                       </div>
                       <p className="text-sm text-muted-foreground mt-1 line-clamp-2">
