@@ -1,6 +1,7 @@
 import { BarChart3, Users, UserCheck, FileText, Settings, Home, Target, Calendar, Phone, Mail, Shield, LogOut, BookOpen, User, Lock, Building2, Zap } from "lucide-react"
 import { NavLink, useLocation, useNavigate } from "react-router-dom"
 import { Button } from "@/components/ui/button"
+import { Separator } from "@/components/ui/separator"
 import { RingCentralSetup } from "@/components/RingCentralSetup"
 import { PhoneDialer } from "@/components/PhoneDialer"
 import { EmailSetup } from "@/components/EmailSetup"
@@ -83,6 +84,8 @@ export function AppSidebar() {
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
+
+        <Separator className="my-2" />
 
         <SidebarGroup>
           <SidebarGroupLabel className="text-foreground dark:text-white font-semibold">System Settings</SidebarGroupLabel>
