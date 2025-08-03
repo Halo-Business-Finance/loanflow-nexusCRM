@@ -80,7 +80,7 @@ export function AIDocumentAnalyzer() {
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Brain className="h-5 w-5" />
-            AI Document Analyzer
+            <span className="underline">AI Document Analyzer</span>
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
@@ -135,7 +135,7 @@ export function AIDocumentAnalyzer() {
           </Button>
 
           <div className="space-y-2">
-            <h4 className="font-medium text-sm">Supported Documents:</h4>
+            <h4 className="font-medium text-sm underline">Supported Documents:</h4>
             <div className="grid grid-cols-2 gap-2 text-xs text-muted-foreground">
               <div>• Pay Stubs</div>
               <div>• Bank Statements</div>
@@ -153,7 +153,7 @@ export function AIDocumentAnalyzer() {
         <CardHeader>
           <CardTitle className="flex items-center gap-2 dark:text-white">
             <TrendingUp className="h-5 w-5 dark:text-white" />
-            Analysis Results
+            <span className="underline">Analysis Results</span>
           </CardTitle>
         </CardHeader>
         <CardContent>
@@ -165,12 +165,12 @@ export function AIDocumentAnalyzer() {
           ) : (
             <div className="space-y-4">
               <div className="flex items-center justify-between">
-                <h4 className="font-medium dark:text-white">Document Type</h4>
+                <h4 className="font-medium dark:text-white underline">Document Type</h4>
                 <Badge variant="secondary">{analysis.documentType}</Badge>
               </div>
 
               <div className="flex items-center justify-between">
-                <h4 className="font-medium dark:text-white">Risk Score</h4>
+                <h4 className="font-medium dark:text-white underline">Risk Score</h4>
                 <div className="flex items-center gap-2">
                   <div className="text-2xl font-bold text-green-600">{analysis.riskScore}</div>
                   <CheckCircle className="h-5 w-5 text-green-600" />
@@ -178,12 +178,12 @@ export function AIDocumentAnalyzer() {
               </div>
 
               <div className="flex items-center justify-between">
-                <h4 className="font-medium dark:text-white">Confidence</h4>
+                <h4 className="font-medium dark:text-white underline">Confidence</h4>
                 <div className="text-lg font-semibold dark:text-white">{analysis.confidence}%</div>
               </div>
 
               <div>
-                <h4 className="font-medium mb-2 dark:text-white">Extracted Data</h4>
+                <h4 className="font-medium mb-2 dark:text-white underline">Extracted Data</h4>
                 <div className="space-y-2 text-sm">
                   {Object.entries(analysis.extractedData).map(([key, value]) => (
                     <div key={key} className="flex justify-between">
@@ -197,7 +197,7 @@ export function AIDocumentAnalyzer() {
               </div>
 
               <div>
-                <h4 className="font-medium mb-2 dark:text-white">AI Recommendations</h4>
+                <h4 className="font-medium mb-2 dark:text-white underline">AI Recommendations</h4>
                 <div className="space-y-2">
                   {analysis.recommendations.map((rec: string, index: number) => (
                     <div key={index} className="flex items-start gap-2 text-sm">
