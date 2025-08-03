@@ -2552,6 +2552,33 @@ export type Database = {
         }
         Relationships: []
       }
+      secure_session_data: {
+        Row: {
+          created_at: string
+          expires_at: string
+          id: string
+          session_key: string
+          session_value: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          expires_at?: string
+          id?: string
+          session_key: string
+          session_value: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          expires_at?: string
+          id?: string
+          session_key?: string
+          session_value?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       secure_sessions: {
         Row: {
           created_at: string
@@ -3217,6 +3244,10 @@ export type Database = {
         Args: Record<PropertyKey, never>
         Returns: number
       }
+      clear_secure_session_data: {
+        Args: Record<PropertyKey, never>
+        Returns: undefined
+      }
       create_audit_log: {
         Args: {
           p_action: string
@@ -3235,6 +3266,14 @@ export type Database = {
           p_metadata?: Json
         }
         Returns: string
+      }
+      create_secure_session: {
+        Args: {
+          p_session_token: string
+          p_device_fingerprint: string
+          p_user_agent: string
+        }
+        Returns: undefined
       }
       detect_ai_behavior: {
         Args: {
@@ -3269,6 +3308,10 @@ export type Database = {
       get_recent_failed_attempts: {
         Args: { user_email: string }
         Returns: number
+      }
+      get_secure_session_data: {
+        Args: { p_key: string }
+        Returns: string
       }
       get_user_role: {
         Args: { user_id?: string }
@@ -3323,9 +3366,17 @@ export type Database = {
         }
         Returns: string
       }
+      remove_secure_session_data: {
+        Args: { p_key: string }
+        Returns: undefined
+      }
       restore_user: {
         Args: { p_user_id: string; p_restored_by?: string }
         Returns: boolean
+      }
+      store_secure_session_data: {
+        Args: { p_key: string; p_value: string }
+        Returns: undefined
       }
       trigger_emergency_shutdown: {
         Args: {

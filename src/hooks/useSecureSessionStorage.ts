@@ -2,36 +2,29 @@ import { useCallback, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 
 /**
- * Secure session storage hook that uses in-memory session management
- * with enhanced security measures
+ * Secure session storage hook that uses server-side session management
+ * instead of localStorage for sensitive data
  */
 export const useSecureSessionStorage = () => {
   
-  // Store session data securely using existing session management
+  // Store session data securely on the server
   const setSecureItem = useCallback(async (key: string, value: any): Promise<boolean> => {
     try {
-      // Use existing active_sessions table for secure storage
-      const { data: session, error: sessionError } = await supabase
-        .from('active_sessions')
-        .select('session_token')
-        .eq('user_id', (await supabase.auth.getUser()).data.user?.id)
-        .eq('is_active', true)
-        .single();
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return false;
 
-      if (sessionError || !session) {
-        console.error('No active session found');
+      const { error } = await supabase
+        .from('secure_session_data')
+        .upsert({
+          user_id: user.id,
+          session_key: key,
+          session_value: JSON.stringify(value)
+        });
+      
+      if (error) {
+        console.error('Failed to store secure session data:', error);
         return false;
       }
-
-      // Store in session metadata (simplified approach)
-      const sessionData = {
-        [key]: JSON.stringify(value),
-        timestamp: new Date().toISOString()
-      };
-
-      // For now, use sessionStorage as fallback with encryption simulation
-      const encrypted = btoa(JSON.stringify(sessionData));
-      sessionStorage.setItem(`secure_${key}`, encrypted);
       
       return true;
     } catch (error) {
@@ -40,14 +33,26 @@ export const useSecureSessionStorage = () => {
     }
   }, []);
 
-  // Retrieve session data securely
+  // Retrieve session data securely from the server
   const getSecureItem = useCallback(async (key: string): Promise<any | null> => {
     try {
-      const encrypted = sessionStorage.getItem(`secure_${key}`);
-      if (!encrypted) return null;
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return null;
 
-      const decrypted = JSON.parse(atob(encrypted));
-      return JSON.parse(decrypted[key]);
+      const { data, error } = await supabase
+        .from('secure_session_data')
+        .select('session_value')
+        .eq('session_key', key)
+        .eq('user_id', user.id)
+        .gt('expires_at', new Date().toISOString())
+        .single();
+      
+      if (error) {
+        console.error('Failed to retrieve secure session data:', error);
+        return null;
+      }
+      
+      return data ? JSON.parse(data.session_value) : null;
     } catch (error) {
       console.error('Secure session retrieval error:', error);
       return null;
@@ -57,7 +62,20 @@ export const useSecureSessionStorage = () => {
   // Remove secure session data
   const removeSecureItem = useCallback(async (key: string): Promise<boolean> => {
     try {
-      sessionStorage.removeItem(`secure_${key}`);
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return false;
+
+      const { error } = await supabase
+        .from('secure_session_data')
+        .delete()
+        .eq('session_key', key)
+        .eq('user_id', user.id);
+      
+      if (error) {
+        console.error('Failed to remove secure session data:', error);
+        return false;
+      }
+      
       return true;
     } catch (error) {
       console.error('Secure session removal error:', error);
@@ -68,13 +86,19 @@ export const useSecureSessionStorage = () => {
   // Clear all secure session data
   const clearSecureSession = useCallback(async (): Promise<boolean> => {
     try {
-      // Clear all secure session items
-      for (let i = 0; i < sessionStorage.length; i++) {
-        const key = sessionStorage.key(i);
-        if (key?.startsWith('secure_')) {
-          sessionStorage.removeItem(key);
-        }
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return false;
+
+      const { error } = await supabase
+        .from('secure_session_data')
+        .delete()
+        .eq('user_id', user.id);
+      
+      if (error) {
+        console.error('Failed to clear secure session data:', error);
+        return false;
       }
+      
       return true;
     } catch (error) {
       console.error('Secure session clear error:', error);
