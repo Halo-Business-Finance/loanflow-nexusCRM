@@ -17,7 +17,8 @@ import {
   User, 
   Bell,
   Save,
-  Lock
+  Lock,
+  Shield
 } from "lucide-react"
 
 export default function Settings() {
@@ -26,6 +27,7 @@ export default function Settings() {
   const [displayName, setDisplayName] = useState("")
   const [phoneNumber, setPhoneNumber] = useState("")
   const [timeZone, setTimeZone] = useState("")
+  const [userRole, setUserRole] = useState("")
   const [currentPassword, setCurrentPassword] = useState("")
   const [newPassword, setNewPassword] = useState("")
   const [confirmPassword, setConfirmPassword] = useState("")
@@ -36,11 +38,30 @@ export default function Settings() {
   const [isChangingPassword, setIsChangingPassword] = useState(false)
 
   useEffect(() => {
-    if (user?.user_metadata) {
-      setDisplayName(user.user_metadata.display_name || "")
-      setPhoneNumber(user.user_metadata.phone_number || "")
-      setTimeZone(user.user_metadata.time_zone || "")
+    const fetchUserData = async () => {
+      if (user?.user_metadata) {
+        setDisplayName(user.user_metadata.display_name || "")
+        setPhoneNumber(user.user_metadata.phone_number || "")
+        setTimeZone(user.user_metadata.time_zone || "")
+      }
+
+      // Fetch user role
+      if (user?.id) {
+        try {
+          const { data: role, error } = await supabase.rpc('get_user_role', {
+            user_id: user.id
+          })
+          
+          if (!error && role) {
+            setUserRole(role)
+          }
+        } catch (error) {
+          console.error('Error fetching user role:', error)
+        }
+      }
     }
+
+    fetchUserData()
   }, [user])
 
   const handleSaveProfile = async () => {
@@ -181,65 +202,84 @@ export default function Settings() {
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-6">
+                {/* User Role Display */}
                 <div className="space-y-2">
-                  <Label htmlFor="email">Email</Label>
-                  <Input 
-                    id="email" 
-                    type="email" 
-                    value={user?.email || ""} 
-                    disabled 
-                    className="bg-muted"
-                  />
-                  <p className="text-xs text-muted-foreground">
-                    Email cannot be changed from this interface
-                  </p>
+                  <Label className="flex items-center gap-2">
+                    <Shield className="w-4 h-4" />
+                    User Role
+                  </Label>
+                  <div className="flex items-center gap-2">
+                    <Badge variant="secondary" className="capitalize">
+                      {userRole || "Loading..."}
+                    </Badge>
+                    <p className="text-xs text-muted-foreground">
+                      Contact an administrator to change your role
+                    </p>
+                  </div>
                 </div>
 
-                <div className="space-y-2">
-                  <Label htmlFor="displayName">Display Name</Label>
-                  <Input 
-                    id="displayName" 
-                    value={displayName}
-                    onChange={(e) => setDisplayName(e.target.value)}
-                    placeholder="Enter your display name"
-                  />
-                </div>
+                {/* Two-column grid for form fields */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div className="space-y-2">
+                    <Label htmlFor="email">Email</Label>
+                    <Input 
+                      id="email" 
+                      type="email" 
+                      value={user?.email || ""} 
+                      disabled 
+                      className="bg-muted"
+                    />
+                    <p className="text-xs text-muted-foreground">
+                      Email cannot be changed from this interface
+                    </p>
+                  </div>
 
-                <div className="space-y-2">
-                  <Label htmlFor="phoneNumber">Phone Number</Label>
-                  <Input 
-                    id="phoneNumber" 
-                    type="tel"
-                    value={phoneNumber}
-                    onChange={(e) => setPhoneNumber(e.target.value)}
-                    placeholder="Enter your phone number"
-                  />
-                </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="displayName">Display Name</Label>
+                    <Input 
+                      id="displayName" 
+                      value={displayName}
+                      onChange={(e) => setDisplayName(e.target.value)}
+                      placeholder="Enter your display name"
+                    />
+                  </div>
 
-                <div className="space-y-2">
-                  <Label htmlFor="timeZone">Time Zone</Label>
-                  <Select value={timeZone} onValueChange={setTimeZone}>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select your time zone" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="America/New_York">Eastern Time (ET)</SelectItem>
-                      <SelectItem value="America/Chicago">Central Time (CT)</SelectItem>
-                      <SelectItem value="America/Denver">Mountain Time (MT)</SelectItem>
-                      <SelectItem value="America/Los_Angeles">Pacific Time (PT)</SelectItem>
-                      <SelectItem value="America/Phoenix">Arizona Time (MST)</SelectItem>
-                      <SelectItem value="America/Anchorage">Alaska Time (AKT)</SelectItem>
-                      <SelectItem value="Pacific/Honolulu">Hawaii Time (HST)</SelectItem>
-                      <SelectItem value="Europe/London">London (GMT)</SelectItem>
-                      <SelectItem value="Europe/Paris">Paris (CET)</SelectItem>
-                      <SelectItem value="Europe/Berlin">Berlin (CET)</SelectItem>
-                      <SelectItem value="Asia/Tokyo">Tokyo (JST)</SelectItem>
-                      <SelectItem value="Asia/Shanghai">Shanghai (CST)</SelectItem>
-                      <SelectItem value="Asia/Kolkata">Mumbai (IST)</SelectItem>
-                      <SelectItem value="Australia/Sydney">Sydney (AEDT)</SelectItem>
-                      <SelectItem value="UTC">UTC</SelectItem>
-                    </SelectContent>
-                  </Select>
+                  <div className="space-y-2">
+                    <Label htmlFor="phoneNumber">Phone Number</Label>
+                    <Input 
+                      id="phoneNumber" 
+                      type="tel"
+                      value={phoneNumber}
+                      onChange={(e) => setPhoneNumber(e.target.value)}
+                      placeholder="Enter your phone number"
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="timeZone">Time Zone</Label>
+                    <Select value={timeZone} onValueChange={setTimeZone}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select your time zone" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="America/New_York">Eastern Time (ET)</SelectItem>
+                        <SelectItem value="America/Chicago">Central Time (CT)</SelectItem>
+                        <SelectItem value="America/Denver">Mountain Time (MT)</SelectItem>
+                        <SelectItem value="America/Los_Angeles">Pacific Time (PT)</SelectItem>
+                        <SelectItem value="America/Phoenix">Arizona Time (MST)</SelectItem>
+                        <SelectItem value="America/Anchorage">Alaska Time (AKT)</SelectItem>
+                        <SelectItem value="Pacific/Honolulu">Hawaii Time (HST)</SelectItem>
+                        <SelectItem value="Europe/London">London (GMT)</SelectItem>
+                        <SelectItem value="Europe/Paris">Paris (CET)</SelectItem>
+                        <SelectItem value="Europe/Berlin">Berlin (CET)</SelectItem>
+                        <SelectItem value="Asia/Tokyo">Tokyo (JST)</SelectItem>
+                        <SelectItem value="Asia/Shanghai">Shanghai (CST)</SelectItem>
+                        <SelectItem value="Asia/Kolkata">Mumbai (IST)</SelectItem>
+                        <SelectItem value="Australia/Sydney">Sydney (AEDT)</SelectItem>
+                        <SelectItem value="UTC">UTC</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
                 </div>
 
                 <Button 
