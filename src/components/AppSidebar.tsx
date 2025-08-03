@@ -28,6 +28,7 @@ const navigationItems = [
   { title: "Pipeline", url: "/pipeline", icon: BarChart3, description: "Track deals through your sales pipeline" },
   { title: "Activities", url: "/activities", icon: Calendar, description: "Schedule and track meetings, calls, and tasks" },
   { title: "Documents", url: "/documents", icon: FileText, description: "Manage loan documents and client files" },
+  { title: "Reports", url: "/reports", icon: BarChart3, description: "View analytics and performance reports" },
   { title: "Resources", url: "/resources", icon: BookOpen, description: "Access training materials and documentation" },
 ]
 
@@ -38,6 +39,7 @@ const settingsItems = [
   { title: "Enterprise", url: "/enterprise", icon: Building2, description: "Advanced business features and workflow management (Admin only)" },
   { title: "Integrations", url: "/integrations", icon: Zap, description: "Connect external tools and services" },
   { title: "AI Tools", url: "/ai-tools", icon: Target, description: "Access AI-powered features and automation" },
+  { title: "API Docs", url: "/api-docs", icon: FileText, description: "View API documentation and examples" },
   { title: "Security", url: "/security", icon: Shield, description: "Monitor security events and manage access controls (Admin only)" },
 ]
 
