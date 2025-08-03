@@ -40,10 +40,6 @@ export default function Settings() {
               <Database className="w-4 h-4" />
               <span>Data Integrity</span>
             </TabsTrigger>
-            <TabsTrigger value="security" className="flex items-center space-x-2">
-              <Shield className="w-4 h-4" />
-              <span>Security</span>
-            </TabsTrigger>
             <TabsTrigger value="profile" className="flex items-center space-x-2">
               <User className="w-4 h-4" />
               <span>Profile</span>
@@ -58,24 +54,6 @@ export default function Settings() {
             <DataIntegrityDashboard />
           </TabsContent>
 
-          <TabsContent value="security">
-            <Card>
-              <CardHeader>
-                <CardTitle>Security Settings</CardTitle>
-                <CardDescription>
-                  Manage your account security preferences
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <p className="text-muted-foreground">
-                  Security settings are managed in the Security Center.{" "}
-                  <Button variant="link" className="p-0 h-auto" asChild>
-                    <Link to="/security">Go to Security Center →</Link>
-                  </Button>
-                </p>
-              </CardContent>
-            </Card>
-          </TabsContent>
 
           <TabsContent value="profile">
             <Card>
