@@ -123,7 +123,13 @@ All colors MUST be HSL.
   }
 
   /* Global underline styles for titles and column headers */
-  h1, h2, h3, h4, h5, h6 {
+  /* Only apply to elements that don't already have border-b classes */
+  h1:not([class*="border-b"]), 
+  h2:not([class*="border-b"]), 
+  h3:not([class*="border-b"]), 
+  h4:not([class*="border-b"]), 
+  h5:not([class*="border-b"]), 
+  h6:not([class*="border-b"]) {
     @apply underline decoration-2 underline-offset-4;
   }
 
@@ -132,12 +138,11 @@ All colors MUST be HSL.
     @apply underline decoration-1 underline-offset-2;
   }
 
-  /* Card titles */
-  [data-testid="card-title"],
-  .card-title,
-  /* Targeting specific title classes that might be used */
-  [class*="CardTitle"],
-  [class*="card-title"] {
+  /* Card titles - only if they don't have border-b */
+  [data-testid="card-title"]:not([class*="border-b"]),
+  .card-title:not([class*="border-b"]),
+  [class*="CardTitle"]:not([class*="border-b"]),
+  [class*="card-title"]:not([class*="border-b"]) {
     @apply underline decoration-2 underline-offset-4;
   }
 
