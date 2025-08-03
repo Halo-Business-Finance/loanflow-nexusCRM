@@ -98,6 +98,9 @@ export default function Leads() {
   // Data fetching
   const fetchLeads = async () => {
     try {
+      console.log('DEBUG: Starting fetchLeads...')
+      console.log('DEBUG: Current user:', user?.id)
+      
       // All authenticated users can see all leads (universal access)
       const { data, error } = await supabase
         .from('leads')
@@ -107,7 +110,12 @@ export default function Leads() {
         `)
         .order('created_at', { ascending: false })
 
-      if (error) throw error
+      console.log('DEBUG: Supabase response:', { data, error })
+      
+      if (error) {
+        console.error('DEBUG: Supabase error details:', error)
+        throw error
+      }
       
       // Merge leads with contact entity data and filter out invalid leads
       const mergedLeads = (data || [])
