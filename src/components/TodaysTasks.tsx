@@ -117,7 +117,7 @@ export function TodaysTasks() {
         <CardHeader>
           <CardTitle className="flex items-center gap-2 dark:text-white">
             <Clock className="h-5 w-5" />
-            <span className="inline-block border-b-2 border-primary dark:border-white pb-1">Today's Tasks</span>
+            <span className="inline-block border-b-2 border-primary dark:border-white pb-1 no-underline">Today's Tasks</span>
           </CardTitle>
         </CardHeader>
         <CardContent>
@@ -136,7 +136,7 @@ export function TodaysTasks() {
       <CardHeader>
         <CardTitle className="flex items-center gap-2 dark:text-white">
           <Clock className="h-5 w-5" />
-          <span className="inline-block border-b-2 border-primary dark:border-white pb-1">Today's Tasks</span>
+          <span className="inline-block border-b-2 border-primary dark:border-white pb-1 no-underline">Today's Tasks</span>
           {(todaysTasks.length + overdueTasks.length) > 0 && (
             <Badge variant="default" className="ml-auto">
               {todaysTasks.length + overdueTasks.length}
