@@ -426,7 +426,7 @@ export default function Dashboard() {
       {/* Header */}
       <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-3xl font-bold text-foreground border-b-2 border-primary dark:border-white pb-2">Dashboard</h1>
+          <h1 className="text-3xl font-bold text-foreground"><span className="border-b-2 border-primary dark:border-white pb-2">Dashboard</span></h1>
           <p className="text-foreground">Welcome back! Here's your performance overview.</p>
           <p className="text-sm text-foreground mt-1">{formatDateTime(currentDateTime)}</p>
         </div>
@@ -455,8 +455,8 @@ export default function Dashboard() {
             onClick={() => handleMetricClick(metric)}
           >
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium text-foreground border-b border-primary/30 dark:border-white/30 pb-1">
-                {metric.title}
+              <CardTitle className="text-sm font-medium text-foreground">
+                <span className="border-b border-primary/30 dark:border-white/30 pb-1">{metric.title}</span>
               </CardTitle>
               <div className="flex items-center gap-2">
                 <ChevronRight className="h-3 w-3 text-muted-foreground" />
@@ -477,7 +477,7 @@ export default function Dashboard() {
         <Card className="col-span-2 shadow-soft">
           <CardHeader>
             <div className="flex justify-between items-center">
-              <CardTitle className="text-foreground border-b-2 border-primary dark:border-white pb-2">Sales Pipeline</CardTitle>
+              <CardTitle className="text-foreground"><span className="border-b-2 border-primary dark:border-white pb-2">Sales Pipeline</span></CardTitle>
               <div className="flex gap-2">
                 <div className="relative">
                   <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
@@ -521,7 +521,7 @@ export default function Dashboard() {
       {/* Loan Close Performance */}
       <Card className="shadow-soft">
         <CardHeader>
-          <CardTitle className="dark:text-white border-b-2 border-primary dark:border-white pb-2">Loan Close Performance</CardTitle>
+          <CardTitle className="dark:text-white"><span className="border-b-2 border-primary dark:border-white pb-2">Loan Close Performance</span></CardTitle>
           <p className="text-sm text-muted-foreground dark:text-white">Monthly closed loans vs targets and close percentage</p>
         </CardHeader>
         <CardContent>
@@ -595,7 +595,7 @@ export default function Dashboard() {
       <Card className="shadow-soft">
         <CardHeader>
           <div className="flex justify-between items-center">
-            <CardTitle className="dark:text-white border-b-2 border-primary dark:border-white pb-2">Recent Leads</CardTitle>
+            <CardTitle className="dark:text-white"><span className="border-b-2 border-primary dark:border-white pb-2">Recent Leads</span></CardTitle>
             <div className="relative">
               <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground dark:text-white" />
               <Input
