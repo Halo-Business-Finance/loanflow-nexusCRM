@@ -201,12 +201,6 @@ export function AppSidebar() {
             )}
           </div>
           
-          {state !== "collapsed" && user && (
-            <div className="mb-3">
-              <p className="text-xs text-muted-foreground capitalize">{userRole} User</p>
-            </div>
-          )}
-          
           <Button 
             variant="outline" 
             size="sm" 
