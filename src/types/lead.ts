@@ -57,7 +57,7 @@ export interface ContactEntity {
 export const STAGES = [
   "All", 
   "Initial Contact", 
-  "Application", 
+  "Loan Application Signed", 
   "Documentation", 
   "Pre-approval", 
   "Qualified", 

@@ -181,7 +181,7 @@ export function LeadForm({ lead, onSubmit, onCancel, isSubmitting = false }: Lea
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="Initial Contact">Initial Contact</SelectItem>
-              <SelectItem value="Application">Application</SelectItem>
+              <SelectItem value="Loan Application Signed">Loan Application Signed</SelectItem>
               <SelectItem value="Documentation">Documentation</SelectItem>
               <SelectItem value="Pre-approval">Pre-approval</SelectItem>
               <SelectItem value="Qualified">Qualified</SelectItem>
