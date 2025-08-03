@@ -1068,6 +1068,102 @@ export type Database = {
         }
         Relationships: []
       }
+      document_analytics: {
+        Row: {
+          created_at: string
+          document_id: string
+          document_name: string
+          download_attempted: boolean | null
+          id: string
+          max_page_reached: number | null
+          pages_viewed: Json | null
+          print_attempted: boolean | null
+          session_data: Json | null
+          total_view_time_seconds: number | null
+          updated_at: string
+          user_id: string
+          view_ended_at: string | null
+          view_started_at: string
+          viewer_type: string | null
+          zoom_events: number | null
+        }
+        Insert: {
+          created_at?: string
+          document_id: string
+          document_name: string
+          download_attempted?: boolean | null
+          id?: string
+          max_page_reached?: number | null
+          pages_viewed?: Json | null
+          print_attempted?: boolean | null
+          session_data?: Json | null
+          total_view_time_seconds?: number | null
+          updated_at?: string
+          user_id: string
+          view_ended_at?: string | null
+          view_started_at?: string
+          viewer_type?: string | null
+          zoom_events?: number | null
+        }
+        Update: {
+          created_at?: string
+          document_id?: string
+          document_name?: string
+          download_attempted?: boolean | null
+          id?: string
+          max_page_reached?: number | null
+          pages_viewed?: Json | null
+          print_attempted?: boolean | null
+          session_data?: Json | null
+          total_view_time_seconds?: number | null
+          updated_at?: string
+          user_id?: string
+          view_ended_at?: string | null
+          view_started_at?: string
+          viewer_type?: string | null
+          zoom_events?: number | null
+        }
+        Relationships: []
+      }
+      document_error_logs: {
+        Row: {
+          browser_info: Json | null
+          created_at: string
+          document_id: string | null
+          document_name: string | null
+          error_message: string
+          error_stack: string | null
+          error_type: string
+          id: string
+          user_id: string | null
+          viewer_type: string | null
+        }
+        Insert: {
+          browser_info?: Json | null
+          created_at?: string
+          document_id?: string | null
+          document_name?: string | null
+          error_message: string
+          error_stack?: string | null
+          error_type: string
+          id?: string
+          user_id?: string | null
+          viewer_type?: string | null
+        }
+        Update: {
+          browser_info?: Json | null
+          created_at?: string
+          document_id?: string | null
+          document_name?: string | null
+          error_message?: string
+          error_stack?: string | null
+          error_type?: string
+          id?: string
+          user_id?: string | null
+          viewer_type?: string | null
+        }
+        Relationships: []
+      }
       email_accounts: {
         Row: {
           access_token: string

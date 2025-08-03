@@ -1,11 +1,12 @@
-import { useState, useEffect, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Download, ExternalLink, X } from 'lucide-react';
+import { Download, ExternalLink, FileText, X } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
+import { useToast } from '@/hooks/use-toast';
+import { useDocumentAnalytics } from '@/hooks/useDocumentAnalytics';
 import { LeadDocument } from '@/hooks/useDocuments';
-import { toast } from '@/hooks/use-toast';
 
 // Declare Adobe PDF Embed API types
 declare global {
@@ -23,10 +24,13 @@ interface DocumentViewerProps {
 export function DocumentViewer({ document, isOpen, onClose }: DocumentViewerProps) {
   const [loading, setLoading] = useState(false);
   const [documentUrl, setDocumentUrl] = useState<string | null>(null);
-  const [useGoogleViewer, setUseGoogleViewer] = useState(false);
-  const [useAdobeViewer, setUseAdobeViewer] = useState(true);
   const [adobeSDKLoaded, setAdobeSDKLoaded] = useState(false);
+  const [useAdobeViewer, setUseAdobeViewer] = useState(true);
+  const [useGoogleViewer, setUseGoogleViewer] = useState(false);
+  const [adobeClientId, setAdobeClientId] = useState<string>('dc-pdf-embed-demo');
+  const [isDemo, setIsDemo] = useState(true);
   const adobeViewerRef = useRef<HTMLDivElement>(null);
+  const { toast } = useToast();
 
   // Determine file types
   const isPdf = document?.file_mime_type?.includes('pdf') || document?.document_name?.toLowerCase().endsWith('.pdf');
@@ -35,30 +39,74 @@ export function DocumentViewer({ document, isOpen, onClose }: DocumentViewerProp
                    document?.document_name?.toLowerCase().match(/\.(doc|docx)$/);
   const isImage = document?.file_mime_type?.startsWith('image/');
 
-  // Load Adobe PDF Embed API
+  // Initialize analytics
+  const analyticsData = document ? {
+    documentId: document.id,
+    documentName: document.document_name,
+    viewerType: useAdobeViewer ? 'adobe' as const : useGoogleViewer ? 'google' as const : 'direct' as const
+  } : null;
+
+  const {
+    startTracking,
+    stopTracking,
+    trackPageView,
+    trackZoomEvent,
+    trackDownloadAttempt,
+    trackPrintAttempt,
+    logError,
+    isTracking
+  } = useDocumentAnalytics(analyticsData);
+
+  // Load Adobe configuration and SDK
   useEffect(() => {
-    const loadAdobeSDK = () => {
+    const loadAdobeConfig = async () => {
+      try {
+        const { data, error } = await supabase.functions.invoke('get-adobe-config');
+        
+        if (error) {
+          console.error('Error getting Adobe config:', error);
+          await logError('adobe_config_failed', error.message);
+          return;
+        }
+
+        setAdobeClientId(data.clientId);
+        setIsDemo(data.isDemo);
+      } catch (error) {
+        console.error('Error loading Adobe config:', error);
+        await logError('adobe_config_exception', error instanceof Error ? error.message : 'Unknown error');
+      }
+    };
+
+    const loadAdobeSDK = async () => {
       if (window.AdobeDC || window.document.querySelector('script[src*="adobe"]')) {
         setAdobeSDKLoaded(true);
         return;
       }
 
-      const script = window.document.createElement('script');
-      script.src = 'https://documentservices.adobe.com/view-sdk/viewer.js';
-      script.onload = () => {
-        setAdobeSDKLoaded(true);
-      };
-      script.onerror = () => {
-        console.error('Failed to load Adobe PDF Embed API');
+      try {
+        const script = window.document.createElement('script');
+        script.src = 'https://documentservices.adobe.com/view-sdk/viewer.js';
+        script.onload = () => {
+          setAdobeSDKLoaded(true);
+        };
+        script.onerror = async () => {
+          console.error('Failed to load Adobe PDF Embed API');
+          await logError('adobe_sdk_load_failed', 'Adobe SDK script failed to load');
+          setUseAdobeViewer(false);
+        };
+        window.document.head.appendChild(script);
+      } catch (error) {
+        console.error('Error loading Adobe SDK:', error);
+        await logError('adobe_sdk_exception', error instanceof Error ? error.message : 'Unknown error');
         setUseAdobeViewer(false);
-      };
-      window.document.head.appendChild(script);
+      }
     };
 
     if (isPdf && isOpen) {
+      loadAdobeConfig();
       loadAdobeSDK();
     }
-  }, [isPdf, isOpen]);
+  }, [isPdf, isOpen, logError]);
 
   const getDocumentUrl = async (filePath: string) => {
     try {
@@ -92,7 +140,7 @@ export function DocumentViewer({ document, isOpen, onClose }: DocumentViewerProp
       adobeViewerRef.current.innerHTML = '';
 
       const adobeDCView = new window.AdobeDC.View({
-        clientId: "dc-pdf-embed-demo", // Using Adobe's demo client ID
+        clientId: adobeClientId,
         divId: adobeViewerRef.current.id || "adobe-dc-view"
       });
 
@@ -112,8 +160,32 @@ export function DocumentViewer({ document, isOpen, onClose }: DocumentViewerProp
         showAnnotationTools: false
       });
 
+      // Set up Adobe event listeners for analytics
+      adobeDCView.registerCallback(
+        window.AdobeDC.View.Enum.CallbackType.EVENT_LISTENER,
+        (event: any) => {
+          switch (event.type) {
+            case 'PAGE_VIEW':
+              trackPageView(event.data.pageNumber);
+              break;
+            case 'ZOOM_IN':
+            case 'ZOOM_OUT':
+              trackZoomEvent();
+              break;
+            case 'DOCUMENT_DOWNLOAD':
+              trackDownloadAttempt();
+              break;
+            case 'DOCUMENT_PRINT':
+              trackPrintAttempt();
+              break;
+          }
+        },
+        { enablePDFAnalytics: true }
+      );
+
     } catch (error) {
       console.error('Adobe PDF viewer error:', error);
+      await logError('adobe_render_failed', error instanceof Error ? error.message : 'Adobe render failed');
       setUseAdobeViewer(false);
       setUseGoogleViewer(true);
     }
@@ -128,6 +200,8 @@ export function DocumentViewer({ document, isOpen, onClose }: DocumentViewerProp
     if (!document?.file_path) return;
 
     try {
+      trackDownloadAttempt();
+      
       const { data, error } = await supabase.storage
         .from('lead-documents')
         .download(document.file_path);
@@ -149,6 +223,7 @@ export function DocumentViewer({ document, isOpen, onClose }: DocumentViewerProp
       });
     } catch (error) {
       console.error('Error downloading document:', error);
+      await logError('download_failed', error instanceof Error ? error.message : 'Download failed');
       toast({
         title: "Error",
         description: "Failed to download document",
@@ -172,11 +247,22 @@ export function DocumentViewer({ document, isOpen, onClose }: DocumentViewerProp
       handleViewDocument();
     }
     if (!isOpen) {
+      // Stop tracking when modal closes
+      if (isTracking) {
+        stopTracking();
+      }
       setDocumentUrl(null); // Reset URL when modal closes
       setUseAdobeViewer(true); // Reset to Adobe viewer as default
       setUseGoogleViewer(false);
     }
-  }, [isOpen, document?.file_path, documentUrl]);
+  }, [isOpen, document?.file_path, documentUrl, isTracking, stopTracking]);
+
+  // Start tracking when document loads and viewer is ready
+  useEffect(() => {
+    if (isOpen && documentUrl && analyticsData && !isTracking) {
+      startTracking();
+    }
+  }, [isOpen, documentUrl, analyticsData, isTracking, startTracking]);
 
   // Render Adobe PDF when URL is available
   useEffect(() => {
@@ -203,6 +289,16 @@ export function DocumentViewer({ document, isOpen, onClose }: DocumentViewerProp
                 <Badge variant="outline" className="text-xs">
                   {document.file_mime_type || 'Unknown type'}
                 </Badge>
+                {isDemo && (
+                  <Badge variant="destructive" className="text-xs">
+                    Demo Mode
+                  </Badge>
+                )}
+                {isTracking && (
+                  <Badge variant="default" className="text-xs">
+                    Analytics Active
+                  </Badge>
+                )}
                 {isPdf && (
                   <Badge variant="outline" className="text-xs">
                     PDF Reader: {useAdobeViewer ? 'Adobe' : useGoogleViewer ? 'Google' : 'Direct'}
