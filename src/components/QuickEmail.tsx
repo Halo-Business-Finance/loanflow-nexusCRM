@@ -8,21 +8,20 @@ import { Mail, Send, Loader2 } from "lucide-react"
 import { useToast } from "@/hooks/use-toast"
 import { supabase } from "@/integrations/supabase/client"
 
-interface EmailComposerProps {
+interface QuickEmailProps {
   trigger: React.ReactNode
-  recipientEmail?: string // Pre-fill with this email
-  recipientName?: string // Optional name for subject personalization
+  recipientEmail: string
+  recipientName?: string
 }
 
-export function EmailComposer({ trigger, recipientEmail, recipientName }: EmailComposerProps) {
+export function QuickEmail({ trigger, recipientEmail, recipientName }: QuickEmailProps) {
   const [isOpen, setIsOpen] = useState(false)
   const [isSending, setIsSending] = useState(false)
   const [formData, setFormData] = useState({
-    to: recipientEmail || "",
-    cc: "",
-    bcc: "",
-    subject: recipientName ? `Follow-up: ${recipientName}` : "",
-    body: ""
+    subject: recipientName ? `Follow-up regarding your loan application` : "Follow-up from LoanFlow",
+    body: recipientName ? 
+      `Hi ${recipientName},\n\nI hope this message finds you well. I wanted to follow up regarding your loan application.\n\nPlease let me know if you have any questions or if there's anything I can help you with.\n\nBest regards,\n[Your Name]` :
+      `Hi,\n\nI hope this message finds you well. I wanted to follow up regarding your inquiry.\n\nPlease let me know if you have any questions.\n\nBest regards,\n[Your Name]`
   })
   const { toast } = useToast()
 
@@ -30,18 +29,11 @@ export function EmailComposer({ trigger, recipientEmail, recipientName }: EmailC
     setFormData(prev => ({ ...prev, [field]: value }))
   }
 
-  const parseEmailList = (emailString: string): string[] => {
-    return emailString
-      .split(',')
-      .map(email => email.trim())
-      .filter(email => email.length > 0)
-  }
-
   const handleSendEmail = async () => {
-    if (!formData.to.trim() || !formData.subject.trim()) {
+    if (!formData.subject.trim()) {
       toast({
-        title: "Missing Information",
-        description: "Please provide at least recipient email and subject",
+        title: "Missing Subject",
+        description: "Please provide an email subject",
         variant: "destructive",
       })
       return
@@ -50,31 +42,29 @@ export function EmailComposer({ trigger, recipientEmail, recipientName }: EmailC
     try {
       setIsSending(true)
 
-      const { data, error } = await supabase.functions.invoke('microsoft-auth', {
+      const { data, error } = await supabase.functions.invoke('send-email', {
         body: {
-          action: 'send_email',
-          to: parseEmailList(formData.to),
-          cc: formData.cc ? parseEmailList(formData.cc) : [],
-          bcc: formData.bcc ? parseEmailList(formData.bcc) : [],
+          to: recipientEmail,
           subject: formData.subject,
-          body: formData.body.replace(/\n/g, '<br>')
+          body: formData.body,
+          leadName: recipientName,
+          fromName: "LoanFlow Team"
         }
       })
 
       if (error) throw error
 
       toast({
-        title: "Email Sent",
-        description: "Your email was sent successfully via Microsoft 365",
+        title: "Email Sent Successfully",
+        description: `Email sent to ${recipientEmail}`,
       })
 
-      // Reset form but keep recipient if provided
+      // Reset form
       setFormData({
-        to: recipientEmail || "",
-        cc: "",
-        bcc: "",
-        subject: recipientName ? `Follow-up: ${recipientName}` : "",
-        body: ""
+        subject: recipientName ? `Follow-up regarding your loan application` : "Follow-up from LoanFlow",
+        body: recipientName ? 
+          `Hi ${recipientName},\n\nI hope this message finds you well. I wanted to follow up regarding your loan application.\n\nPlease let me know if you have any questions or if there's anything I can help you with.\n\nBest regards,\n[Your Name]` :
+          `Hi,\n\nI hope this message finds you well. I wanted to follow up regarding your inquiry.\n\nPlease let me know if you have any questions.\n\nBest regards,\n[Your Name]`
       })
       setIsOpen(false)
 
@@ -82,7 +72,7 @@ export function EmailComposer({ trigger, recipientEmail, recipientName }: EmailC
       console.error('Error sending email:', error)
       toast({
         title: "Failed to Send Email",
-        description: error.message || "Please check your Microsoft 365 connection and try again",
+        description: error.message || "Please check your email configuration and try again",
         variant: "destructive",
       })
     } finally {
@@ -95,45 +85,25 @@ export function EmailComposer({ trigger, recipientEmail, recipientName }: EmailC
       <DialogTrigger asChild>
         {trigger}
       </DialogTrigger>
-      <DialogContent className="sm:max-w-[600px] max-h-[80vh] overflow-y-auto">
+      <DialogContent className="sm:max-w-[500px]">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <Mail className="w-5 h-5" />
-            Compose Email
+            Quick Email
           </DialogTitle>
           <DialogDescription>
-            Send an email using your connected Microsoft 365 account
+            Send a quick email to {recipientEmail}
           </DialogDescription>
         </DialogHeader>
 
         <div className="space-y-4">
           <div className="space-y-2">
-            <Label htmlFor="to">To *</Label>
+            <Label htmlFor="to">To</Label>
             <Input
               id="to"
-              placeholder="recipient@example.com, another@example.com"
-              value={formData.to}
-              onChange={(e) => handleInputChange('to', e.target.value)}
-            />
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="cc">CC</Label>
-            <Input
-              id="cc"
-              placeholder="cc@example.com"
-              value={formData.cc}
-              onChange={(e) => handleInputChange('cc', e.target.value)}
-            />
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="bcc">BCC</Label>
-            <Input
-              id="bcc"
-              placeholder="bcc@example.com"
-              value={formData.bcc}
-              onChange={(e) => handleInputChange('bcc', e.target.value)}
+              value={recipientEmail}
+              disabled
+              className="bg-muted"
             />
           </div>
 
