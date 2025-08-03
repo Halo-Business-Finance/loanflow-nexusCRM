@@ -8,13 +8,14 @@ import { Badge } from "@/components/ui/badge";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToast } from "@/hooks/use-toast";
-import { Shield, Lock, AlertTriangle, Eye, Users, Key, Activity, Trash2 } from "lucide-react";
+import { Shield, Lock, AlertTriangle, Eye, Users, Key, Activity, Trash2, Database } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/components/auth/AuthProvider";
 import { AdvancedThreatDetection } from "./AdvancedThreatDetection";
 import { SecurityMonitor } from "./SecurityMonitor";
 import { DarkWebSecurityBot } from "./DarkWebSecurityBot";
 import { HackerDetectionBot } from "./HackerDetectionBot";
+import { DataIntegrityDashboard } from "@/components/DataIntegrityDashboard";
 import Layout from "@/components/Layout";
 
 interface SecurityNotification {
@@ -307,6 +308,7 @@ export function SecurityManager() {
         <Tabs defaultValue="overview" className="space-y-4">
           <TabsList>
             <TabsTrigger value="overview">Overview</TabsTrigger>
+            <TabsTrigger value="data-integrity">Data Integrity</TabsTrigger>
             <TabsTrigger value="monitor">Security Monitor</TabsTrigger>
             <TabsTrigger value="threats">AI Protection Bot</TabsTrigger>
             <TabsTrigger value="darkweb">Dark Web Bot</TabsTrigger>
@@ -411,6 +413,10 @@ export function SecurityManager() {
               )}
             </CardContent>
           </Card>
+        </TabsContent>
+
+        <TabsContent value="data-integrity" className="space-y-4">
+          <DataIntegrityDashboard />
         </TabsContent>
 
         <TabsContent value="monitor" className="space-y-4">
