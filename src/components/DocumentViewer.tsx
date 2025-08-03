@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -97,11 +97,14 @@ export function DocumentViewer({ document, isOpen, onClose }: DocumentViewerProp
   const canViewInBrowser = isPdf || isImage;
 
   // Load document URL when modal opens
-  useState(() => {
+  useEffect(() => {
     if (isOpen && document?.file_path && !documentUrl) {
       handleViewDocument();
     }
-  });
+    if (!isOpen) {
+      setDocumentUrl(null); // Reset URL when modal closes
+    }
+  }, [isOpen, document?.file_path, documentUrl]);
 
   if (!document) return null;
 
