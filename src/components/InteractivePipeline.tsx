@@ -93,11 +93,11 @@ const LeadCard = ({ lead, onStageChange, onViewDetails }: {
                 </DialogTrigger>
                 <DialogContent>
                   <DialogHeader>
-                    <DialogTitle className="dark:text-white">Move Lead: {lead.name}</DialogTitle>
+                    <DialogTitle className="text-foreground">Move Lead: {lead.name}</DialogTitle>
                   </DialogHeader>
                   <div className="space-y-4">
                     <div>
-                      <label className="text-sm font-medium dark:text-white">Move to Stage:</label>
+                      <label className="text-sm font-medium text-foreground">Move to Stage:</label>
                       <Select onValueChange={(value) => onStageChange(lead.id, value)}>
                         <SelectTrigger>
                           <SelectValue placeholder="Select new stage" />
@@ -242,11 +242,11 @@ export function InteractivePipeline() {
             <Card className="shadow-soft">
               <CardHeader className="pb-3">
                 <div className="flex items-center justify-between">
-                  <CardTitle className="text-lg dark:text-white">{stage}</CardTitle>
+                  <CardTitle className="text-lg text-foreground">{stage}</CardTitle>
                   <div className="flex items-center gap-2">
                     <Badge variant="secondary">{stageGroups[stage]?.length || 0}</Badge>
                     {index < stageOrder.length - 1 && (
-                      <ArrowRight className="h-4 w-4 text-muted-foreground dark:text-white" />
+                      <ArrowRight className="h-4 w-4 text-muted-foreground" />
                     )}
                   </div>
                 </div>

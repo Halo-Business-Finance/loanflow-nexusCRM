@@ -112,9 +112,9 @@ export function AppSidebar() {
               </Tooltip>
               {state !== "collapsed" && (
                 <div className="flex flex-col">
-                  <span className="font-bold text-lg text-foreground dark:text-white">LoanFlow CRM</span>
+                  <span className="font-bold text-lg text-sidebar-foreground">LoanFlow CRM</span>
                   {user && (
-                    <span className="text-xs text-muted-foreground dark:text-white truncate max-w-[140px]">
+                    <span className="text-xs text-muted-foreground truncate max-w-[140px]">
                       {userProfile?.first_name || user.user_metadata?.first_name || user.email}
                     </span>
                   )}
@@ -124,7 +124,7 @@ export function AppSidebar() {
           </div>
 
           <SidebarGroup>
-            <SidebarGroupLabel className="text-foreground dark:text-white font-semibold underline">Navigation</SidebarGroupLabel>
+            <SidebarGroupLabel className="text-sidebar-foreground font-semibold underline">Navigation</SidebarGroupLabel>
             <SidebarGroupContent>
               <SidebarMenu>
                 {navigationItems.map((item) => (
@@ -134,7 +134,7 @@ export function AppSidebar() {
                         <TooltipTrigger asChild>
                           <SidebarMenuButton asChild>
                             <NavLink to={item.url} end className={getNavClass}>
-                              <item.icon className="w-4 h-4 text-blue-500" />
+                              <item.icon className="w-4 h-4 text-sidebar-primary" />
                               <span className="sr-only">{item.title}</span>
                             </NavLink>
                           </SidebarMenuButton>
@@ -149,7 +149,7 @@ export function AppSidebar() {
                     ) : (
                       <SidebarMenuButton asChild>
                         <NavLink to={item.url} end className={getNavClass} title={item.description}>
-                          <item.icon className="w-4 h-4 text-blue-500" />
+                          <item.icon className="w-4 h-4 text-sidebar-primary" />
                           <span>{item.title}</span>
                         </NavLink>
                       </SidebarMenuButton>
@@ -163,7 +163,7 @@ export function AppSidebar() {
         <Separator className="my-2" />
 
         <SidebarGroup>
-          <SidebarGroupLabel className="text-foreground dark:text-white font-semibold underline">System Settings</SidebarGroupLabel>
+          <SidebarGroupLabel className="text-sidebar-foreground font-semibold underline">System Settings</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
               {settingsItems.map((item) => {
@@ -178,7 +178,7 @@ export function AppSidebar() {
                         <TooltipTrigger asChild>
                           <SidebarMenuButton asChild>
                             <NavLink to={item.url} className={getNavClass}>
-                              <item.icon className="w-4 h-4 text-blue-500" />
+                              <item.icon className="w-4 h-4 text-sidebar-primary" />
                               <span className="sr-only">{item.title}</span>
                             </NavLink>
                           </SidebarMenuButton>
@@ -193,7 +193,7 @@ export function AppSidebar() {
                     ) : (
                       <SidebarMenuButton asChild>
                         <NavLink to={item.url} className={getNavClass} title={item.description}>
-                          <item.icon className="w-4 h-4 text-blue-500" />
+                          <item.icon className="w-4 h-4 text-sidebar-primary" />
                           <span>{item.title}</span>
                         </NavLink>
                       </SidebarMenuButton>
@@ -207,7 +207,7 @@ export function AppSidebar() {
 
         {/* Quick Actions */}
         <SidebarGroup>
-          <SidebarGroupLabel className="text-foreground dark:text-white font-semibold underline">Quick Actions</SidebarGroupLabel>
+          <SidebarGroupLabel className="text-sidebar-foreground font-semibold underline">Quick Actions</SidebarGroupLabel>
           <SidebarGroupContent>
             <div className="space-y-2 px-2">
               <Tooltip>

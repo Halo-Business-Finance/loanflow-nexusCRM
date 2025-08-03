@@ -162,7 +162,7 @@ export function GlobalSearch() {
           className="w-full justify-start text-muted-foreground hover:bg-muted"
           data-search-trigger
         >
-          <Search className="mr-2 h-4 w-4 dark:text-white" />
+          <Search className="mr-2 h-4 w-4 text-muted-foreground" />
           Search everything...
           <kbd className="ml-auto pointer-events-none inline-flex h-5 select-none items-center gap-1 rounded border bg-muted px-1.5 font-mono text-[10px] font-medium text-muted-foreground opacity-100">
             <span className="text-xs">⌘</span>K
@@ -175,7 +175,7 @@ export function GlobalSearch() {
         </DialogHeader>
         <div className="space-y-4">
           <div className="relative">
-            <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground dark:text-white" />
+            <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
             <Input
               placeholder="Search leads, clients, loans..."
               value={query}
@@ -224,14 +224,14 @@ export function GlobalSearch() {
 
           {!loading && query.length >= 2 && results.length === 0 && (
             <div className="text-center py-8 text-muted-foreground">
-              <Search className="h-8 w-8 mx-auto mb-2 opacity-50 dark:text-white" />
+              <Search className="h-8 w-8 mx-auto mb-2 opacity-50 text-muted-foreground" />
               <p>No results found for "{query}"</p>
             </div>
           )}
 
           {query.length < 2 && (
             <div className="text-center py-8 text-muted-foreground">
-              <Search className="h-8 w-8 mx-auto mb-2 opacity-50 dark:text-white" />
+              <Search className="h-8 w-8 mx-auto mb-2 opacity-50 text-muted-foreground" />
               <p>Type at least 2 characters to search</p>
             </div>
           )}

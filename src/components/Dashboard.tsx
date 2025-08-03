@@ -547,8 +547,8 @@ export default function Dashboard() {
       {/* Loan Close Performance */}
       <Card className="shadow-soft">
         <CardHeader>
-          <CardTitle className="dark:text-white"><span className="inline-block border-b-2 border-primary dark:border-white pb-1">Loan Close Performance</span></CardTitle>
-          <p className="text-sm text-muted-foreground dark:text-white">Monthly closed loans vs targets and close percentage</p>
+          <CardTitle className="text-foreground"><span className="inline-block border-b-2 border-primary pb-1">Loan Close Performance</span></CardTitle>
+          <p className="text-sm text-muted-foreground">Monthly closed loans vs targets and close percentage</p>
         </CardHeader>
         <CardContent>
           <ChartContainer config={chartConfig} className="h-[300px]">
@@ -621,9 +621,9 @@ export default function Dashboard() {
       <Card className="shadow-soft">
         <CardHeader>
           <div className="flex justify-between items-center">
-            <CardTitle className="dark:text-white inline-block border-b-2 border-primary dark:border-white pb-1">Recent Leads</CardTitle>
+            <CardTitle className="text-foreground inline-block border-b-2 border-primary pb-1">Recent Leads</CardTitle>
             <div className="relative">
-              <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground dark:text-white" />
+              <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
               <Input
                 placeholder="Search leads..."
                 value={leadsFilter}
