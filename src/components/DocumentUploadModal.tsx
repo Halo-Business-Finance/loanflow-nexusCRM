@@ -21,6 +21,7 @@ interface DocumentUploadModalProps {
   isOpen: boolean;
   onClose: () => void;
   onUpload: (leadId: string, contactEntityId: string, file: File, documentType: string, notes?: string) => Promise<any>;
+  preSelectedLeadId?: string; // Optional pre-selected lead
 }
 
 const documentTypes = [
@@ -37,7 +38,7 @@ const documentTypes = [
   'Other'
 ];
 
-export function DocumentUploadModal({ isOpen, onClose, onUpload }: DocumentUploadModalProps) {
+export function DocumentUploadModal({ isOpen, onClose, onUpload, preSelectedLeadId }: DocumentUploadModalProps) {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [selectedLead, setSelectedLead] = useState<string>('');
   const [documentType, setDocumentType] = useState<string>('');
@@ -49,8 +50,12 @@ export function DocumentUploadModal({ isOpen, onClose, onUpload }: DocumentUploa
   useEffect(() => {
     if (isOpen && user) {
       fetchLeads();
+      // Pre-select lead if provided
+      if (preSelectedLeadId) {
+        setSelectedLead(preSelectedLeadId);
+      }
     }
-  }, [isOpen, user]);
+  }, [isOpen, user, preSelectedLeadId]);
 
   const fetchLeads = async () => {
     if (!user) return;
@@ -127,7 +132,7 @@ export function DocumentUploadModal({ isOpen, onClose, onUpload }: DocumentUploa
         <div className="space-y-4">
           <div className="space-y-2">
             <Label htmlFor="lead-select">Select Lead</Label>
-            <Select value={selectedLead} onValueChange={setSelectedLead}>
+            <Select value={selectedLead} onValueChange={setSelectedLead} disabled={!!preSelectedLeadId}>
               <SelectTrigger>
                 <SelectValue placeholder="Choose a lead..." />
               </SelectTrigger>
@@ -139,6 +144,9 @@ export function DocumentUploadModal({ isOpen, onClose, onUpload }: DocumentUploa
                 ))}
               </SelectContent>
             </Select>
+            {preSelectedLeadId && (
+              <p className="text-xs text-muted-foreground">Lead is pre-selected for this portal</p>
+            )}
           </div>
 
           <div className="space-y-2">

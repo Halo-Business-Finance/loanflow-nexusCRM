@@ -15,6 +15,7 @@ import { RouteErrorBoundary } from "@/components/RouteErrorBoundary";
 import Index from "./pages/Index";
 import Leads from "./pages/Leads";
 import LeadDetail from "./pages/LeadDetail";
+import LeadDocuments from "./pages/LeadDocuments";
 import Pipeline from "./pages/Pipeline";
 import Clients from "./pages/Clients";
 import ClientDetail from "./pages/ClientDetail";
@@ -64,6 +65,7 @@ function AuthenticatedApp() {
             <Route path="/" element={<Index />} errorElement={<RouteErrorBoundary />} />
             <Route path="/leads" element={<Leads />} errorElement={<RouteErrorBoundary />} />
             <Route path="/leads/:id" element={<LeadDetail />} errorElement={<RouteErrorBoundary />} />
+            <Route path="/leads/:leadId/documents" element={<LeadDocuments />} errorElement={<RouteErrorBoundary />} />
             <Route path="/clients" element={<Clients />} errorElement={<RouteErrorBoundary />} />
             <Route path="/clients/:id" element={<ClientDetail />} errorElement={<RouteErrorBoundary />} />
             <Route path="/pipeline" element={<Pipeline />} errorElement={<RouteErrorBoundary />} />

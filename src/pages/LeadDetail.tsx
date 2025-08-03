@@ -806,8 +806,8 @@ export default function LeadDetail() {
             <Button
               size="sm"
               variant="outline"
-              className="h-9 px-3 text-xs bg-gradient-to-r from-orange-500/10 to-orange-500/5 hover:from-orange-500/20 hover:to-orange-500/10 border-orange-500/20"
-              onClick={() => navigate('/documents')}
+              className="h-9 px-3 text-xs bg-gradient-to-r from-purple-500/10 to-purple-500/5 hover:from-purple-500/20 hover:to-purple-500/10 border-purple-500/20"
+              onClick={() => navigate(`/leads/${lead.id}/documents`)}
             >
               <FileText className="w-3 h-3 mr-1" />
               Documents
