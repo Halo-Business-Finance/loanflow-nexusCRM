@@ -932,23 +932,61 @@ export default function Users() {
                                         <Trash2 className="h-4 w-4" />
                                       </Button>
                                     </AlertDialogTrigger>
-                                    <AlertDialogContent>
+                                    <AlertDialogContent className="sm:max-w-[500px]">
                                       <AlertDialogHeader>
-                                        <AlertDialogTitle>Delete User</AlertDialogTitle>
-                                        <AlertDialogDescription>
-                                          Are you sure you want to permanently delete <strong>{user.first_name} {user.last_name}</strong> ({user.email})? 
-                                          This will remove all their data including profile, roles, sessions, and notifications. This action cannot be undone.
-                                          <br /><br />
-                                          <strong>Tip:</strong> Consider archiving the user instead, which allows you to restore them later.
+                                        <AlertDialogTitle className="flex items-center gap-2 text-red-600">
+                                          <Trash2 className="h-5 w-5" />
+                                          Confirm User Deletion
+                                        </AlertDialogTitle>
+                                        <AlertDialogDescription className="space-y-3">
+                                          <div className="p-4 bg-red-50 dark:bg-red-950/20 rounded-lg border border-red-200 dark:border-red-800">
+                                            <p className="font-semibold text-red-800 dark:text-red-200">
+                                              ⚠️ This action cannot be undone!
+                                            </p>
+                                          </div>
+                                          
+                                          <p>
+                                            You are about to permanently delete <strong>{user.first_name} {user.last_name}</strong> ({user.email}).
+                                          </p>
+                                          
+                                          <div className="space-y-1 text-sm">
+                                            <p className="font-medium">This will permanently remove:</p>
+                                            <ul className="list-disc list-inside space-y-1 ml-2">
+                                              <li>User profile and personal information</li>
+                                              <li>User roles and permissions</li>
+                                              <li>Active sessions and login history</li>
+                                              <li>All notifications and system records</li>
+                                            </ul>
+                                          </div>
+                                          
+                                          <div className="p-3 bg-blue-50 dark:bg-blue-950/20 rounded-lg border border-blue-200 dark:border-blue-800">
+                                            <p className="text-sm text-blue-700 dark:text-blue-300">
+                                              <strong>Recommended:</strong> Consider archiving this user instead. Archiving preserves their data while deactivating access, and allows restoration if needed.
+                                            </p>
+                                          </div>
                                         </AlertDialogDescription>
                                       </AlertDialogHeader>
-                                      <AlertDialogFooter>
-                                        <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                      <AlertDialogFooter className="gap-2">
+                                        <AlertDialogCancel className="flex-1">
+                                          Cancel
+                                        </AlertDialogCancel>
+                                        <Button
+                                          variant="outline"
+                                          onClick={() => {
+                                            setUserToArchive(user)
+                                            setShowArchiveDialog(true)
+                                          }}
+                                          className="flex-1"
+                                        >
+                                          <Archive className="h-4 w-4 mr-2" />
+                                          Archive Instead
+                                        </Button>
                                         <AlertDialogAction
                                           onClick={() => deleteUser(user.id, user.email)}
-                                          className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                                          className="bg-destructive text-destructive-foreground hover:bg-destructive/90 flex-1"
                                         >
-                                          Permanently Delete
+                                          <Trash2 className="h-4 w-4 mr-2" />
+                                          Delete Permanently
                                         </AlertDialogAction>
                                       </AlertDialogFooter>
                                     </AlertDialogContent>
@@ -1213,20 +1251,36 @@ export default function Users() {
         <Dialog open={showArchiveDialog} onOpenChange={setShowArchiveDialog}>
           <DialogContent className="sm:max-w-[500px]">
             <DialogHeader>
-              <DialogTitle>Archive User</DialogTitle>
+              <DialogTitle className="flex items-center gap-2 text-orange-600">
+                <Archive className="h-5 w-5" />
+                Confirm User Archive
+              </DialogTitle>
             </DialogHeader>
             {userToArchive && (
               <div className="space-y-4">
-                <div className="p-4 bg-muted/20 rounded-lg">
-                  <p className="text-sm text-muted-foreground mb-2">
+                <div className="p-4 bg-orange-50 dark:bg-orange-950/20 rounded-lg border border-orange-200 dark:border-orange-800">
+                  <p className="font-semibold text-orange-800 dark:text-orange-200 mb-2">
+                    📦 Archive Confirmation
+                  </p>
+                  <p className="text-sm text-orange-700 dark:text-orange-300 mb-2">
                     You are about to archive:
                   </p>
-                  <p className="font-semibold">
+                  <p className="font-semibold text-orange-900 dark:text-orange-100">
                     {userToArchive.first_name} {userToArchive.last_name}
                   </p>
-                  <p className="text-sm text-muted-foreground">
+                  <p className="text-sm text-orange-700 dark:text-orange-300">
                     {userToArchive.email}
                   </p>
+                </div>
+                
+                <div className="space-y-1 text-sm">
+                  <p className="font-medium">This archive action will:</p>
+                  <ul className="list-disc list-inside space-y-1 ml-2 text-muted-foreground">
+                    <li>Deactivate the user's access to the system</li>
+                    <li>Move them to the "Archived Users" tab</li>
+                    <li>Preserve all their data for future restoration</li>
+                    <li>Allow you to restore them at any time</li>
+                  </ul>
                 </div>
                 
                 <div className="space-y-2">
@@ -1235,27 +1289,18 @@ export default function Users() {
                     id="archiveReason"
                     value={archiveReason}
                     onChange={(e) => setArchiveReason(e.target.value)}
-                    placeholder="Enter reason for archiving this user..."
-                    rows={3}
+                    placeholder="e.g., Employee left company, Role change, etc."
+                    rows={2}
                   />
                 </div>
                 
-                <div className="p-3 bg-blue-50 dark:bg-blue-950/20 rounded-lg border border-blue-200 dark:border-blue-800">
-                  <p className="text-xs text-blue-700 dark:text-blue-300">
-                    Archiving will deactivate the user and move them to the archived users section. 
-                    You can restore them later if needed. This is a safer alternative to permanent deletion.
+                <div className="p-3 bg-green-50 dark:bg-green-950/20 rounded-lg border border-green-200 dark:border-green-800">
+                  <p className="text-xs text-green-700 dark:text-green-300">
+                    ✅ Safe action: Unlike deletion, archiving preserves all user data and can be easily reversed by using the "Restore" button in the Archived Users tab.
                   </p>
                 </div>
                 
                 <div className="flex gap-2 pt-4">
-                  <Button 
-                    onClick={archiveUser} 
-                    className="flex-1"
-                    variant="secondary"
-                  >
-                    <Archive className="h-4 w-4 mr-2" />
-                    Archive User
-                  </Button>
                   <Button 
                     variant="outline" 
                     onClick={() => {
@@ -1263,8 +1308,16 @@ export default function Users() {
                       setArchiveReason("")
                       setUserToArchive(null)
                     }}
+                    className="flex-1"
                   >
                     Cancel
+                  </Button>
+                  <Button 
+                    onClick={archiveUser} 
+                    className="flex-1 bg-orange-600 hover:bg-orange-700 text-white"
+                  >
+                    <Archive className="h-4 w-4 mr-2" />
+                    Confirm Archive
                   </Button>
                 </div>
               </div>
