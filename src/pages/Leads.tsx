@@ -462,6 +462,7 @@ export default function Leads() {
             onEdit={openEditDialog}
             onDelete={deleteLead}
             onConvert={(lead) => setConvertingLead(lead)}
+            onRefresh={fetchLeads}
             hasAdminRole={hasRole('admin') || hasRole('super_admin')}
           />
 

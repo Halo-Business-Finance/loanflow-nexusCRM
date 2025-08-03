@@ -11,7 +11,8 @@ import {
   Trash2,
   Edit,
   MoreHorizontal,
-  Calendar
+  Calendar,
+  UserPlus
 } from "lucide-react"
 import { formatPhoneNumber } from "@/lib/utils"
 import {
@@ -22,6 +23,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { Lead } from "@/types/lead"
+import { LeadAssignment } from "@/components/leads/LeadAssignment"
 
 interface LeadTableRowProps {
   lead: Lead
@@ -29,6 +31,7 @@ interface LeadTableRowProps {
   onDelete: (leadId: string, leadName: string) => void
   onConvert: (lead: Lead) => void
   hasAdminRole: boolean
+  onRefresh?: () => void
 }
 
 const getPriorityColor = (priority: string) => {
@@ -54,7 +57,7 @@ const getStageColor = (stage: string) => {
   }
 }
 
-export function LeadTableRow({ lead, onEdit, onDelete, onConvert, hasAdminRole }: LeadTableRowProps) {
+export function LeadTableRow({ lead, onEdit, onDelete, onConvert, hasAdminRole, onRefresh }: LeadTableRowProps) {
   const navigate = useNavigate()
 
   const getInitials = (name: string) => {
@@ -137,9 +140,57 @@ export function LeadTableRow({ lead, onEdit, onDelete, onConvert, hasAdminRole }
         </Badge>
       </td>
 
-      {/* Actions - Empty placeholder for now */}
-      <td className="p-4 text-center">
-        {/* Actions would go here if needed */}
+      {/* Actions */}
+      <td className="p-4 text-center" onClick={(e) => e.stopPropagation()}>
+        <div className="flex items-center gap-2 justify-center">
+          <LeadAssignment
+            leadId={lead.id}
+            leadName={lead.name}
+            currentAssignments={{
+              loan_originator_id: lead.loan_originator_id,
+              loan_processor_id: lead.loan_processor_id,
+              closer_id: lead.closer_id,
+              funder_id: lead.funder_id
+            }}
+            onAssignmentUpdate={onRefresh}
+            trigger={
+              <Button variant="outline" size="sm" className="gap-1">
+                <UserPlus className="h-3 w-3" />
+                Assign
+              </Button>
+            }
+          />
+          
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="outline" size="sm" className="gap-1">
+                <MoreHorizontal className="h-3 w-3" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="w-48">
+              <DropdownMenuItem onClick={() => onEdit(lead)}>
+                <Edit className="h-4 w-4 mr-2" />
+                Edit Lead
+              </DropdownMenuItem>
+              {!lead.is_converted_to_client && (
+                <DropdownMenuItem onClick={() => onConvert(lead)}>
+                  <ArrowRight className="h-4 w-4 mr-2" />
+                  Convert to Client
+                </DropdownMenuItem>
+              )}
+              <DropdownMenuSeparator />
+              {hasAdminRole && (
+                <DropdownMenuItem 
+                  onClick={() => onDelete(lead.id, lead.name)}
+                  className="text-destructive focus:text-destructive"
+                >
+                  <Trash2 className="h-4 w-4 mr-2" />
+                  Delete Lead
+                </DropdownMenuItem>
+              )}
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
       </td>
 
     </tr>

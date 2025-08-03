@@ -15,6 +15,7 @@ interface LeadsListProps {
   onEdit: (lead: Lead) => void
   onDelete: (leadId: string, leadName: string) => void
   onConvert: (lead: Lead) => void
+  onRefresh?: () => void
   hasAdminRole: boolean
 }
 
@@ -24,6 +25,7 @@ export function LeadsList({
   onEdit, 
   onDelete, 
   onConvert, 
+  onRefresh,
   hasAdminRole 
 }: LeadsListProps) {
   if (leads.length === 0) {
@@ -74,6 +76,7 @@ export function LeadsList({
               onEdit={onEdit}
               onDelete={onDelete}
               onConvert={onConvert}
+              onRefresh={onRefresh}
               hasAdminRole={hasAdminRole}
             />
           ))}

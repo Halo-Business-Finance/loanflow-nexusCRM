@@ -33,6 +33,11 @@ export interface Lead {
   bdo_name?: string
   bdo_telephone?: string
   bdo_email?: string
+  // Team member assignments
+  loan_originator_id?: string | null
+  loan_processor_id?: string | null
+  closer_id?: string | null
+  funder_id?: string | null
 }
 
 export interface ContactEntity {
