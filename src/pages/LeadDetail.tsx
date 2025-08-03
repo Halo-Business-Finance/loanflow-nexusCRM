@@ -526,8 +526,8 @@ export default function LeadDetail() {
         current_processing_rate: editableFields.current_processing_rate ? parseFloat(editableFields.current_processing_rate) : null
       }
 
-      // Check if stage is being changed to "Funded" and lead isn't already converted
-      const isBeingFunded = editableFields.stage === "Funded" && lead.stage !== "Funded" && !lead.is_converted_to_client
+      // Check if stage is being changed to "Loan Funded" and lead isn't already converted
+      const isBeingFunded = editableFields.stage === "Loan Funded" && lead.stage !== "Loan Funded" && !lead.is_converted_to_client
 
       // Update the contact entity
       const { error: contactError } = await supabase
