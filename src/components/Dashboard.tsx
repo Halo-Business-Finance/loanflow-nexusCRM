@@ -45,6 +45,12 @@ const initialMetrics = [
     trend: "neutral"
   },
   {
+    title: "Total Leads",
+    value: "0",
+    change: "0%",
+    trend: "neutral"
+  },
+  {
     title: "Active Leads",
     value: "0",
     change: "0%",
@@ -297,28 +303,30 @@ export default function Dashboard() {
         title: "Total Pipeline Value",
         value: formatCurrency(totalPipelineValue),
         change: "+0%", // Could calculate based on previous period
-        
+        trend: "neutral"
+      },
+      {
+        title: "Total Leads", 
+        value: formatNumber(leadsData.length),
+        change: "+0%",
         trend: "neutral"
       },
       {
         title: "Active Leads", 
         value: formatNumber(activeLeadsCount),
         change: "+0%",
-        
         trend: "neutral"
       },
       {
         title: "Applications This Month",
         value: formatNumber(applicationsThisMonth),
         change: "+0%",
-        
         trend: "neutral"
       },
       {
         title: "Conversion Rate",
         value: `${formatNumber(conversionRate)}%`,
         change: "+0%",
-        
         trend: "neutral"
       }
     ])
