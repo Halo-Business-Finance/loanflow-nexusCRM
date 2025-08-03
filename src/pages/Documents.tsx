@@ -8,6 +8,7 @@ import { useState } from "react"
 import { useAuth } from "@/components/auth/AuthProvider"
 import { useDocuments, LeadDocument } from "@/hooks/useDocuments"
 import { DocumentUploadModal } from "@/components/DocumentUploadModal"
+import { DocumentViewer } from "@/components/DocumentViewer"
 import { formatDistanceToNow } from "date-fns"
 
 export default function Documents() {
@@ -16,6 +17,8 @@ export default function Documents() {
   const [searchTerm, setSearchTerm] = useState("")
   const [statusFilter, setStatusFilter] = useState<string>("all")
   const [showUploadModal, setShowUploadModal] = useState(false)
+  const [selectedDocument, setSelectedDocument] = useState<LeadDocument | null>(null)
+  const [showDocumentViewer, setShowDocumentViewer] = useState(false)
 
   const getStatusColor = (status: string) => {
     switch (status.toLowerCase()) {
@@ -41,6 +44,11 @@ export default function Documents() {
     verified: documents.filter(doc => doc.status === 'verified').length,
     pending: documents.filter(doc => doc.status === 'pending').length,
     rejected: documents.filter(doc => doc.status === 'rejected').length
+  }
+
+  const handleViewDocument = (document: LeadDocument) => {
+    setSelectedDocument(document)
+    setShowDocumentViewer(true)
   }
 
   const formatFileSize = (bytes?: number) => {
@@ -252,6 +260,15 @@ export default function Documents() {
                             size="sm" 
                             variant="outline" 
                             className="flex-1 gap-2"
+                            onClick={() => handleViewDocument(document)}
+                          >
+                            <Eye className="h-4 w-4" />
+                            View
+                          </Button>
+                          <Button 
+                            size="sm" 
+                            variant="outline" 
+                            className="flex-1 gap-2"
                             onClick={() => downloadDocument(document)}
                           >
                             <Download className="h-4 w-4" />
@@ -304,6 +321,16 @@ export default function Documents() {
           isOpen={showUploadModal}
           onClose={() => setShowUploadModal(false)}
           onUpload={uploadDocument}
+        />
+
+        {/* Document Viewer */}
+        <DocumentViewer
+          document={selectedDocument}
+          isOpen={showDocumentViewer}
+          onClose={() => {
+            setShowDocumentViewer(false)
+            setSelectedDocument(null)
+          }}
         />
       </div>
     </Layout>

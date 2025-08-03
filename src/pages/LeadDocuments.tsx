@@ -10,6 +10,7 @@ import { Input } from "@/components/ui/input"
 import { useToast } from "@/hooks/use-toast"
 import { useDocuments, LeadDocument } from "@/hooks/useDocuments"
 import { DocumentUploadModal } from "@/components/DocumentUploadModal"
+import { DocumentViewer } from "@/components/DocumentViewer"
 import { formatDistanceToNow } from "date-fns"
 import { 
   ArrowLeft, 
@@ -21,7 +22,8 @@ import {
   CheckCircle, 
   User,
   DollarSign,
-  Calendar
+  Calendar,
+  Eye
 } from "lucide-react"
 
 export default function LeadDocuments() {
@@ -35,6 +37,8 @@ export default function LeadDocuments() {
   const [searchTerm, setSearchTerm] = useState("")
   const [showUploadModal, setShowUploadModal] = useState(false)
   const [statusFilter, setStatusFilter] = useState<string>("all")
+  const [selectedDocument, setSelectedDocument] = useState<LeadDocument | null>(null)
+  const [showDocumentViewer, setShowDocumentViewer] = useState(false)
 
   useEffect(() => {
     if (leadId && user) {
@@ -116,6 +120,11 @@ export default function LeadDocuments() {
     verified: leadDocuments.filter(doc => doc.status === 'verified').length,
     pending: leadDocuments.filter(doc => doc.status === 'pending').length,
     rejected: leadDocuments.filter(doc => doc.status === 'rejected').length
+  }
+
+  const handleViewDocument = (document: LeadDocument) => {
+    setSelectedDocument(document)
+    setShowDocumentViewer(true)
   }
 
   const formatFileSize = (bytes?: number) => {
@@ -383,15 +392,26 @@ export default function LeadDocuments() {
                     {/* Action Buttons */}
                     <div className="flex gap-2 pt-4 border-t">
                       {document.file_path && (
-                        <Button 
-                          size="sm" 
-                          variant="outline" 
-                          className="flex-1 gap-2"
-                          onClick={() => downloadDocument(document)}
-                        >
-                          <Download className="h-4 w-4" />
-                          Download
-                        </Button>
+                        <>
+                          <Button 
+                            size="sm" 
+                            variant="outline" 
+                            className="flex-1 gap-2"
+                            onClick={() => handleViewDocument(document)}
+                          >
+                            <Eye className="h-4 w-4" />
+                            View
+                          </Button>
+                          <Button 
+                            size="sm" 
+                            variant="outline" 
+                            className="flex-1 gap-2"
+                            onClick={() => downloadDocument(document)}
+                          >
+                            <Download className="h-4 w-4" />
+                            Download
+                          </Button>
+                        </>
                       )}
                       
                       {document.status === 'pending' && (
@@ -439,6 +459,16 @@ export default function LeadDocuments() {
           onClose={() => setShowUploadModal(false)}
           onUpload={handleUploadForLead}
           preSelectedLeadId={leadId}
+        />
+
+        {/* Document Viewer */}
+        <DocumentViewer
+          document={selectedDocument}
+          isOpen={showDocumentViewer}
+          onClose={() => {
+            setShowDocumentViewer(false)
+            setSelectedDocument(null)
+          }}
         />
       </div>
     </Layout>
