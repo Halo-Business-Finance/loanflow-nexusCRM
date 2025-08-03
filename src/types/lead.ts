@@ -60,6 +60,7 @@ export const STAGES = [
   "Qualified", 
   "Application", 
   "Pre-approval", 
+  "Loan Approved", 
   "Documentation", 
   "Closing", 
   "Funded", 
