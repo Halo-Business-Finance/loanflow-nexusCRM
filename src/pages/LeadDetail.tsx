@@ -983,7 +983,7 @@ export default function LeadDetail() {
                               <SelectItem value="Loan Application Signed">Loan Application Signed</SelectItem>
                               <SelectItem value="Waiting for Documentation">Waiting for Documentation</SelectItem>
                               <SelectItem value="Pre-approval">Pre-approval</SelectItem>
-                              <SelectItem value="Qualified">Qualified</SelectItem>
+                              <SelectItem value="Term Sheet Signed">Term Sheet Signed</SelectItem>
                               <SelectItem value="Loan Approved">Loan Approved</SelectItem>
                               <SelectItem value="Closing">Closing</SelectItem>
                               <SelectItem value="Loan Funded">Loan Funded</SelectItem>
@@ -1594,7 +1594,7 @@ export default function LeadDetail() {
                               <SelectItem value="Loan Application Signed">Loan Application Signed</SelectItem>
                               <SelectItem value="Waiting for Documentation">Waiting for Documentation</SelectItem>
                               <SelectItem value="Pre-approval">Pre-approval</SelectItem>
-                              <SelectItem value="Qualified">Qualified</SelectItem>
+                              <SelectItem value="Term Sheet Signed">Term Sheet Signed</SelectItem>
                               <SelectItem value="Loan Approved">Loan Approved</SelectItem>
                               <SelectItem value="Closing">Closing</SelectItem>
                               <SelectItem value="Loan Funded">Loan Funded</SelectItem>
