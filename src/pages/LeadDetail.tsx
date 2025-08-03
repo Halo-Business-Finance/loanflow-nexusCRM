@@ -981,8 +981,8 @@ export default function LeadDetail() {
                               <SelectItem value="New Lead">New Lead</SelectItem>
                               <SelectItem value="Initial Contact">Initial Contact</SelectItem>
                               <SelectItem value="Application">Application</SelectItem>
-                              <SelectItem value="Pre-approval">Pre-approval</SelectItem>
                               <SelectItem value="Documentation">Documentation</SelectItem>
+                              <SelectItem value="Pre-approval">Pre-approval</SelectItem>
                               <SelectItem value="Qualified">Qualified</SelectItem>
                               <SelectItem value="Loan Approved">Loan Approved</SelectItem>
                               <SelectItem value="Closing">Closing</SelectItem>
@@ -1592,8 +1592,8 @@ export default function LeadDetail() {
                               <SelectItem value="New Lead">New Lead</SelectItem>
                               <SelectItem value="Initial Contact">Initial Contact</SelectItem>
                               <SelectItem value="Application">Application</SelectItem>
-                              <SelectItem value="Pre-approval">Pre-approval</SelectItem>
                               <SelectItem value="Documentation">Documentation</SelectItem>
+                              <SelectItem value="Pre-approval">Pre-approval</SelectItem>
                               <SelectItem value="Qualified">Qualified</SelectItem>
                               <SelectItem value="Loan Approved">Loan Approved</SelectItem>
                               <SelectItem value="Closing">Closing</SelectItem>
