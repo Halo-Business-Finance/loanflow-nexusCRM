@@ -124,7 +124,7 @@ export function NotificationBell() {
           size="sm" 
           className="relative text-foreground dark:text-white hover:bg-accent/10"
         >
-          <Bell className="w-5 h-5 text-yellow-500" />
+          <Bell className="w-5 h-5" fill="rgb(234, 179, 8)" stroke="rgb(234, 179, 8)" />
           {unreadCount > 0 && (
             <Badge 
               variant="default" 
