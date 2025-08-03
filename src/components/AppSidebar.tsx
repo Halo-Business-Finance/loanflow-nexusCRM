@@ -2,9 +2,7 @@ import { BarChart3, Users, UserCheck, FileText, Settings, Home, Target, Calendar
 import { NavLink, useLocation, useNavigate } from "react-router-dom"
 import { Button } from "@/components/ui/button"
 import { Separator } from "@/components/ui/separator"
-import { RingCentralSetup } from "@/components/RingCentralSetup"
 import { PhoneDialer } from "@/components/PhoneDialer"
-import { EmailSetup } from "@/components/EmailSetup"
 import { EmailComposer } from "@/components/EmailComposer"
 import { useAuth } from "@/components/auth/AuthProvider"
 import { useState, useEffect } from "react"
@@ -192,22 +190,6 @@ export function AppSidebar() {
                   <Button variant="outline" size="sm" className="w-full justify-start gap-2">
                     <Mail className="w-4 h-4" />
                     {state !== "collapsed" && <span>Send Email</span>}
-                  </Button>
-                }
-              />
-              <RingCentralSetup 
-                trigger={
-                  <Button variant="outline" size="sm" className="w-full justify-start gap-2">
-                    <Phone className="w-4 h-4" />
-                    {state !== "collapsed" && <span>Phone Settings</span>}
-                  </Button>
-                }
-              />
-              <EmailSetup 
-                trigger={
-                  <Button variant="outline" size="sm" className="w-full justify-start gap-2">
-                    <Mail className="w-4 h-4" />
-                    {state !== "collapsed" && <span>Email Settings</span>}
                   </Button>
                 }
               />

@@ -18,8 +18,12 @@ import {
   Bell,
   Save,
   Lock,
-  Shield
+  Shield,
+  Phone,
+  Mail
 } from "lucide-react"
+import { RingCentralSetup } from "@/components/RingCentralSetup"
+import { EmailSetup } from "@/components/EmailSetup"
 
 export default function Settings() {
   const { user } = useAuth()
@@ -290,6 +294,35 @@ export default function Settings() {
                   <Save className="w-4 h-4" />
                   {isLoading ? "Saving..." : "Save Profile"}
                 </Button>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader>
+                <CardTitle>Communication Settings</CardTitle>
+                <CardDescription>
+                  Configure your phone and email settings
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <RingCentralSetup 
+                    trigger={
+                      <Button variant="outline" className="w-full justify-start gap-2">
+                        <Phone className="w-4 h-4" />
+                        <span>Phone Settings</span>
+                      </Button>
+                    }
+                  />
+                  <EmailSetup 
+                    trigger={
+                      <Button variant="outline" className="w-full justify-start gap-2">
+                        <Mail className="w-4 h-4" />
+                        <span>Email Settings</span>
+                      </Button>
+                    }
+                  />
+                </div>
               </CardContent>
             </Card>
 
