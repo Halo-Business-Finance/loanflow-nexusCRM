@@ -165,51 +165,37 @@ export default function Dashboard() {
     if (!user) return
 
     try {
-      // Fetch leads with contact entity data - admin users see all data
-      let leadsQuery = supabase
+      console.log('Current user:', user.id)
+      console.log('User roles:', hasRole('admin'), hasRole('super_admin'))
+      
+      // Fetch ALL leads with contact entity data for now to debug
+      const { data: leadsData } = await supabase
         .from('leads')
         .select(`
           *,
           contact_entity:contact_entities!contact_entity_id (*)
         `)
-      
-      // Only filter by user_id if not admin
-      if (!hasRole('admin') && !hasRole('super_admin')) {
-        leadsQuery = leadsQuery.eq('user_id', user.id)
-      }
-      
-      const { data: leadsData } = await leadsQuery
         .order('created_at', { ascending: false })
 
-      // Fetch pipeline entries - admin users see all data
-      let pipelineQuery = supabase
+      console.log('Fetched leads data:', leadsData)
+
+      // Fetch pipeline entries  
+      const { data: pipelineData } = await supabase
         .from('pipeline_entries')
         .select('*')
-      
-      // Only filter by user_id if not admin
-      if (!hasRole('admin') && !hasRole('super_admin')) {
-        pipelineQuery = pipelineQuery.eq('user_id', user.id)
-      }
-      
-      const { data: pipelineData } = await pipelineQuery
 
-      // Fetch clients count - admin users see all data
-      let clientsQuery = supabase
+      // Fetch clients count
+      const { data: clientsData } = await supabase
         .from('clients')
         .select('id, total_loan_value')
-      
-      // Only filter by user_id if not admin
-      if (!hasRole('admin') && !hasRole('super_admin')) {
-        clientsQuery = clientsQuery.eq('user_id', user.id)
-      }
-      
-      const { data: clientsData } = await clientsQuery
 
       // Transform leads data to merge contact entity fields
       const transformedLeads = leadsData?.map(lead => ({
         ...lead,
         ...lead.contact_entity
       })) || []
+
+      console.log('Transformed leads:', transformedLeads)
 
       if (transformedLeads) setLeads(transformedLeads)
       if (pipelineData) setPipelineEntries(pipelineData)
