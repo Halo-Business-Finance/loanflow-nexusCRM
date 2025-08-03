@@ -16,7 +16,8 @@ import {
   Settings as SettingsIcon,
   User, 
   Bell,
-  Save
+  Save,
+  Lock
 } from "lucide-react"
 
 export default function Settings() {
@@ -25,10 +26,14 @@ export default function Settings() {
   const [displayName, setDisplayName] = useState("")
   const [phoneNumber, setPhoneNumber] = useState("")
   const [timeZone, setTimeZone] = useState("")
+  const [currentPassword, setCurrentPassword] = useState("")
+  const [newPassword, setNewPassword] = useState("")
+  const [confirmPassword, setConfirmPassword] = useState("")
   const [emailNotifications, setEmailNotifications] = useState(true)
   const [leadStatusNotifications, setLeadStatusNotifications] = useState(true)
   const [followUpReminders, setFollowUpReminders] = useState(true)
   const [isLoading, setIsLoading] = useState(false)
+  const [isChangingPassword, setIsChangingPassword] = useState(false)
 
   useEffect(() => {
     if (user?.user_metadata) {
@@ -90,6 +95,63 @@ export default function Settings() {
     }
   }
 
+  const handleChangePassword = async () => {
+    if (!newPassword || !confirmPassword) {
+      toast({
+        title: "Error",
+        description: "Please fill in all password fields.",
+        variant: "destructive",
+      })
+      return
+    }
+
+    if (newPassword !== confirmPassword) {
+      toast({
+        title: "Error",
+        description: "New passwords don't match.",
+        variant: "destructive",
+      })
+      return
+    }
+
+    if (newPassword.length < 6) {
+      toast({
+        title: "Error",
+        description: "Password must be at least 6 characters long.",
+        variant: "destructive",
+      })
+      return
+    }
+
+    setIsChangingPassword(true)
+    try {
+      const { error } = await supabase.auth.updateUser({
+        password: newPassword
+      })
+
+      if (error) throw error
+
+      // Clear password fields
+      setCurrentPassword("")
+      setNewPassword("")
+      setConfirmPassword("")
+
+      toast({
+        title: "Password updated",
+        description: "Your password has been successfully changed.",
+      })
+    } catch (error) {
+      console.error("Error updating password:", error)
+      toast({
+        title: "Error",
+        description: "Failed to update password. Please try again.",
+        variant: "destructive",
+      })
+    } finally {
+      setIsChangingPassword(false)
+    }
+  }
+
   return (
     <Layout>
       <div className="container mx-auto p-6 space-y-6">
@@ -110,7 +172,7 @@ export default function Settings() {
             </TabsTrigger>
           </TabsList>
 
-          <TabsContent value="profile">
+          <TabsContent value="profile" className="space-y-6">
             <Card>
               <CardHeader>
                 <CardTitle>Profile Settings</CardTitle>
@@ -187,6 +249,54 @@ export default function Settings() {
                 >
                   <Save className="w-4 h-4" />
                   {isLoading ? "Saving..." : "Save Profile"}
+                </Button>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Lock className="w-5 h-5" />
+                  Change Password
+                </CardTitle>
+                <CardDescription>
+                  Update your account password
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-6">
+                <div className="space-y-2">
+                  <Label htmlFor="newPassword">New Password</Label>
+                  <Input 
+                    id="newPassword" 
+                    type="password"
+                    value={newPassword}
+                    onChange={(e) => setNewPassword(e.target.value)}
+                    placeholder="Enter new password"
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="confirmPassword">Confirm New Password</Label>
+                  <Input 
+                    id="confirmPassword" 
+                    type="password"
+                    value={confirmPassword}
+                    onChange={(e) => setConfirmPassword(e.target.value)}
+                    placeholder="Confirm new password"
+                  />
+                </div>
+
+                <p className="text-xs text-muted-foreground">
+                  Password must be at least 6 characters long
+                </p>
+
+                <Button 
+                  onClick={handleChangePassword} 
+                  disabled={isChangingPassword || !newPassword || !confirmPassword}
+                  className="flex items-center gap-2"
+                >
+                  <Lock className="w-4 h-4" />
+                  {isChangingPassword ? "Updating..." : "Update Password"}
                 </Button>
               </CardContent>
             </Card>
