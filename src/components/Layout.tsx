@@ -71,7 +71,7 @@ export default function Layout({ children }: LayoutProps) {
                 <ArrowRight className="w-4 h-4" />
               </Button>
               <div className="flex items-center gap-2 ml-2">
-                <h1 className="text-xl font-semibold text-primary dark:text-white">Halo Business Finance</h1>
+                <h1 className="text-xl font-semibold text-primary dark:text-white no-underline">Halo Business Finance</h1>
               </div>
             </div>
             <div className="flex items-center gap-4">
