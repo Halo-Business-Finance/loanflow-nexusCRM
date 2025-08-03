@@ -42,6 +42,7 @@ const getPriorityColor = (priority: string) => {
 
 const getStageColor = (stage: string) => {
   switch (stage) {
+    case 'New Lead': return 'outline'
     case 'Initial Contact': return 'secondary'
     case 'Qualified': return 'default'
     case 'Application': return 'default'

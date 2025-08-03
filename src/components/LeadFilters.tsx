@@ -16,7 +16,7 @@ interface LeadFiltersProps {
   filteredCount: number
 }
 
-const stages = ["All", "Initial Contact", "Qualified", "Application", "Pre-approval", "Closing", "Funded", "Archive"]
+const stages = ["All", "New Lead", "Initial Contact", "Qualified", "Application", "Pre-approval", "Closing", "Funded", "Archive"]
 const priorities = ["All", "High", "Medium", "Low"]
 
 export function LeadFilters({

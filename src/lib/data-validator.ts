@@ -135,7 +135,7 @@ export class DataFieldValidator {
     }
 
     // Validate stage
-    const validStages = ['Lead', 'Qualified', 'Application', 'Pre-approval', 'Documentation', 'Closing', 'Funded', 'Rejected']
+    const validStages = ['New Lead', 'Lead', 'Qualified', 'Application', 'Pre-approval', 'Documentation', 'Closing', 'Funded', 'Rejected']
     if (entryData.stage && !validStages.includes(entryData.stage)) {
       result.warnings.push(`Stage '${entryData.stage}' is not a standard pipeline stage`)
     }
