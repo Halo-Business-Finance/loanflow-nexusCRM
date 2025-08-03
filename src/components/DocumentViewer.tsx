@@ -16,6 +16,7 @@ interface DocumentViewerProps {
 export function DocumentViewer({ document, isOpen, onClose }: DocumentViewerProps) {
   const [loading, setLoading] = useState(false);
   const [documentUrl, setDocumentUrl] = useState<string | null>(null);
+  const [useGoogleViewer, setUseGoogleViewer] = useState(false);
 
   const getDocumentUrl = async (filePath: string) => {
     try {
@@ -77,6 +78,17 @@ export function DocumentViewer({ document, isOpen, onClose }: DocumentViewerProp
         variant: "destructive",
       });
     }
+  };
+
+  // Alternative PDF viewer using Google Docs Viewer
+  const getGoogleDocsViewerUrl = async () => {
+    if (!document?.file_path) return null;
+    
+    const url = await getDocumentUrl(document.file_path);
+    if (url && isPdf) {
+      return `https://docs.google.com/viewer?url=${encodeURIComponent(url)}&embedded=true`;
+    }
+    return null;
   };
 
   const openInNewTab = async () => {
@@ -164,13 +176,37 @@ export function DocumentViewer({ document, isOpen, onClose }: DocumentViewerProp
               <span className="ml-2">Loading document...</span>
             </div>
           ) : documentUrl ? (
-            <div className="h-[70vh] border rounded-lg overflow-hidden">
+            <div className="h-[70vh] border rounded-lg overflow-hidden relative">
               {isPdf ? (
-                <iframe
-                  src={documentUrl}
-                  className="w-full h-full border-0"
-                  title={document.document_name}
-                />
+                <>
+                  {useGoogleViewer ? (
+                    <iframe
+                      src={`https://docs.google.com/viewer?url=${encodeURIComponent(documentUrl)}&embedded=true`}
+                      className="w-full h-full border-0"
+                      title={document.document_name}
+                    />
+                  ) : (
+                    <iframe
+                      src={documentUrl}
+                      className="w-full h-full border-0"
+                      title={document.document_name}
+                      onError={() => {
+                        console.log('Direct PDF viewing failed, switching to Google Docs Viewer');
+                        setUseGoogleViewer(true);
+                      }}
+                    />
+                  )}
+                  <div className="absolute top-2 right-2 z-10">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => setUseGoogleViewer(!useGoogleViewer)}
+                      className="text-xs"
+                    >
+                      {useGoogleViewer ? 'Direct View' : 'Google Viewer'}
+                    </Button>
+                  </div>
+                </>
               ) : isImage ? (
                 <div className="w-full h-full flex items-center justify-center bg-muted/50">
                   <img
