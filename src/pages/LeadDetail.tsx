@@ -982,7 +982,7 @@ export default function LeadDetail() {
                               <SelectItem value="Initial Contact">Initial Contact</SelectItem>
                               <SelectItem value="Loan Application Signed">Loan Application Signed</SelectItem>
                               <SelectItem value="Waiting for Documentation">Waiting for Documentation</SelectItem>
-                              <SelectItem value="Pre-approval">Pre-approval</SelectItem>
+                              <SelectItem value="Pre-Approved">Pre-Approved</SelectItem>
                               <SelectItem value="Term Sheet Signed">Term Sheet Signed</SelectItem>
                               <SelectItem value="Loan Approved">Loan Approved</SelectItem>
                               <SelectItem value="Closing">Closing</SelectItem>
@@ -1593,7 +1593,7 @@ export default function LeadDetail() {
                               <SelectItem value="Initial Contact">Initial Contact</SelectItem>
                               <SelectItem value="Loan Application Signed">Loan Application Signed</SelectItem>
                               <SelectItem value="Waiting for Documentation">Waiting for Documentation</SelectItem>
-                              <SelectItem value="Pre-approval">Pre-approval</SelectItem>
+                              <SelectItem value="Pre-Approved">Pre-Approved</SelectItem>
                               <SelectItem value="Term Sheet Signed">Term Sheet Signed</SelectItem>
                               <SelectItem value="Loan Approved">Loan Approved</SelectItem>
                               <SelectItem value="Closing">Closing</SelectItem>

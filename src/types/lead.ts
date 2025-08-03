@@ -59,7 +59,7 @@ export const STAGES = [
   "Initial Contact", 
   "Loan Application Signed", 
   "Waiting for Documentation", 
-  "Pre-approval", 
+  "Pre-Approved", 
   "Term Sheet Signed", 
   "Loan Approved", 
   "Closing", 
