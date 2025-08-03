@@ -7,6 +7,8 @@ import { Textarea } from "@/components/ui/textarea"
 import { DialogFooter } from "@/components/ui/dialog"
 import { Loader2 } from "lucide-react"
 import { Lead, ContactEntity, LOAN_TYPES } from "@/types/lead"
+import { useRoleBasedAccess } from "@/hooks/useRoleBasedAccess"
+import { useSecureForm } from "@/hooks/useSecureForm"
 
 interface LeadFormProps {
   lead?: Lead | null
@@ -16,6 +18,9 @@ interface LeadFormProps {
 }
 
 export function LeadForm({ lead, onSubmit, onCancel, isSubmitting = false }: LeadFormProps) {
+  const { canAccessLeads } = useRoleBasedAccess()
+  const { isValidating } = useSecureForm()
+  
   const [formData, setFormData] = useState<ContactEntity>({
     name: lead?.name || "",
     email: lead?.email || "",
@@ -207,7 +212,7 @@ export function LeadForm({ lead, onSubmit, onCancel, isSubmitting = false }: Lea
         <Button type="button" variant="outline" onClick={onCancel}>
           Cancel
         </Button>
-        <Button type="submit" disabled={isSubmitting}>
+        <Button type="submit" disabled={isSubmitting || isValidating || !canAccessLeads}>
           {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
           {lead ? "Update Lead" : "Create Lead"}
         </Button>

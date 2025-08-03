@@ -1,5 +1,6 @@
 import { useState } from "react"
 import { Plus, Phone, Mail, Calendar, User, Users } from "lucide-react"
+import { useRoleBasedAccess } from "@/hooks/useRoleBasedAccess"
 import { Button } from "@/components/ui/button"
 import {
   DropdownMenu,
@@ -21,6 +22,7 @@ import { useNavigate } from "react-router-dom"
 export function QuickActions() {
   const [isOpen, setIsOpen] = useState(false)
   const navigate = useNavigate()
+  const { canAccessLeads, canManageClients, canViewReports } = useRoleBasedAccess()
 
   const handleAction = (action: string) => {
     switch (action) {
@@ -56,23 +58,31 @@ export function QuickActions() {
           <DropdownMenuContent align="end" className="w-56">
             <DropdownMenuLabel>Quick Actions</DropdownMenuLabel>
             <DropdownMenuSeparator />
-            <DropdownMenuItem onClick={() => handleAction('new-lead')}>
-              <User className="mr-2 h-4 w-4" />
-              <span>Add New Lead</span>
-            </DropdownMenuItem>
-            <DropdownMenuItem onClick={() => handleAction('new-client')}>
-              <Users className="mr-2 h-4 w-4" />
-              <span>Add New Client</span>
-            </DropdownMenuItem>
+            {canAccessLeads && (
+              <DropdownMenuItem onClick={() => handleAction('new-lead')}>
+                <User className="mr-2 h-4 w-4" />
+                <span>Add New Lead</span>
+              </DropdownMenuItem>
+            )}
+            {canManageClients && (
+              <DropdownMenuItem onClick={() => handleAction('new-client')}>
+                <Users className="mr-2 h-4 w-4" />
+                <span>Add New Client</span>
+              </DropdownMenuItem>
+            )}
             <DropdownMenuSeparator />
-            <DropdownMenuItem onClick={() => handleAction('view-pipeline')}>
-              <Calendar className="mr-2 h-4 w-4" />
-              <span>View Pipeline</span>
-            </DropdownMenuItem>
-            <DropdownMenuItem onClick={() => handleAction('view-activities')}>
-              <Mail className="mr-2 h-4 w-4" />
-              <span>View Activities</span>
-            </DropdownMenuItem>
+            {canViewReports && (
+              <DropdownMenuItem onClick={() => handleAction('view-pipeline')}>
+                <Calendar className="mr-2 h-4 w-4" />
+                <span>View Pipeline</span>
+              </DropdownMenuItem>
+            )}
+            {canViewReports && (
+              <DropdownMenuItem onClick={() => handleAction('view-activities')}>
+                <Mail className="mr-2 h-4 w-4" />
+                <span>View Activities</span>
+              </DropdownMenuItem>
+            )}
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
@@ -97,38 +107,46 @@ export function QuickActions() {
             <DialogTitle>Quick Actions</DialogTitle>
           </DialogHeader>
           <div className="grid grid-cols-2 gap-4">
-            <Button 
-              variant="outline" 
-              className="h-20 flex-col gap-2"
-              onClick={() => handleAction('new-lead')}
-            >
-              <User className="h-6 w-6" />
-              <span className="text-sm">New Lead</span>
-            </Button>
-            <Button 
-              variant="outline" 
-              className="h-20 flex-col gap-2"
-              onClick={() => handleAction('new-client')}
-            >
-              <Users className="h-6 w-6" />
-              <span className="text-sm">New Client</span>
-            </Button>
-            <Button 
-              variant="outline" 
-              className="h-20 flex-col gap-2"
-              onClick={() => handleAction('view-pipeline')}
-            >
-              <Calendar className="h-6 w-6" />
-              <span className="text-sm">Pipeline</span>
-            </Button>
-            <Button 
-              variant="outline" 
-              className="h-20 flex-col gap-2"
-              onClick={() => handleAction('view-activities')}
-            >
-              <Mail className="h-6 w-6" />
-              <span className="text-sm">Activities</span>
-            </Button>
+            {canAccessLeads && (
+              <Button 
+                variant="outline" 
+                className="h-20 flex-col gap-2"
+                onClick={() => handleAction('new-lead')}
+              >
+                <User className="h-6 w-6" />
+                <span className="text-sm">New Lead</span>
+              </Button>
+            )}
+            {canManageClients && (
+              <Button 
+                variant="outline" 
+                className="h-20 flex-col gap-2"
+                onClick={() => handleAction('new-client')}
+              >
+                <Users className="h-6 w-6" />
+                <span className="text-sm">New Client</span>
+              </Button>
+            )}
+            {canViewReports && (
+              <Button 
+                variant="outline" 
+                className="h-20 flex-col gap-2"
+                onClick={() => handleAction('view-pipeline')}
+              >
+                <Calendar className="h-6 w-6" />
+                <span className="text-sm">Pipeline</span>
+              </Button>
+            )}
+            {canViewReports && (
+              <Button 
+                variant="outline" 
+                className="h-20 flex-col gap-2"
+                onClick={() => handleAction('view-activities')}
+              >
+                <Mail className="h-6 w-6" />
+                <span className="text-sm">Activities</span>
+              </Button>
+            )}
           </div>
         </DialogContent>
       </Dialog>

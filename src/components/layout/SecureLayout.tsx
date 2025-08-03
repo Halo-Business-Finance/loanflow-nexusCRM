@@ -1,0 +1,55 @@
+import React, { useEffect } from 'react';
+import Layout from '@/components/Layout';
+import { SecurityWrapper } from '@/components/SecurityWrapper';
+import { useSessionSecurity } from '@/hooks/useSessionSecurity';
+import { useAuth } from '@/components/auth/AuthProvider';
+import { toast } from 'sonner';
+
+interface SecureLayoutProps {
+  children: React.ReactNode;
+  requireRole?: string;
+}
+
+export const SecureLayout: React.FC<SecureLayoutProps> = ({ children, requireRole }) => {
+  const { user } = useAuth();
+  const { validateSession, trackActivity } = useSessionSecurity();
+
+  // Validate session on mount and periodically
+  useEffect(() => {
+    if (user) {
+      const interval = setInterval(async () => {
+        const isValid = await validateSession();
+        if (!isValid) {
+          toast.error('Session expired. Please log in again.');
+        }
+      }, 10 * 60 * 1000); // Every 10 minutes
+
+      return () => clearInterval(interval);
+    }
+  }, [user, validateSession]);
+
+  // Track activity for session management
+  useEffect(() => {
+    const handleActivity = () => trackActivity();
+    
+    // Track various user interactions
+    const events = ['click', 'keydown', 'mousemove', 'scroll', 'touchstart'];
+    events.forEach(event => {
+      window.addEventListener(event, handleActivity, { passive: true });
+    });
+
+    return () => {
+      events.forEach(event => {
+        window.removeEventListener(event, handleActivity);
+      });
+    };
+  }, [trackActivity]);
+
+  return (
+    <SecurityWrapper requireRole={requireRole}>
+      <Layout>
+        {children}
+      </Layout>
+    </SecurityWrapper>
+  );
+};

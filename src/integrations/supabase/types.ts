@@ -50,6 +50,45 @@ export type Database = {
         }
         Relationships: []
       }
+      active_sessions: {
+        Row: {
+          created_at: string
+          device_fingerprint: string | null
+          expires_at: string
+          id: string
+          ip_address: unknown | null
+          is_active: boolean
+          last_activity: string
+          session_token: string
+          user_agent: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          device_fingerprint?: string | null
+          expires_at: string
+          id?: string
+          ip_address?: unknown | null
+          is_active?: boolean
+          last_activity?: string
+          session_token: string
+          user_agent?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          device_fingerprint?: string | null
+          expires_at?: string
+          id?: string
+          ip_address?: unknown | null
+          is_active?: boolean
+          last_activity?: string
+          session_token?: string
+          user_agent?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       api_request_analytics: {
         Row: {
           ai_confidence_score: number | null
@@ -2663,6 +2702,33 @@ export type Database = {
         }
         Relationships: []
       }
+      session_config: {
+        Row: {
+          created_at: string
+          id: string
+          max_concurrent_sessions: number
+          require_fresh_login_minutes: number
+          session_timeout_minutes: number
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          max_concurrent_sessions?: number
+          require_fresh_login_minutes?: number
+          session_timeout_minutes?: number
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          max_concurrent_sessions?: number
+          require_fresh_login_minutes?: number
+          session_timeout_minutes?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
       social_media_profiles: {
         Row: {
           client_id: string | null
@@ -3243,8 +3309,21 @@ export type Database = {
         }
         Returns: boolean
       }
+      validate_and_sanitize_input: {
+        Args: {
+          p_input: string
+          p_field_type?: string
+          p_max_length?: number
+          p_allow_html?: boolean
+        }
+        Returns: Json
+      }
       validate_password_strength: {
         Args: { password: string }
+        Returns: Json
+      }
+      validate_session_security: {
+        Args: { p_user_id: string; p_session_token: string }
         Returns: Json
       }
       verify_data_integrity: {

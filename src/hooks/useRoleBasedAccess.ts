@@ -1,0 +1,69 @@
+import { useAuth } from '@/components/auth/AuthProvider';
+import { useCallback } from 'react';
+
+export type UserRole = 'super_admin' | 'admin' | 'manager' | 'agent';
+
+interface RoleHierarchy {
+  [key: string]: number;
+}
+
+const ROLE_HIERARCHY: RoleHierarchy = {
+  'super_admin': 4,
+  'admin': 3,
+  'manager': 2,
+  'agent': 1
+};
+
+export const useRoleBasedAccess = () => {
+  const { hasRole, userRole } = useAuth();
+
+  const hasMinimumRole = useCallback((requiredRole: UserRole): boolean => {
+    if (!userRole) return false;
+    
+    const userLevel = ROLE_HIERARCHY[userRole] || 0;
+    const requiredLevel = ROLE_HIERARCHY[requiredRole] || 0;
+    
+    return userLevel >= requiredLevel;
+  }, [userRole]);
+
+  const canAccessLeads = useCallback((): boolean => {
+    return hasRole('agent') || hasMinimumRole('agent');
+  }, [hasRole, hasMinimumRole]);
+
+  const canManageUsers = useCallback((): boolean => {
+    return hasMinimumRole('admin');
+  }, [hasMinimumRole]);
+
+  const canAccessAdminFeatures = useCallback((): boolean => {
+    return hasMinimumRole('admin');
+  }, [hasMinimumRole]);
+
+  const canModifySystemSettings = useCallback((): boolean => {
+    return hasMinimumRole('super_admin');
+  }, [hasMinimumRole]);
+
+  const canDeleteLeads = useCallback((): boolean => {
+    return hasMinimumRole('manager');
+  }, [hasMinimumRole]);
+
+  const canViewReports = useCallback((): boolean => {
+    return hasMinimumRole('agent');
+  }, [hasMinimumRole]);
+
+  const canManageClients = useCallback((): boolean => {
+    return hasMinimumRole('agent');
+  }, [hasMinimumRole]);
+
+  return {
+    userRole,
+    hasRole,
+    hasMinimumRole,
+    canAccessLeads,
+    canManageUsers,
+    canAccessAdminFeatures,
+    canModifySystemSettings,
+    canDeleteLeads,
+    canViewReports,
+    canManageClients
+  };
+};
