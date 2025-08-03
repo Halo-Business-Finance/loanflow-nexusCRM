@@ -105,7 +105,7 @@ export function AppSidebar() {
             </Button>
             {state !== "collapsed" && (
               <div className="flex flex-col">
-                <span className="font-bold text-lg text-foreground dark:text-white">LoanFlow</span>
+                <span className="font-bold text-lg text-foreground dark:text-white">Halo Business Finance</span>
                 {user && (
                   <span className="text-xs text-muted-foreground dark:text-white truncate max-w-[140px]">
                     {userProfile?.first_name || user.user_metadata?.first_name || user.email}
