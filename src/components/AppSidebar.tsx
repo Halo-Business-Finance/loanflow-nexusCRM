@@ -111,21 +111,6 @@ export function AppSidebar() {
               </div>
             )}
           </div>
-          
-          {state !== "collapsed" && user && (
-            <Button 
-              variant="outline" 
-              size="sm" 
-              className="w-full justify-start gap-2"
-              onClick={() => {
-                console.log('Sign Out button clicked!')
-                signOut()
-              }}
-            >
-              <LogOut className="w-4 h-4" />
-              <span>Sign Out</span>
-            </Button>
-          )}
         </div>
 
         <SidebarGroup>
@@ -196,6 +181,24 @@ export function AppSidebar() {
             </div>
           </SidebarGroupContent>
         </SidebarGroup>
+
+        {/* Sign Out Button at Bottom */}
+        {user && (
+          <div className="mt-auto p-2">
+            <Button 
+              variant="outline" 
+              size="sm" 
+              className="w-full justify-start gap-2"
+              onClick={() => {
+                console.log('Sign Out button clicked!')
+                signOut()
+              }}
+            >
+              <LogOut className="w-4 h-4" />
+              {state !== "collapsed" && <span>Sign Out</span>}
+            </Button>
+          </div>
+        )}
 
       </SidebarContent>
     </Sidebar>
