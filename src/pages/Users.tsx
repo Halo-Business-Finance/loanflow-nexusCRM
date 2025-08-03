@@ -546,16 +546,19 @@ export default function Users() {
 
   const toggleUserStatus = async (userId: string, currentStatus: boolean) => {
     try {
+      // Only allow activation/deactivation, not archiving
+      // This is for temporary status changes, not permanent archiving
       const { error } = await supabase
         .from('user_roles')
         .update({ is_active: !currentStatus })
         .eq('user_id', userId)
+        .eq('archived_at', null) // Only update non-archived users
 
       if (error) throw error
 
       toast({
         title: "Success",
-        description: `User ${currentStatus ? 'deactivated' : 'activated'} successfully`
+        description: `User ${currentStatus ? 'temporarily deactivated' : 'activated'} successfully. Use archive for permanent deactivation.`
       })
 
       fetchUsers()
