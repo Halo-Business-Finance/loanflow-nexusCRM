@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -6,6 +6,13 @@ import { Download, ExternalLink, X } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { LeadDocument } from '@/hooks/useDocuments';
 import { toast } from '@/hooks/use-toast';
+
+// Declare Adobe PDF Embed API types
+declare global {
+  interface Window {
+    AdobeDC: any;
+  }
+}
 
 interface DocumentViewerProps {
   document: LeadDocument | null;
@@ -17,6 +24,41 @@ export function DocumentViewer({ document, isOpen, onClose }: DocumentViewerProp
   const [loading, setLoading] = useState(false);
   const [documentUrl, setDocumentUrl] = useState<string | null>(null);
   const [useGoogleViewer, setUseGoogleViewer] = useState(false);
+  const [useAdobeViewer, setUseAdobeViewer] = useState(true);
+  const [adobeSDKLoaded, setAdobeSDKLoaded] = useState(false);
+  const adobeViewerRef = useRef<HTMLDivElement>(null);
+
+  // Determine file types
+  const isPdf = document?.file_mime_type?.includes('pdf') || document?.document_name?.toLowerCase().endsWith('.pdf');
+  const isWordDoc = document?.file_mime_type?.includes('word') || 
+                   document?.file_mime_type?.includes('document') ||
+                   document?.document_name?.toLowerCase().match(/\.(doc|docx)$/);
+  const isImage = document?.file_mime_type?.startsWith('image/');
+
+  // Load Adobe PDF Embed API
+  useEffect(() => {
+    const loadAdobeSDK = () => {
+      if (window.AdobeDC || window.document.querySelector('script[src*="adobe"]')) {
+        setAdobeSDKLoaded(true);
+        return;
+      }
+
+      const script = window.document.createElement('script');
+      script.src = 'https://documentservices.adobe.com/view-sdk/viewer.js';
+      script.onload = () => {
+        setAdobeSDKLoaded(true);
+      };
+      script.onerror = () => {
+        console.error('Failed to load Adobe PDF Embed API');
+        setUseAdobeViewer(false);
+      };
+      window.document.head.appendChild(script);
+    };
+
+    if (isPdf && isOpen) {
+      loadAdobeSDK();
+    }
+  }, [isPdf, isOpen]);
 
   const getDocumentUrl = async (filePath: string) => {
     try {
@@ -39,6 +81,41 @@ export function DocumentViewer({ document, isOpen, onClose }: DocumentViewerProp
       return null;
     } finally {
       setLoading(false);
+    }
+  };
+
+  const renderAdobePDF = async () => {
+    if (!adobeViewerRef.current || !documentUrl || !window.AdobeDC || !adobeSDKLoaded) return;
+
+    try {
+      // Clear the container
+      adobeViewerRef.current.innerHTML = '';
+
+      const adobeDCView = new window.AdobeDC.View({
+        clientId: "dc-pdf-embed-demo", // Using Adobe's demo client ID
+        divId: adobeViewerRef.current.id || "adobe-dc-view"
+      });
+
+      // Set a unique ID for the viewer container
+      if (!adobeViewerRef.current.id) {
+        adobeViewerRef.current.id = `adobe-viewer-${Date.now()}`;
+      }
+
+      await adobeDCView.previewFile({
+        content: { location: { url: documentUrl } },
+        metaData: { fileName: document?.document_name || "Document" }
+      }, {
+        embedMode: "SIZED_CONTAINER",
+        showDownloadPDF: true,
+        showPrintPDF: true,
+        showLeftHandPanel: false,
+        showAnnotationTools: false
+      });
+
+    } catch (error) {
+      console.error('Adobe PDF viewer error:', error);
+      setUseAdobeViewer(false);
+      setUseGoogleViewer(true);
     }
   };
 
@@ -80,17 +157,6 @@ export function DocumentViewer({ document, isOpen, onClose }: DocumentViewerProp
     }
   };
 
-  // Alternative PDF viewer using Google Docs Viewer
-  const getGoogleDocsViewerUrl = async () => {
-    if (!document?.file_path) return null;
-    
-    const url = await getDocumentUrl(document.file_path);
-    if (url && isPdf) {
-      return `https://docs.google.com/viewer?url=${encodeURIComponent(url)}&embedded=true`;
-    }
-    return null;
-  };
-
   const openInNewTab = async () => {
     if (!document?.file_path) return;
     
@@ -100,14 +166,6 @@ export function DocumentViewer({ document, isOpen, onClose }: DocumentViewerProp
     }
   };
 
-  const isPdf = document?.file_mime_type?.includes('pdf') || document?.document_name?.toLowerCase().endsWith('.pdf');
-  const isWordDoc = document?.file_mime_type?.includes('word') || 
-                   document?.file_mime_type?.includes('document') ||
-                   document?.document_name?.toLowerCase().match(/\.(doc|docx)$/);
-  const isImage = document?.file_mime_type?.startsWith('image/');
-
-  const canViewInBrowser = isPdf || isImage;
-
   // Load document URL when modal opens
   useEffect(() => {
     if (isOpen && document?.file_path && !documentUrl) {
@@ -115,8 +173,17 @@ export function DocumentViewer({ document, isOpen, onClose }: DocumentViewerProp
     }
     if (!isOpen) {
       setDocumentUrl(null); // Reset URL when modal closes
+      setUseAdobeViewer(true); // Reset to Adobe viewer as default
+      setUseGoogleViewer(false);
     }
   }, [isOpen, document?.file_path, documentUrl]);
+
+  // Render Adobe PDF when URL is available
+  useEffect(() => {
+    if (documentUrl && isPdf && useAdobeViewer && adobeSDKLoaded && isOpen) {
+      renderAdobePDF();
+    }
+  }, [documentUrl, isPdf, useAdobeViewer, adobeSDKLoaded, isOpen]);
 
   if (!document) return null;
 
@@ -136,6 +203,11 @@ export function DocumentViewer({ document, isOpen, onClose }: DocumentViewerProp
                 <Badge variant="outline" className="text-xs">
                   {document.file_mime_type || 'Unknown type'}
                 </Badge>
+                {isPdf && (
+                  <Badge variant="outline" className="text-xs">
+                    PDF Reader: {useAdobeViewer ? 'Adobe' : useGoogleViewer ? 'Google' : 'Direct'}
+                  </Badge>
+                )}
               </div>
             </div>
             <div className="flex items-center gap-2">
@@ -179,7 +251,13 @@ export function DocumentViewer({ document, isOpen, onClose }: DocumentViewerProp
             <div className="h-[70vh] border rounded-lg overflow-hidden relative">
               {isPdf ? (
                 <>
-                  {useGoogleViewer ? (
+                  {useAdobeViewer && adobeSDKLoaded ? (
+                    <div 
+                      ref={adobeViewerRef}
+                      className="w-full h-full"
+                      id={`adobe-viewer-${document?.id || 'default'}`}
+                    />
+                  ) : useGoogleViewer ? (
                     <iframe
                       src={`https://docs.google.com/viewer?url=${encodeURIComponent(documentUrl)}&embedded=true`}
                       className="w-full h-full border-0"
@@ -191,19 +269,48 @@ export function DocumentViewer({ document, isOpen, onClose }: DocumentViewerProp
                       className="w-full h-full border-0"
                       title={document.document_name}
                       onError={() => {
-                        console.log('Direct PDF viewing failed, switching to Google Docs Viewer');
-                        setUseGoogleViewer(true);
+                        console.log('Direct PDF viewing failed, switching to Adobe viewer');
+                        setUseAdobeViewer(true);
                       }}
                     />
                   )}
-                  <div className="absolute top-2 right-2 z-10">
+                  <div className="absolute top-2 right-2 z-10 flex gap-1">
                     <Button
                       variant="outline"
                       size="sm"
-                      onClick={() => setUseGoogleViewer(!useGoogleViewer)}
-                      className="text-xs"
+                      onClick={() => {
+                        setUseAdobeViewer(true);
+                        setUseGoogleViewer(false);
+                      }}
+                      className={`text-xs ${useAdobeViewer ? 'bg-primary text-primary-foreground' : ''}`}
+                      disabled={!adobeSDKLoaded}
+                      title="Adobe PDF Reader (Recommended)"
                     >
-                      {useGoogleViewer ? 'Direct View' : 'Google Viewer'}
+                      Adobe
+                    </Button>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => {
+                        setUseGoogleViewer(true);
+                        setUseAdobeViewer(false);
+                      }}
+                      className={`text-xs ${useGoogleViewer ? 'bg-primary text-primary-foreground' : ''}`}
+                      title="Google Docs Viewer"
+                    >
+                      Google
+                    </Button>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => {
+                        setUseAdobeViewer(false);
+                        setUseGoogleViewer(false);
+                      }}
+                      className={`text-xs ${!useAdobeViewer && !useGoogleViewer ? 'bg-primary text-primary-foreground' : ''}`}
+                      title="Direct Browser Viewer"
+                    >
+                      Direct
                     </Button>
                   </div>
                 </>
@@ -221,7 +328,7 @@ export function DocumentViewer({ document, isOpen, onClose }: DocumentViewerProp
                     <div className="text-lg font-medium">Word Document Preview</div>
                     <p className="text-muted-foreground max-w-md">
                       Word documents cannot be previewed directly in the browser. 
-                      You can download the file or open it in a new tab to view with your system"s default application.
+                      You can download the file or open it in a new tab to view with your system&apos;s default application.
                     </p>
                     <div className="flex gap-2">
                       <Button onClick={downloadDocument} className="gap-2">
