@@ -1,0 +1,3 @@
+UPDATE security_headers 
+SET header_value = 'default-src ''self''; script-src ''self'' ''unsafe-inline'' https://documentservices.adobe.com; style-src ''self'' ''unsafe-inline''; img-src ''self'' data: https:; font-src ''self''; connect-src ''self'' https://gshxxsniwytjgcnthyfq.supabase.co; frame-src ''self'' https://gshxxsniwytjgcnthyfq.supabase.co https://documentservices.adobe.com blob: data:; object-src ''none''; base-uri ''self'';'
+WHERE header_name = 'Content-Security-Policy' AND is_active = true;
