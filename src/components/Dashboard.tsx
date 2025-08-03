@@ -180,17 +180,30 @@ export default function Dashboard() {
       
       const { data: leadsData } = await leadsQuery
         .order('created_at', { ascending: false })
-        .limit(5)
 
-      // Fetch pipeline entries  
-      const { data: pipelineData } = await supabase
+      // Fetch pipeline entries - admin users see all data
+      let pipelineQuery = supabase
         .from('pipeline_entries')
         .select('*')
+      
+      // Only filter by user_id if not admin
+      if (!hasRole('admin') && !hasRole('super_admin')) {
+        pipelineQuery = pipelineQuery.eq('user_id', user.id)
+      }
+      
+      const { data: pipelineData } = await pipelineQuery
 
-      // Fetch clients count
-      const { data: clientsData } = await supabase
+      // Fetch clients count - admin users see all data
+      let clientsQuery = supabase
         .from('clients')
         .select('id, total_loan_value')
+      
+      // Only filter by user_id if not admin
+      if (!hasRole('admin') && !hasRole('super_admin')) {
+        clientsQuery = clientsQuery.eq('user_id', user.id)
+      }
+      
+      const { data: clientsData } = await clientsQuery
 
       // Transform leads data to merge contact entity fields
       const transformedLeads = leadsData?.map(lead => ({
