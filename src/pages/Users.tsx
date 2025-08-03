@@ -306,23 +306,21 @@ export default function Users() {
         return
       }
 
-      console.log('Attempting to sign up user...')
+      console.log('Attempting to create user with admin privileges...')
       
-      // Sign up the user first
-      const { data, error } = await supabase.auth.signUp({
+      // Use admin.createUser to bypass email verification for admin-created accounts
+      const { data, error } = await supabase.auth.admin.createUser({
         email: newUser.email,
         password: newUser.password,
-        options: {
-          data: {
-            first_name: newUser.first_name,
-            last_name: newUser.last_name,
-            phone_number: newUser.phone_number // Include phone in signup metadata
-          },
-          emailRedirectTo: `${window.location.origin}/`
+        email_confirm: true, // Automatically confirm email for admin-created users
+        user_metadata: {
+          first_name: newUser.first_name,
+          last_name: newUser.last_name,
+          phone_number: newUser.phone_number
         }
       })
 
-      console.log('Signup result:', { data, error })
+      console.log('Admin user creation result:', { data, error })
 
       if (error) throw error
       if (!data.user) throw new Error('Failed to create user')
