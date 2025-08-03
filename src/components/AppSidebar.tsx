@@ -119,7 +119,10 @@ export function AppSidebar() {
               variant="outline" 
               size="sm" 
               className="w-full justify-start gap-2"
-              onClick={signOut}
+              onClick={() => {
+                console.log('Sign Out button clicked!')
+                signOut()
+              }}
             >
               <LogOut className="w-4 h-4" />
               <span>Sign Out</span>

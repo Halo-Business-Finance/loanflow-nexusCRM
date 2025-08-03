@@ -242,7 +242,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }
 
   const signOut = async () => {
+    console.log('signOut function called')
     try {
+      console.log('Attempting to log logout...')
       // Log logout
       await supabase.functions.invoke('audit-log', {
         body: {
@@ -251,14 +253,20 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         }
       })
 
+      console.log('Attempting Supabase signOut...')
       const { error } = await supabase.auth.signOut()
-      if (error) throw error
+      if (error) {
+        console.error('Supabase signOut error:', error)
+        throw error
+      }
 
+      console.log('SignOut successful, showing toast...')
       toast({
         title: "Signed out",
         description: "You have been signed out successfully.",
       })
     } catch (error: any) {
+      console.error('SignOut catch block error:', error)
       toast({
         title: "Sign out failed",
         description: error.message,
