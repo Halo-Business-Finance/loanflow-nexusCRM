@@ -174,7 +174,7 @@ export function AppSidebar() {
 
         {/* Quick Actions */}
         <SidebarGroup>
-          <SidebarGroupLabel className="text-foreground dark:text-white font-semibold">Quick Actions</SidebarGroupLabel>
+          <SidebarGroupLabel className="text-foreground dark:text-white font-semibold underline">Quick Actions</SidebarGroupLabel>
           <SidebarGroupContent>
             <div className="space-y-2 px-2">
               <PhoneDialer 
