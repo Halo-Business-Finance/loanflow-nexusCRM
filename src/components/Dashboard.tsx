@@ -521,7 +521,7 @@ export default function Dashboard() {
       {/* Loan Close Performance */}
       <Card className="shadow-soft">
         <CardHeader>
-          <CardTitle className="dark:text-white"><span className="border-b-2 border-primary dark:border-white pb-2">Loan Close Performance</span></CardTitle>
+          <CardTitle className="dark:text-white inline-block border-b-2 border-primary dark:border-white pb-1">Loan Close Performance</CardTitle>
           <p className="text-sm text-muted-foreground dark:text-white">Monthly closed loans vs targets and close percentage</p>
         </CardHeader>
         <CardContent>
