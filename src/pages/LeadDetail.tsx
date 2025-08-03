@@ -552,8 +552,14 @@ export default function LeadDetail() {
         .from('leads')
         .update(leadUpdateData)
         .eq('id', lead.id)
+        .select()
 
-      if (leadError) throw leadError
+      console.log('Lead update result:', { leadUpdateData, leadError })
+
+      if (leadError) {
+        console.error('Lead update error:', leadError)
+        throw leadError
+      }
 
       // If being funded, create client record
       if (isBeingFunded) {
@@ -572,9 +578,13 @@ export default function LeadDetail() {
       fetchLead()
     } catch (error) {
       console.error('Error updating lead:', error)
+      console.error('Error details:', JSON.stringify(error, null, 2))
+      console.error('Lead data:', lead)
+      console.error('Editable fields:', editableFields)
+      
       toast({
         title: "Error",
-        description: "Failed to update lead information",
+        description: `Failed to update lead information: ${error?.message || 'Unknown error'}`,
         variant: "destructive",
       })
     }
