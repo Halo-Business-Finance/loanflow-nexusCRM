@@ -426,6 +426,7 @@ export default function ClientDetail() {
 
   const getStageColor = (stage: string) => {
     switch (stage) {
+      case 'New Lead': return 'outline'
       case 'Initial Contact': return 'secondary'
       case 'Qualified': return 'default'
       case 'Application': return 'secondary'
@@ -1111,15 +1112,16 @@ export default function ClientDetail() {
                           <SelectTrigger>
                             <SelectValue placeholder="Select stage" />
                           </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="Initial Contact">Initial Contact</SelectItem>
-                            <SelectItem value="Qualified">Qualified</SelectItem>
-                            <SelectItem value="Application">Application</SelectItem>
-                            <SelectItem value="Pre-approval">Pre-approval</SelectItem>
-                            <SelectItem value="Documentation">Documentation</SelectItem>
-                            <SelectItem value="Closing">Closing</SelectItem>
-                            <SelectItem value="Funded">Funded</SelectItem>
-                          </SelectContent>
+                           <SelectContent>
+                             <SelectItem value="New Lead">New Lead</SelectItem>
+                             <SelectItem value="Initial Contact">Initial Contact</SelectItem>
+                             <SelectItem value="Qualified">Qualified</SelectItem>
+                             <SelectItem value="Application">Application</SelectItem>
+                             <SelectItem value="Pre-approval">Pre-approval</SelectItem>
+                             <SelectItem value="Documentation">Documentation</SelectItem>
+                             <SelectItem value="Closing">Closing</SelectItem>
+                             <SelectItem value="Funded">Funded</SelectItem>
+                           </SelectContent>
                         </Select>
                       ) : (
                         <p className="font-medium">{client.stage || 'N/A'}</p>

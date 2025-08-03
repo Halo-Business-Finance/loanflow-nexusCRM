@@ -730,12 +730,14 @@ export default function LeadDetail() {
   const getStageColor = (stage?: string) => {
     if (!stage) return 'secondary'
     switch (stage) {
+      case 'New Lead': return 'outline'
       case 'Initial Contact': return 'secondary'
       case 'Qualified': return 'default'
       case 'Application': return 'default'
       case 'Pre-approval': return 'default'
       case 'Documentation': return 'default'
       case 'Closing': return 'default'
+      case 'Funded': return 'default'
       default: return 'secondary'
     }
   }
@@ -975,15 +977,16 @@ export default function LeadDetail() {
                           <SelectTrigger>
                             <SelectValue placeholder="Select stage" />
                           </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="Initial Contact">Initial Contact</SelectItem>
-                            <SelectItem value="Qualified">Qualified</SelectItem>
-                            <SelectItem value="Application">Application</SelectItem>
-                            <SelectItem value="Pre-approval">Pre-approval</SelectItem>
-                            <SelectItem value="Documentation">Documentation</SelectItem>
-                            <SelectItem value="Closing">Closing</SelectItem>
-                            <SelectItem value="Funded">Funded</SelectItem>
-                          </SelectContent>
+                           <SelectContent>
+                             <SelectItem value="New Lead">New Lead</SelectItem>
+                             <SelectItem value="Initial Contact">Initial Contact</SelectItem>
+                             <SelectItem value="Qualified">Qualified</SelectItem>
+                             <SelectItem value="Application">Application</SelectItem>
+                             <SelectItem value="Pre-approval">Pre-approval</SelectItem>
+                             <SelectItem value="Documentation">Documentation</SelectItem>
+                             <SelectItem value="Closing">Closing</SelectItem>
+                             <SelectItem value="Funded">Funded</SelectItem>
+                           </SelectContent>
                         </Select>
                       ) : (
                         <Badge variant={getStageColor(lead.stage)}>{lead.stage}</Badge>
@@ -1584,15 +1587,16 @@ export default function LeadDetail() {
                           <SelectTrigger>
                             <SelectValue placeholder="Select stage" />
                           </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="Initial Contact">Initial Contact</SelectItem>
-                            <SelectItem value="Qualified">Qualified</SelectItem>
-                            <SelectItem value="Application">Application</SelectItem>
-                            <SelectItem value="Pre-approval">Pre-approval</SelectItem>
-                            <SelectItem value="Documentation">Documentation</SelectItem>
-                            <SelectItem value="Closing">Closing</SelectItem>
-                            <SelectItem value="Funded">Funded</SelectItem>
-                          </SelectContent>
+                           <SelectContent>
+                             <SelectItem value="New Lead">New Lead</SelectItem>
+                             <SelectItem value="Initial Contact">Initial Contact</SelectItem>
+                             <SelectItem value="Qualified">Qualified</SelectItem>
+                             <SelectItem value="Application">Application</SelectItem>
+                             <SelectItem value="Pre-approval">Pre-approval</SelectItem>
+                             <SelectItem value="Documentation">Documentation</SelectItem>
+                             <SelectItem value="Closing">Closing</SelectItem>
+                             <SelectItem value="Funded">Funded</SelectItem>
+                           </SelectContent>
                         </Select>
                       ) : (
                         <p className="font-medium text-foreground">{lead.stage || 'N/A'}</p>
