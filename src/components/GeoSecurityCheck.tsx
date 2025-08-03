@@ -18,7 +18,14 @@ export function GeoSecurityCheck({ children }: GeoSecurityCheckProps) {
         console.log('Performing geo-security check...')
         const { data, error } = await supabase.functions.invoke('geo-security')
         
-        if (error || !data?.allowed) {
+        console.log('Geo-security response:', { data, error })
+        
+        if (error) {
+          console.error('Geo-security error:', error)
+          // Allow access on error to prevent lockout
+          setIsAllowed(true)
+          setBlockReason('')
+        } else if (!data?.allowed) {
           setIsAllowed(false)
           setBlockReason(data?.reason || 'Access restricted to US locations only')
           console.log('Geo-security check failed:', data?.reason)
@@ -35,6 +42,12 @@ export function GeoSecurityCheck({ children }: GeoSecurityCheckProps) {
       }
     }
 
+    // Temporarily bypass geo check - allow immediate access
+    console.log('DEBUG: Bypassing geo-security check for troubleshooting')
+    setIsAllowed(true)
+    setIsChecking(false)
+    
+    // Still run the check for debugging but don't block
     checkGeoSecurity()
   }, [])
 
