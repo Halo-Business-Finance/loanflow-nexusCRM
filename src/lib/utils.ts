@@ -46,3 +46,18 @@ export function formatPhoneNumber(value: string): string {
     return `(${phoneNumber.slice(0, 3)}) ${phoneNumber.slice(3, 6)}-${phoneNumber.slice(6, 10)}`
   }
 }
+
+// Create a tel: link for direct calling
+export function createTelLink(phoneNumber: string): string {
+  if (!phoneNumber) return ""
+  // Remove all non-numeric characters for the tel: link
+  const cleanPhone = phoneNumber.replace(/\D/g, '')
+  return `tel:+1${cleanPhone}`
+}
+
+// Format and create clickable phone link
+export function formatClickablePhone(phoneNumber: string): { formatted: string; telLink: string } {
+  const formatted = formatPhoneNumber(phoneNumber)
+  const telLink = createTelLink(phoneNumber)
+  return { formatted, telLink }
+}

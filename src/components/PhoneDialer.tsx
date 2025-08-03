@@ -24,11 +24,12 @@ const formatPhoneNumber = (value: string) => {
 
 interface PhoneDialerProps {
   trigger?: React.ReactNode
+  phoneNumber?: string // Pre-fill with this phone number
 }
 
-export function PhoneDialer({ trigger }: PhoneDialerProps) {
+export function PhoneDialer({ trigger, phoneNumber: initialPhoneNumber }: PhoneDialerProps) {
   const [isOpen, setIsOpen] = useState(false)
-  const [phoneNumber, setPhoneNumber] = useState("")
+  const [phoneNumber, setPhoneNumber] = useState(initialPhoneNumber || "")
   const [loading, setLoading] = useState(false)
   const { toast } = useToast()
 
@@ -85,8 +86,18 @@ export function PhoneDialer({ trigger }: PhoneDialerProps) {
     </Button>
   )
 
+  // Reset phone number when dialog opens/closes
+  const handleOpenChange = (open: boolean) => {
+    setIsOpen(open)
+    if (open && initialPhoneNumber) {
+      setPhoneNumber(initialPhoneNumber)
+    } else if (!open && !initialPhoneNumber) {
+      setPhoneNumber("")
+    }
+  }
+
   return (
-    <Dialog open={isOpen} onOpenChange={setIsOpen}>
+    <Dialog open={isOpen} onOpenChange={handleOpenChange}>
       <DialogTrigger asChild>
         {trigger || defaultTrigger}
       </DialogTrigger>

@@ -804,6 +804,7 @@ export default function LeadDetail() {
           <div className="flex gap-2">
             {/* Quick Action Buttons */}
             <PhoneDialer 
+              phoneNumber={lead.phone} // Pre-fill with lead's phone number
               trigger={
                 <Button
                   size="sm"
@@ -949,6 +950,7 @@ export default function LeadDetail() {
                     ) : (
                       lead.phone ? (
                         <PhoneDialer 
+                          phoneNumber={lead.phone} // Pre-fill with this number
                           trigger={
                             <button className="font-medium hover:text-primary transition-colors text-left text-foreground">
                               {lead.phone}
@@ -1654,9 +1656,18 @@ export default function LeadDetail() {
                             placeholder="Enter BDO telephone"
                           />
                         ) : (
-                          <p className="font-medium text-foreground">
-                            {lead.bdo_telephone || 'N/A'}
-                          </p>
+                          lead.bdo_telephone ? (
+                            <PhoneDialer 
+                              phoneNumber={lead.bdo_telephone} // Pre-fill with BDO telephone
+                              trigger={
+                                <button className="font-medium hover:text-primary transition-colors text-left text-foreground">
+                                  {lead.bdo_telephone}
+                                </button>
+                              }
+                            />
+                          ) : (
+                            <p className="font-medium text-foreground">N/A</p>
+                          )
                         )}
                       </div>
                     </div>
@@ -1801,10 +1812,17 @@ export default function LeadDetail() {
                 {client.phone && (
                   <div className="flex items-center gap-3">
                     <Phone className="w-4 h-4 text-muted-foreground" />
-                    <div>
-                      <p className="text-sm text-muted-foreground">Phone</p>
-                      <p className="font-medium text-foreground">{client.phone}</p>
-                    </div>
+                     <div>
+                       <p className="text-sm text-muted-foreground">Phone</p>
+                       <PhoneDialer 
+                         phoneNumber={client.phone} // Pre-fill with client phone
+                         trigger={
+                           <button className="font-medium hover:text-primary transition-colors text-left text-foreground">
+                             {client.phone}
+                           </button>
+                         }
+                       />
+                     </div>
                   </div>
                 )}
 
