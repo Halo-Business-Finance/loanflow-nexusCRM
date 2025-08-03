@@ -122,7 +122,7 @@ const LeadCard = ({ lead, onStageChange, onViewDetails }: {
   );
 };
 
-const stageOrder = ["New Lead", "Initial Contact", "Qualified", "Application", "Pre-approval", "Closing", "Funded"];
+const stageOrder = ["New Lead", "Initial Contact", "Qualified", "Application", "Loan Approved", "Closing", "Funded"];
 
 export function InteractivePipeline() {
   const [leads, setLeads] = useState<LeadData[]>([]);

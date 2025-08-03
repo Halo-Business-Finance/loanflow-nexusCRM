@@ -430,7 +430,7 @@ export default function ClientDetail() {
       case 'Initial Contact': return 'secondary'
       case 'Qualified': return 'default'
       case 'Application': return 'secondary'
-      case 'Pre-approval': return 'outline'
+      case 'Loan Approved': return 'outline'
       case 'Documentation': return 'secondary'
       case 'Closing': return 'default'
       case 'Funded': return 'default'
@@ -1117,7 +1117,7 @@ export default function ClientDetail() {
                              <SelectItem value="Initial Contact">Initial Contact</SelectItem>
                              <SelectItem value="Qualified">Qualified</SelectItem>
                              <SelectItem value="Application">Application</SelectItem>
-                             <SelectItem value="Pre-approval">Pre-approval</SelectItem>
+                             <SelectItem value="Loan Approved">Loan Approved</SelectItem>
                              <SelectItem value="Documentation">Documentation</SelectItem>
                              <SelectItem value="Closing">Closing</SelectItem>
                              <SelectItem value="Funded">Funded</SelectItem>
