@@ -14,22 +14,27 @@ export const useSessionSecurity = () => {
   const [sessionToken, setSessionToken] = useState<string | null>(null);
   const [lastActivity, setLastActivity] = useState<Date>(new Date());
 
-  // Generate session token on login
+  // Generate session token on login (using server-side session management)
   useEffect(() => {
     if (user && !sessionToken) {
       const token = crypto.randomUUID();
       setSessionToken(token);
       
-      // Create session record
-      supabase.from('active_sessions').insert({
-        user_id: user.id,
-        session_token: token,
-        device_fingerprint: generateDeviceFingerprint(),
-        ip_address: '0.0.0.0', // Will be set by RLS
-        user_agent: navigator.userAgent,
-        expires_at: new Date(Date.now() + 8 * 60 * 60 * 1000).toISOString() // 8 hours
+      // Create session record with enhanced security
+      supabase.rpc('create_secure_session', {
+        p_session_token: token,
+        p_device_fingerprint: generateDeviceFingerprint(),
+        p_user_agent: navigator.userAgent
       }).then(({ error }) => {
-        if (error) console.error('Session creation error:', error);
+        if (error) {
+          console.error('Secure session creation error:', error);
+          // Log security event for failed session creation
+          supabase.rpc('log_security_event', {
+            p_event_type: 'session_creation_failed',
+            p_severity: 'medium',
+            p_details: { error: error.message }
+          });
+        }
       });
     }
   }, [user, sessionToken]);

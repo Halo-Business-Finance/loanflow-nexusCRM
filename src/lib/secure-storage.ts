@@ -11,19 +11,16 @@ class SecureStorage {
   }
 
   private getOrCreateEncryptionKey(): string {
-    const existingKey = localStorage.getItem('_enc_key');
-    if (existingKey) {
-      return existingKey;
+    // Use session-based key (no localStorage) for better security
+    if (!this.sessionKey) {
+      this.sessionKey = Array.from(crypto.getRandomValues(new Uint8Array(32)))
+        .map(b => b.toString(16).padStart(2, '0'))
+        .join('');
     }
-    
-    // Generate a new encryption key
-    const key = Array.from(crypto.getRandomValues(new Uint8Array(32)))
-      .map(b => b.toString(16).padStart(2, '0'))
-      .join('');
-    
-    localStorage.setItem('_enc_key', key);
-    return key;
+    return this.sessionKey;
   }
+  
+  private sessionKey: string | null = null;
 
   private async encrypt(text: string): Promise<string> {
     const encoder = new TextEncoder();
