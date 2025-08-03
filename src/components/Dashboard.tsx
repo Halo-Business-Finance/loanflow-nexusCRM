@@ -426,7 +426,7 @@ export default function Dashboard() {
       {/* Header */}
       <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-3xl font-bold text-foreground"><span className="border-b-2 border-primary dark:border-white pb-2">Dashboard</span></h1>
+          <h1 className="text-3xl font-bold text-foreground inline-block border-b-2 border-primary dark:border-white pb-1">Dashboard</h1>
           <p className="text-foreground">Welcome back! Here's your performance overview.</p>
           <p className="text-sm text-foreground mt-1">{formatDateTime(currentDateTime)}</p>
         </div>
