@@ -97,6 +97,13 @@ export default function Users() {
     }
   }, [hasRole])
 
+  // Add manual refresh function
+  const refreshUserData = () => {
+    setLoading(true)
+    fetchUsers()
+    fetchArchivedUsers()
+  }
+
   // Redirect if not admin or super_admin
   if (!hasRole('admin') && !hasRole('super_admin')) {
     return (
@@ -662,12 +669,23 @@ export default function Users() {
             <p className="text-white">Manage loan originators and team members</p>
           </div>
           
-          <Dialog open={showNewUserDialog} onOpenChange={setShowNewUserDialog}>
-            <DialogTrigger asChild>
-              <Button className="gap-2">
-                <UserPlus className="h-4 w-4 text-white" />
-                Add User
-              </Button>
+          <div className="flex gap-2">
+            <Button 
+              variant="outline" 
+              onClick={refreshUserData}
+              disabled={loading}
+              className="gap-2"
+            >
+              <RotateCcw className={`h-4 w-4 ${loading ? 'animate-spin' : ''}`} />
+              Refresh
+            </Button>
+            
+            <Dialog open={showNewUserDialog} onOpenChange={setShowNewUserDialog}>
+              <DialogTrigger asChild>
+                <Button className="gap-2">
+                  <UserPlus className="h-4 w-4 text-white" />
+                  Add User
+                </Button>
             </DialogTrigger>
             <DialogContent className="sm:max-w-[500px]">
               <DialogHeader>
@@ -761,6 +779,7 @@ export default function Users() {
               </div>
             </DialogContent>
           </Dialog>
+        </div>
         </div>
 
         {/* Search and Filter */}
