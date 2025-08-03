@@ -1798,6 +1798,74 @@ export type Database = {
         }
         Relationships: []
       }
+      lead_documents: {
+        Row: {
+          contact_entity_id: string | null
+          created_at: string
+          document_name: string
+          document_type: string
+          file_mime_type: string | null
+          file_path: string | null
+          file_size: number | null
+          id: string
+          lead_id: string
+          metadata: Json | null
+          notes: string | null
+          status: string
+          updated_at: string
+          uploaded_at: string | null
+          user_id: string
+          verified_at: string | null
+          verified_by: string | null
+        }
+        Insert: {
+          contact_entity_id?: string | null
+          created_at?: string
+          document_name: string
+          document_type: string
+          file_mime_type?: string | null
+          file_path?: string | null
+          file_size?: number | null
+          id?: string
+          lead_id: string
+          metadata?: Json | null
+          notes?: string | null
+          status?: string
+          updated_at?: string
+          uploaded_at?: string | null
+          user_id: string
+          verified_at?: string | null
+          verified_by?: string | null
+        }
+        Update: {
+          contact_entity_id?: string | null
+          created_at?: string
+          document_name?: string
+          document_type?: string
+          file_mime_type?: string | null
+          file_path?: string | null
+          file_size?: number | null
+          id?: string
+          lead_id?: string
+          metadata?: Json | null
+          notes?: string | null
+          status?: string
+          updated_at?: string
+          uploaded_at?: string | null
+          user_id?: string
+          verified_at?: string | null
+          verified_by?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "lead_documents_contact_entity_id_fkey"
+            columns: ["contact_entity_id"]
+            isOneToOne: false
+            referencedRelation: "contact_entities"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       lead_scores: {
         Row: {
           behavioral_score: number
