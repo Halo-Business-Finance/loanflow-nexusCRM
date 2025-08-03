@@ -22,6 +22,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
 import { Lead } from "@/types/lead"
 import { LeadAssignment } from "@/components/leads/LeadAssignment"
 
@@ -69,6 +70,7 @@ export function LeadTableRow({ lead, onEdit, onDelete, onConvert, hasAdminRole, 
     : 0
 
   return (
+    <TooltipProvider delayDuration={300}>
     <tr 
       className={`group border-b border-muted/20 hover:bg-muted/30 hover:outline hover:outline-1 hover:outline-white transition-all cursor-pointer ${
         lead.is_converted_to_client ? 'opacity-60' : ''
@@ -154,19 +156,28 @@ export function LeadTableRow({ lead, onEdit, onDelete, onConvert, hasAdminRole, 
             }}
             onAssignmentUpdate={onRefresh}
             trigger={
-              <Button variant="outline" size="sm" className="gap-1">
-                <UserPlus className="h-3 w-3" />
-                Assign
-              </Button>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button variant="outline" size="sm" className="gap-1">
+                    <UserPlus className="h-3 w-3" />
+                    Assign
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>Assign this lead to team members for processing</p>
+                </TooltipContent>
+              </Tooltip>
             }
           />
           
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="outline" size="sm" className="gap-1">
-                <MoreHorizontal className="h-3 w-3" />
-              </Button>
-            </DropdownMenuTrigger>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="outline" size="sm" className="gap-1">
+                    <MoreHorizontal className="h-3 w-3" />
+                  </Button>
+                </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-48">
               <DropdownMenuItem onClick={() => onEdit(lead)}>
                 <Edit className="h-4 w-4 mr-2" />
@@ -188,11 +199,17 @@ export function LeadTableRow({ lead, onEdit, onDelete, onConvert, hasAdminRole, 
                   Delete Lead
                 </DropdownMenuItem>
               )}
-            </DropdownMenuContent>
-          </DropdownMenu>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </TooltipTrigger>
+            <TooltipContent>
+              <p>Additional actions: Edit, Convert to Client, or Delete</p>
+            </TooltipContent>
+          </Tooltip>
         </div>
       </td>
 
     </tr>
+  </TooltipProvider>
   )
 }

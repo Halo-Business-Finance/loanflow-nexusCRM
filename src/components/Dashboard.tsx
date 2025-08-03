@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button"
 import { Progress } from "@/components/ui/progress"
 import { Badge } from "@/components/ui/badge"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Input } from "@/components/ui/input"
 import { 
@@ -422,29 +423,45 @@ export default function Dashboard() {
   }
 
   return (
-    <div className="space-y-6">
-      {/* Header */}
-      <div className="flex justify-between items-center">
-        <div>
-          <h1 className="text-3xl font-bold text-foreground inline-block border-b-2 border-primary dark:border-white pb-1">Dashboard</h1>
-          <p className="text-foreground">Welcome back! Here's your performance overview.</p>
-          <p className="text-sm text-foreground mt-1">{formatDateTime(currentDateTime)}</p>
+    <TooltipProvider delayDuration={300}>
+      <div className="space-y-6">
+        {/* Header */}
+        <div className="flex justify-between items-center">
+          <div>
+            <h1 className="text-3xl font-bold text-foreground inline-block border-b-2 border-primary dark:border-white pb-1">Dashboard</h1>
+            <p className="text-foreground">Welcome back! Here's your performance overview.</p>
+            <p className="text-sm text-foreground mt-1">{formatDateTime(currentDateTime)}</p>
+          </div>
+          <div className="flex gap-2">
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button 
+                  variant="outline" 
+                  onClick={handleRefreshData}
+                  disabled={isRefreshing}
+                  className="gap-2"
+                >
+                  <RefreshCw className={`h-4 w-4 ${isRefreshing ? 'animate-spin' : ''}`} />
+                  Refresh
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>Refresh all dashboard data with the latest information from the database</p>
+              </TooltipContent>
+            </Tooltip>
+            
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button className="bg-gradient-primary shadow-medium" onClick={handleNewLeadClick}>
+                  New Lead
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>Create a new lead and add them to your pipeline</p>
+              </TooltipContent>
+            </Tooltip>
+          </div>
         </div>
-        <div className="flex gap-2">
-          <Button 
-            variant="outline" 
-            onClick={handleRefreshData}
-            disabled={isRefreshing}
-            className="gap-2"
-          >
-            <RefreshCw className={`h-4 w-4 ${isRefreshing ? 'animate-spin' : ''}`} />
-            Refresh
-          </Button>
-          <Button className="bg-gradient-primary shadow-medium" onClick={handleNewLeadClick}>
-            New Lead
-          </Button>
-        </div>
-      </div>
 
       {/* Key Metrics */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -730,5 +747,6 @@ export default function Dashboard() {
         </DialogContent>
       </Dialog>
     </div>
+  </TooltipProvider>
   )
 }

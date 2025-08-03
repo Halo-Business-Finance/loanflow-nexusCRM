@@ -13,6 +13,7 @@ import { Separator } from "@/components/ui/separator"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Textarea } from "@/components/ui/textarea"
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog"
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
 import { supabase } from "@/integrations/supabase/client"
 import { useToast } from "@/hooks/use-toast"
 import { PhoneDialer } from "@/components/PhoneDialer"
@@ -658,7 +659,8 @@ export default function Users() {
   }
 
   return (
-    <Layout>
+    <TooltipProvider delayDuration={300}>
+      <Layout>
       <div className="space-y-6">
         {/* Header */}
         <div className="flex justify-between items-center">
@@ -896,52 +898,80 @@ export default function Users() {
                           {/* Actions Column */}
                           <td className="py-4 px-4">
                             <div className="flex items-center justify-end gap-2">
-                              <Button
-                                variant="default"
-                                size="sm"
-                                onClick={() => {
-                                  setEditingUser(user)
-                                  setShowEditDialog(true)
-                                }}
-                                className="h-8 w-8 p-0"
-                              >
-                                <Edit className="h-4 w-4 text-white" />
-                              </Button>
-                              
-                              <Button
-                                variant="default"
-                                size="sm"
-                                onClick={() => {
-                                  setPasswordChangeUser(user)
-                                  setShowPasswordDialog(true)
-                                }}
-                                className="h-8 w-8 p-0"
-                              >
-                                <Key className="h-4 w-4 text-white" />
-                              </Button>
-
-                              <Button
-                                variant="default"
-                                size="sm"
-                                onClick={() => toggleUserStatus(user.id, user.is_active)}
-                                className="h-8 w-8 p-0"
-                              >
-                                {user.is_active ? <Shield className="h-4 w-4 text-white" /> : <User className="h-4 w-4 text-white" />}
-                              </Button>
-
-                              {user.email !== currentUser?.email && (
-                                <>
+                              <Tooltip>
+                                <TooltipTrigger asChild>
                                   <Button
                                     variant="default"
                                     size="sm"
                                     onClick={() => {
-                                      setUserToArchive(user)
-                                      setShowArchiveDialog(true)
+                                      setEditingUser(user)
+                                      setShowEditDialog(true)
                                     }}
                                     className="h-8 w-8 p-0"
                                   >
-                                    <Archive className="h-4 w-4 text-white" />
+                                    <Edit className="h-4 w-4 text-white" />
                                   </Button>
+                                </TooltipTrigger>
+                                <TooltipContent>
+                                  <p>Edit user profile and role settings</p>
+                                </TooltipContent>
+                              </Tooltip>
+                              
+                              <Tooltip>
+                                <TooltipTrigger asChild>
+                                  <Button
+                                    variant="default"
+                                    size="sm"
+                                    onClick={() => {
+                                      setPasswordChangeUser(user)
+                                      setShowPasswordDialog(true)
+                                    }}
+                                    className="h-8 w-8 p-0"
+                                  >
+                                    <Key className="h-4 w-4 text-white" />
+                                  </Button>
+                                </TooltipTrigger>
+                                <TooltipContent>
+                                  <p>Change user's password</p>
+                                </TooltipContent>
+                              </Tooltip>
+
+                              <Tooltip>
+                                <TooltipTrigger asChild>
+                                  <Button
+                                    variant="default"
+                                    size="sm"
+                                    onClick={() => toggleUserStatus(user.id, user.is_active)}
+                                    className="h-8 w-8 p-0"
+                                  >
+                                    {user.is_active ? <Shield className="h-4 w-4 text-white" /> : <User className="h-4 w-4 text-white" />}
+                                  </Button>
+                                </TooltipTrigger>
+                                <TooltipContent>
+                                  <p>{user.is_active ? 'Temporarily deactivate user' : 'Activate user'}</p>
+                                </TooltipContent>
+                              </Tooltip>
+
+                              {user.email !== currentUser?.email && (
+                                <>
+                                  <Tooltip>
+                                    <TooltipTrigger asChild>
+                                      <Button
+                                        variant="default"
+                                        size="sm"
+                                        onClick={() => {
+                                          setUserToArchive(user)
+                                          setShowArchiveDialog(true)
+                                        }}
+                                        className="h-8 w-8 p-0"
+                                      >
+                                        <Archive className="h-4 w-4 text-white" />
+                                      </Button>
+                                    </TooltipTrigger>
+                                    <TooltipContent>
+                                      <p>Archive user (safe, reversible removal)</p>
+                                    </TooltipContent>
+                                  </Tooltip>
                                   
                                   <AlertDialog>
                                     <AlertDialogTrigger asChild>
@@ -1343,5 +1373,6 @@ export default function Users() {
         </Dialog>
       </div>
     </Layout>
+  </TooltipProvider>
   )
 }

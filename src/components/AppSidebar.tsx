@@ -2,6 +2,7 @@ import { BarChart3, Users, UserCheck, FileText, Settings, Home, Target, Calendar
 import { NavLink, useLocation, useNavigate } from "react-router-dom"
 import { Button } from "@/components/ui/button"
 import { Separator } from "@/components/ui/separator"
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
 import { PhoneDialer } from "@/components/PhoneDialer"
 import { EmailComposer } from "@/components/EmailComposer"
 import { useAuth } from "@/components/auth/AuthProvider"
@@ -21,23 +22,23 @@ import {
 } from "@/components/ui/sidebar"
 
 const navigationItems = [
-  { title: "Dashboard", url: "/", icon: Home },
-  { title: "Leads", url: "/leads", icon: Target },
-  { title: "Existing Clients", url: "/clients", icon: Users },
-  { title: "Pipeline", url: "/pipeline", icon: BarChart3 },
-  { title: "Activities", url: "/activities", icon: Calendar },
-  { title: "Documents", url: "/documents", icon: FileText },
-  { title: "Resources", url: "/resources", icon: BookOpen },
+  { title: "Dashboard", url: "/", icon: Home, description: "View overview of leads, pipeline, and key metrics" },
+  { title: "Leads", url: "/leads", icon: Target, description: "Manage potential customers and track lead progress" },
+  { title: "Existing Clients", url: "/clients", icon: Users, description: "View and manage your current client base" },
+  { title: "Pipeline", url: "/pipeline", icon: BarChart3, description: "Track deals through your sales pipeline" },
+  { title: "Activities", url: "/activities", icon: Calendar, description: "Schedule and track meetings, calls, and tasks" },
+  { title: "Documents", url: "/documents", icon: FileText, description: "Manage loan documents and client files" },
+  { title: "Resources", url: "/resources", icon: BookOpen, description: "Access training materials and documentation" },
 ]
 
 const settingsItems = [
-  { title: "Settings", url: "/settings", icon: Settings },
-  { title: "Users", url: "/users", icon: UserCheck },
-  { title: "Users & Leads", url: "/users-leads", icon: Users },
-  { title: "Enterprise", url: "/enterprise", icon: Building2 },
-  { title: "Integrations", url: "/integrations", icon: Zap },
-  { title: "AI Tools", url: "/ai-tools", icon: Target },
-  { title: "Security", url: "/security", icon: Shield },
+  { title: "Settings", url: "/settings", icon: Settings, description: "Configure application preferences and account settings" },
+  { title: "Users", url: "/users", icon: UserCheck, description: "Manage team members and user permissions (Admin only)" },
+  { title: "Users & Leads", url: "/users-leads", icon: Users, description: "View user activity and lead assignments" },
+  { title: "Enterprise", url: "/enterprise", icon: Building2, description: "Advanced business features and workflow management (Admin only)" },
+  { title: "Integrations", url: "/integrations", icon: Zap, description: "Connect external tools and services" },
+  { title: "AI Tools", url: "/ai-tools", icon: Target, description: "Access AI-powered features and automation" },
+  { title: "Security", url: "/security", icon: Shield, description: "Monitor security events and manage access controls (Admin only)" },
 ]
 
 export function AppSidebar() {
@@ -82,54 +83,80 @@ export function AppSidebar() {
   }
 
   return (
-    <Sidebar className={state === "collapsed" ? "w-16" : "w-64"} collapsible="icon">
-      <SidebarContent className="bg-card border-r">
-        {/* LoanFlow Branding and User Info */}
-        <div className="p-4 border-b space-y-4">
-          <div className="flex items-center gap-2">
-            <Button
-              variant="ghost"
-              size="sm"
-              className="w-8 h-8 p-0 bg-gradient-primary rounded-lg hover:bg-gradient-primary/80"
-              onClick={handleUserIconClick}
-              title={user ? `Signed in as ${user.email}` : "Click to sign in"}
-            >
-              {user ? (
-                <UserCheck className="w-4 h-4 text-sidebar-foreground" />
-              ) : (
-                <User className="w-4 h-4 text-sidebar-foreground" />
+    <TooltipProvider delayDuration={300}>
+      <Sidebar className={state === "collapsed" ? "w-16" : "w-64"} collapsible="icon">
+        <SidebarContent className="bg-card border-r">
+          {/* LoanFlow Branding and User Info */}
+          <div className="p-4 border-b space-y-4">
+            <div className="flex items-center gap-2">
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="w-8 h-8 p-0 bg-gradient-primary rounded-lg hover:bg-gradient-primary/80"
+                    onClick={handleUserIconClick}
+                  >
+                    {user ? (
+                      <UserCheck className="w-4 h-4 text-sidebar-foreground" />
+                    ) : (
+                      <User className="w-4 h-4 text-sidebar-foreground" />
+                    )}
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent side="right">
+                  <p>{user ? `Signed in as ${user.email}. Click to view settings.` : "Click to sign in"}</p>
+                </TooltipContent>
+              </Tooltip>
+              {state !== "collapsed" && (
+                <div className="flex flex-col">
+                  <span className="font-bold text-lg text-foreground dark:text-white">LoanFlow CRM</span>
+                  {user && (
+                    <span className="text-xs text-muted-foreground dark:text-white truncate max-w-[140px]">
+                      {userProfile?.first_name || user.user_metadata?.first_name || user.email}
+                    </span>
+                  )}
+                </div>
               )}
-            </Button>
-            {state !== "collapsed" && (
-              <div className="flex flex-col">
-                <span className="font-bold text-lg text-foreground dark:text-white">LoanFlow CRM</span>
-                {user && (
-                  <span className="text-xs text-muted-foreground dark:text-white truncate max-w-[140px]">
-                    {userProfile?.first_name || user.user_metadata?.first_name || user.email}
-                  </span>
-                )}
-              </div>
-            )}
+            </div>
           </div>
-        </div>
 
-        <SidebarGroup>
-          <SidebarGroupLabel className="text-foreground dark:text-white font-semibold underline">Navigation</SidebarGroupLabel>
-          <SidebarGroupContent>
-            <SidebarMenu>
-              {navigationItems.map((item) => (
-                <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton asChild>
-                     <NavLink to={item.url} end className={getNavClass}>
-                       <item.icon className="w-4 h-4 text-blue-500" />
-                       {state !== "collapsed" && <span>{item.title}</span>}
-                    </NavLink>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              ))}
-            </SidebarMenu>
-          </SidebarGroupContent>
-        </SidebarGroup>
+          <SidebarGroup>
+            <SidebarGroupLabel className="text-foreground dark:text-white font-semibold underline">Navigation</SidebarGroupLabel>
+            <SidebarGroupContent>
+              <SidebarMenu>
+                {navigationItems.map((item) => (
+                  <SidebarMenuItem key={item.title}>
+                    {state === "collapsed" ? (
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <SidebarMenuButton asChild>
+                            <NavLink to={item.url} end className={getNavClass}>
+                              <item.icon className="w-4 h-4 text-blue-500" />
+                              <span className="sr-only">{item.title}</span>
+                            </NavLink>
+                          </SidebarMenuButton>
+                        </TooltipTrigger>
+                        <TooltipContent side="right">
+                          <div className="max-w-xs">
+                            <p className="font-semibold">{item.title}</p>
+                            <p className="text-sm text-muted-foreground">{item.description}</p>
+                          </div>
+                        </TooltipContent>
+                      </Tooltip>
+                    ) : (
+                      <SidebarMenuButton asChild>
+                        <NavLink to={item.url} end className={getNavClass} title={item.description}>
+                          <item.icon className="w-4 h-4 text-blue-500" />
+                          <span>{item.title}</span>
+                        </NavLink>
+                      </SidebarMenuButton>
+                    )}
+                  </SidebarMenuItem>
+                ))}
+              </SidebarMenu>
+            </SidebarGroupContent>
+          </SidebarGroup>
 
         <Separator className="my-2" />
 
@@ -144,12 +171,31 @@ export function AppSidebar() {
                 }
                 return (
                   <SidebarMenuItem key={item.title}>
-                    <SidebarMenuButton asChild>
-                       <NavLink to={item.url} className={getNavClass}>
-                         <item.icon className="w-4 h-4 text-blue-500" />
-                         {state !== "collapsed" && <span>{item.title}</span>}
-                      </NavLink>
-                    </SidebarMenuButton>
+                    {state === "collapsed" ? (
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <SidebarMenuButton asChild>
+                            <NavLink to={item.url} className={getNavClass}>
+                              <item.icon className="w-4 h-4 text-blue-500" />
+                              <span className="sr-only">{item.title}</span>
+                            </NavLink>
+                          </SidebarMenuButton>
+                        </TooltipTrigger>
+                        <TooltipContent side="right">
+                          <div className="max-w-xs">
+                            <p className="font-semibold">{item.title}</p>
+                            <p className="text-sm text-muted-foreground">{item.description}</p>
+                          </div>
+                        </TooltipContent>
+                      </Tooltip>
+                    ) : (
+                      <SidebarMenuButton asChild>
+                        <NavLink to={item.url} className={getNavClass} title={item.description}>
+                          <item.icon className="w-4 h-4 text-blue-500" />
+                          <span>{item.title}</span>
+                        </NavLink>
+                      </SidebarMenuButton>
+                    )}
                   </SidebarMenuItem>
                 );
               })}
@@ -162,22 +208,41 @@ export function AppSidebar() {
           <SidebarGroupLabel className="text-foreground dark:text-white font-semibold underline">Quick Actions</SidebarGroupLabel>
           <SidebarGroupContent>
             <div className="space-y-2 px-2">
-              <PhoneDialer 
-                trigger={
-                  <Button variant="outline" size="sm" className="w-full justify-start gap-2">
-                    <Phone className="w-4 h-4" />
-                    {state !== "collapsed" && <span>Make Call</span>}
-                  </Button>
-                }
-              />
-              <EmailComposer 
-                trigger={
-                  <Button variant="outline" size="sm" className="w-full justify-start gap-2">
-                    <Mail className="w-4 h-4" />
-                    {state !== "collapsed" && <span>Send Email</span>}
-                  </Button>
-                }
-              />
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <div>
+                    <PhoneDialer 
+                      trigger={
+                        <Button variant="outline" size="sm" className="w-full justify-start gap-2">
+                          <Phone className="w-4 h-4" />
+                          {state !== "collapsed" && <span>Make Call</span>}
+                        </Button>
+                      }
+                    />
+                  </div>
+                </TooltipTrigger>
+                <TooltipContent side="right">
+                  <p>Open phone dialer to make calls to leads and clients</p>
+                </TooltipContent>
+              </Tooltip>
+              
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <div>
+                    <EmailComposer 
+                      trigger={
+                        <Button variant="outline" size="sm" className="w-full justify-start gap-2">
+                          <Mail className="w-4 h-4" />
+                          {state !== "collapsed" && <span>Send Email</span>}
+                        </Button>
+                      }
+                    />
+                  </div>
+                </TooltipTrigger>
+                <TooltipContent side="right">
+                  <p>Compose and send emails to leads and clients</p>
+                </TooltipContent>
+              </Tooltip>
             </div>
           </SidebarGroupContent>
         </SidebarGroup>
@@ -185,22 +250,30 @@ export function AppSidebar() {
         {/* Sign Out Button at Bottom */}
         {user && (
           <div className="mt-auto p-2">
-            <Button 
-              variant="outline" 
-              size="sm" 
-              className="w-full justify-start gap-2"
-              onClick={() => {
-                console.log('Sign Out button clicked!')
-                signOut()
-              }}
-            >
-              <LogOut className="w-4 h-4" />
-              {state !== "collapsed" && <span>Sign Out</span>}
-            </Button>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  className="w-full justify-start gap-2"
+                  onClick={() => {
+                    console.log('Sign Out button clicked!')
+                    signOut()
+                  }}
+                >
+                  <LogOut className="w-4 h-4" />
+                  {state !== "collapsed" && <span>Sign Out</span>}
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent side="right">
+                <p>Sign out of your account and return to login page</p>
+              </TooltipContent>
+            </Tooltip>
           </div>
         )}
 
       </SidebarContent>
     </Sidebar>
+  </TooltipProvider>
   )
 }
