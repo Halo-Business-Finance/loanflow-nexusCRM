@@ -10,6 +10,7 @@ import { AuthPage } from "@/components/auth/AuthPage";
 import { SecurityManager } from "@/components/security/SecurityManager";
 import { GeoSecurityCheck } from "@/components/GeoSecurityCheck";
 import { AsyncErrorBoundary } from "@/components/AsyncErrorBoundary";
+import { CSPHeaders } from "@/components/security/CSPHeaders";
 import { RouteErrorBoundary } from "@/components/RouteErrorBoundary";
 import Index from "./pages/Index";
 import Leads from "./pages/Leads";
@@ -96,6 +97,7 @@ const App = () => (
   <AsyncErrorBoundary>
     <QueryClientProvider client={queryClient}>
       <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+        <CSPHeaders />
         <GeoSecurityCheck>
           <AuthProvider>
             <TooltipProvider>

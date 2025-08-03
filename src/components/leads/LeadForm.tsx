@@ -19,7 +19,7 @@ interface LeadFormProps {
 
 export function LeadForm({ lead, onSubmit, onCancel, isSubmitting = false }: LeadFormProps) {
   const { canAccessLeads } = useRoleBasedAccess()
-  const { isValidating } = useSecureForm()
+  const { isValidating, validateAndSanitize } = useSecureForm()
   
   const [formData, setFormData] = useState<ContactEntity>({
     name: lead?.name || "",
@@ -45,8 +45,24 @@ export function LeadForm({ lead, onSubmit, onCancel, isSubmitting = false }: Lea
     await onSubmit(formData)
   }
 
-  const handleInputChange = (field: keyof ContactEntity, value: any) => {
-    setFormData(prev => ({ ...prev, [field]: value }))
+  const handleInputChange = async (field: keyof ContactEntity, value: any) => {
+    // Validate and sanitize input based on field type
+    let fieldType: 'text' | 'email' | 'phone' | 'numeric' = 'text'
+    if (field === 'email') fieldType = 'email'
+    if (field === 'phone') fieldType = 'phone'
+    if (['loan_amount', 'credit_score', 'annual_revenue'].includes(field)) fieldType = 'numeric'
+    
+    if (typeof value === 'string' && value.trim()) {
+      const validation = await validateAndSanitize(value, fieldType)
+      if (validation.valid && validation.sanitized) {
+        setFormData(prev => ({ ...prev, [field]: validation.sanitized }))
+      } else {
+        // Show validation errors to user (simplified for now)
+        console.warn('Validation failed:', validation.errors)
+      }
+    } else {
+      setFormData(prev => ({ ...prev, [field]: value }))
+    }
   }
 
   return (

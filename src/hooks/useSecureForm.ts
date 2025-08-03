@@ -28,7 +28,7 @@ export const useSecureForm = () => {
     setIsValidating(true);
     
     try {
-      const { data, error } = await supabase.rpc('validate_and_sanitize_input', {
+      const { data, error } = await supabase.rpc('validate_and_sanitize_input_enhanced', {
         p_input: input,
         p_field_type: fieldType,
         p_max_length: options.maxLength || 255,

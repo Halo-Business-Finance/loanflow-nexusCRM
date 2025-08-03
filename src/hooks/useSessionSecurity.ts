@@ -61,9 +61,11 @@ export const useSessionSecurity = () => {
     if (!user || !sessionToken) return false;
 
     try {
-      const { data, error } = await supabase.rpc('validate_session_security', {
+      const { data, error } = await supabase.rpc('validate_session_with_security_checks', {
         p_user_id: user.id,
-        p_session_token: sessionToken
+        p_session_token: sessionToken,
+        p_ip_address: null, // Could be enhanced to get real IP
+        p_user_agent: navigator.userAgent
       });
 
       if (error) {

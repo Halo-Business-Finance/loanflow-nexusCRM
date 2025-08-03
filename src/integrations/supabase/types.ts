@@ -2666,6 +2666,33 @@ export type Database = {
         }
         Relationships: []
       }
+      security_headers: {
+        Row: {
+          created_at: string | null
+          header_name: string
+          header_value: string
+          id: string
+          is_active: boolean | null
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          header_name: string
+          header_value: string
+          id?: string
+          is_active?: boolean | null
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          header_name?: string
+          header_value?: string
+          id?: string
+          is_active?: boolean | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
       security_notifications: {
         Row: {
           created_at: string
@@ -3318,12 +3345,30 @@ export type Database = {
         }
         Returns: Json
       }
+      validate_and_sanitize_input_enhanced: {
+        Args: {
+          p_input: string
+          p_field_type?: string
+          p_max_length?: number
+          p_allow_html?: boolean
+        }
+        Returns: Json
+      }
       validate_password_strength: {
         Args: { password: string }
         Returns: Json
       }
       validate_session_security: {
         Args: { p_user_id: string; p_session_token: string }
+        Returns: Json
+      }
+      validate_session_with_security_checks: {
+        Args: {
+          p_user_id: string
+          p_session_token: string
+          p_ip_address?: unknown
+          p_user_agent?: string
+        }
         Returns: Json
       }
       verify_data_integrity: {
