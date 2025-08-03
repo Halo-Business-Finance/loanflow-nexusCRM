@@ -121,4 +121,47 @@ All colors MUST be HSL.
     @apply bg-background text-foreground;
     font-family: sans-serif;
   }
+
+  /* Global underline styles for titles and column headers */
+  h1, h2, h3, h4, h5, h6 {
+    @apply underline decoration-2 underline-offset-4;
+  }
+
+  /* Table headers */
+  th {
+    @apply underline decoration-1 underline-offset-2;
+  }
+
+  /* Card titles */
+  [data-testid="card-title"],
+  .card-title,
+  /* Targeting specific title classes that might be used */
+  [class*="CardTitle"],
+  [class*="card-title"] {
+    @apply underline decoration-2 underline-offset-4;
+  }
+
+  /* Dialog titles */
+  [data-testid="dialog-title"],
+  .dialog-title,
+  [class*="DialogTitle"],
+  [class*="dialog-title"] {
+    @apply underline decoration-2 underline-offset-4;
+  }
+
+  /* Sheet titles */
+  [data-testid="sheet-title"],
+  .sheet-title,
+  [class*="SheetTitle"],
+  [class*="sheet-title"] {
+    @apply underline decoration-2 underline-offset-4;
+  }
+
+  /* Alert dialog titles */
+  [data-testid="alertdialog-title"],
+  .alertdialog-title,
+  [class*="AlertDialogTitle"],
+  [class*="alertdialog-title"] {
+    @apply underline decoration-2 underline-offset-4;
+  }
 }
