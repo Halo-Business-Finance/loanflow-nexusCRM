@@ -28,6 +28,7 @@ import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, 
 
 // Import centralized types
 import { Lead, ContactEntity, STAGES, PRIORITIES } from "@/types/lead"
+import { mapLeadFields, extractContactEntityData, LEAD_WITH_CONTACT_QUERY } from "@/lib/field-mapping"
 
 export default function Leads() {
   const { user, hasRole } = useAuth()
@@ -99,35 +100,17 @@ export default function Leads() {
   const fetchLeads = async () => {
     try {
       // All authenticated users can see all leads (universal access)
-      const { data, error } = await supabase
+      const { data: leadsData, error } = await supabase
         .from('leads')
-        .select(`
-          *,
-          contact_entity:contact_entities(*)
-        `)
+        .select(LEAD_WITH_CONTACT_QUERY)
         .order('created_at', { ascending: false })
 
       if (error) throw error
       
       // Merge leads with contact entity data and filter out invalid leads
-      const mergedLeads = (data || [])
+      const mergedLeads = (leadsData || [])
         .filter(lead => lead.contact_entity && lead.contact_entity.name) // Filter out leads without valid contact entities
-        .map(lead => ({
-          ...lead,
-          name: lead.contact_entity?.name || '',
-          email: lead.contact_entity?.email || '',
-          phone: lead.contact_entity?.phone || '',
-          location: lead.contact_entity?.location || '',
-          stage: lead.contact_entity?.stage || 'New',
-          priority: lead.contact_entity?.priority || 'medium',
-          loan_amount: lead.contact_entity?.loan_amount || 0,
-          loan_type: lead.contact_entity?.loan_type || '',
-          business_name: lead.contact_entity?.business_name || '',
-          credit_score: lead.contact_entity?.credit_score || 0,
-          net_operating_income: lead.contact_entity?.net_operating_income || 0,
-          naics_code: lead.contact_entity?.naics_code || '',
-          ownership_structure: lead.contact_entity?.ownership_structure || ''
-        }))
+        .map(mapLeadFields)
       
       setLeads(mergedLeads)
     } catch (error) {

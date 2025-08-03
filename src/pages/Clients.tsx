@@ -1,4 +1,6 @@
 import { useState, useEffect } from "react"
+import { mapClientFields, CLIENT_WITH_CONTACT_QUERY } from "@/lib/field-mapping"
+import { Client } from "@/types/lead"
 import { supabase } from "@/integrations/supabase/client"
 import { useAuth } from "@/components/auth/AuthProvider"
 import Layout from "@/components/Layout"
@@ -23,43 +25,7 @@ import { formatNumber, formatCurrency } from "@/lib/utils"
 import { useNotifications } from "@/hooks/useNotifications"
 import { format } from "date-fns"
 
-interface Client {
-  id: string
-  name: string
-  email: string
-  phone?: string
-  location?: string
-  status: string
-  stage?: string // Add stage field for synchronization
-  naics_code?: string // Add NAICS code field
-  ownership_structure?: string // Add ownership structure field
-  total_loans: number
-  total_loan_value: number
-  join_date: string
-  last_activity: string
-  business_name?: string
-  business_address?: string
-  owns_property?: boolean
-  property_payment_amount?: number
-  year_established?: number
-  credit_score?: number
-  net_operating_income?: number
-  bank_lender_name?: string
-  annual_revenue?: number
-  existing_loan_amount?: number
-  notes?: string
-  call_notes?: string
-  priority?: string
-  income?: number
-  pos_system?: string
-  monthly_processing_volume?: number
-  average_transaction_size?: number
-  processor_name?: string
-  current_processing_rate?: number
-  bdo_name?: string
-  bdo_telephone?: string
-  bdo_email?: string
-}
+// Using imported Client interface from types/lead.ts
 
 interface Loan {
   id: string
@@ -101,27 +67,20 @@ export default function Clients() {
 
   const fetchClients = async () => {
     try {
-      const { data, error } = await supabase
+      const { data: clientsData, error } = await supabase
         .from('clients')
-        .select(`
-          *,
-          contact_entity:contact_entities!contact_entity_id (*)
-        `)
+        .select(CLIENT_WITH_CONTACT_QUERY)
         .order('created_at', { ascending: false })
 
       if (error) throw error
+
+      const clientsWithContactData = (clientsData || []).map(mapClientFields)
       
-      // Transform clients data to merge contact entity fields
-      const transformedClients = data?.map(client => ({
-        ...client,
-        ...client.contact_entity
-      })) || []
-      
-      setClients(transformedClients)
+      setClients(clientsWithContactData)
       
       // Fetch loans for all clients
-      if (data && data.length > 0) {
-        await fetchAllClientLoans(data.map(c => c.id))
+      if (clientsData && clientsData.length > 0) {
+        await fetchAllClientLoans(clientsData.map(c => c.id))
       }
     } catch (error) {
       console.error('Error fetching clients:', error)

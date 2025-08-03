@@ -50,7 +50,8 @@ import {
   ShoppingCart
 } from "lucide-react"
 
-import { Lead } from "@/types/lead"
+import { Lead, Client as ClientType } from "@/types/lead"
+import { mapLeadFields, mapClientFields, extractContactEntityData, LEAD_WITH_CONTACT_QUERY, CLIENT_WITH_CONTACT_QUERY } from "@/lib/field-mapping"
 
 interface Client {
   id: string
@@ -148,10 +149,7 @@ export default function LeadDetail() {
       console.log('fetchLead: Fetching lead with ID:', id)
       const { data, error } = await supabase
         .from('leads')
-        .select(`
-          *,
-          contact_entity:contact_entities!contact_entity_id (*)
-        `)
+        .select(LEAD_WITH_CONTACT_QUERY)
         .eq('id', id)
         .maybeSingle()
 
@@ -239,10 +237,7 @@ export default function LeadDetail() {
     try {
       const { data, error } = await supabase
         .from('clients')
-        .select(`
-          *,
-          contact_entity:contact_entities(*)
-        `)
+        .select(CLIENT_WITH_CONTACT_QUERY)
         .eq('lead_id', leadId)
         .single()
 
@@ -252,11 +247,7 @@ export default function LeadDetail() {
       }
       
       // Merge client with contact entity data
-      const mergedClient = {
-        ...data,
-        name: data.contact_entity?.name || '',
-        email: data.contact_entity?.email || ''
-      }
+      const mergedClient = mapClientFields(data)
       setClient(mergedClient)
     } catch (error) {
       console.error('Error fetching client:', error)
@@ -638,10 +629,7 @@ export default function LeadDetail() {
           lead_id: lead.id,
           status: 'Active'
         })
-        .select(`
-          *,
-          contact_entity:contact_entities(*)
-        `)
+        .select(CLIENT_WITH_CONTACT_QUERY)
         .single()
 
       if (clientError) throw clientError
@@ -672,11 +660,7 @@ export default function LeadDetail() {
       }
 
       // Merge client with contact entity data
-      const mergedClient = {
-        ...newClient,
-        name: newClient.contact_entity?.name || '',
-        email: newClient.contact_entity?.email || ''
-      }
+      const mergedClient = mapClientFields(newClient)
       setClient(mergedClient)
       
       console.log('Lead successfully converted to client:', newClient)
