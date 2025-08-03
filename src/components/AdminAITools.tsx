@@ -44,7 +44,7 @@ export function AdminAITools() {
       <div className="flex items-center gap-3">
         <Cpu className="h-6 w-6 text-primary" />
         <div>
-          <h2 className="text-2xl font-bold text-foreground">AI & Automation Tools</h2>
+          <h2 className="text-2xl font-bold text-foreground underline">AI & Automation Tools</h2>
           <p className="text-muted-foreground">Advanced tools to boost loan origination efficiency</p>
         </div>
         <Badge variant="default" className="ml-auto">Admin Only</Badge>
@@ -54,19 +54,19 @@ export function AdminAITools() {
         <TabsList className="grid w-full grid-cols-4">
           <TabsTrigger value="ai-assistant" className="gap-2">
             <Brain className="h-4 w-4" />
-            AI Assistant
+            <span className="underline">AI Assistant</span>
           </TabsTrigger>
           <TabsTrigger value="voice-ai" className="gap-2">
             <Mic className="h-4 w-4" />
-            Voice AI
+            <span className="underline">Voice AI</span>
           </TabsTrigger>
           <TabsTrigger value="automation" className="gap-2">
             <Zap className="h-4 w-4" />
-            Automation
+            <span className="underline">Automation</span>
           </TabsTrigger>
           <TabsTrigger value="analytics" className="gap-2">
             <BarChart3 className="h-4 w-4" />
-            Analytics
+            <span className="underline">Analytics</span>
           </TabsTrigger>
         </TabsList>
 
