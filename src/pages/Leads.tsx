@@ -280,6 +280,14 @@ export default function Leads() {
     
     setIsSubmitting(true)
     try {
+      // Check authentication first
+      const { data: { user }, error: authError } = await supabase.auth.getUser()
+      console.log('Current authenticated user:', user)
+      
+      if (authError || !user) {
+        throw new Error('User not authenticated')
+      }
+      
       // Update contact entity
       const { error } = await supabase
         .from('contact_entities')
