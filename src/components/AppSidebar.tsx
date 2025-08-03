@@ -87,6 +87,46 @@ export function AppSidebar() {
   return (
     <Sidebar className={state === "collapsed" ? "w-16" : "w-64"} collapsible="icon">
       <SidebarContent className="bg-card border-r">
+        {/* LoanFlow Branding and User Info */}
+        <div className="p-4 border-b space-y-4">
+          <div className="flex items-center gap-2">
+            <Button
+              variant="ghost"
+              size="sm"
+              className="w-8 h-8 p-0 bg-gradient-primary rounded-lg hover:bg-gradient-primary/80"
+              onClick={handleUserIconClick}
+              title={user ? `Signed in as ${user.email}` : "Click to sign in"}
+            >
+              {user ? (
+                <UserCheck className="w-4 h-4 text-sidebar-foreground" />
+              ) : (
+                <User className="w-4 h-4 text-sidebar-foreground" />
+              )}
+            </Button>
+            {state !== "collapsed" && (
+              <div className="flex flex-col">
+                <span className="font-bold text-lg text-foreground dark:text-white">LoanFlow</span>
+                {user && (
+                  <span className="text-xs text-muted-foreground dark:text-white truncate max-w-[140px]">
+                    {userProfile?.first_name || user.user_metadata?.first_name || user.email}
+                  </span>
+                )}
+              </div>
+            )}
+          </div>
+          
+          {state !== "collapsed" && user && (
+            <Button 
+              variant="outline" 
+              size="sm" 
+              className="w-full justify-start gap-2"
+              onClick={signOut}
+            >
+              <LogOut className="w-4 h-4" />
+              <span>Sign Out</span>
+            </Button>
+          )}
+        </div>
 
         <SidebarGroup>
           <SidebarGroupLabel className="text-foreground dark:text-white font-semibold">Navigation</SidebarGroupLabel>
@@ -173,44 +213,6 @@ export function AppSidebar() {
           </SidebarGroupContent>
         </SidebarGroup>
 
-        {/* LoanFlow Branding and User Info */}
-        <div className="mt-auto p-4 border-t space-y-4">
-          <div className="flex items-center gap-2">
-            <Button
-              variant="ghost"
-              size="sm"
-              className="w-8 h-8 p-0 bg-gradient-primary rounded-lg hover:bg-gradient-primary/80"
-              onClick={handleUserIconClick}
-              title={user ? `Signed in as ${user.email}` : "Click to sign in"}
-            >
-              {user ? (
-                <UserCheck className="w-4 h-4 text-sidebar-foreground" />
-              ) : (
-                <User className="w-4 h-4 text-sidebar-foreground" />
-              )}
-            </Button>
-            {state !== "collapsed" && (
-              <div className="flex flex-col">
-                <span className="font-bold text-lg text-foreground dark:text-white">LoanFlow</span>
-                {user && (
-                  <span className="text-xs text-muted-foreground dark:text-white truncate max-w-[140px]">
-                    {userProfile?.first_name || user.user_metadata?.first_name || user.email}
-                  </span>
-                )}
-              </div>
-            )}
-          </div>
-          
-          <Button 
-            variant="outline" 
-            size="sm" 
-            className="w-full justify-start gap-2"
-            onClick={signOut}
-          >
-            <LogOut className="w-4 h-4" />
-            {state !== "collapsed" && <span>Sign Out</span>}
-          </Button>
-        </div>
       </SidebarContent>
     </Sidebar>
   )
