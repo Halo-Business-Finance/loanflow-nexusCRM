@@ -53,34 +53,7 @@ import {
 import { Lead, Client as ClientType } from "@/types/lead"
 import { mapLeadFields, mapClientFields, extractContactEntityData, LEAD_WITH_CONTACT_QUERY, CLIENT_WITH_CONTACT_QUERY } from "@/lib/field-mapping"
 
-interface Client {
-  id: string
-  name: string
-  email: string
-  phone?: string
-  location?: string
-  status: string
-  total_loans: number
-  total_loan_value: number
-  join_date: string
-  business_name?: string
-  business_address?: string
-  owns_property?: boolean
-  property_payment_amount?: number
-  year_established?: number
-  credit_score?: number
-  net_operating_income?: number
-  bank_lender_name?: string
-  annual_revenue?: number
-  existing_loan_amount?: number
-  notes?: string
-  call_notes?: string
-  priority?: string
-  income?: number
-  bdo_name?: string
-  bdo_telephone?: string
-  bdo_email?: string
-}
+// Using imported ClientType interface from types/lead.ts
 
 export default function LeadDetail() {
   const { id } = useParams<{ id: string }>()
