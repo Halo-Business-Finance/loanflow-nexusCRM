@@ -286,6 +286,51 @@ export type Database = {
         }
         Relationships: []
       }
+      blockchain_records: {
+        Row: {
+          block_number: number | null
+          blockchain_hash: string | null
+          created_at: string
+          data_hash: string
+          id: string
+          metadata: Json | null
+          record_id: string
+          record_type: string
+          transaction_hash: string | null
+          updated_at: string
+          verification_status: string
+          verified_at: string | null
+        }
+        Insert: {
+          block_number?: number | null
+          blockchain_hash?: string | null
+          created_at?: string
+          data_hash: string
+          id?: string
+          metadata?: Json | null
+          record_id: string
+          record_type: string
+          transaction_hash?: string | null
+          updated_at?: string
+          verification_status?: string
+          verified_at?: string | null
+        }
+        Update: {
+          block_number?: number | null
+          blockchain_hash?: string | null
+          created_at?: string
+          data_hash?: string
+          id?: string
+          metadata?: Json | null
+          record_id?: string
+          record_type?: string
+          transaction_hash?: string | null
+          updated_at?: string
+          verification_status?: string
+          verified_at?: string | null
+        }
+        Relationships: []
+      }
       case_comments: {
         Row: {
           attachments: Json | null
@@ -906,6 +951,45 @@ export type Database = {
         }
         Relationships: []
       }
+      data_integrity_checks: {
+        Row: {
+          actual_hash: string | null
+          check_type: string
+          checked_at: string | null
+          created_at: string
+          discrepancies: Json | null
+          expected_hash: string
+          id: string
+          record_id: string | null
+          status: string
+          table_name: string
+        }
+        Insert: {
+          actual_hash?: string | null
+          check_type: string
+          checked_at?: string | null
+          created_at?: string
+          discrepancies?: Json | null
+          expected_hash: string
+          id?: string
+          record_id?: string | null
+          status?: string
+          table_name: string
+        }
+        Update: {
+          actual_hash?: string | null
+          check_type?: string
+          checked_at?: string | null
+          created_at?: string
+          discrepancies?: Json | null
+          expected_hash?: string
+          id?: string
+          record_id?: string | null
+          status?: string
+          table_name?: string
+        }
+        Relationships: []
+      }
       device_fingerprints: {
         Row: {
           ai_detection_flags: Json | null
@@ -1170,6 +1254,56 @@ export type Database = {
           updated_at?: string
         }
         Relationships: []
+      }
+      encrypted_fields: {
+        Row: {
+          created_at: string
+          encrypted_value: string
+          encryption_algorithm: string
+          encryption_key_id: string
+          field_name: string
+          id: string
+          iv: string
+          record_id: string
+          salt: string
+          table_name: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          encrypted_value: string
+          encryption_algorithm?: string
+          encryption_key_id: string
+          field_name: string
+          id?: string
+          iv: string
+          record_id: string
+          salt: string
+          table_name: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          encrypted_value?: string
+          encryption_algorithm?: string
+          encryption_key_id?: string
+          field_name?: string
+          id?: string
+          iv?: string
+          record_id?: string
+          salt?: string
+          table_name?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "fk_encryption_key"
+            columns: ["encryption_key_id"]
+            isOneToOne: false
+            referencedRelation: "encryption_keys"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       encryption_keys: {
         Row: {
@@ -1474,6 +1608,66 @@ export type Database = {
             columns: ["territory_id"]
             isOneToOne: false
             referencedRelation: "territories"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      immutable_audit_trail: {
+        Row: {
+          action: string
+          blockchain_record_id: string | null
+          created_at: string
+          id: string
+          is_verified: boolean | null
+          new_values_hash: string | null
+          old_values_hash: string | null
+          record_id: string | null
+          table_name: string | null
+          timestamp_hash: string
+          user_id: string | null
+          verification_proof: string | null
+        }
+        Insert: {
+          action: string
+          blockchain_record_id?: string | null
+          created_at?: string
+          id?: string
+          is_verified?: boolean | null
+          new_values_hash?: string | null
+          old_values_hash?: string | null
+          record_id?: string | null
+          table_name?: string | null
+          timestamp_hash: string
+          user_id?: string | null
+          verification_proof?: string | null
+        }
+        Update: {
+          action?: string
+          blockchain_record_id?: string | null
+          created_at?: string
+          id?: string
+          is_verified?: boolean | null
+          new_values_hash?: string | null
+          old_values_hash?: string | null
+          record_id?: string | null
+          table_name?: string | null
+          timestamp_hash?: string
+          user_id?: string | null
+          verification_proof?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "fk_blockchain_record"
+            columns: ["blockchain_record_id"]
+            isOneToOne: false
+            referencedRelation: "blockchain_records"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fk_blockchain_record"
+            columns: ["blockchain_record_id"]
+            isOneToOne: false
+            referencedRelation: "verified_blockchain_records"
             referencedColumns: ["id"]
           },
         ]
@@ -2891,7 +3085,26 @@ export type Database = {
       }
     }
     Views: {
-      [_ in never]: never
+      verified_blockchain_records: {
+        Row: {
+          action: string | null
+          audit_verified: boolean | null
+          block_number: number | null
+          blockchain_hash: string | null
+          created_at: string | null
+          data_hash: string | null
+          id: string | null
+          metadata: Json | null
+          record_id: string | null
+          record_type: string | null
+          transaction_hash: string | null
+          updated_at: string | null
+          user_id: string | null
+          verification_status: string | null
+          verified_at: string | null
+        }
+        Relationships: []
+      }
     }
     Functions: {
       archive_user: {
@@ -2918,6 +3131,15 @@ export type Database = {
           p_record_id?: string
           p_old_values?: Json
           p_new_values?: Json
+        }
+        Returns: string
+      }
+      create_blockchain_record: {
+        Args: {
+          p_record_type: string
+          p_record_id: string
+          p_data_hash: string
+          p_metadata?: Json
         }
         Returns: string
       }
@@ -3023,6 +3245,10 @@ export type Database = {
       }
       validate_password_strength: {
         Args: { password: string }
+        Returns: Json
+      }
+      verify_data_integrity: {
+        Args: { p_table_name: string; p_record_id?: string }
         Returns: Json
       }
     }
