@@ -91,18 +91,22 @@ export function TodaysTasks() {
     fetchTasks()
   }, [user])
 
-  const todaysTasks = tasks.filter(task => {
-    const taskDate = new Date(task.created_at)
-    const isTaskToday = isToday(taskDate) || isBefore(taskDate, startOfDay(new Date()))
-    console.log('Filtering task:', task.title, 'Date:', taskDate, 'IsToday:', isTaskToday)
-    return isTaskToday
-  })
-
+  // Separate tasks into categories
   const overdueTasks = tasks.filter(task => {
     const taskDate = new Date(task.created_at)
-    const isOverdue = isBefore(taskDate, startOfDay(new Date())) && !isToday(taskDate)
-    console.log('Checking overdue for task:', task.title, 'IsOverdue:', isOverdue)
+    const daysDiff = Math.floor((new Date().getTime() - taskDate.getTime()) / (1000 * 60 * 60 * 24))
+    const isOverdue = daysDiff > 1
+    console.log('Checking overdue for task:', task.title, 'DaysDiff:', daysDiff, 'IsOverdue:', isOverdue)
     return isOverdue
+  })
+
+  const todaysTasks = tasks.filter(task => {
+    const taskDate = new Date(task.created_at)
+    const daysDiff = Math.floor((new Date().getTime() - taskDate.getTime()) / (1000 * 60 * 60 * 24))
+    // Show tasks from today and yesterday (not yet overdue)
+    const isTaskRelevant = daysDiff <= 1
+    console.log('Filtering task:', task.title, 'Date:', taskDate, 'DaysDiff:', daysDiff, 'IsRelevant:', isTaskRelevant)
+    return isTaskRelevant
   })
 
   console.log('Final filtered results:', { todaysTasks, overdueTasks, totalTasks: tasks.length })
