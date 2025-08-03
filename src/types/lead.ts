@@ -57,11 +57,11 @@ export interface ContactEntity {
 export const STAGES = [
   "All", 
   "Initial Contact", 
-  "Qualified", 
   "Application", 
   "Pre-approval", 
-  "Loan Approved", 
   "Documentation", 
+  "Qualified", 
+  "Loan Approved", 
   "Closing", 
   "Funded", 
   "Archive"
