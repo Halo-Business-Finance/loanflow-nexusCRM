@@ -123,13 +123,13 @@ All colors MUST be HSL.
   }
 
   /* Global underline styles for titles and column headers */
-  /* Only apply to elements that don't already have border-b classes */
-  h1:not([class*="border-b"]), 
-  h2:not([class*="border-b"]), 
-  h3:not([class*="border-b"]), 
-  h4:not([class*="border-b"]), 
-  h5:not([class*="border-b"]), 
-  h6:not([class*="border-b"]) {
+  /* Only apply to elements that don't already have border-b classes or no-underline class */
+  h1:not([class*="border-b"]):not([class*="no-underline"]), 
+  h2:not([class*="border-b"]):not([class*="no-underline"]), 
+  h3:not([class*="border-b"]):not([class*="no-underline"]), 
+  h4:not([class*="border-b"]):not([class*="no-underline"]), 
+  h5:not([class*="border-b"]):not([class*="no-underline"]), 
+  h6:not([class*="border-b"]):not([class*="no-underline"]) {
     @apply underline decoration-2 underline-offset-4;
   }
 
