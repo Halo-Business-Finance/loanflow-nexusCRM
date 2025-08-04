@@ -20,7 +20,7 @@ interface Lead {
 interface DocumentUploadModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onUpload: (leadId: string, contactEntityId: string, file: File, documentType: string, notes?: string) => Promise<any>;
+  onUpload: (leadId: string, contactEntityId: string, file: File, documentType: string, notes?: string, customDocumentName?: string) => Promise<any>;
   preSelectedLeadId?: string; // Optional pre-selected lead
 }
 
@@ -92,7 +92,7 @@ export function DocumentUploadModal({ isOpen, onClose, onUpload, preSelectedLead
   };
 
   const handleUpload = async () => {
-    if (!selectedFile || !selectedLead || !documentType) return;
+    if (!selectedFile || !selectedLead || !documentType || !documentName) return;
 
     setUploading(true);
     try {
@@ -104,7 +104,8 @@ export function DocumentUploadModal({ isOpen, onClose, onUpload, preSelectedLead
         selectedLeadData.contact_entity_id,
         selectedFile,
         documentType,
-        notes || undefined
+        notes || undefined,
+        documentName
       );
       
       // Reset form

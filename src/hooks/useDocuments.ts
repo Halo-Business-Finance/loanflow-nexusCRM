@@ -63,7 +63,8 @@ export function useDocuments() {
     contactEntityId: string,
     file: File,
     documentType: string,
-    notes?: string
+    notes?: string,
+    customDocumentName?: string
   ) => {
     if (!user) return null;
 
@@ -85,7 +86,7 @@ export function useDocuments() {
           lead_id: leadId,
           contact_entity_id: contactEntityId,
           user_id: user.id,
-          document_name: file.name,
+          document_name: customDocumentName || file.name,
           document_type: documentType,
           file_path: filePath,
           file_size: file.size,
