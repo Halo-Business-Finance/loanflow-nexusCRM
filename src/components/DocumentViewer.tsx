@@ -387,66 +387,40 @@ export function DocumentViewer({ document, isOpen, onClose }: DocumentViewerProp
             <div className="h-[70vh] border rounded-lg overflow-hidden relative">
               {isPdf ? (
                 <>
-                  {useAdobeViewer && adobeSDKLoaded ? (
-                    <div 
-                      ref={adobeViewerRef}
-                      className="w-full h-full"
-                      id={`adobe-viewer-${document?.id || 'default'}`}
-                    />
-                  ) : useGoogleViewer ? (
+                  {/* Simple, reliable PDF viewer */}
+                  <div className="w-full h-full">
                     <iframe
-                      src={`https://docs.google.com/viewer?url=${encodeURIComponent(documentUrl)}&embedded=true`}
+                      src={`${documentUrl}#toolbar=1&navpanes=1&scrollbar=1&page=1&view=FitH`}
                       className="w-full h-full border-0"
                       title={document.document_name}
+                      style={{ minHeight: '500px' }}
                     />
-                  ) : (
-                    <iframe
-                      src={documentUrl}
-                      className="w-full h-full border-0"
-                      title={document.document_name}
-                      onError={() => {
-                        console.log('Direct PDF viewing failed, switching to Adobe viewer');
-                        setUseAdobeViewer(true);
-                      }}
-                    />
-                  )}
-                  <div className="absolute top-2 right-2 z-10 flex gap-1">
+                  </div>
+                  
+                  {/* Viewer options overlay */}
+                  <div className="absolute top-2 right-2 z-10 flex gap-1 bg-black/50 rounded-lg p-1">
                     <Button
-                      variant="outline"
+                      variant="ghost"
                       size="sm"
-                      onClick={() => {
-                        setUseAdobeViewer(true);
-                        setUseGoogleViewer(false);
-                      }}
-                      className={`text-xs ${useAdobeViewer ? 'bg-primary text-primary-foreground' : ''}`}
-                      disabled={!adobeSDKLoaded}
-                      title="Adobe PDF Reader (Recommended)"
+                      onClick={() => window.open(documentUrl, '_blank')}
+                      className="text-white hover:bg-white/20 text-xs px-2 py-1 h-auto"
+                      title="Open in new tab for full features"
                     >
-                      Adobe
+                      Full View
                     </Button>
                     <Button
-                      variant="outline"
+                      variant="ghost"
                       size="sm"
                       onClick={() => {
-                        setUseGoogleViewer(true);
-                        setUseAdobeViewer(false);
+                        const link = window.document.createElement('a');
+                        link.href = documentUrl;
+                        link.download = document.document_name;
+                        link.click();
                       }}
-                      className={`text-xs ${useGoogleViewer ? 'bg-primary text-primary-foreground' : ''}`}
-                      title="Google Docs Viewer"
+                      className="text-white hover:bg-white/20 text-xs px-2 py-1 h-auto"
+                      title="Download PDF"
                     >
-                      Google
-                    </Button>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => {
-                        setUseAdobeViewer(false);
-                        setUseGoogleViewer(false);
-                      }}
-                      className={`text-xs ${!useAdobeViewer && !useGoogleViewer ? 'bg-primary text-primary-foreground' : ''}`}
-                      title="Direct Browser Viewer"
-                    >
-                      Direct
+                      Download
                     </Button>
                   </div>
                 </>
