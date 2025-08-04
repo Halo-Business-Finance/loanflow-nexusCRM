@@ -200,14 +200,40 @@ export default function Documents() {
                       </div>
                     </div>
 
-                    {/* File Information */}
+                    {/* File Information with Preview */}
                     <div className="bg-muted/50 rounded-lg p-4">
-                      <div className="flex items-center gap-3">
-                        <FileText className="h-8 w-8 text-primary" />
+                      <div className="flex items-center gap-4">
+                        {/* Document Preview Image */}
+                        <div className="w-16 h-20 bg-white rounded-lg border-2 border-border shadow-sm flex-shrink-0 overflow-hidden">
+                          {document.file_mime_type?.includes('pdf') ? (
+                            <div className="w-full h-full bg-gradient-to-br from-red-50 to-red-100 flex items-center justify-center">
+                              <FileText className="h-8 w-8 text-red-600" />
+                            </div>
+                          ) : document.file_mime_type?.startsWith('image/') ? (
+                            <img 
+                              src={`https://images.unsplash.com/photo-1461749280684-dccba630e2f6?w=64&h=80&fit=crop&auto=format`}
+                              alt="Document preview"
+                              className="w-full h-full object-cover"
+                            />
+                          ) : document.file_mime_type?.includes('word') || document.file_mime_type?.includes('document') ? (
+                            <div className="w-full h-full bg-gradient-to-br from-blue-50 to-blue-100 flex items-center justify-center">
+                              <FileText className="h-8 w-8 text-blue-600" />
+                            </div>
+                          ) : (
+                            <div className="w-full h-full bg-gradient-to-br from-gray-50 to-gray-100 flex items-center justify-center">
+                              <FileText className="h-8 w-8 text-gray-600" />
+                            </div>
+                          )}
+                        </div>
+                        
+                        {/* File Details */}
                         <div className="flex-1">
                           <div className="font-medium">{document.document_name}</div>
                           <div className="text-sm text-muted-foreground">
-                            {formatFileSize(document.file_size)}
+                            {formatFileSize(document.file_size)} • {document.file_mime_type || 'Unknown type'}
+                          </div>
+                          <div className="text-xs text-muted-foreground mt-1">
+                            Uploaded {formatDate(document.uploaded_at)}
                           </div>
                         </div>
                       </div>
