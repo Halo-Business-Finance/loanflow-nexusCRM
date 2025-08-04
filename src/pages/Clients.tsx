@@ -10,10 +10,13 @@ import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
+import { Label } from "@/components/ui/label"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter } from "@/components/ui/dialog"
 import { Calendar as CalendarComponent } from "@/components/ui/calendar"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { Search, Phone, Mail, MapPin, Calendar, DollarSign, Filter, ChevronDown, ChevronUp, Trash2, Bell, MessageSquare, ShoppingCart, FileText, Eye } from "lucide-react"
+import { Search, Phone, Mail, MapPin, Calendar, DollarSign, Filter, ChevronDown, ChevronUp, Trash2, Bell, MessageSquare, ShoppingCart, FileText, Eye, Plus, Loader2 } from "lucide-react"
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog"
 import { useToast } from "@/hooks/use-toast"
 import { ActionReminder } from "@/components/ActionReminder"
@@ -58,6 +61,19 @@ export default function Clients() {
   const [notificationMessage, setNotificationMessage] = useState("")
   const [followUpDate, setFollowUpDate] = useState<Date | undefined>()
   const [selectedClientForReminder, setSelectedClientForReminder] = useState<Client | null>(null)
+  
+  // Add Client state
+  const [showAddDialog, setShowAddDialog] = useState(false)
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [newClient, setNewClient] = useState({
+    name: "",
+    email: "",
+    phone: "",
+    location: "",
+    business_name: "",
+    business_address: "",
+    status: "Active"
+  })
 
   useEffect(() => {
     if (user) {
@@ -358,6 +374,78 @@ export default function Clients() {
   const activeClients = clients.filter(c => c.status === 'Active').length
   const avgLoanSize = clients.length > 0 ? totalLoanValue / clients.length : 0
 
+  const addNewClient = async () => {
+    if (!newClient.name.trim() || !newClient.email.trim()) {
+      toast({
+        title: "Validation Error",
+        description: "Name and email are required fields",
+        variant: "destructive",
+      })
+      return
+    }
+
+    setIsSubmitting(true)
+    try {
+      // First create contact entity
+      const { data: contactEntity, error: contactError } = await supabase
+        .from('contact_entities')
+        .insert({
+          user_id: user?.id,
+          name: newClient.name.trim(),
+          email: newClient.email.trim().toLowerCase(),
+          phone: newClient.phone?.trim() || null,
+          location: newClient.location?.trim() || null,
+          business_name: newClient.business_name?.trim() || null,
+          business_address: newClient.business_address?.trim() || null,
+          stage: 'Loan Funded' // Clients are already funded
+        })
+        .select()
+        .single()
+
+      if (contactError) throw contactError
+
+      // Then create client record
+      const { error: clientError } = await supabase
+        .from('clients')
+        .insert({
+          user_id: user?.id,
+          contact_entity_id: contactEntity.id,
+          status: newClient.status,
+          total_loans: 0,
+          total_loan_value: 0
+        })
+
+      if (clientError) throw clientError
+
+      toast({
+        title: "Success!",
+        description: "New client has been added successfully.",
+      })
+
+      // Reset form and close dialog
+      setNewClient({
+        name: "",
+        email: "",
+        phone: "",
+        location: "",
+        business_name: "",
+        business_address: "",
+        status: "Active"
+      })
+      setShowAddDialog(false)
+      fetchClients() // Refresh the clients list
+    } catch (error) {
+      console.error('Error adding client:', error)
+      toast({
+        title: "Error",
+        description: `Failed to add new client: ${error?.message || 'Unknown error'}`,
+        variant: "destructive",
+      })
+    } finally {
+      setIsSubmitting(false)
+    }
+  }
+
   if (loading) {
     return (
       <Layout>
@@ -377,9 +465,116 @@ export default function Clients() {
             <h1 className="text-3xl font-bold text-foreground dark:text-white">Clients</h1>
             <p className="text-muted-foreground dark:text-white">Manage your client relationships</p>
           </div>
-          <Button className="bg-gradient-primary">
-            Add Client
-          </Button>
+          <Dialog open={showAddDialog} onOpenChange={setShowAddDialog}>
+            <DialogTrigger asChild>
+              <Button className="bg-gradient-primary">
+                <Plus className="mr-2 h-4 w-4" />
+                Add Client
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="max-w-2xl">
+              <DialogHeader>
+                <DialogTitle>Add New Client</DialogTitle>
+              </DialogHeader>
+              <div className="space-y-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="name">Name *</Label>
+                    <Input
+                      id="name"
+                      value={newClient.name}
+                      onChange={(e) => setNewClient(prev => ({ ...prev, name: e.target.value }))}
+                      placeholder="Enter client name"
+                      required
+                    />
+                  </div>
+                  
+                  <div className="space-y-2">
+                    <Label htmlFor="email">Email *</Label>
+                    <Input
+                      id="email"
+                      type="email"
+                      value={newClient.email}
+                      onChange={(e) => setNewClient(prev => ({ ...prev, email: e.target.value }))}
+                      placeholder="Enter email address"
+                      required
+                    />
+                  </div>
+                  
+                  <div className="space-y-2">
+                    <Label htmlFor="phone">Phone</Label>
+                    <Input
+                      id="phone"
+                      value={newClient.phone}
+                      onChange={(e) => setNewClient(prev => ({ ...prev, phone: e.target.value }))}
+                      placeholder="Enter phone number"
+                    />
+                  </div>
+                  
+                  <div className="space-y-2">
+                    <Label htmlFor="location">Location</Label>
+                    <Input
+                      id="location"
+                      value={newClient.location}
+                      onChange={(e) => setNewClient(prev => ({ ...prev, location: e.target.value }))}
+                      placeholder="Enter location"
+                    />
+                  </div>
+                  
+                  <div className="space-y-2">
+                    <Label htmlFor="business_name">Business Name</Label>
+                    <Input
+                      id="business_name"
+                      value={newClient.business_name}
+                      onChange={(e) => setNewClient(prev => ({ ...prev, business_name: e.target.value }))}
+                      placeholder="Enter business name"
+                    />
+                  </div>
+                  
+                  <div className="space-y-2">
+                    <Label htmlFor="status">Status</Label>
+                    <Select
+                      value={newClient.status}
+                      onValueChange={(value) => setNewClient(prev => ({ ...prev, status: value }))}
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select status" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="Active">Active</SelectItem>
+                        <SelectItem value="Pending">Pending</SelectItem>
+                        <SelectItem value="Inactive">Inactive</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
+                
+                <div className="space-y-2">
+                  <Label htmlFor="business_address">Business Address</Label>
+                  <Textarea
+                    id="business_address"
+                    value={newClient.business_address}
+                    onChange={(e) => setNewClient(prev => ({ ...prev, business_address: e.target.value }))}
+                    placeholder="Enter business address"
+                    rows={3}
+                  />
+                </div>
+              </div>
+              
+              <DialogFooter>
+                <Button type="button" variant="outline" onClick={() => setShowAddDialog(false)}>
+                  Cancel
+                </Button>
+                <Button 
+                  onClick={addNewClient} 
+                  disabled={isSubmitting}
+                >
+                  {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                  {isSubmitting ? "Adding..." : "Add Client"}
+                </Button>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
         </div>
 
         {/* Search and Filters */}
