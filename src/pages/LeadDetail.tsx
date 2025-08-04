@@ -749,20 +749,39 @@ export default function LeadDetail() {
               <ArrowLeft className="w-4 h-4 mr-2" />
               Back to Leads
             </Button>
-            <div>
-              <h1 className="text-3xl font-bold text-foreground">{lead.name}</h1>
-              <div className="flex items-center gap-4 mt-2">
-                <Badge variant={getPriorityColor(lead.priority)}>
-                  {lead.priority} Priority
-                </Badge>
-                <Badge variant={getStageColor(lead.stage)}>
-                  {lead.stage}
-                </Badge>
-                {lead.is_converted_to_client && (
-                  <Badge variant="default">Client</Badge>
-                )}
-              </div>
-            </div>
+             <div className="bg-gradient-to-r from-card to-card/50 backdrop-blur-sm rounded-2xl p-6 border border-border/50 shadow-medium">
+               <div className="flex items-center gap-3 mb-3">
+                 <div className="w-12 h-12 rounded-full bg-gradient-to-br from-primary to-primary-glow flex items-center justify-center shadow-lg">
+                   <User className="w-6 h-6 text-primary-foreground" />
+                 </div>
+                 <div>
+                   <h1 className="text-2xl font-bold text-foreground bg-gradient-to-r from-foreground to-foreground/80 bg-clip-text">{lead.name}</h1>
+                   <p className="text-sm text-muted-foreground">Lead Profile</p>
+                 </div>
+               </div>
+               <div className="flex items-center gap-3 flex-wrap">
+                 <Badge 
+                   variant={getPriorityColor(lead.priority)}
+                   className="px-3 py-1 rounded-full font-medium shadow-sm"
+                 >
+                   {lead.priority} Priority
+                 </Badge>
+                 <Badge 
+                   variant={getStageColor(lead.stage)}
+                   className="px-3 py-1 rounded-full font-medium shadow-sm"
+                 >
+                   {lead.stage}
+                 </Badge>
+                 {lead.is_converted_to_client && (
+                   <Badge 
+                     variant="default"
+                     className="px-3 py-1 rounded-full font-medium shadow-sm bg-gradient-to-r from-accent to-accent/80"
+                   >
+                     Client
+                   </Badge>
+                 )}
+               </div>
+             </div>
           </div>
           <div className="flex gap-3">
             {/* Quick Action Buttons */}

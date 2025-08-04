@@ -37,7 +37,8 @@ import {
   Home,
   ShoppingCart,
   Target,
-  FileText
+  FileText,
+  UserCheck
 } from "lucide-react"
 
 interface Client {
@@ -491,20 +492,42 @@ export default function ClientDetail() {
               <ArrowLeft className="w-4 h-4 mr-2" />
               Back to Clients
             </Button>
-            <div>
-              <h1 className="text-3xl font-bold">{client.name}</h1>
-              <p className="text-muted-foreground">Client since {new Date(client.join_date).toLocaleDateString()}</p>
-            </div>
-            <div className="flex gap-2">
-              <Badge variant={getStatusColor(client.status)}>{client.status}</Badge>
-              {client.priority && (
-                <Badge variant={getPriorityColor(client.priority)}>{client.priority} Priority</Badge>
-              )}
-              {client.stage && (
-                <Badge variant={getStageColor(client.stage)}>{client.stage}</Badge>
-              )}
-            </div>
-          </div>
+             <div className="bg-gradient-to-r from-card to-card/50 backdrop-blur-sm rounded-2xl p-6 border border-border/50 shadow-medium">
+               <div className="flex items-center gap-3 mb-3">
+                 <div className="w-12 h-12 rounded-full bg-gradient-to-br from-accent to-accent/80 flex items-center justify-center shadow-lg">
+                   <UserCheck className="w-6 h-6 text-accent-foreground" />
+                 </div>
+                 <div>
+                   <h1 className="text-2xl font-bold bg-gradient-to-r from-foreground to-foreground/80 bg-clip-text">{client.name}</h1>
+                   <p className="text-sm text-muted-foreground">Client since {new Date(client.join_date).toLocaleDateString()}</p>
+                 </div>
+               </div>
+               <div className="flex items-center gap-3 flex-wrap">
+                 <Badge 
+                   variant={getStatusColor(client.status)}
+                   className="px-3 py-1 rounded-full font-medium shadow-sm"
+                 >
+                   {client.status}
+                 </Badge>
+                 {client.priority && (
+                   <Badge 
+                     variant={getPriorityColor(client.priority)}
+                     className="px-3 py-1 rounded-full font-medium shadow-sm"
+                   >
+                     {client.priority} Priority
+                   </Badge>
+                 )}
+                 {client.stage && (
+                   <Badge 
+                     variant={getStageColor(client.stage)}
+                     className="px-3 py-1 rounded-full font-medium shadow-sm"
+                   >
+                     {client.stage}
+                   </Badge>
+                 )}
+               </div>
+             </div>
+           </div>
           
           <div className="flex gap-3">
             <PhoneDialer 
