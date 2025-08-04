@@ -111,12 +111,18 @@ export function DocumentViewer({ document, isOpen, onClose }: DocumentViewerProp
   const getDocumentUrl = async (filePath: string) => {
     try {
       setLoading(true);
+      console.log('Attempting to get document URL for:', filePath);
+      
       const { data, error } = await supabase.storage
         .from('lead-documents')
         .createSignedUrl(filePath, 3600); // 1 hour expiry
 
-      if (error) throw error;
+      if (error) {
+        console.error('Supabase storage error:', error);
+        throw error;
+      }
       
+      console.log('Successfully got signed URL:', data.signedUrl);
       setDocumentUrl(data.signedUrl);
       return data.signedUrl;
     } catch (error) {
