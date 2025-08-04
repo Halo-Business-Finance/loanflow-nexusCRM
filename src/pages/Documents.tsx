@@ -9,6 +9,7 @@ import { useAuth } from "@/components/auth/AuthProvider"
 import { useDocuments, LeadDocument } from "@/hooks/useDocuments"
 import { DocumentUploadModal } from "@/components/DocumentUploadModal"
 import { DocumentViewer } from "@/components/DocumentViewer"
+import { DocumentTest } from "@/components/DocumentTest"
 import { formatDistanceToNow } from "date-fns"
 
 export default function Documents() {
@@ -97,6 +98,9 @@ export default function Documents() {
 
   return (
     <Layout>
+      {/* Add Document Test Component */}
+      <DocumentTest />
+      
       <div className="space-y-6">
         {/* Header */}
         <div className="flex justify-between items-center">
