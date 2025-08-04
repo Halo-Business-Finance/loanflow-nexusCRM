@@ -168,17 +168,24 @@ export function DocumentViewer({ document, isOpen, onClose }: DocumentViewerProp
   // Initialize Adobe PDF Viewer
   const initializeAdobeViewer = async (url: string) => {
     try {
-      console.log('Starting Adobe viewer initialization...');
+      console.log('=== Adobe Viewer Initialization Started ===');
+      console.log('Document URL:', url);
+      console.log('Document details:', {
+        name: document?.document_name,
+        type: document?.file_mime_type,
+        size: document?.file_size
+      });
+      
       setViewerError(false); // Reset error state
       
       let config = adobeConfig;
       if (!config) {
-        console.log('Getting Adobe config...');
+        console.log('No existing config, fetching Adobe config...');
         config = await getAdobeConfig();
         if (!config) throw new Error('No Adobe config available');
       }
 
-      console.log('Adobe config:', config);
+      console.log('Using Adobe config:', config);
 
       console.log('Loading Adobe SDK...');
       await loadAdobeSDK();
@@ -186,15 +193,18 @@ export function DocumentViewer({ document, isOpen, onClose }: DocumentViewerProp
       if (!window.AdobeDC) {
         throw new Error('Adobe SDK not available after loading');
       }
+      console.log('Adobe SDK confirmed available');
 
       if (!viewerRef.current) {
         throw new Error('Viewer container not ready');
       }
+      console.log('Viewer container confirmed ready');
 
       // Ensure container has the correct ID
       viewerRef.current.id = 'adobe-dc-view';
       // Clear previous viewer content
       viewerRef.current.innerHTML = '';
+      console.log('Container cleared and ID set');
 
       // Wait a moment for DOM to be ready
       await new Promise(resolve => setTimeout(resolve, 100));
@@ -204,15 +214,33 @@ export function DocumentViewer({ document, isOpen, onClose }: DocumentViewerProp
       if (!container) {
         throw new Error('Adobe viewer container not found in DOM');
       }
+      console.log('Container verified in DOM:', container);
+
+      // Test URL accessibility
+      console.log('Testing URL accessibility...');
+      try {
+        const response = await fetch(url, { method: 'HEAD' });
+        console.log('URL test response:', response.status, response.statusText);
+        if (!response.ok) {
+          throw new Error(`URL not accessible: ${response.status} ${response.statusText}`);
+        }
+      } catch (fetchError) {
+        console.error('URL accessibility test failed:', fetchError);
+        throw new Error(`PDF URL not accessible: ${fetchError instanceof Error ? fetchError.message : 'Unknown error'}`);
+      }
 
       console.log('Creating Adobe DC View instance...');
       const adobeDCView = new window.AdobeDC.View({
         clientId: config.clientId,
         divId: 'adobe-dc-view'
       });
+      console.log('Adobe DC View instance created successfully');
 
-      console.log('Initializing Adobe PDF viewer with URL:', url);
-      console.log('Document name:', document?.document_name);
+      console.log('Calling previewFile with config:', {
+        url,
+        fileName: document?.document_name || 'document.pdf',
+        embedMode: 'SIZED_CONTAINER'
+      });
 
       // Use a more robust preview configuration
       adobeDCView.previewFile({
@@ -229,10 +257,12 @@ export function DocumentViewer({ document, isOpen, onClose }: DocumentViewerProp
       });
 
       setAdobeView(adobeDCView);
-      console.log('Adobe PDF viewer initialized successfully');
+      console.log('=== Adobe PDF viewer initialized successfully ===');
       
     } catch (error) {
-      console.error('Error initializing Adobe viewer:', error);
+      console.error('=== Adobe Viewer Initialization Failed ===');
+      console.error('Error details:', error);
+      console.error('Error stack:', error instanceof Error ? error.stack : 'No stack trace');
       setViewerError(true);
       
       // Show a more helpful error message
@@ -390,7 +420,8 @@ export function DocumentViewer({ document, isOpen, onClose }: DocumentViewerProp
                       <FileText className="h-4 w-4 text-red-600" />
                       <span className="text-sm font-medium">PDF Document</span>
                       <Badge variant="default" className="text-xs">
-                        PDF Reader: Browser Native
+                        PDF Reader: Adobe PDF Embed {adobeConfig?.isDemo ? '(Demo)' : '(Licensed)'} 
+                        {viewerError && ' - Error'}
                       </Badge>
                     </div>
                     <div className="flex gap-2">
@@ -414,14 +445,56 @@ export function DocumentViewer({ document, isOpen, onClose }: DocumentViewerProp
                     </div>
                   </div>
                   
-                  {/* Native Browser PDF Viewer - Most reliable */}
+                  {/* Adobe PDF Embed SDK Viewer */}
                   <div className="flex-1">
-                    <iframe
-                      src={documentUrl}
-                      className="w-full h-full border-0"
-                      title={document?.document_name || 'PDF Document'}
-                      loading="lazy"
-                    />
+                    {viewerError ? (
+                      <div className="w-full h-full flex flex-col items-center justify-center bg-muted/50">
+                        <div className="text-center space-y-4">
+                          <div className="w-20 h-24 bg-gradient-to-b from-red-50 to-red-100 rounded-lg flex items-center justify-center mx-auto border-2 border-red-200">
+                            <FileText className="h-10 w-10 text-red-600" />
+                          </div>
+                          <div>
+                            <h3 className="font-medium text-lg">Adobe PDF Viewer Error</h3>
+                            <p className="text-sm text-muted-foreground mt-1">
+                              The Adobe PDF viewer encountered an issue, but you can still access the file.
+                            </p>
+                          </div>
+                          <div className="flex gap-2">
+                            <Button onClick={() => window.open(documentUrl, '_blank')} className="gap-2">
+                              <ExternalLink className="h-4 w-4" />
+                              Open PDF in Browser
+                            </Button>
+                            <Button variant="outline" onClick={downloadDocument} className="gap-2">
+                              <Download className="h-4 w-4" />
+                              Download PDF
+                            </Button>
+                          </div>
+                          <Button 
+                            variant="outline" 
+                            size="sm"
+                            onClick={() => {
+                              console.log('Retrying Adobe viewer initialization...');
+                              setViewerError(false);
+                              setAdobeView(null);
+                              if (documentUrl) {
+                                initializeAdobeViewer(documentUrl);
+                              }
+                            }}
+                            className="gap-1"
+                          >
+                            <Loader2 className="h-3 w-3" />
+                            Try Again
+                          </Button>
+                        </div>
+                      </div>
+                    ) : (
+                      <div 
+                        id="adobe-dc-view" 
+                        ref={viewerRef}
+                        className="w-full h-full"
+                        style={{ minHeight: '500px' }}
+                      />
+                    )}
                   </div>
                 </div>
               ) : isImage ? (
