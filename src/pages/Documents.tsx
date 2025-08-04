@@ -75,14 +75,25 @@ export default function Documents() {
     )
   }
 
-  // Debug logging
-  console.log('Documents Debug:', { 
+  // Debug logging - Enhanced
+  console.log('=== DOCUMENTS PAGE DEBUG ===');
+  console.log('Auth State:', { 
     userExists: !!user, 
-    userId: user?.id, 
+    userId: user?.id,
+    userEmail: user?.email
+  });
+  console.log('Documents State:', {
     documentsCount: documents.length, 
     loading,
-    documentsData: documents.slice(0, 3) // Show first 3 documents for debugging
+    documentsPreview: documents.slice(0, 2).map(d => ({
+      id: d.id.slice(0, 8),
+      name: d.document_name,
+      type: d.document_type,
+      status: d.status,
+      hasFilePath: !!d.file_path
+    }))
   });
+  console.log('=== END DEBUG ===');
 
   return (
     <Layout>
