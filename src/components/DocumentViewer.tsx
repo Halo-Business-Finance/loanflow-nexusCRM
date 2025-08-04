@@ -138,18 +138,27 @@ export function DocumentViewer({ document, isOpen, onClose }: DocumentViewerProp
   const loadAdobeSDK = () => {
     return new Promise<void>((resolve, reject) => {
       if (window.AdobeDC) {
+        console.log('Adobe SDK already loaded');
         resolve();
         return;
       }
 
+      console.log('Loading Adobe PDF SDK...');
       const script = window.document.createElement('script');
       script.src = 'https://acrobatservices.adobe.com/view-sdk/viewer.js';
       script.onload = () => {
         console.log('Adobe PDF SDK loaded successfully');
-        resolve();
+        // Give Adobe SDK a moment to initialize
+        setTimeout(() => {
+          if (window.AdobeDC) {
+            resolve();
+          } else {
+            reject(new Error('Adobe SDK loaded but AdobeDC not available'));
+          }
+        }, 1000);
       };
-      script.onerror = () => {
-        console.error('Failed to load Adobe PDF SDK');
+      script.onerror = (error) => {
+        console.error('Failed to load Adobe PDF SDK:', error);
         reject(new Error('Failed to load Adobe PDF SDK'));
       };
       window.document.head.appendChild(script);
@@ -159,29 +168,41 @@ export function DocumentViewer({ document, isOpen, onClose }: DocumentViewerProp
   // Initialize Adobe PDF Viewer
   const initializeAdobeViewer = async (url: string) => {
     try {
-      if (!adobeConfig) {
-        const config = await getAdobeConfig();
+      console.log('Starting Adobe viewer initialization...');
+      
+      let config = adobeConfig;
+      if (!config) {
+        console.log('Getting Adobe config...');
+        config = await getAdobeConfig();
         if (!config) throw new Error('No Adobe config available');
       }
 
+      console.log('Adobe config:', config);
+
+      console.log('Loading Adobe SDK...');
       await loadAdobeSDK();
 
-      if (!window.AdobeDC || !viewerRef.current) {
-        throw new Error('Adobe SDK not available or viewer container not ready');
+      if (!window.AdobeDC) {
+        throw new Error('Adobe SDK not available after loading');
+      }
+
+      if (!viewerRef.current) {
+        throw new Error('Viewer container not ready');
       }
 
       // Clear previous viewer
-      if (viewerRef.current) {
-        viewerRef.current.innerHTML = '';
-      }
+      viewerRef.current.innerHTML = '';
 
+      console.log('Creating Adobe DC View instance...');
       const adobeDCView = new window.AdobeDC.View({
-        clientId: adobeConfig?.clientId || 'dc-pdf-embed-demo',
+        clientId: config.clientId,
         divId: 'adobe-dc-view'
       });
 
       console.log('Initializing Adobe PDF viewer with URL:', url);
+      console.log('Document name:', document?.document_name);
 
+      // Use a more robust preview configuration
       adobeDCView.previewFile({
         content: { location: { url } },
         metaData: { fileName: document?.document_name || 'document.pdf' }
@@ -201,9 +222,11 @@ export function DocumentViewer({ document, isOpen, onClose }: DocumentViewerProp
     } catch (error) {
       console.error('Error initializing Adobe viewer:', error);
       setViewerError(true);
+      
+      // Show a more helpful error message
       toast({
-        title: "PDF Viewer Error",
-        description: "Failed to load Adobe PDF viewer. Please try downloading the document.",
+        title: "Adobe PDF Viewer Error",
+        description: `Failed to load Adobe PDF viewer: ${error.message}. Please try downloading the document or opening in browser.`,
         variant: "destructive",
       });
     }
@@ -355,7 +378,8 @@ export function DocumentViewer({ document, isOpen, onClose }: DocumentViewerProp
                       <FileText className="h-4 w-4 text-red-600" />
                       <span className="text-sm font-medium">PDF Document</span>
                       <Badge variant="default" className="text-xs">
-                        PDF Reader: Adobe PDF Embed {adobeConfig?.isDemo ? '(Demo)' : '(Licensed)'}
+                        PDF Reader: Adobe PDF Embed {adobeConfig?.isDemo ? '(Demo)' : '(Licensed)'} 
+                        {viewerError && ' - Error'}
                       </Badge>
                     </div>
                     <div className="flex gap-2">
