@@ -390,8 +390,7 @@ export function DocumentViewer({ document, isOpen, onClose }: DocumentViewerProp
                       <FileText className="h-4 w-4 text-red-600" />
                       <span className="text-sm font-medium">PDF Document</span>
                       <Badge variant="default" className="text-xs">
-                        PDF Reader: Adobe PDF Embed {adobeConfig?.isDemo ? '(Demo)' : '(Licensed)'} 
-                        {viewerError && ' - Error'}
+                        PDF Reader: Browser Native
                       </Badge>
                     </div>
                     <div className="flex gap-2">
@@ -415,55 +414,14 @@ export function DocumentViewer({ document, isOpen, onClose }: DocumentViewerProp
                     </div>
                   </div>
                   
-                  {/* Adobe PDF Embed SDK Viewer */}
+                  {/* Native Browser PDF Viewer - Most reliable */}
                   <div className="flex-1">
-                    {viewerError ? (
-                      <div className="w-full h-full flex flex-col items-center justify-center bg-muted/50">
-                        <div className="text-center space-y-4">
-                          <div className="w-20 h-24 bg-gradient-to-b from-red-50 to-red-100 rounded-lg flex items-center justify-center mx-auto border-2 border-red-200">
-                            <FileText className="h-10 w-10 text-red-600" />
-                          </div>
-                          <div>
-                            <h3 className="font-medium text-lg">Adobe PDF Viewer Error</h3>
-                            <p className="text-sm text-muted-foreground mt-1">
-                              The Adobe PDF viewer encountered an issue, but you can still access the file.
-                            </p>
-                          </div>
-                          <div className="flex gap-2">
-                            <Button onClick={() => window.open(documentUrl, '_blank')} className="gap-2">
-                              <ExternalLink className="h-4 w-4" />
-                              Open PDF in Browser
-                            </Button>
-                            <Button variant="outline" onClick={downloadDocument} className="gap-2">
-                              <Download className="h-4 w-4" />
-                              Download PDF
-                            </Button>
-                          </div>
-                          <Button 
-                            variant="outline" 
-                            size="sm"
-                            onClick={() => {
-                              setViewerError(false);
-                              setAdobeView(null);
-                              if (documentUrl) {
-                                initializeAdobeViewer(documentUrl);
-                              }
-                            }}
-                            className="gap-1"
-                          >
-                            <Loader2 className="h-3 w-3" />
-                            Try Again
-                          </Button>
-                        </div>
-                      </div>
-                    ) : (
-                      <div 
-                        id="adobe-dc-view" 
-                        ref={viewerRef}
-                        className="w-full h-full"
-                        style={{ minHeight: '500px' }}
-                      />
-                    )}
+                    <iframe
+                      src={documentUrl}
+                      className="w-full h-full border-0"
+                      title={document?.document_name || 'PDF Document'}
+                      loading="lazy"
+                    />
                   </div>
                 </div>
               ) : isImage ? (
