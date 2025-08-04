@@ -220,7 +220,7 @@ export function DocumentViewer({ document, isOpen, onClose }: DocumentViewerProp
                       <FileText className="h-4 w-4 text-red-600" />
                       <span className="text-sm font-medium">PDF Document</span>
                       <Badge variant="default" className="text-xs">
-                        PDF Reader: Browser Native
+                        PDF Reader: PDF.js Viewer
                       </Badge>
                     </div>
                     <div className="flex gap-2">
@@ -244,10 +244,10 @@ export function DocumentViewer({ document, isOpen, onClose }: DocumentViewerProp
                     </div>
                   </div>
                   
-                  {/* Direct PDF Embed */}
+                  {/* PDF.js Viewer - This bypasses iframe restrictions */}
                   <div className="flex-1">
                     <iframe
-                      src={documentUrl}
+                      src={`https://mozilla.github.io/pdf.js/web/viewer.html?file=${encodeURIComponent(documentUrl)}`}
                       className="w-full h-full border-0"
                       title={document.document_name}
                     />
