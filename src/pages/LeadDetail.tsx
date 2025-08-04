@@ -741,7 +741,11 @@ export default function LeadDetail() {
         {/* Header */}
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-4">
-            <Button variant="outline" onClick={() => navigate('/leads')}>
+            <Button 
+              variant="modern" 
+              className="h-10 px-4 rounded-lg font-medium"
+              onClick={() => navigate('/leads')}
+            >
               <ArrowLeft className="w-4 h-4 mr-2" />
               Back to Leads
             </Button>
@@ -760,31 +764,31 @@ export default function LeadDetail() {
               </div>
             </div>
           </div>
-          <div className="flex gap-2">
+          <div className="flex gap-3">
             {/* Quick Action Buttons */}
             <PhoneDialer 
-              phoneNumber={lead.phone} // Pre-fill with lead's phone number
+              phoneNumber={lead.phone}
               trigger={
                 <Button
                   size="sm"
-                  variant="outline"
-                  className="h-9 px-3 text-xs bg-gradient-to-r from-blue-500/10 to-blue-500/5 hover:from-blue-500/20 hover:to-blue-500/10 border-blue-500/20"
+                  variant="gradient-blue"
+                  className="h-10 px-4 rounded-lg font-medium shadow-md"
                 >
-                  <PhoneIcon className="w-3 h-3 mr-1" />
+                  <PhoneIcon className="w-4 h-4 mr-2" />
                   Call
                 </Button>
               }
             />
             <EmailComposer 
-              recipientEmail={lead.email} // Pre-fill with lead's email
-              recipientName={lead.name} // Pre-fill subject with lead's name
+              recipientEmail={lead.email}
+              recipientName={lead.name}
               trigger={
                 <Button
                   size="sm"
-                  variant="outline"
-                  className="h-9 px-3 text-xs bg-gradient-to-r from-green-500/10 to-green-500/5 hover:from-green-500/20 hover:to-green-500/10 border-green-500/20"
+                  variant="gradient-green"
+                  className="h-10 px-4 rounded-lg font-medium shadow-md"
                 >
-                  <Mail className="w-3 h-3 mr-1" />
+                  <Mail className="w-4 h-4 mr-2" />
                   Email
                 </Button>
               }
@@ -795,47 +799,58 @@ export default function LeadDetail() {
               trigger={
                 <Button
                   size="sm"
-                  variant="outline"
-                  className="h-9 px-3 text-xs bg-gradient-to-r from-orange-500/10 to-orange-500/5 hover:from-orange-500/20 hover:to-orange-500/10 border-orange-500/20"
+                  variant="gradient-orange"
+                  className="h-10 px-4 rounded-lg font-medium shadow-md"
                 >
-                  <Send className="w-3 h-3 mr-1" />
+                  <Send className="w-4 h-4 mr-2" />
                   Quick Email
                 </Button>
               }
             />
             <Button
               size="sm"
-              variant="outline"
-              className="h-9 px-3 text-xs bg-gradient-to-r from-purple-500/10 to-purple-500/5 hover:from-purple-500/20 hover:to-purple-500/10 border-purple-500/20"
+              variant="gradient-purple"
+              className="h-10 px-4 rounded-lg font-medium shadow-md"
               onClick={() => navigate(`/leads/${lead.id}/documents`)}
             >
-              <FileText className="w-3 h-3 mr-1" />
+              <FileText className="w-4 h-4 mr-2" />
               Documents
             </Button>
             <Button
               onClick={() => setShowReminderDialog(true)}
               size="sm"
-              variant="outline"
-              className="h-9 px-3 text-xs bg-gradient-to-r from-primary/10 to-primary/5 hover:from-primary/20 hover:to-primary/10 border-primary/20"
+              variant="gradient"
+              className="h-10 px-4 rounded-lg font-medium shadow-md"
             >
-              <Bell className="w-3 h-3 mr-1" />
+              <Bell className="w-4 h-4 mr-2" />
               Reminder
             </Button>
             
             {/* Edit/Save Buttons */}
-            <Button onClick={() => setIsEditing(!isEditing)}>
+            <Button 
+              onClick={() => setIsEditing(!isEditing)}
+              variant="modern"
+              className="h-10 px-4 rounded-lg font-medium"
+            >
               <Edit className="w-4 h-4 mr-2" />
               {isEditing ? 'Cancel' : 'Edit'}
             </Button>
             {isEditing && (
-              <Button onClick={saveLeadChanges}>
+              <Button 
+                onClick={saveLeadChanges}
+                variant="gradient"
+                className="h-10 px-4 rounded-lg font-medium shadow-md"
+              >
                 <Save className="w-4 h-4 mr-2" />
                 Save Changes
               </Button>
             )}
             <AlertDialog>
               <AlertDialogTrigger asChild>
-                <Button variant="destructive">
+                <Button 
+                  variant="gradient-red"
+                  className="h-10 px-4 rounded-lg font-medium shadow-md"
+                >
                   <Trash2 className="w-4 h-4 mr-2" />
                   Delete Lead
                 </Button>

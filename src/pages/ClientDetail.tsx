@@ -483,7 +483,11 @@ export default function ClientDetail() {
         {/* Header */}
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-4">
-            <Button variant="outline" size="sm" onClick={() => navigate('/clients')}>
+            <Button 
+              variant="modern" 
+              className="h-10 px-4 rounded-lg font-medium"
+              onClick={() => navigate('/clients')}
+            >
               <ArrowLeft className="w-4 h-4 mr-2" />
               Back to Clients
             </Button>
@@ -502,10 +506,13 @@ export default function ClientDetail() {
             </div>
           </div>
           
-          <div className="flex gap-2">
+          <div className="flex gap-3">
             <PhoneDialer 
               trigger={
-                <Button variant="outline">
+                <Button 
+                  variant="gradient-blue"
+                  className="h-10 px-4 rounded-lg font-medium shadow-md"
+                >
                   <Phone className="w-4 h-4 mr-2" />
                   Call
                 </Button>
@@ -513,20 +520,26 @@ export default function ClientDetail() {
             />
             <EmailComposer 
               trigger={
-                <Button variant="outline">
+                <Button 
+                  variant="gradient-green"
+                  className="h-10 px-4 rounded-lg font-medium shadow-md"
+                >
                   <Mail className="w-4 h-4 mr-2" />
                   Email
                 </Button>
               }
             />
             <Button 
-              variant="outline"
+              variant="gradient"
+              className="h-10 px-4 rounded-lg font-medium shadow-md"
               onClick={() => setShowReminderDialog(true)}
             >
               <Bell className="w-4 h-4 mr-2" />
               Set Reminder
             </Button>
             <Button
+              variant={isEditing ? "gradient" : "modern"}
+              className="h-10 px-4 rounded-lg font-medium shadow-md"
               onClick={() => {
                 if (isEditing) {
                   saveClientChanges()
