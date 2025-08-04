@@ -31,7 +31,7 @@ import { Lead, ContactEntity, STAGES, PRIORITIES } from "@/types/lead"
 import { mapLeadFields, extractContactEntityData, LEAD_WITH_CONTACT_QUERY } from "@/lib/field-mapping"
 
 export default function Leads() {
-  const { user, hasRole } = useAuth()
+  const { user, hasRole, userRole } = useAuth()
   const { toast } = useToast()
   
   // State management
@@ -332,12 +332,17 @@ export default function Leads() {
 
   const deleteLead = async (leadId: string, leadName: string) => {
     try {
+      console.log('Attempting to delete lead:', { leadId, leadName, userRole, hasAdminRole: hasRole('admin'), hasRole: hasRole('super_admin') })
+      
       const { error } = await supabase
         .from('leads')
         .delete()
         .eq('id', leadId)
 
-      if (error) throw error
+      if (error) {
+        console.error('Delete error details:', error)
+        throw error
+      }
 
       toast({
         title: "Success!",
@@ -349,7 +354,7 @@ export default function Leads() {
       console.error('Error deleting lead:', error)
       toast({
         title: "Error",
-        description: "Failed to delete lead",
+        description: `Failed to delete lead: ${error?.message || 'Unknown error'}`,
         variant: "destructive",
       })
     }
@@ -468,7 +473,8 @@ export default function Leads() {
             onDelete={deleteLead}
             onConvert={(lead) => setConvertingLead(lead)}
             onRefresh={fetchLeads}
-            hasAdminRole={hasRole('admin') || hasRole('super_admin')}
+            hasAdminRole={hasRole('admin') || hasRole('super_admin') || hasRole('manager')}
+            currentUserId={user?.id}
           />
 
           {/* Edit Dialog */}

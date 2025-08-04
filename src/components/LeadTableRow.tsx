@@ -33,6 +33,7 @@ interface LeadTableRowProps {
   onConvert: (lead: Lead) => void
   hasAdminRole: boolean
   onRefresh?: () => void
+  currentUserId?: string
 }
 
 const getPriorityColor = (priority: string) => {
@@ -58,7 +59,7 @@ const getStageColor = (stage: string) => {
   }
 }
 
-export function LeadTableRow({ lead, onEdit, onDelete, onConvert, hasAdminRole, onRefresh }: LeadTableRowProps) {
+export function LeadTableRow({ lead, onEdit, onDelete, onConvert, hasAdminRole, onRefresh, currentUserId }: LeadTableRowProps) {
   const navigate = useNavigate()
 
   const getInitials = (name: string) => {
@@ -68,6 +69,9 @@ export function LeadTableRow({ lead, onEdit, onDelete, onConvert, hasAdminRole, 
   const daysSinceContact = lead.last_contact 
     ? Math.floor((Date.now() - new Date(lead.last_contact).getTime()) / (1000 * 60 * 60 * 24))
     : 0
+
+  // Check if user can delete this lead (admin/manager roles or own lead)
+  const canDelete = hasAdminRole || (currentUserId && lead.user_id === currentUserId)
 
   return (
     <TooltipProvider delayDuration={300}>
@@ -190,7 +194,7 @@ export function LeadTableRow({ lead, onEdit, onDelete, onConvert, hasAdminRole, 
                 </DropdownMenuItem>
               )}
               <DropdownMenuSeparator />
-              {hasAdminRole && (
+              {canDelete && (
                 <DropdownMenuItem 
                   onClick={() => onDelete(lead.id, lead.name)}
                   className="text-destructive focus:text-destructive"

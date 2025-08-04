@@ -17,6 +17,7 @@ interface LeadsListProps {
   onConvert: (lead: Lead) => void
   onRefresh?: () => void
   hasAdminRole: boolean
+  currentUserId?: string
 }
 
 export function LeadsList({ 
@@ -26,7 +27,8 @@ export function LeadsList({
   onDelete, 
   onConvert, 
   onRefresh,
-  hasAdminRole 
+  hasAdminRole,
+  currentUserId 
 }: LeadsListProps) {
   if (leads.length === 0) {
     return (
@@ -47,6 +49,7 @@ export function LeadsList({
             onDelete={onDelete}
             onConvert={onConvert}
             hasAdminRole={hasAdminRole}
+            currentUserId={currentUserId}
           />
         ))}
       </div>
@@ -78,6 +81,7 @@ export function LeadsList({
               onConvert={onConvert}
               onRefresh={onRefresh}
               hasAdminRole={hasAdminRole}
+              currentUserId={currentUserId}
             />
           ))}
         </TableBody>

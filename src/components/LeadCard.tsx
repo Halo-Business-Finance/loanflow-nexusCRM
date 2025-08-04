@@ -38,6 +38,7 @@ interface LeadCardProps {
   onDelete: (leadId: string, leadName: string) => void
   onConvert: (lead: Lead) => void
   hasAdminRole: boolean
+  currentUserId?: string
 }
 
 const getPriorityColor = (priority: string) => {
@@ -72,7 +73,7 @@ const getPriorityIcon = (priority: string) => {
   }
 }
 
-export function LeadCard({ lead, onEdit, onDelete, onConvert, hasAdminRole }: LeadCardProps) {
+export function LeadCard({ lead, onEdit, onDelete, onConvert, hasAdminRole, currentUserId }: LeadCardProps) {
   const navigate = useNavigate()
 
   const getInitials = (name: string) => {
@@ -82,6 +83,9 @@ export function LeadCard({ lead, onEdit, onDelete, onConvert, hasAdminRole }: Le
   const daysSinceContact = lead.last_contact 
     ? Math.floor((Date.now() - new Date(lead.last_contact).getTime()) / (1000 * 60 * 60 * 24))
     : 0
+
+  // Check if user can delete this lead (admin/manager roles or own lead)
+  const canDelete = hasAdminRole || (currentUserId && lead.user_id === currentUserId)
 
   return (
     <Card 
@@ -138,7 +142,7 @@ export function LeadCard({ lead, onEdit, onDelete, onConvert, hasAdminRole }: Le
                 </DropdownMenuItem>
               )}
               <DropdownMenuSeparator />
-              {hasAdminRole && (
+              {canDelete && (
                 <DropdownMenuItem 
                   onClick={(e) => { e.stopPropagation(); onDelete(lead.id, lead.name); }}
                   className="text-destructive focus:text-destructive"
