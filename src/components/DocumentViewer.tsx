@@ -30,6 +30,23 @@ export function DocumentViewer({ document, isOpen, onClose }: DocumentViewerProp
       setLoading(true);
       console.log('Getting document URL for:', filePath);
       
+      // Since the bucket is public, we can try the public URL first
+      const publicUrl = `https://gshxxsniwytjgcnthyfq.supabase.co/storage/v1/object/public/lead-documents/${filePath}`;
+      console.log('Trying public URL:', publicUrl);
+      
+      // Test if the public URL works
+      try {
+        const response = await fetch(publicUrl, { method: 'HEAD' });
+        if (response.ok) {
+          console.log('Public URL works, using it');
+          setDocumentUrl(publicUrl);
+          return publicUrl;
+        }
+      } catch (e) {
+        console.log('Public URL failed, trying signed URL');
+      }
+      
+      // Fallback to signed URL
       const { data, error } = await supabase.storage
         .from('lead-documents')
         .createSignedUrl(filePath, 3600); // 1 hour expiry
