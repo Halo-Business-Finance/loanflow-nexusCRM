@@ -34,7 +34,7 @@ export function LeadForm({ lead, onSubmit, onCancel, isSubmitting = false }: Lea
     credit_score: lead?.credit_score || undefined,
     net_operating_income: lead?.net_operating_income || undefined,
     priority: lead?.priority || "medium",
-    stage: lead?.stage || "Initial Contact",
+    stage: lead?.stage || "New Lead",
     notes: "",
     naics_code: lead?.naics_code || "",
     ownership_structure: lead?.ownership_structure || ""
@@ -196,6 +196,7 @@ export function LeadForm({ lead, onSubmit, onCancel, isSubmitting = false }: Lea
               <SelectValue placeholder="Select stage" />
             </SelectTrigger>
             <SelectContent>
+              <SelectItem value="New Lead">New Lead</SelectItem>
               <SelectItem value="Initial Contact">Initial Contact</SelectItem>
               <SelectItem value="Loan Application Signed">Loan Application Signed</SelectItem>
               <SelectItem value="Waiting for Documentation">Waiting for Documentation</SelectItem>
