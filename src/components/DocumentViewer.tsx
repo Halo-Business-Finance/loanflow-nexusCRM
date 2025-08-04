@@ -1,11 +1,36 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Download, ExternalLink, FileText, X } from 'lucide-react';
+import { Download, ExternalLink, FileText, X, Loader2 } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { LeadDocument } from '@/hooks/useDocuments';
+
+// Adobe DC View SDK types
+declare global {
+  interface Window {
+    AdobeDC?: {
+      View: new (config: { clientId: string; divId: string }) => {
+        previewFile: (
+          fileConfig: {
+            content: { location: { url: string } };
+            metaData: { fileName: string };
+          },
+          viewerConfig: {
+            embedMode: string;
+            showAnnotationTools: boolean;
+            showLeftHandPanel: boolean;
+            showDownloadPDF: boolean;
+            showPrintPDF: boolean;
+            showTopToolbar: boolean;
+            defaultViewMode: string;
+          }
+        ) => void;
+      };
+    };
+  }
+}
 
 interface DocumentViewerProps {
   document: LeadDocument | null;
@@ -17,7 +42,9 @@ export function DocumentViewer({ document, isOpen, onClose }: DocumentViewerProp
   const [loading, setLoading] = useState(false);
   const [documentUrl, setDocumentUrl] = useState<string | null>(null);
   const [viewerError, setViewerError] = useState(false);
-  const [viewerType, setViewerType] = useState<'google' | 'pdf.js' | 'direct'>('google');
+  const [adobeConfig, setAdobeConfig] = useState<{clientId: string, isDemo: boolean} | null>(null);
+  const [adobeView, setAdobeView] = useState<any>(null);
+  const viewerRef = useRef<HTMLDivElement>(null);
   const { toast } = useToast();
 
   // Determine file types
@@ -90,6 +117,98 @@ export function DocumentViewer({ document, isOpen, onClose }: DocumentViewerProp
     }
   };
 
+  // Get Adobe configuration
+  const getAdobeConfig = async () => {
+    try {
+      const { data, error } = await supabase.functions.invoke('get-adobe-config');
+      if (error) throw error;
+      console.log('Adobe config retrieved:', data);
+      setAdobeConfig(data);
+      return data;
+    } catch (error) {
+      console.error('Error getting Adobe config:', error);
+      // Fallback to demo config
+      const fallbackConfig = { clientId: 'dc-pdf-embed-demo', isDemo: true };
+      setAdobeConfig(fallbackConfig);
+      return fallbackConfig;
+    }
+  };
+
+  // Load Adobe PDF SDK
+  const loadAdobeSDK = () => {
+    return new Promise<void>((resolve, reject) => {
+      if (window.AdobeDC) {
+        resolve();
+        return;
+      }
+
+      const script = window.document.createElement('script');
+      script.src = 'https://acrobatservices.adobe.com/view-sdk/viewer.js';
+      script.onload = () => {
+        console.log('Adobe PDF SDK loaded successfully');
+        resolve();
+      };
+      script.onerror = () => {
+        console.error('Failed to load Adobe PDF SDK');
+        reject(new Error('Failed to load Adobe PDF SDK'));
+      };
+      window.document.head.appendChild(script);
+    });
+  };
+
+  // Initialize Adobe PDF Viewer
+  const initializeAdobeViewer = async (url: string) => {
+    try {
+      if (!adobeConfig) {
+        const config = await getAdobeConfig();
+        if (!config) throw new Error('No Adobe config available');
+      }
+
+      await loadAdobeSDK();
+
+      if (!window.AdobeDC || !viewerRef.current) {
+        throw new Error('Adobe SDK not available or viewer container not ready');
+      }
+
+      // Clear previous viewer
+      if (viewerRef.current) {
+        viewerRef.current.innerHTML = '';
+      }
+
+      const adobeDCView = new window.AdobeDC.View({
+        clientId: adobeConfig?.clientId || 'dc-pdf-embed-demo',
+        divId: 'adobe-dc-view'
+      });
+
+      console.log('Initializing Adobe PDF viewer with URL:', url);
+
+      adobeDCView.previewFile({
+        content: { location: { url } },
+        metaData: { fileName: document?.document_name || 'document.pdf' }
+      }, {
+        embedMode: 'SIZED_CONTAINER',
+        showAnnotationTools: false,
+        showLeftHandPanel: true,
+        showDownloadPDF: true,
+        showPrintPDF: true,
+        showTopToolbar: true,
+        defaultViewMode: 'FIT_PAGE'
+      });
+
+      setAdobeView(adobeDCView);
+      console.log('Adobe PDF viewer initialized successfully');
+      
+    } catch (error) {
+      console.error('Error initializing Adobe viewer:', error);
+      setViewerError(true);
+      toast({
+        title: "PDF Viewer Error",
+        description: "Failed to load Adobe PDF viewer. Please try downloading the document.",
+        variant: "destructive",
+      });
+    }
+  };
+
   const downloadDocument = async () => {
     if (!document?.file_path) return;
 
@@ -139,11 +258,23 @@ export function DocumentViewer({ document, isOpen, onClose }: DocumentViewerProp
       getDocumentUrl(document.file_path);
     }
     if (!isOpen) {
-      setDocumentUrl(null); // Reset URL when modal closes
-      setViewerError(false); // Reset viewer error state
-      setViewerType('google'); // Reset to default viewer
+      setDocumentUrl(null);
+      setViewerError(false);
+      setAdobeView(null);
+      // Clear Adobe viewer container
+      if (viewerRef.current) {
+        viewerRef.current.innerHTML = '';
+      }
     }
   }, [isOpen, document?.file_path, documentUrl]);
+
+  // Initialize Adobe viewer when document URL is ready
+  useEffect(() => {
+    if (isOpen && documentUrl && isPdf && !viewerError && !adobeView) {
+      console.log('Document URL ready, initializing Adobe viewer...');
+      initializeAdobeViewer(documentUrl);
+    }
+  }, [isOpen, documentUrl, isPdf, viewerError, adobeView]);
 
   // Helper function to format file size
   const formatFileSize = (bytes?: number) => {
@@ -224,7 +355,7 @@ export function DocumentViewer({ document, isOpen, onClose }: DocumentViewerProp
                       <FileText className="h-4 w-4 text-red-600" />
                       <span className="text-sm font-medium">PDF Document</span>
                       <Badge variant="default" className="text-xs">
-                        PDF Reader: {viewerType === 'google' ? 'Google Docs' : viewerType === 'pdf.js' ? 'PDF.js' : 'Fallback'}
+                        PDF Reader: Adobe PDF Embed {adobeConfig?.isDemo ? '(Demo)' : '(Licensed)'}
                       </Badge>
                     </div>
                     <div className="flex gap-2">
@@ -248,96 +379,55 @@ export function DocumentViewer({ document, isOpen, onClose }: DocumentViewerProp
                     </div>
                   </div>
                   
-                  {/* Multi-fallback PDF viewer */}
+                  {/* Adobe PDF Embed SDK Viewer */}
                   <div className="flex-1">
-                    {(() => {
-                      console.log('PDF Viewer Debug:', {
-                        documentUrl,
-                        viewerType,
-                        viewerError,
-                        encodedUrl: encodeURIComponent(documentUrl),
-                        googleViewerUrl: `https://docs.google.com/gviewer?url=${encodeURIComponent(documentUrl)}&embedded=true`,
-                        pdfJsUrl: `https://mozilla.github.io/pdf.js/web/viewer.html?file=${encodeURIComponent(documentUrl)}`
-                      });
-                      
-                      if (viewerError && viewerType === 'google') {
-                        console.log('Google viewer failed, trying PDF.js');
-                        setViewerType('pdf.js');
-                        setViewerError(false);
-                      }
-                      
-                      // Render based on current viewer type
-                      if (viewerType === 'google' && !viewerError) {
-                        return (
-                          <iframe
-                            src={`https://docs.google.com/gviewer?url=${encodeURIComponent(documentUrl)}&embedded=true`}
-                            className="w-full h-full border-0"
-                            title={document.document_name}
-                            onError={(e) => {
-                              console.error('Google PDF viewer error:', e);
-                              setViewerError(true);
-                            }}
-                            onLoad={() => {
-                              console.log('Google PDF viewer loaded successfully');
-                            }}
-                          />
-                        );
-                      } else if (viewerType === 'pdf.js') {
-                        return (
-                          <iframe
-                            src={`https://mozilla.github.io/pdf.js/web/viewer.html?file=${encodeURIComponent(documentUrl)}`}
-                            className="w-full h-full border-0"
-                            title={document.document_name}
-                            onError={(e) => {
-                              console.error('PDF.js viewer error:', e);
-                              setViewerType('direct');
-                              setViewerError(true);
-                            }}
-                            onLoad={() => {
-                              console.log('PDF.js viewer loaded successfully');
-                            }}
-                          />
-                        );
-                      } else {
-                        // Direct fallback with message
-                        return (
-                          <div className="w-full h-full flex flex-col items-center justify-center bg-muted/50">
-                            <div className="text-center space-y-4">
-                              <div className="w-20 h-24 bg-gradient-to-b from-red-50 to-red-100 rounded-lg flex items-center justify-center mx-auto border-2 border-red-200">
-                                <FileText className="h-10 w-10 text-red-600" />
-                              </div>
-                              <div>
-                                <h3 className="font-medium text-lg">PDF Preview Unavailable</h3>
-                                <p className="text-sm text-muted-foreground mt-1">
-                                  The PDF viewer encountered an issue, but you can still access the file.
-                                </p>
-                              </div>
-                              <div className="flex gap-2">
-                                <Button onClick={() => window.open(documentUrl, '_blank')} className="gap-2">
-                                  <ExternalLink className="h-4 w-4" />
-                                  Open PDF in Browser
-                                </Button>
-                                <Button variant="outline" onClick={downloadDocument} className="gap-2">
-                                  <Download className="h-4 w-4" />
-                                  Download PDF
-                                </Button>
-                              </div>
-                              <Button 
-                                variant="outline" 
-                                size="sm"
-                                onClick={() => {
-                                  setViewerType('google');
-                                  setViewerError(false);
-                                }}
-                                className="gap-1"
-                              >
-                                Try Again
-                              </Button>
-                            </div>
+                    {viewerError ? (
+                      <div className="w-full h-full flex flex-col items-center justify-center bg-muted/50">
+                        <div className="text-center space-y-4">
+                          <div className="w-20 h-24 bg-gradient-to-b from-red-50 to-red-100 rounded-lg flex items-center justify-center mx-auto border-2 border-red-200">
+                            <FileText className="h-10 w-10 text-red-600" />
                           </div>
-                        );
-                      }
-                    })()}
+                          <div>
+                            <h3 className="font-medium text-lg">Adobe PDF Viewer Error</h3>
+                            <p className="text-sm text-muted-foreground mt-1">
+                              The Adobe PDF viewer encountered an issue, but you can still access the file.
+                            </p>
+                          </div>
+                          <div className="flex gap-2">
+                            <Button onClick={() => window.open(documentUrl, '_blank')} className="gap-2">
+                              <ExternalLink className="h-4 w-4" />
+                              Open PDF in Browser
+                            </Button>
+                            <Button variant="outline" onClick={downloadDocument} className="gap-2">
+                              <Download className="h-4 w-4" />
+                              Download PDF
+                            </Button>
+                          </div>
+                          <Button 
+                            variant="outline" 
+                            size="sm"
+                            onClick={() => {
+                              setViewerError(false);
+                              setAdobeView(null);
+                              if (documentUrl) {
+                                initializeAdobeViewer(documentUrl);
+                              }
+                            }}
+                            className="gap-1"
+                          >
+                            <Loader2 className="h-3 w-3" />
+                            Try Again
+                          </Button>
+                        </div>
+                      </div>
+                    ) : (
+                      <div 
+                        id="adobe-dc-view" 
+                        ref={viewerRef}
+                        className="w-full h-full"
+                        style={{ minHeight: '500px' }}
+                      />
+                    )}
                   </div>
                 </div>
               ) : isImage ? (
