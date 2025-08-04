@@ -729,24 +729,40 @@ export default function Integrations() {
               
               <div className="space-y-2">
                 <Label className="text-xs text-muted-foreground">
-                  To use your own Adobe Client ID instead of the demo version:
+                  Configure your Adobe credentials for full access:
                 </Label>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => {
-                    setShowAdobeConfig(false)
-                    setShowAdobeSecretForm(true)
-                    toast({
-                      title: "Adobe Configuration",
-                      description: "Please enter your Adobe Client ID to upgrade from demo to licensed version.",
-                    })
-                  }}
-                  className="w-full text-xs"
-                >
-                  <Settings className="w-3 h-3 mr-1" />
-                  Configure Adobe Client ID
-                </Button>
+                <div className="grid grid-cols-2 gap-2">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => {
+                      setShowAdobeConfig(false)
+                      toast({
+                        title: "Adobe Client ID",
+                        description: "Please enter your Adobe Client ID to upgrade from demo to licensed version.",
+                      })
+                    }}
+                    className="text-xs"
+                  >
+                    <Settings className="w-3 h-3 mr-1" />
+                    Client ID
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => {
+                      setShowAdobeConfig(false)
+                      toast({
+                        title: "Adobe API Key",
+                        description: "Please enter your Adobe API Key for enhanced functionality.",
+                      })
+                    }}
+                    className="text-xs"
+                  >
+                    <Shield className="w-3 h-3 mr-1" />
+                    API Key
+                  </Button>
+                </div>
               </div>
             </div>
 
