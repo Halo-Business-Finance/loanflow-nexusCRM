@@ -751,9 +751,15 @@ export default function Users() {
                 
                 <div className="space-y-2">
                   <Label htmlFor="role">Role</Label>
-                  <Select value={newUser.role} onValueChange={(value: any) => setNewUser({...newUser, role: value})}>
+                  <Select 
+                    value={newUser.role} 
+                    onValueChange={(value: any) => {
+                      console.log('Role selection changed:', value)
+                      setNewUser({...newUser, role: value})
+                    }}
+                  >
                     <SelectTrigger>
-                      <SelectValue />
+                      <SelectValue placeholder="Select a role" />
                     </SelectTrigger>
                     <SelectContent className="bg-background border shadow-lg z-50">
                       {currentUserRole === 'super_admin' && (
@@ -764,9 +770,9 @@ export default function Users() {
                       )}
                       <SelectItem value="manager">Manager</SelectItem>
                       <SelectItem value="agent">Loan Originator (Agent)</SelectItem>
-                      <SelectItem value="funder">Funder</SelectItem>
-                      <SelectItem value="loan_processor">Processor</SelectItem>
-                      <SelectItem value="underwriter">Underwriter</SelectItem>
+                      <SelectItem value="funder">Loan Funder</SelectItem>
+                      <SelectItem value="loan_processor">Loan Processor</SelectItem>
+                      <SelectItem value="underwriter">Loan Underwriter</SelectItem>
                       <SelectItem value="viewer">Viewer</SelectItem>
                     </SelectContent>
                   </Select>
@@ -1189,10 +1195,13 @@ export default function Users() {
                   <Label htmlFor="editRole">Role</Label>
                   <Select 
                     value={editingUser.role} 
-                    onValueChange={(value: any) => setEditingUser({...editingUser, role: value})}
+                    onValueChange={(value: any) => {
+                      console.log('Edit role selection changed:', value)
+                      setEditingUser({...editingUser, role: value})
+                    }}
                   >
                     <SelectTrigger>
-                      <SelectValue />
+                      <SelectValue placeholder="Select a role" />
                     </SelectTrigger>
                     <SelectContent className="bg-background border shadow-lg z-50">
                       {currentUserRole === 'super_admin' && (
@@ -1203,9 +1212,9 @@ export default function Users() {
                       )}
                       <SelectItem value="manager">Manager</SelectItem>
                       <SelectItem value="agent">Loan Originator (Agent)</SelectItem>
-                      <SelectItem value="funder">Funder</SelectItem>
-                      <SelectItem value="loan_processor">Processor</SelectItem>
-                      <SelectItem value="underwriter">Underwriter</SelectItem>
+                      <SelectItem value="funder">Loan Funder</SelectItem>
+                      <SelectItem value="loan_processor">Loan Processor</SelectItem>
+                      <SelectItem value="underwriter">Loan Underwriter</SelectItem>
                       <SelectItem value="viewer">Viewer</SelectItem>
                     </SelectContent>
                   </Select>
