@@ -42,7 +42,6 @@ export function useDocuments() {
           *,
           contact_entity:contact_entities(name, loan_amount)
         `)
-        .eq('user_id', user.id)
         .order('created_at', { ascending: false });
 
       if (error) throw error;
@@ -130,8 +129,7 @@ export function useDocuments() {
       const { error } = await supabase
         .from('lead_documents')
         .update(updates)
-        .eq('id', documentId)
-        .eq('user_id', user.id);
+        .eq('id', documentId);
 
       if (error) throw error;
 
@@ -194,8 +192,7 @@ export function useDocuments() {
       const { error } = await supabase
         .from('lead_documents')
         .delete()
-        .eq('id', documentId)
-        .eq('user_id', user.id);
+        .eq('id', documentId);
 
       if (error) throw error;
 
