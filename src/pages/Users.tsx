@@ -56,7 +56,7 @@ interface UserProfile {
   last_name: string | null
   phone_number: string | null
   created_at: string
-  role: 'super_admin' | 'admin' | 'manager' | 'agent' | 'funder' | 'loan_processor' | 'underwriter' | 'tech'
+  role: 'super_admin' | 'admin' | 'manager' | 'agent' | 'funder' | 'loan_processor' | 'underwriter' | 'closer' | 'tech'
   is_active: boolean
   archived_at?: string | null
   archived_by?: string | null
@@ -79,7 +79,7 @@ export default function Users() {
     first_name: "",
     last_name: "",
     phone_number: "",
-    role: "agent" as 'super_admin' | 'admin' | 'manager' | 'agent' | 'funder' | 'loan_processor' | 'underwriter' | 'tech'
+    role: "agent" as 'super_admin' | 'admin' | 'manager' | 'agent' | 'funder' | 'loan_processor' | 'underwriter' | 'closer' | 'tech'
   })
   const [editingUser, setEditingUser] = useState<UserProfile | null>(null)
   const [showNewUserDialog, setShowNewUserDialog] = useState(false)
@@ -643,6 +643,7 @@ export default function Users() {
       case 'funder': return 'secondary'
       case 'loan_processor': return 'secondary'
       case 'underwriter': return 'secondary'
+      case 'closer': return 'secondary'
       case 'tech': return 'outline'
       default: return 'outline'
     }
@@ -773,6 +774,7 @@ export default function Users() {
                       <SelectItem value="funder">Loan Funder</SelectItem>
                       <SelectItem value="loan_processor">Loan Processor</SelectItem>
                       <SelectItem value="underwriter">Loan Underwriter</SelectItem>
+                      <SelectItem value="closer">Closer</SelectItem>
                       <SelectItem value="tech">Tech</SelectItem>
                     </SelectContent>
                   </Select>
@@ -887,7 +889,8 @@ export default function Users() {
                                user.role === 'agent' ? 'Agent' :
                                user.role === 'funder' ? 'Funder' :
                                user.role === 'loan_processor' ? 'Processor' :
-                                user.role === 'underwriter' ? 'Underwriter' : 
+                                 user.role === 'underwriter' ? 'Underwriter' : 
+                                 user.role === 'closer' ? 'Closer' :
                                  user.role === 'tech' ? 'Tech' : 'Unknown'}
                             </Badge>
                           </td>
@@ -1110,8 +1113,9 @@ export default function Users() {
                                user.role === 'agent' ? 'Agent' :
                                user.role === 'funder' ? 'Funder' :
                                user.role === 'loan_processor' ? 'Processor' :
-                                user.role === 'underwriter' ? 'Underwriter' : 
-                                user.role === 'tech' ? 'Tech' : 'Unknown'}
+                                 user.role === 'underwriter' ? 'Underwriter' : 
+                                 user.role === 'closer' ? 'Closer' :
+                                 user.role === 'tech' ? 'Tech' : 'Unknown'}
                             </Badge>
                           </td>
 
@@ -1217,6 +1221,7 @@ export default function Users() {
                       <SelectItem value="funder">Loan Funder</SelectItem>
                       <SelectItem value="loan_processor">Loan Processor</SelectItem>
                       <SelectItem value="underwriter">Loan Underwriter</SelectItem>
+                      <SelectItem value="closer">Closer</SelectItem>
                       <SelectItem value="tech">Tech</SelectItem>
                     </SelectContent>
                   </Select>
