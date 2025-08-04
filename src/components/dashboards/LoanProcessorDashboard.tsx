@@ -25,6 +25,20 @@ interface ProcessorMetrics {
   totalThisWeek: number;
 }
 
+interface LeadWithContact {
+  id: string;
+  stage: string;
+  created_at: string;
+  updated_at: string;
+  contact_entity_id: string;
+  name?: string;
+  email?: string;
+  phone?: string;
+  business_name?: string;
+  loan_amount?: number;
+  loan_type?: string;
+}
+
 export const LoanProcessorDashboard = () => {
   const { toast } = useToast();
   const [metrics, setMetrics] = useState<ProcessorMetrics>({
@@ -34,7 +48,7 @@ export const LoanProcessorDashboard = () => {
     applicationsPastDue: 0,
     totalThisWeek: 0
   });
-  const [pendingApps, setPendingApps] = useState<any[]>([]);
+  const [pendingApps, setPendingApps] = useState<LeadWithContact[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -46,44 +60,85 @@ export const LoanProcessorDashboard = () => {
       const today = new Date().toISOString().split('T')[0];
       const weekAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString();
 
-      // Fetch pending applications
-      const { data: pendingData } = await supabase
-        .from('leads')
+      // Fetch pending applications - using contact_entities for stage filtering
+      const { data: contactsData, error: contactsError } = await supabase
+        .from('contact_entities')
         .select(`
-          *,
-          contact_entity:contact_entities!contact_entity_id (*)
+          id,
+          name,
+          email,
+          phone,
+          business_name,
+          loan_amount,
+          loan_type,
+          stage,
+          created_at,
+          updated_at
         `)
-        .in('stage', ['Application', 'Pre-approval'])
-        .eq('is_converted_to_client', false);
+        .in('stage', ['Application', 'Pre-approval']);
 
-      // Fetch processed applications today
-      const { data: processedToday } = await supabase
-        .from('leads')
+      if (contactsError) {
+        throw contactsError;
+      }
+
+      // Get corresponding leads for these contact entities
+      const contactIds = contactsData?.map(contact => contact.id) || [];
+      
+      let leadsData: any[] = [];
+      if (contactIds.length > 0) {
+        const { data: leads, error: leadsError } = await supabase
+          .from('leads')
+          .select('id, contact_entity_id, is_converted_to_client')
+          .in('contact_entity_id', contactIds)
+          .eq('is_converted_to_client', false);
+        
+        if (leadsError) {
+          throw leadsError;
+        }
+        
+        leadsData = leads || [];
+      }
+
+      // Merge contact and lead data
+      const transformedPending: LeadWithContact[] = (contactsData || [])
+        .filter(contact => leadsData.some(lead => lead.contact_entity_id === contact.id))
+        .map(contact => ({
+          id: contact.id,
+          stage: contact.stage || '',
+          created_at: contact.created_at || '',
+          updated_at: contact.updated_at || '',
+          contact_entity_id: contact.id,
+          name: contact.name,
+          email: contact.email,
+          phone: contact.phone,
+          business_name: contact.business_name,
+          loan_amount: contact.loan_amount,
+          loan_type: contact.loan_type
+        }));
+
+      // Fetch processed applications today - using contact_entities
+      const { data: processedContactsToday } = await supabase
+        .from('contact_entities')
         .select('id')
         .gte('updated_at', today)
         .in('stage', ['Pre-approval', 'Documentation']);
 
       // Fetch this week's processing stats
-      const { data: weeklyData } = await supabase
-        .from('leads')
+      const { data: weeklyContactsData } = await supabase
+        .from('contact_entities')
         .select('id, created_at, updated_at')
         .gte('updated_at', weekAgo);
-
-      const transformedPending = pendingData?.map(lead => ({
-        ...lead,
-        ...lead.contact_entity
-      })) || [];
 
       setPendingApps(transformedPending);
       
       setMetrics({
         pendingApplications: transformedPending.length,
-        processedToday: processedToday?.length || 0,
+        processedToday: processedContactsToday?.length || 0,
         averageProcessingTime: 2.5, // Calculate based on actual data
         applicationsPastDue: transformedPending.filter(app => 
           new Date(app.created_at) < new Date(Date.now() - 3 * 24 * 60 * 60 * 1000)
         ).length,
-        totalThisWeek: weeklyData?.length || 0
+        totalThisWeek: weeklyContactsData?.length || 0
       });
 
     } catch (error) {
@@ -100,8 +155,9 @@ export const LoanProcessorDashboard = () => {
 
   const handleProcessApplication = async (applicationId: string) => {
     try {
+      // Update stage in contact_entities table (not leads table)
       await supabase
-        .from('leads')
+        .from('contact_entities')
         .update({ 
           stage: 'Pre-approval',
           updated_at: new Date().toISOString()
