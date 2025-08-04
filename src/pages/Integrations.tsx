@@ -692,7 +692,7 @@ export default function Integrations() {
               Adobe PDF Configuration
             </DialogTitle>
             <DialogDescription className="text-sm">
-              Current Adobe PDF Embed integration status
+              Configure your Adobe PDF Embed API credentials
             </DialogDescription>
           </DialogHeader>
           
@@ -714,6 +714,34 @@ export default function Integrations() {
                 <code className="text-xs bg-background px-1 py-0.5 rounded">
                   {adobeConfig.clientId ? `${adobeConfig.clientId.substring(0, 8)}...` : 'demo'}
                 </code>
+              </div>
+            </div>
+
+            {/* Configuration Section */}
+            <div className="space-y-3 p-3 border rounded-lg">
+              <div className="flex items-center justify-between">
+                <span className="text-sm font-medium">API Configuration</span>
+                <Badge variant="outline" className="text-xs">
+                  {adobeConfig.isDemo ? 'Demo Mode' : 'Production'}
+                </Badge>
+              </div>
+              
+              <div className="space-y-2">
+                <Label className="text-xs text-muted-foreground">
+                  To use your own Adobe Client ID instead of the demo version:
+                </Label>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => {
+                    setShowAdobeConfig(false)
+                    // Open the secret form for Adobe Client ID configuration
+                  }}
+                  className="w-full text-xs"
+                >
+                  <Settings className="w-3 h-3 mr-1" />
+                  Configure Adobe Client ID
+                </Button>
               </div>
             </div>
 
