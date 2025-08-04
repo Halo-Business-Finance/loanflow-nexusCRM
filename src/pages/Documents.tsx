@@ -75,6 +75,14 @@ export default function Documents() {
     )
   }
 
+  // Debug logging
+  console.log('Documents Debug:', {
+    userExists: !!user,
+    userId: user?.id,
+    documentsCount: documents.length,
+    loading
+  });
+
   return (
     <Layout>
       <div className="space-y-6">
