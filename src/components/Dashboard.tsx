@@ -433,25 +433,38 @@ export default function Dashboard() {
 
   return (
     <TooltipProvider delayDuration={300}>
-      <div className="space-y-6">
+      <div className="space-y-8 p-6 bg-gradient-to-br from-background via-background/95 to-background/90 min-h-screen">
         {/* Header */}
-        <div className="flex justify-between items-center">
-          <div>
-            <h1 className="text-3xl font-bold text-foreground inline-block border-b-2 border-primary dark:border-white pb-1">Dashboard</h1>
-            <p className="text-foreground">Welcome back! Here's your performance overview.</p>
-            <p className="text-sm text-foreground mt-1">{formatDateTime(currentDateTime)}</p>
+        <div className="flex justify-between items-center bg-gradient-to-r from-card/80 to-card/40 backdrop-blur-xl rounded-3xl p-8 border border-border/30 shadow-large">
+          <div className="space-y-2">
+            <div className="flex items-center gap-4">
+              <div className="w-16 h-16 rounded-2xl bg-gradient-primary flex items-center justify-center shadow-lg">
+                <TrendingUp className="w-8 h-8 text-primary-foreground" />
+              </div>
+              <div>
+                <h1 className="text-4xl font-bold bg-gradient-to-r from-foreground via-foreground/90 to-foreground/70 bg-clip-text text-transparent">
+                  Dashboard
+                </h1>
+                <p className="text-lg text-muted-foreground">Welcome back! Here's your performance overview.</p>
+              </div>
+            </div>
+            <div className="flex items-center gap-2 mt-4">
+              <Clock className="w-4 h-4 text-muted-foreground" />
+              <p className="text-sm text-muted-foreground">{formatDateTime(currentDateTime)}</p>
+            </div>
           </div>
-          <div className="flex gap-2">
+          <div className="flex gap-3">
             <Tooltip>
               <TooltipTrigger asChild>
                 <Button 
-                  variant="outline" 
+                  variant="modern" 
+                  size="lg"
                   onClick={handleRefreshData}
                   disabled={isRefreshing}
-                  className="gap-2"
+                  className="gap-3 h-12 px-6 rounded-xl shadow-md backdrop-blur-sm"
                 >
-                  <RefreshCw className={`h-4 w-4 ${isRefreshing ? 'animate-spin' : ''}`} />
-                  Refresh
+                  <RefreshCw className={`h-5 w-5 ${isRefreshing ? 'animate-spin' : ''}`} />
+                  Refresh Data
                 </Button>
               </TooltipTrigger>
               <TooltipContent>
@@ -461,7 +474,13 @@ export default function Dashboard() {
             
             <Tooltip>
               <TooltipTrigger asChild>
-                <Button className="bg-gradient-primary shadow-medium" onClick={handleNewLeadClick}>
+                <Button 
+                  variant="gradient" 
+                  size="lg"
+                  className="gap-3 h-12 px-6 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300" 
+                  onClick={handleNewLeadClick}
+                >
+                  <Users className="h-5 w-5" />
                   New Lead
                 </Button>
               </TooltipTrigger>
@@ -473,37 +492,56 @@ export default function Dashboard() {
         </div>
 
       {/* Key Metrics */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        {metrics.map((metric) => (
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
+        {metrics.map((metric, index) => (
           <Card 
             key={metric.title} 
-            className="shadow-soft hover:shadow-medium transition-all cursor-pointer hover:scale-105"
+            className="relative overflow-hidden bg-gradient-to-br from-card/90 to-card/60 backdrop-blur-xl border border-border/30 shadow-large hover:shadow-glow transition-all duration-500 cursor-pointer hover:scale-105 group rounded-2xl"
             onClick={() => handleMetricClick(metric)}
           >
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium text-foreground inline-block border-b border-primary/30 dark:border-white/30 pb-1">
+            {/* Animated background gradient */}
+            <div className="absolute inset-0 bg-gradient-to-r from-primary/5 via-accent/5 to-primary/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+            
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-3 relative z-10">
+              <CardTitle className="text-sm font-semibold text-muted-foreground uppercase tracking-wider">
                 {metric.title}
               </CardTitle>
-              <div className="flex items-center gap-2">
-                <ChevronRight className="h-3 w-3 text-muted-foreground" />
+              <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-primary/20 to-accent/20 flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                {index === 0 && <DollarSign className="h-4 w-4 text-primary" />}
+                {index === 1 && <Users className="h-4 w-4 text-accent" />}
+                {index === 2 && <Target className="h-4 w-4 text-primary" />}
+                {index === 3 && <FileText className="h-4 w-4 text-accent" />}
+                {index === 4 && <TrendingUp className="h-4 w-4 text-primary" />}
               </div>
             </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold text-foreground">{metric.value}</div>
-              <p className="text-xs text-muted-foreground">
-                {metric.change} from last month
-              </p>
+            <CardContent className="relative z-10">
+              <div className="text-3xl font-bold bg-gradient-to-r from-foreground to-foreground/80 bg-clip-text text-transparent mb-2">
+                {metric.value}
+              </div>
+              <div className="flex items-center gap-2">
+                <span className="text-xs font-medium text-accent px-2 py-1 bg-accent/10 rounded-full">
+                  {metric.change}
+                </span>
+                <span className="text-xs text-muted-foreground">from last month</span>
+              </div>
             </CardContent>
           </Card>
         ))}
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         {/* Pipeline Overview */}
-        <Card className="col-span-2 shadow-soft">
-          <CardHeader>
+        <Card className="col-span-2 bg-gradient-to-br from-card/90 to-card/60 backdrop-blur-xl border border-border/30 shadow-large rounded-2xl overflow-hidden">
+          <CardHeader className="border-b border-border/30 bg-gradient-to-r from-card/50 to-transparent">
             <div className="flex justify-between items-center">
-              <CardTitle className="text-foreground inline-block border-b-2 border-primary dark:border-white pb-1">Sales Pipeline</CardTitle>
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-xl bg-gradient-primary flex items-center justify-center">
+                  <Target className="w-5 h-5 text-primary-foreground" />
+                </div>
+                <CardTitle className="text-xl font-bold bg-gradient-to-r from-foreground to-foreground/80 bg-clip-text text-transparent">
+                  Sales Pipeline
+                </CardTitle>
+              </div>
               <div className="flex gap-2">
                 <div className="relative">
                   <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
@@ -511,29 +549,48 @@ export default function Dashboard() {
                     placeholder="Filter stages..."
                     value={pipelineFilter}
                     onChange={(e) => setPipelineFilter(e.target.value)}
-                    className="pl-10 w-40"
+                    className="pl-10 w-48 rounded-xl bg-background/50 backdrop-blur-sm border-border/30"
                   />
                 </div>
               </div>
             </div>
           </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
-              {filteredPipelineStages.map((stage) => (
+          <CardContent className="p-6">
+            <div className="space-y-6">
+              {filteredPipelineStages.map((stage, index) => (
                 <div 
                   key={stage.name} 
-                  className="space-y-2 p-3 rounded-lg hover:bg-muted/50 transition-colors cursor-pointer"
+                  className="group relative p-4 rounded-xl bg-gradient-to-r from-background/50 to-background/30 backdrop-blur-sm border border-border/20 hover:border-primary/30 transition-all duration-300 cursor-pointer hover:shadow-md hover:scale-[1.02]"
                   onClick={() => handlePipelineStageClick(stage)}
                 >
-                  <div className="flex justify-between text-sm">
-                    <span className="text-foreground font-medium dark:text-white">{stage.name}</span>
-                    <div className="flex items-center gap-2">
-                      <span className="text-muted-foreground dark:text-white">{stage.count} leads</span>
-                      <Target className="h-3 w-3 text-muted-foreground dark:text-white" />
+                  <div className="absolute inset-0 bg-gradient-to-r from-primary/5 to-accent/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-xl" />
+                  
+                  <div className="relative z-10 space-y-3">
+                    <div className="flex justify-between items-center">
+                      <div className="flex items-center gap-3">
+                        <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-primary/20 to-accent/20 flex items-center justify-center">
+                          <span className="text-sm font-bold text-primary">{index + 1}</span>
+                        </div>
+                        <span className="font-semibold text-foreground">{stage.name}</span>
+                      </div>
+                      <div className="flex items-center gap-3">
+                        <Badge variant="outline" className="bg-background/50 backdrop-blur-sm">
+                          {stage.count} leads
+                        </Badge>
+                        <ChevronRight className="h-4 w-4 text-muted-foreground group-hover:text-primary transition-colors" />
+                      </div>
+                    </div>
+                    <div className="space-y-2">
+                      <Progress 
+                        value={stage.percentage} 
+                        className="h-3 rounded-full bg-background/50 group-hover:h-4 transition-all duration-300" 
+                      />
+                      <div className="flex justify-between text-xs">
+                        <span className="text-muted-foreground">Progress</span>
+                        <span className="font-medium text-primary">{stage.percentage}% completion</span>
+                      </div>
                     </div>
                   </div>
-                  <Progress value={stage.percentage} className="h-3 hover:h-4 transition-all" />
-                  <div className="text-xs text-muted-foreground dark:text-white text-right">{stage.percentage}% completion</div>
                 </div>
               ))}
             </div>
@@ -545,122 +602,156 @@ export default function Dashboard() {
       </div>
 
       {/* Loan Close Performance */}
-      <Card className="shadow-soft">
-        <CardHeader>
-          <CardTitle className="text-foreground"><span className="inline-block border-b-2 border-primary pb-1">Loan Close Performance</span></CardTitle>
-          <p className="text-sm text-muted-foreground">Monthly closed loans vs targets and close percentage</p>
+      <Card className="bg-gradient-to-br from-card/90 to-card/60 backdrop-blur-xl border border-border/30 shadow-large rounded-2xl overflow-hidden">
+        <CardHeader className="border-b border-border/30 bg-gradient-to-r from-card/50 to-transparent">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-xl bg-gradient-accent flex items-center justify-center">
+              <TrendingUp className="w-5 h-5 text-accent-foreground" />
+            </div>
+            <div>
+              <CardTitle className="text-xl font-bold bg-gradient-to-r from-foreground to-foreground/80 bg-clip-text text-transparent">
+                Loan Close Performance
+              </CardTitle>
+              <p className="text-sm text-muted-foreground">Monthly closed loans vs targets and close percentage</p>
+            </div>
+          </div>
         </CardHeader>
-        <CardContent>
-          <ChartContainer config={chartConfig} className="h-[300px]">
-            <LineChart data={loanCloseData}>
-              <XAxis 
-                dataKey="month" 
-                tickLine={false}
-                axisLine={false}
-                tick={{ fill: 'var(--foreground)', fontSize: 12 }}
-              />
-              <YAxis 
-                yAxisId="left"
-                tickLine={false}
-                axisLine={false}
-                tick={{ fill: 'var(--foreground)', fontSize: 12 }}
-              />
-              <YAxis 
-                yAxisId="right"
-                orientation="right"
-                tickLine={false}
-                axisLine={false}
-                tick={{ fill: 'var(--foreground)', fontSize: 12 }}
-                tickFormatter={(value) => `${value}%`}
-              />
-              <ChartTooltip 
-                content={
-                  <ChartTooltipContent 
-                    labelFormatter={(label) => `${label} 2024`}
-                    formatter={(value, name) => [
-                      name === "closePercentage" ? `${value}%` : value,
-                      name === "closedLoans" ? "Closed" : 
-                      name === "targetLoans" ? "Target" : "Close %"
-                    ]}
-                  />
-                }
-              />
-              <Line
-                yAxisId="left"
-                type="monotone"
-                dataKey="closedLoans"
-                stroke="var(--color-closedLoans)"
-                strokeWidth={3}
-                dot={{ fill: "var(--color-closedLoans)", strokeWidth: 2, r: 6 }}
-                activeDot={{ r: 8, stroke: "var(--color-closedLoans)", strokeWidth: 2 }}
-              />
-              <Line
-                yAxisId="left"
-                type="monotone"
-                dataKey="targetLoans"
-                stroke="var(--color-targetLoans)"
-                strokeWidth={2}
-                strokeDasharray="5 5"
-                dot={{ fill: "var(--color-targetLoans)", strokeWidth: 2, r: 4 }}
-              />
-              <Line
-                yAxisId="right"
-                type="monotone"
-                dataKey="closePercentage"
-                stroke="var(--color-closePercentage)"
-                strokeWidth={2}
-                dot={{ fill: "var(--color-closePercentage)", strokeWidth: 2, r: 4 }}
-                activeDot={{ r: 6, stroke: "var(--color-closePercentage)", strokeWidth: 2 }}
-              />
-            </LineChart>
-          </ChartContainer>
+        <CardContent className="p-6">
+          <div className="bg-gradient-to-br from-background/50 to-background/30 backdrop-blur-sm rounded-xl p-4 border border-border/20">
+            <ChartContainer config={chartConfig} className="h-[320px]">
+              <LineChart data={loanCloseData}>
+                <XAxis 
+                  dataKey="month" 
+                  tickLine={false}
+                  axisLine={false}
+                  tick={{ fill: 'var(--foreground)', fontSize: 12 }}
+                />
+                <YAxis 
+                  yAxisId="left"
+                  tickLine={false}
+                  axisLine={false}
+                  tick={{ fill: 'var(--foreground)', fontSize: 12 }}
+                />
+                <YAxis 
+                  yAxisId="right"
+                  orientation="right"
+                  tickLine={false}
+                  axisLine={false}
+                  tick={{ fill: 'var(--foreground)', fontSize: 12 }}
+                  tickFormatter={(value) => `${value}%`}
+                />
+                <ChartTooltip 
+                  content={
+                    <ChartTooltipContent 
+                      labelFormatter={(label) => `${label} 2024`}
+                      formatter={(value, name) => [
+                        name === "closePercentage" ? `${value}%` : value,
+                        name === "closedLoans" ? "Closed" : 
+                        name === "targetLoans" ? "Target" : "Close %"
+                      ]}
+                    />
+                  }
+                />
+                <Line
+                  yAxisId="left"
+                  type="monotone"
+                  dataKey="closedLoans"
+                  stroke="var(--color-closedLoans)"
+                  strokeWidth={3}
+                  dot={{ fill: "var(--color-closedLoans)", strokeWidth: 2, r: 6 }}
+                  activeDot={{ r: 8, stroke: "var(--color-closedLoans)", strokeWidth: 2 }}
+                />
+                <Line
+                  yAxisId="left"
+                  type="monotone"
+                  dataKey="targetLoans"
+                  stroke="var(--color-targetLoans)"
+                  strokeWidth={2}
+                  strokeDasharray="5 5"
+                  dot={{ fill: "var(--color-targetLoans)", strokeWidth: 2, r: 4 }}
+                />
+                <Line
+                  yAxisId="right"
+                  type="monotone"
+                  dataKey="closePercentage"
+                  stroke="var(--color-closePercentage)"
+                  strokeWidth={2}
+                  dot={{ fill: "var(--color-closePercentage)", strokeWidth: 2, r: 4 }}
+                  activeDot={{ r: 6, stroke: "var(--color-closePercentage)", strokeWidth: 2 }}
+                />
+              </LineChart>
+            </ChartContainer>
+          </div>
         </CardContent>
       </Card>
 
       {/* Recent Leads */}
-      <Card className="shadow-soft">
-        <CardHeader>
+      <Card className="bg-gradient-to-br from-card/90 to-card/60 backdrop-blur-xl border border-border/30 shadow-large rounded-2xl overflow-hidden">
+        <CardHeader className="border-b border-border/30 bg-gradient-to-r from-card/50 to-transparent">
           <div className="flex justify-between items-center">
-            <CardTitle className="text-foreground inline-block border-b-2 border-primary pb-1">Recent Leads</CardTitle>
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary/20 to-accent/20 flex items-center justify-center">
+                <Users className="w-5 h-5 text-primary" />
+              </div>
+              <CardTitle className="text-xl font-bold bg-gradient-to-r from-foreground to-foreground/80 bg-clip-text text-transparent">
+                Recent Leads
+              </CardTitle>
+            </div>
             <div className="relative">
               <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
               <Input
                 placeholder="Search leads..."
                 value={leadsFilter}
                 onChange={(e) => setLeadsFilter(e.target.value)}
-                className="pl-10 w-40"
+                className="pl-10 w-48 rounded-xl bg-background/50 backdrop-blur-sm border-border/30"
               />
             </div>
           </div>
         </CardHeader>
-        <CardContent>
+        <CardContent className="p-6">
           <div className="space-y-4">
             {filteredLeads.map((lead, index) => (
               <div 
                 key={`lead-${index}-${lead.name}`}
-                className="flex items-center justify-between p-4 rounded-lg bg-gradient-card border hover:shadow-medium transition-all cursor-pointer hover:scale-[1.02]"
+                className="group relative p-5 rounded-xl bg-gradient-to-r from-background/60 to-background/40 backdrop-blur-sm border border-border/20 hover:border-primary/30 hover:shadow-lg transition-all duration-300 cursor-pointer hover:scale-[1.02]"
                 onClick={() => handleLeadClick(lead)}
               >
-                <div className="flex items-center gap-4">
-                  <div className="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center">
-                    <Users className="w-5 h-5 text-primary-foreground dark:text-white" />
+                <div className="absolute inset-0 bg-gradient-to-r from-primary/3 to-accent/3 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-xl" />
+                
+                <div className="relative z-10 flex items-center justify-between">
+                  <div className="flex items-center gap-4">
+                    <div className="w-12 h-12 bg-gradient-to-br from-primary/20 to-accent/20 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                      <Users className="w-6 h-6 text-primary" />
+                    </div>
+                    <div>
+                      <p className="font-semibold text-foreground text-lg">{lead.name}</p>
+                      <div className="flex items-center gap-3 mt-1">
+                        <p className="text-sm font-medium text-primary">{lead.amount}</p>
+                        <Badge variant="outline" className="text-xs bg-background/50">
+                          {lead.loanType}
+                        </Badge>
+                      </div>
+                    </div>
                   </div>
-                  <div>
-                    <p className="font-medium text-foreground dark:text-white">{lead.name}</p>
-                    <p className="text-sm text-muted-foreground dark:text-white">{lead.amount}</p>
-                    <p className="text-xs text-muted-foreground dark:text-white">Program: {lead.loanType}</p>
+                  <div className="flex items-center gap-4">
+                    <div className="text-right">
+                      <Badge 
+                        variant="outline" 
+                        className="mb-2 bg-background/50 backdrop-blur-sm"
+                      >
+                        {lead.stage}
+                      </Badge>
+                      <p className="text-xs text-muted-foreground">Last: {lead.lastContact}</p>
+                    </div>
+                    <Badge 
+                      variant={lead.priority === 'high' ? 'destructive' : 
+                              lead.priority === 'medium' ? 'default' : 'secondary'}
+                      className="capitalize"
+                    >
+                      {lead.priority}
+                    </Badge>
+                    <ChevronRight className="h-5 w-5 text-muted-foreground group-hover:text-primary group-hover:translate-x-1 transition-all duration-300" />
                   </div>
-                </div>
-                <div className="flex items-center gap-4">
-                  <Badge variant="outline">{lead.stage}</Badge>
-                  <span className="text-sm text-muted-foreground dark:text-white">{lead.lastContact}</span>
-                  <Badge 
-                    variant={lead.priority === 'high' ? 'destructive' : 
-                            lead.priority === 'medium' ? 'default' : 'secondary'}
-                  >
-                    {lead.priority}
-                  </Badge>
-                  <ChevronRight className="h-4 w-4 text-muted-foreground dark:text-white" />
                 </div>
               </div>
             ))}
