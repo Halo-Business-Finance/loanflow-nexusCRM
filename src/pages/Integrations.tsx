@@ -685,120 +685,85 @@ export default function Integrations() {
 
       {/* Adobe Configuration Dialog */}
       <Dialog open={showAdobeConfig} onOpenChange={setShowAdobeConfig}>
-        <DialogContent className="max-w-2xl">
+        <DialogContent className="max-w-md">
           <DialogHeader>
-            <DialogTitle className="flex items-center gap-3">
-              <div className="p-2 bg-red-50 rounded-lg">
-                <FileImage className="w-5 h-5 text-red-600" />
-              </div>
-              Adobe PDF Embed Configuration
+            <DialogTitle className="flex items-center gap-2 text-lg">
+              <FileImage className="w-5 h-5 text-red-600" />
+              Adobe PDF Configuration
             </DialogTitle>
-            <DialogDescription>
-              Configure your Adobe PDF Embed API integration for enhanced document viewing capabilities.
+            <DialogDescription className="text-sm">
+              Current Adobe PDF Embed integration status
             </DialogDescription>
           </DialogHeader>
           
-          <div className="space-y-6 py-4">
-            {/* Current Configuration */}
-            <div className="bg-muted/30 rounded-lg p-4 space-y-3">
-              <h4 className="font-medium text-sm">Current Configuration</h4>
-              <div className="grid grid-cols-2 gap-4 text-sm">
-                <div>
-                  <Label className="text-muted-foreground">Client ID</Label>
-                  <p className="font-mono bg-background/50 px-2 py-1 rounded text-xs">
-                    {adobeConfig.clientId || 'dc-pdf-embed-demo'}
-                  </p>
+          <div className="space-y-4 py-2">
+            {/* Current Status */}
+            <div className="bg-muted/30 rounded-lg p-3 space-y-2">
+              <div className="flex items-center justify-between">
+                <span className="text-sm font-medium">Status</span>
+                <Badge className="bg-green-50 text-green-700 border-green-200 text-xs">Connected</Badge>
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="text-sm text-muted-foreground">License</span>
+                <Badge variant={adobeConfig.isDemo ? "secondary" : "default"} className="text-xs">
+                  {adobeConfig.isDemo ? 'Demo' : 'Licensed'}
+                </Badge>
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="text-sm text-muted-foreground">Client ID</span>
+                <code className="text-xs bg-background px-1 py-0.5 rounded">
+                  {adobeConfig.clientId ? `${adobeConfig.clientId.substring(0, 8)}...` : 'demo'}
+                </code>
+              </div>
+            </div>
+
+            {/* Quick Features */}
+            <div className="space-y-2">
+              <span className="text-sm font-medium">Features Enabled</span>
+              <div className="grid grid-cols-2 gap-1 text-xs">
+                <div className="flex items-center gap-1">
+                  <div className="w-1 h-1 bg-green-500 rounded-full" />
+                  <span>PDF Viewer</span>
                 </div>
-                <div>
-                  <Label className="text-muted-foreground">License Type</Label>
-                  <Badge variant={adobeConfig.isDemo ? "secondary" : "default"} className="text-xs">
-                    {adobeConfig.isDemo ? 'Demo License' : 'Licensed'}
-                  </Badge>
+                <div className="flex items-center gap-1">
+                  <div className="w-1 h-1 bg-green-500 rounded-full" />
+                  <span>Document Embed</span>
+                </div>
+                <div className="flex items-center gap-1">
+                  <div className="w-1 h-1 bg-green-500 rounded-full" />
+                  <span>Zoom Controls</span>
+                </div>
+                <div className="flex items-center gap-1">
+                  <div className="w-1 h-1 bg-green-500 rounded-full" />
+                  <span>Mobile Ready</span>
                 </div>
               </div>
             </div>
 
-            {/* Configuration Status */}
-            <div className="space-y-4">
-              <h4 className="font-medium text-sm">Integration Status</h4>
-              <div className="grid gap-3">
-                <div className="flex items-center justify-between p-3 bg-background/50 rounded-lg">
-                  <div className="flex items-center gap-3">
-                    <CheckCircle className="w-4 h-4 text-green-500" />
-                    <div>
-                      <p className="font-medium text-sm">Adobe SDK</p>
-                      <p className="text-xs text-muted-foreground">Successfully loaded and configured</p>
-                    </div>
-                  </div>
-                  <Badge className="bg-green-50 text-green-700 border-green-200">Active</Badge>
-                </div>
-                
-                <div className="flex items-center justify-between p-3 bg-background/50 rounded-lg">
-                  <div className="flex items-center gap-3">
-                    <CheckCircle className="w-4 h-4 text-green-500" />
-                    <div>
-                      <p className="font-medium text-sm">PDF Viewer</p>
-                      <p className="text-xs text-muted-foreground">Enhanced PDF viewing enabled</p>
-                    </div>
-                  </div>
-                  <Badge className="bg-green-50 text-green-700 border-green-200">Connected</Badge>
-                </div>
-
-                <div className="flex items-center justify-between p-3 bg-background/50 rounded-lg">
-                  <div className="flex items-center gap-3">
-                    <FileText className="w-4 h-4 text-blue-500" />
-                    <div>
-                      <p className="font-medium text-sm">Document Storage</p>
-                      <p className="text-xs text-muted-foreground">Supabase storage integration active</p>
-                    </div>
-                  </div>
-                  <Badge className="bg-blue-50 text-blue-700 border-blue-200">Ready</Badge>
-                </div>
-              </div>
-            </div>
-
-            {/* Features & Capabilities */}
-            <div className="space-y-4">
-              <h4 className="font-medium text-sm">Available Features</h4>
-              <div className="grid grid-cols-2 gap-3 text-sm">
-                {[
-                  "Professional PDF viewing",
-                  "Document embedding",
-                  "Zoom and navigation controls",
-                  "Search within documents",
-                  "Mobile-responsive design",
-                  "Secure document access"
-                ].map((feature, index) => (
-                  <div key={index} className="flex items-center gap-2">
-                    <div className="w-1.5 h-1.5 bg-green-500 rounded-full" />
-                    <span className="text-muted-foreground">{feature}</span>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            {/* Configuration Actions */}
-            <div className="flex gap-3 pt-4 border-t">
+            {/* Actions */}
+            <div className="flex gap-2 pt-2">
               <Button
                 variant="outline"
+                size="sm"
                 onClick={() => window.open('https://developer.adobe.com/document-services/docs/overview/pdf-embed-api/', '_blank')}
-                className="flex-1"
+                className="flex-1 text-xs"
               >
-                <ExternalLink className="w-4 h-4 mr-2" />
-                Adobe Documentation
+                <ExternalLink className="w-3 h-3 mr-1" />
+                Docs
               </Button>
               <Button
+                size="sm"
                 onClick={() => {
                   toast({
-                    title: "Adobe Integration",
-                    description: "Adobe PDF Embed is successfully configured and ready to use.",
+                    title: "Adobe Integration Active",
+                    description: "PDF viewer is ready to use.",
                   })
                   setShowAdobeConfig(false)
                 }}
-                className="flex-1"
+                className="flex-1 text-xs"
               >
-                <CheckCircle className="w-4 h-4 mr-2" />
-                Configuration Complete
+                <CheckCircle className="w-3 h-3 mr-1" />
+                Done
               </Button>
             </div>
           </div>
