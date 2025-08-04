@@ -80,9 +80,9 @@ All colors MUST be HSL.
     --popover: 220 23% 12%;
     --popover-foreground: 220 10% 95%;
 
-    --primary: 220 91% 25%;
-    --primary-foreground: 220 10% 95%;
-    --primary-glow: 220 80% 45%;
+    --primary: 0 0% 100%;
+    --primary-foreground: 220 25% 8%;
+    --primary-glow: 0 0% 90%;
 
     --secondary: 220 25% 18%;
     --secondary-foreground: 220 10% 95%;
@@ -90,7 +90,7 @@ All colors MUST be HSL.
     --muted: 220 20% 15%;
     --muted-foreground: 0 0% 100%;
 
-    --accent: 142 76% 46%;
+    --accent: 0 0% 100%;
     --accent-foreground: 220 25% 8%;
 
     --warning: 38 92% 60%;
@@ -101,17 +101,17 @@ All colors MUST be HSL.
 
     --border: 220 25% 20%;
     --input: 220 25% 20%;
-    --ring: 220 91% 35%;
+    --ring: 0 0% 100%;
 
-    --gradient-primary: linear-gradient(135deg, hsl(220 91% 35%), hsl(220 80% 45%));
-    --gradient-blue: linear-gradient(135deg, hsl(212 90% 65%), hsl(212 80% 75%));
-    --gradient-green: linear-gradient(135deg, hsl(142 76% 55%), hsl(142 65% 65%));
-    --gradient-orange: linear-gradient(135deg, hsl(24 95% 58%), hsl(24 85% 68%));
-    --gradient-purple: linear-gradient(135deg, hsl(262 90% 60%), hsl(262 80% 70%));
-    --gradient-red: linear-gradient(135deg, hsl(0 84% 65%), hsl(0 74% 75%));
-    --shadow-glow: 0 0 20px hsl(220 91% 35% / 0.15);
+    --gradient-primary: linear-gradient(135deg, hsl(0 0% 100%), hsl(0 0% 90%));
+    --gradient-blue: linear-gradient(135deg, hsl(0 0% 100%), hsl(0 0% 90%));
+    --gradient-green: linear-gradient(135deg, hsl(0 0% 100%), hsl(0 0% 90%));
+    --gradient-orange: linear-gradient(135deg, hsl(0 0% 100%), hsl(0 0% 90%));
+    --gradient-purple: linear-gradient(135deg, hsl(0 0% 100%), hsl(0 0% 90%));
+    --gradient-red: linear-gradient(135deg, hsl(0 0% 100%), hsl(0 0% 90%));
+    --shadow-glow: 0 0 20px hsl(0 0% 100% / 0.15);
     --gradient-card: linear-gradient(145deg, hsl(220 23% 12%), hsl(220 20% 15%));
-    --gradient-accent: linear-gradient(135deg, hsl(142 76% 46%), hsl(142 60% 55%));
+    --gradient-accent: linear-gradient(135deg, hsl(0 0% 100%), hsl(0 0% 90%));
 
     --sidebar-background: 220 30% 6%;
     --sidebar-foreground: 220 10% 95%;
@@ -120,7 +120,7 @@ All colors MUST be HSL.
     --sidebar-accent: 220 25% 15%;
     --sidebar-accent-foreground: 220 10% 95%;
     --sidebar-border: 220 25% 18%;
-    --sidebar-ring: 220 91% 35%;
+    --sidebar-ring: 0 0% 100%;
   }
 }
 
