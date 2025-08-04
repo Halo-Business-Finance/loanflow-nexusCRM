@@ -16,6 +16,8 @@ interface DocumentViewerProps {
 export function DocumentViewer({ document, isOpen, onClose }: DocumentViewerProps) {
   const [loading, setLoading] = useState(false);
   const [documentUrl, setDocumentUrl] = useState<string | null>(null);
+  const [viewerError, setViewerError] = useState(false);
+  const [viewerType, setViewerType] = useState<'google' | 'pdf.js' | 'direct'>('google');
   const { toast } = useToast();
 
   // Determine file types
@@ -138,6 +140,8 @@ export function DocumentViewer({ document, isOpen, onClose }: DocumentViewerProp
     }
     if (!isOpen) {
       setDocumentUrl(null); // Reset URL when modal closes
+      setViewerError(false); // Reset viewer error state
+      setViewerType('google'); // Reset to default viewer
     }
   }, [isOpen, document?.file_path, documentUrl]);
 
@@ -220,7 +224,7 @@ export function DocumentViewer({ document, isOpen, onClose }: DocumentViewerProp
                       <FileText className="h-4 w-4 text-red-600" />
                       <span className="text-sm font-medium">PDF Document</span>
                       <Badge variant="default" className="text-xs">
-                        PDF Reader: PDF.js Viewer
+                        PDF Reader: {viewerType === 'google' ? 'Google Docs' : viewerType === 'pdf.js' ? 'PDF.js' : 'Fallback'}
                       </Badge>
                     </div>
                     <div className="flex gap-2">
@@ -244,13 +248,96 @@ export function DocumentViewer({ document, isOpen, onClose }: DocumentViewerProp
                     </div>
                   </div>
                   
-                  {/* PDF.js Viewer - This bypasses iframe restrictions */}
+                  {/* Multi-fallback PDF viewer */}
                   <div className="flex-1">
-                    <iframe
-                      src={`https://mozilla.github.io/pdf.js/web/viewer.html?file=${encodeURIComponent(documentUrl)}`}
-                      className="w-full h-full border-0"
-                      title={document.document_name}
-                    />
+                    {(() => {
+                      console.log('PDF Viewer Debug:', {
+                        documentUrl,
+                        viewerType,
+                        viewerError,
+                        encodedUrl: encodeURIComponent(documentUrl),
+                        googleViewerUrl: `https://docs.google.com/gviewer?url=${encodeURIComponent(documentUrl)}&embedded=true`,
+                        pdfJsUrl: `https://mozilla.github.io/pdf.js/web/viewer.html?file=${encodeURIComponent(documentUrl)}`
+                      });
+                      
+                      if (viewerError && viewerType === 'google') {
+                        console.log('Google viewer failed, trying PDF.js');
+                        setViewerType('pdf.js');
+                        setViewerError(false);
+                      }
+                      
+                      // Render based on current viewer type
+                      if (viewerType === 'google' && !viewerError) {
+                        return (
+                          <iframe
+                            src={`https://docs.google.com/gviewer?url=${encodeURIComponent(documentUrl)}&embedded=true`}
+                            className="w-full h-full border-0"
+                            title={document.document_name}
+                            onError={(e) => {
+                              console.error('Google PDF viewer error:', e);
+                              setViewerError(true);
+                            }}
+                            onLoad={() => {
+                              console.log('Google PDF viewer loaded successfully');
+                            }}
+                          />
+                        );
+                      } else if (viewerType === 'pdf.js') {
+                        return (
+                          <iframe
+                            src={`https://mozilla.github.io/pdf.js/web/viewer.html?file=${encodeURIComponent(documentUrl)}`}
+                            className="w-full h-full border-0"
+                            title={document.document_name}
+                            onError={(e) => {
+                              console.error('PDF.js viewer error:', e);
+                              setViewerType('direct');
+                              setViewerError(true);
+                            }}
+                            onLoad={() => {
+                              console.log('PDF.js viewer loaded successfully');
+                            }}
+                          />
+                        );
+                      } else {
+                        // Direct fallback with message
+                        return (
+                          <div className="w-full h-full flex flex-col items-center justify-center bg-muted/50">
+                            <div className="text-center space-y-4">
+                              <div className="w-20 h-24 bg-gradient-to-b from-red-50 to-red-100 rounded-lg flex items-center justify-center mx-auto border-2 border-red-200">
+                                <FileText className="h-10 w-10 text-red-600" />
+                              </div>
+                              <div>
+                                <h3 className="font-medium text-lg">PDF Preview Unavailable</h3>
+                                <p className="text-sm text-muted-foreground mt-1">
+                                  The PDF viewer encountered an issue, but you can still access the file.
+                                </p>
+                              </div>
+                              <div className="flex gap-2">
+                                <Button onClick={() => window.open(documentUrl, '_blank')} className="gap-2">
+                                  <ExternalLink className="h-4 w-4" />
+                                  Open PDF in Browser
+                                </Button>
+                                <Button variant="outline" onClick={downloadDocument} className="gap-2">
+                                  <Download className="h-4 w-4" />
+                                  Download PDF
+                                </Button>
+                              </div>
+                              <Button 
+                                variant="outline" 
+                                size="sm"
+                                onClick={() => {
+                                  setViewerType('google');
+                                  setViewerError(false);
+                                }}
+                                className="gap-1"
+                              >
+                                Try Again
+                              </Button>
+                            </div>
+                          </div>
+                        );
+                      }
+                    })()}
                   </div>
                 </div>
               ) : isImage ? (
