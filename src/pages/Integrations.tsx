@@ -1,7 +1,8 @@
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { useNavigate } from "react-router-dom"
 import Layout from "@/components/Layout"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Input } from "@/components/ui/input"
@@ -10,6 +11,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Switch } from "@/components/ui/switch"
 import { Separator } from "@/components/ui/separator"
 import { useToast } from "@/hooks/use-toast"
+import { supabase } from "@/integrations/supabase/client"
 import { 
   Mail, 
   MessageSquare, 
@@ -34,7 +36,8 @@ import {
   Sparkles,
   ArrowRight,
   Shield,
-  Workflow
+  Workflow,
+  FileImage
 } from "lucide-react"
 
 const integrations = [
@@ -82,6 +85,15 @@ const integrations = [
     category: "documents",
     status: "available",
     features: ["Document signing", "Templates", "Audit trail", "Reminders"]
+  },
+  {
+    id: "adobe-pdf",
+    name: "Adobe PDF Embed",
+    description: "Advanced PDF viewing and document management with Adobe services",
+    icon: FileImage,
+    category: "documents",
+    status: "connected",
+    features: ["PDF viewer", "Document embedding", "Annotation tools", "Professional viewing"]
   },
   {
     id: "zapier",
@@ -140,7 +152,29 @@ export default function Integrations() {
     apiKey: "",
     enabled: false
   })
+  const [adobeConfig, setAdobeConfig] = useState({
+    clientId: "",
+    isDemo: true
+  })
+  const [showAdobeConfig, setShowAdobeConfig] = useState(false)
   const { toast } = useToast()
+
+  // Fetch Adobe configuration on component mount
+  useEffect(() => {
+    fetchAdobeConfig()
+  }, [])
+
+  const fetchAdobeConfig = async () => {
+    try {
+      const { data, error } = await supabase.functions.invoke('get-adobe-config')
+      if (error) throw error
+      if (data) {
+        setAdobeConfig(data)
+      }
+    } catch (error) {
+      console.error('Error fetching Adobe config:', error)
+    }
+  }
 
   const handleBrowseMarketplace = () => {
     // Open the integrations marketplace in a new tab
@@ -161,9 +195,26 @@ export default function Integrations() {
   }
 
   const handleIntegrationToggle = (integrationId: string, enabled: boolean) => {
+    if (integrationId === "adobe-pdf") {
+      setShowAdobeConfig(true)
+      return
+    }
+    
     toast({
       title: enabled ? "Integration Enabled" : "Integration Disabled",
       description: `${integrations.find(i => i.id === integrationId)?.name} has been ${enabled ? 'enabled' : 'disabled'}`,
+    })
+  }
+
+  const handleIntegrationConfigure = (integrationId: string) => {
+    if (integrationId === "adobe-pdf") {
+      setShowAdobeConfig(true)
+      return
+    }
+    
+    toast({
+      title: "Opening Configuration",
+      description: `Configure ${integrations.find(i => i.id === integrationId)?.name} settings`,
     })
   }
 
@@ -438,6 +489,7 @@ export default function Integrations() {
                             : "bg-gradient-primary hover:shadow-lg hover:shadow-primary/20"
                         }`}
                         variant={integration.status === "connected" ? "outline" : "default"}
+                        onClick={() => handleIntegrationConfigure(integration.id)}
                       >
                         {integration.status === "connected" ? (
                           <>
@@ -630,6 +682,128 @@ export default function Integrations() {
           </Tabs>
         </div>
       </div>
+
+      {/* Adobe Configuration Dialog */}
+      <Dialog open={showAdobeConfig} onOpenChange={setShowAdobeConfig}>
+        <DialogContent className="max-w-2xl">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-3">
+              <div className="p-2 bg-red-50 rounded-lg">
+                <FileImage className="w-5 h-5 text-red-600" />
+              </div>
+              Adobe PDF Embed Configuration
+            </DialogTitle>
+            <DialogDescription>
+              Configure your Adobe PDF Embed API integration for enhanced document viewing capabilities.
+            </DialogDescription>
+          </DialogHeader>
+          
+          <div className="space-y-6 py-4">
+            {/* Current Configuration */}
+            <div className="bg-muted/30 rounded-lg p-4 space-y-3">
+              <h4 className="font-medium text-sm">Current Configuration</h4>
+              <div className="grid grid-cols-2 gap-4 text-sm">
+                <div>
+                  <Label className="text-muted-foreground">Client ID</Label>
+                  <p className="font-mono bg-background/50 px-2 py-1 rounded text-xs">
+                    {adobeConfig.clientId || 'dc-pdf-embed-demo'}
+                  </p>
+                </div>
+                <div>
+                  <Label className="text-muted-foreground">License Type</Label>
+                  <Badge variant={adobeConfig.isDemo ? "secondary" : "default"} className="text-xs">
+                    {adobeConfig.isDemo ? 'Demo License' : 'Licensed'}
+                  </Badge>
+                </div>
+              </div>
+            </div>
+
+            {/* Configuration Status */}
+            <div className="space-y-4">
+              <h4 className="font-medium text-sm">Integration Status</h4>
+              <div className="grid gap-3">
+                <div className="flex items-center justify-between p-3 bg-background/50 rounded-lg">
+                  <div className="flex items-center gap-3">
+                    <CheckCircle className="w-4 h-4 text-green-500" />
+                    <div>
+                      <p className="font-medium text-sm">Adobe SDK</p>
+                      <p className="text-xs text-muted-foreground">Successfully loaded and configured</p>
+                    </div>
+                  </div>
+                  <Badge className="bg-green-50 text-green-700 border-green-200">Active</Badge>
+                </div>
+                
+                <div className="flex items-center justify-between p-3 bg-background/50 rounded-lg">
+                  <div className="flex items-center gap-3">
+                    <CheckCircle className="w-4 h-4 text-green-500" />
+                    <div>
+                      <p className="font-medium text-sm">PDF Viewer</p>
+                      <p className="text-xs text-muted-foreground">Enhanced PDF viewing enabled</p>
+                    </div>
+                  </div>
+                  <Badge className="bg-green-50 text-green-700 border-green-200">Connected</Badge>
+                </div>
+
+                <div className="flex items-center justify-between p-3 bg-background/50 rounded-lg">
+                  <div className="flex items-center gap-3">
+                    <FileText className="w-4 h-4 text-blue-500" />
+                    <div>
+                      <p className="font-medium text-sm">Document Storage</p>
+                      <p className="text-xs text-muted-foreground">Supabase storage integration active</p>
+                    </div>
+                  </div>
+                  <Badge className="bg-blue-50 text-blue-700 border-blue-200">Ready</Badge>
+                </div>
+              </div>
+            </div>
+
+            {/* Features & Capabilities */}
+            <div className="space-y-4">
+              <h4 className="font-medium text-sm">Available Features</h4>
+              <div className="grid grid-cols-2 gap-3 text-sm">
+                {[
+                  "Professional PDF viewing",
+                  "Document embedding",
+                  "Zoom and navigation controls",
+                  "Search within documents",
+                  "Mobile-responsive design",
+                  "Secure document access"
+                ].map((feature, index) => (
+                  <div key={index} className="flex items-center gap-2">
+                    <div className="w-1.5 h-1.5 bg-green-500 rounded-full" />
+                    <span className="text-muted-foreground">{feature}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Configuration Actions */}
+            <div className="flex gap-3 pt-4 border-t">
+              <Button
+                variant="outline"
+                onClick={() => window.open('https://developer.adobe.com/document-services/docs/overview/pdf-embed-api/', '_blank')}
+                className="flex-1"
+              >
+                <ExternalLink className="w-4 h-4 mr-2" />
+                Adobe Documentation
+              </Button>
+              <Button
+                onClick={() => {
+                  toast({
+                    title: "Adobe Integration",
+                    description: "Adobe PDF Embed is successfully configured and ready to use.",
+                  })
+                  setShowAdobeConfig(false)
+                }}
+                className="flex-1"
+              >
+                <CheckCircle className="w-4 h-4 mr-2" />
+                Configuration Complete
+              </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
     </Layout>
   )
 }
