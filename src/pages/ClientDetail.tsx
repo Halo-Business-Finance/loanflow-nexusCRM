@@ -554,8 +554,7 @@ export default function ClientDetail() {
           {/* Client Overview */}
           <Card>
             <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <User className="w-5 h-5" />
+              <CardTitle>
                 Client Overview
               </CardTitle>
             </CardHeader>
@@ -580,8 +579,7 @@ export default function ClientDetail() {
           {/* Client Information */}
           <Card>
             <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <User className="w-5 h-5" />
+              <CardTitle>
                 Client Information
               </CardTitle>
             </CardHeader>
@@ -702,8 +700,7 @@ export default function ClientDetail() {
           {/* Business Information */}
           <Card>
             <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Building className="w-5 h-5" />
+              <CardTitle>
                 Business Information
               </CardTitle>
             </CardHeader>
@@ -876,8 +873,7 @@ export default function ClientDetail() {
           {/* Financial Information */}
           <Card>
             <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <DollarSign className="w-5 h-5" />
+              <CardTitle>
                 Financial Information
               </CardTitle>
             </CardHeader>
@@ -964,8 +960,7 @@ export default function ClientDetail() {
           {(client.owns_property || client.property_payment_amount || isEditing) && (
             <Card>
               <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Home className="w-5 h-5" />
+                <CardTitle>
                   Property Information
                 </CardTitle>
               </CardHeader>
@@ -996,8 +991,7 @@ export default function ClientDetail() {
           {/* Loan Information */}
           <Card>
             <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <DollarSign className="w-5 h-5" />
+              <CardTitle>
                 Loan Information
               </CardTitle>
             </CardHeader>
@@ -1200,8 +1194,7 @@ export default function ClientDetail() {
           {/* Loan Requests Section */}
           <Card>
             <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <DollarSign className="w-5 h-5" />
+              <CardTitle>
                 Loan Requests
               </CardTitle>
             </CardHeader>
@@ -1216,8 +1209,7 @@ export default function ClientDetail() {
           {(client.pos_system || client.monthly_processing_volume || client.average_transaction_size || client.processor_name || client.current_processing_rate || isEditing) && (
             <Card>
               <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <ShoppingCart className="w-5 h-5" />
+                <CardTitle>
                   POS Information
                 </CardTitle>
               </CardHeader>
@@ -1318,8 +1310,7 @@ export default function ClientDetail() {
           {/* Loan Management */}
           <Card>
             <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <DollarSign className="w-5 h-5" />
+              <CardTitle>
                 Loan Management
               </CardTitle>
             </CardHeader>
@@ -1361,8 +1352,7 @@ export default function ClientDetail() {
           {/* Call Notes Section */}
           <Card>
             <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Phone className="w-5 h-5" />
+              <CardTitle>
                 Call Notes
               </CardTitle>
             </CardHeader>

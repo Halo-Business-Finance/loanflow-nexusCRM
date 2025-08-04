@@ -865,8 +865,7 @@ export default function LeadDetail() {
           {/* Lead Information */}
           <Card>
             <CardHeader>
-              <CardTitle className="flex items-center gap-2 text-foreground">
-                <User className="w-5 h-5" />
+              <CardTitle className="text-foreground">
                 Lead Information
               </CardTitle>
             </CardHeader>
@@ -1038,8 +1037,7 @@ export default function LeadDetail() {
           {/* Business Information */}
           <Card>
             <CardHeader>
-              <CardTitle className="flex items-center gap-2 text-foreground">
-                <Building className="w-5 h-5" />
+              <CardTitle className="text-foreground">
                 Business Information
               </CardTitle>
             </CardHeader>
@@ -1338,8 +1336,7 @@ export default function LeadDetail() {
           {/* POS Information */}
           <Card>
             <CardHeader>
-              <CardTitle className="flex items-center gap-2 text-foreground">
-                <ShoppingCart className="w-5 h-5" />
+              <CardTitle className="text-foreground">
                 POS Information
               </CardTitle>
             </CardHeader>
@@ -1451,8 +1448,7 @@ export default function LeadDetail() {
           {/* Loan Information */}
           <Card>
             <CardHeader>
-              <CardTitle className="flex items-center gap-2 text-foreground">
-                <DollarSign className="w-5 h-5" />
+              <CardTitle className="text-foreground">
                 Loan Information
               </CardTitle>
             </CardHeader>
@@ -1675,8 +1671,7 @@ export default function LeadDetail() {
         {/* Loan Requests Section */}
         <Card>
           <CardHeader>
-            <CardTitle className="flex items-center gap-2 text-foreground">
-              <DollarSign className="w-5 h-5" />
+            <CardTitle className="text-foreground">
               Loan Requests
             </CardTitle>
           </CardHeader>
@@ -1717,8 +1712,7 @@ export default function LeadDetail() {
         {/* Call Notes Section */}
         <Card>
           <CardHeader>
-            <CardTitle className="flex items-center gap-2 text-foreground">
-              <PhoneIcon className="w-5 h-5" />
+            <CardTitle className="text-foreground">
               Call Notes
             </CardTitle>
           </CardHeader>
@@ -1761,8 +1755,7 @@ export default function LeadDetail() {
         {lead.is_converted_to_client && client && (
           <Card>
             <CardHeader>
-              <CardTitle className="flex items-center gap-2 text-foreground">
-                <UserCheck className="w-5 h-5" />
+              <CardTitle className="text-foreground">
                 Existing Client Information
               </CardTitle>
             </CardHeader>
