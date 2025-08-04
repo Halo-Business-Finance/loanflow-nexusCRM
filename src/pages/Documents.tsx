@@ -76,11 +76,12 @@ export default function Documents() {
   }
 
   // Debug logging
-  console.log('Documents Debug:', {
-    userExists: !!user,
-    userId: user?.id,
-    documentsCount: documents.length,
-    loading
+  console.log('Documents Debug:', { 
+    userExists: !!user, 
+    userId: user?.id, 
+    documentsCount: documents.length, 
+    loading,
+    documentsData: documents.slice(0, 3) // Show first 3 documents for debugging
   });
 
   return (
