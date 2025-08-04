@@ -157,6 +157,7 @@ export default function Integrations() {
     isDemo: true
   })
   const [showAdobeConfig, setShowAdobeConfig] = useState(false)
+  const [showAdobeSecretForm, setShowAdobeSecretForm] = useState(false)
   const { toast } = useToast()
 
   // Fetch Adobe configuration on component mount
@@ -735,7 +736,11 @@ export default function Integrations() {
                   size="sm"
                   onClick={() => {
                     setShowAdobeConfig(false)
-                    // Open the secret form for Adobe Client ID configuration
+                    setShowAdobeSecretForm(true)
+                    toast({
+                      title: "Adobe Configuration",
+                      description: "Please enter your Adobe Client ID to upgrade from demo to licensed version.",
+                    })
                   }}
                   className="w-full text-xs"
                 >
