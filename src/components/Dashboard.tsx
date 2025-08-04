@@ -490,18 +490,18 @@ export default function Dashboard() {
         </div>
 
       {/* Key Metrics */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4">
         {metrics.map((metric, index) => (
           <Card 
             key={metric.title} 
-            className="relative bg-gradient-to-br from-card/80 to-card/50 backdrop-blur-sm border border-border/20 shadow-md hover:shadow-lg transition-all duration-300 cursor-pointer hover:scale-105 group rounded-lg"
+            className="relative bg-gradient-to-br from-card/80 to-card/50 backdrop-blur-sm border border-border/20 shadow-md hover:shadow-lg transition-all duration-300 cursor-pointer hover:scale-105 group rounded-lg min-w-0"
             onClick={() => handleMetricClick(metric)}
           >            
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
+              <CardTitle className="text-xs font-medium text-muted-foreground uppercase tracking-wide truncate pr-2">
                 {metric.title}
               </CardTitle>
-              <div className="w-6 h-6 rounded-md bg-primary/10 flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+              <div className="w-6 h-6 rounded-md bg-primary/10 flex items-center justify-center group-hover:scale-110 transition-transform duration-300 flex-shrink-0">
                 {index === 0 && <DollarSign className="h-3 w-3 text-primary" />}
                 {index === 1 && <Users className="h-3 w-3 text-accent" />}
                 {index === 2 && <Target className="h-3 w-3 text-primary" />}
@@ -510,14 +510,14 @@ export default function Dashboard() {
               </div>
             </CardHeader>
             <CardContent className="pt-0">
-              <div className="text-2xl font-bold text-foreground mb-1">
+              <div className="text-2xl font-bold text-foreground mb-1 truncate">
                 {metric.value}
               </div>
               <div className="flex items-center gap-1">
-                <span className="text-xs font-medium text-accent px-2 py-0.5 bg-accent/10 rounded">
+                <span className="text-xs font-medium text-accent px-2 py-0.5 bg-accent/10 rounded flex-shrink-0">
                   {metric.change}
                 </span>
-                <span className="text-xs text-muted-foreground">vs last month</span>
+                <span className="text-xs text-muted-foreground truncate">vs last month</span>
               </div>
             </CardContent>
           </Card>
