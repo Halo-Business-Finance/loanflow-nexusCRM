@@ -67,7 +67,6 @@ export default function LeadDocuments() {
           )
         `)
         .eq('id', leadId)
-        .eq('user_id', user?.id)
         .maybeSingle()
 
       if (error) throw error
