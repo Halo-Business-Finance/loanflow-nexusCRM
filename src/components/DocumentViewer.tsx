@@ -249,10 +249,19 @@ export function DocumentViewer({ document, isOpen, onClose }: DocumentViewerProp
 
   // Load document URL when modal opens
   useEffect(() => {
+    console.log('DocumentViewer useEffect triggered:', { 
+      isOpen, 
+      documentPath: document?.file_path, 
+      hasDocumentUrl: !!documentUrl,
+      documentName: document?.document_name 
+    });
+    
     if (isOpen && document?.file_path && !documentUrl) {
+      console.log('Calling handleViewDocument for:', document.file_path);
       handleViewDocument();
     }
     if (!isOpen) {
+      console.log('Modal closed, resetting state');
       // Stop tracking when modal closes
       if (isTracking) {
         stopTracking();
