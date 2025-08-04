@@ -92,12 +92,35 @@ export function DocumentUploadModal({ isOpen, onClose, onUpload, preSelectedLead
   };
 
   const handleUpload = async () => {
-    if (!selectedFile || !selectedLead || !documentType || !documentName) return;
+    console.log('Upload button clicked!');
+    console.log('Form state:', { selectedFile, selectedLead, documentType, documentName });
+    
+    if (!selectedFile || !selectedLead || !documentType || !documentName) {
+      console.log('Missing required fields:', {
+        hasFile: !!selectedFile,
+        hasLead: !!selectedLead,
+        hasDocType: !!documentType,
+        hasDocName: !!documentName
+      });
+      return;
+    }
 
     setUploading(true);
     try {
       const selectedLeadData = leads.find(lead => lead.id === selectedLead);
-      if (!selectedLeadData) return;
+      if (!selectedLeadData) {
+        console.log('Selected lead not found in leads array');
+        return;
+      }
+
+      console.log('Calling onUpload with:', {
+        leadId: selectedLead,
+        contactEntityId: selectedLeadData.contact_entity_id,
+        fileName: selectedFile.name,
+        documentType,
+        notes,
+        documentName
+      });
 
       await onUpload(
         selectedLead,
