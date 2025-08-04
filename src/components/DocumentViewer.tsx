@@ -42,7 +42,13 @@ export function DocumentViewer({ document, isOpen, onClose }: DocumentViewerProp
   const [loading, setLoading] = useState(false);
   const [documentUrl, setDocumentUrl] = useState<string | null>(null);
   const [viewerError, setViewerError] = useState(false);
-  const [adobeConfig, setAdobeConfig] = useState<{clientId: string, isDemo: boolean} | null>(null);
+  const [adobeConfig, setAdobeConfig] = useState<{
+    clientId: string; 
+    isDemo: boolean;
+    hasApiKey?: boolean;
+    status?: string;
+    features?: any;
+  } | null>(null);
   const [adobeView, setAdobeView] = useState<any>(null);
   const viewerRef = useRef<HTMLDivElement>(null);
   const { toast } = useToast();
@@ -472,10 +478,16 @@ export function DocumentViewer({ document, isOpen, onClose }: DocumentViewerProp
                           <Button 
                             variant="outline" 
                             size="sm"
-                            onClick={() => {
+                            onClick={async () => {
                               console.log('Retrying Adobe viewer initialization...');
                               setViewerError(false);
                               setAdobeView(null);
+                              setAdobeConfig(null); // Clear config to force refresh
+                              
+                              // Refresh Adobe configuration to get latest credentials
+                              const newConfig = await getAdobeConfig();
+                              console.log('Refreshed Adobe config:', newConfig);
+                              
                               if (documentUrl) {
                                 initializeAdobeViewer(documentUrl);
                               }
@@ -483,7 +495,7 @@ export function DocumentViewer({ document, isOpen, onClose }: DocumentViewerProp
                             className="gap-1"
                           >
                             <Loader2 className="h-3 w-3" />
-                            Try Again
+                            Try Again with Latest Config
                           </Button>
                         </div>
                       </div>
