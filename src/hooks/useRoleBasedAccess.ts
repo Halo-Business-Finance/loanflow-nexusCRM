@@ -1,7 +1,7 @@
 import { useAuth } from '@/components/auth/AuthProvider';
 import { useCallback } from 'react';
 
-export type UserRole = 'super_admin' | 'admin' | 'manager' | 'agent';
+export type UserRole = 'super_admin' | 'admin' | 'manager' | 'agent' | 'loan_processor' | 'funder' | 'underwriter' | 'closer';
 
 interface RoleHierarchy {
   [key: string]: number;
@@ -11,6 +11,10 @@ const ROLE_HIERARCHY: RoleHierarchy = {
   'super_admin': 4,
   'admin': 3,
   'manager': 2,
+  'loan_processor': 1,
+  'funder': 1,
+  'underwriter': 1,
+  'closer': 1,
   'agent': 1
 };
 
@@ -54,6 +58,23 @@ export const useRoleBasedAccess = () => {
     return hasMinimumRole('agent');
   }, [hasMinimumRole]);
 
+  // Loan-specific role permissions
+  const canProcessLoans = useCallback((): boolean => {
+    return hasRole('loan_processor') || hasMinimumRole('manager');
+  }, [hasRole, hasMinimumRole]);
+
+  const canFundLoans = useCallback((): boolean => {
+    return hasRole('funder') || hasMinimumRole('admin');
+  }, [hasRole, hasMinimumRole]);
+
+  const canUnderwriteLoans = useCallback((): boolean => {
+    return hasRole('underwriter') || hasMinimumRole('manager');
+  }, [hasRole, hasMinimumRole]);
+
+  const canCloseLoans = useCallback((): boolean => {
+    return hasRole('closer') || hasMinimumRole('manager');
+  }, [hasRole, hasMinimumRole]);
+
   return {
     userRole,
     hasRole,
@@ -64,6 +85,10 @@ export const useRoleBasedAccess = () => {
     canModifySystemSettings,
     canDeleteLeads,
     canViewReports,
-    canManageClients
+    canManageClients,
+    canProcessLoans,
+    canFundLoans,
+    canUnderwriteLoans,
+    canCloseLoans
   };
 };

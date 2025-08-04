@@ -35,6 +35,10 @@ import { useAuth } from "@/components/auth/AuthProvider"
 import { PhoneDialer } from "@/components/PhoneDialer"
 import { EmailComposer } from "@/components/EmailComposer"
 import { formatNumber, formatCurrency } from "@/lib/utils"
+import { LoanProcessorDashboard } from "@/components/dashboards/LoanProcessorDashboard"
+import { FunderDashboard } from "@/components/dashboards/FunderDashboard"
+import { UnderwriterDashboard } from "@/components/dashboards/UnderwriterDashboard"
+import { CloserDashboard } from "@/components/dashboards/CloserDashboard"
 
 // Initial metrics structure - will be updated with real data
 const initialMetrics = [
@@ -137,7 +141,21 @@ const chartConfig = {
 export default function Dashboard() {
   const { toast } = useToast()
   const navigate = useNavigate()
-  const { user, hasRole } = useAuth()
+  const { user, hasRole, userRole } = useAuth()
+
+  // Route to role-specific dashboards
+  if (userRole === 'loan_processor') {
+    return <LoanProcessorDashboard />
+  }
+  if (userRole === 'funder') {
+    return <FunderDashboard />
+  }
+  if (userRole === 'underwriter') {
+    return <UnderwriterDashboard />
+  }
+  if (userRole === 'closer') {
+    return <CloserDashboard />
+  }
   const [currentDateTime, setCurrentDateTime] = useState(new Date())
   const [selectedMetric, setSelectedMetric] = useState<string | null>(null)
   const [selectedLead, setSelectedLead] = useState<typeof recentLeads[0] | null>(null)
