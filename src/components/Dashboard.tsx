@@ -369,6 +369,9 @@ export default function Dashboard() {
       case "Total Pipeline Value":
         navigate("/pipeline")
         break
+      case "Total Leads":
+        navigate("/leads")
+        break
       case "Active Leads":
         navigate("/leads")
         break
