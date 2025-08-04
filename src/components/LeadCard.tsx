@@ -17,8 +17,18 @@ import {
   TrendingUp,
   AlertCircle,
   Star,
-  MoreHorizontal
+  MoreHorizontal,
+  Edit,
+  Trash2,
+  ArrowRight
 } from "lucide-react"
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
 import { formatPhoneNumber } from "@/lib/utils"
 import { Lead } from "@/types/lead"
 
@@ -75,12 +85,11 @@ export function LeadCard({ lead, onEdit, onDelete, onConvert, hasAdminRole }: Le
 
   return (
     <Card 
-      className={`group hover:shadow-lg hover:shadow-white/20 transition-all duration-300 cursor-pointer animate-fade-in border-muted/20 hover:border-white bg-transparent overflow-hidden ${lead.is_converted_to_client ? 'opacity-70' : 'hover:scale-[1.02]'}`}
-      onClick={() => navigate(`/leads/${lead.id}`)}
+      className={`group hover:shadow-lg hover:shadow-white/20 transition-all duration-300 overflow-hidden ${lead.is_converted_to_client ? 'opacity-70' : 'hover:scale-[1.02]'} border-muted/20 hover:border-white bg-transparent`}
     >
       <CardHeader className="pb-3 px-4 pt-4">
         <div className="flex items-start justify-between">
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-3 flex-1 min-w-0 cursor-pointer" onClick={() => navigate(`/leads/${lead.id}`)}>
             <Avatar className="h-12 w-12 border-2 border-primary/20 dark:border-white">
               <AvatarFallback className="bg-primary/10 text-primary dark:text-white font-semibold">
                 {getInitials(lead.name)}
@@ -109,6 +118,37 @@ export function LeadCard({ lead, onEdit, onDelete, onConvert, hasAdminRole }: Le
               </div>
             </div>
           </div>
+          
+          {/* Actions Dropdown */}
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild onClick={(e) => e.stopPropagation()}>
+              <Button variant="ghost" size="sm" className="h-8 w-8 p-0 opacity-60 hover:opacity-100">
+                <MoreHorizontal className="h-4 w-4" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="w-48">
+              <DropdownMenuItem onClick={(e) => { e.stopPropagation(); onEdit(lead); }}>
+                <Edit className="h-4 w-4 mr-2" />
+                Edit Lead
+              </DropdownMenuItem>
+              {!lead.is_converted_to_client && (
+                <DropdownMenuItem onClick={(e) => { e.stopPropagation(); onConvert(lead); }}>
+                  <ArrowRight className="h-4 w-4 mr-2" />
+                  Convert to Client
+                </DropdownMenuItem>
+              )}
+              <DropdownMenuSeparator />
+              {hasAdminRole && (
+                <DropdownMenuItem 
+                  onClick={(e) => { e.stopPropagation(); onDelete(lead.id, lead.name); }}
+                  className="text-destructive focus:text-destructive"
+                >
+                  <Trash2 className="h-4 w-4 mr-2" />
+                  Delete Lead
+                </DropdownMenuItem>
+              )}
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
       </CardHeader>
 
