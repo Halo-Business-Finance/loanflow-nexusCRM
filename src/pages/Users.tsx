@@ -332,7 +332,7 @@ export default function Users() {
       
       const { error: roleError } = await supabase
         .from('user_roles')
-        .update({ role: newUser.role })
+        .update({ role: newUser.role as any })
         .eq('user_id', data.user.id)
         .eq('is_active', true)
 
@@ -458,7 +458,7 @@ export default function Users() {
         .from('user_roles')
         .insert({
           user_id: editingUser.id,
-          role: editingUser.role,
+          role: editingUser.role as any,
           is_active: true
         })
         .select()
