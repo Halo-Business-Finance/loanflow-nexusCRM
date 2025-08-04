@@ -139,9 +139,23 @@ export function DocumentViewer({ document, isOpen, onClose }: DocumentViewerProp
   };
 
   const renderAdobePDF = async () => {
-    if (!adobeViewerRef.current || !documentUrl || !window.AdobeDC || !adobeSDKLoaded) return;
+    if (!adobeViewerRef.current || !documentUrl || !window.AdobeDC || !adobeSDKLoaded) {
+      console.log('Adobe render conditions not met:', {
+        hasContainer: !!adobeViewerRef.current,
+        hasDocumentUrl: !!documentUrl,
+        hasAdobeDC: !!window.AdobeDC,
+        sdkLoaded: adobeSDKLoaded
+      });
+      return;
+    }
 
     try {
+      console.log('Starting Adobe PDF render with:', {
+        clientId: adobeClientId,
+        documentUrl,
+        isDemo
+      });
+
       // Clear the container
       adobeViewerRef.current.innerHTML = '';
 
@@ -155,6 +169,8 @@ export function DocumentViewer({ document, isOpen, onClose }: DocumentViewerProp
         adobeViewerRef.current.id = `adobe-viewer-${Date.now()}`;
       }
 
+      console.log('Calling previewFile with container ID:', adobeViewerRef.current.id);
+
       await adobeDCView.previewFile({
         content: { location: { url: documentUrl } },
         metaData: { fileName: document?.document_name || "Document" }
@@ -163,13 +179,19 @@ export function DocumentViewer({ document, isOpen, onClose }: DocumentViewerProp
         showDownloadPDF: true,
         showPrintPDF: true,
         showLeftHandPanel: false,
-        showAnnotationTools: false
+        showAnnotationTools: false,
+        defaultViewMode: "FIT_PAGE",
+        showPageControls: true,
+        dockPageControls: false
       });
+
+      console.log('Adobe PDF render completed successfully');
 
       // Set up Adobe event listeners for analytics
       adobeDCView.registerCallback(
         window.AdobeDC.View.Enum.CallbackType.EVENT_LISTENER,
         (event: any) => {
+          console.log('Adobe PDF event:', event);
           switch (event.type) {
             case 'PAGE_VIEW':
               trackPageView(event.data.pageNumber);
@@ -192,6 +214,9 @@ export function DocumentViewer({ document, isOpen, onClose }: DocumentViewerProp
     } catch (error) {
       console.error('Adobe PDF viewer error:', error);
       await logError('adobe_render_failed', error instanceof Error ? error.message : 'Adobe render failed');
+      
+      // Fallback to Google viewer
+      console.log('Falling back to Google viewer');
       setUseAdobeViewer(false);
       setUseGoogleViewer(true);
     }
