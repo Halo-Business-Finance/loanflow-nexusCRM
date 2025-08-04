@@ -423,8 +423,7 @@ export function ForecastingDashboard() {
       {/* Period Selection */}
       <Card>
         <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Calendar className="h-5 w-5" />
+          <CardTitle>
             Forecast Periods
           </CardTitle>
         </CardHeader>
@@ -472,8 +471,7 @@ export function ForecastingDashboard() {
           {/* Forecasts Table */}
           <Card>
             <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <BarChart3 className="h-5 w-5" />
+              <CardTitle>
                 Forecast Details
               </CardTitle>
               <CardDescription>

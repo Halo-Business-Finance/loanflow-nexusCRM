@@ -178,8 +178,7 @@ export function DataIntegrityDashboard() {
     <div className="space-y-6">
       <Card>
         <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Database className="h-5 w-5" />
+          <CardTitle>
             Data Integrity Dashboard
           </CardTitle>
         </CardHeader>

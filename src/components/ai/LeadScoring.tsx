@@ -283,7 +283,6 @@ export function LeadScoring() {
               <Card key={factor.name}>
                 <CardHeader>
                   <CardTitle className="flex items-center space-x-2">
-                    <factor.icon className="w-5 h-5" />
                     <span>{factor.name}</span>
                     <Badge variant="secondary">{factor.weight}%</Badge>
                   </CardTitle>

@@ -343,8 +343,7 @@ export default function LoanRequestManager({
             <Card key={request.id} className="relative">
               <CardHeader className="pb-3">
                 <div className="flex items-center justify-between">
-                  <CardTitle className="text-base flex items-center gap-2">
-                    <DollarSign className="w-4 h-4" />
+                  <CardTitle className="text-base">
                     {formatCurrency(request.loan_amount)}
                   </CardTitle>
                   <Button

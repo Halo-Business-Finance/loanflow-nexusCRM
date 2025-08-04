@@ -87,8 +87,7 @@ export function VoiceAIIntegration() {
       {/* Configuration */}
       <Card className="shadow-soft">
         <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Settings className="h-5 w-5" />
+          <CardTitle>
             Voice AI Configuration
           </CardTitle>
         </CardHeader>
@@ -147,8 +146,7 @@ export function VoiceAIIntegration() {
       {/* Voice Controls */}
       <Card className="shadow-soft">
         <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Mic className="h-5 w-5" />
+          <CardTitle>
             Voice AI Controls
           </CardTitle>
         </CardHeader>

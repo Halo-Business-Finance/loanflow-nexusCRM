@@ -430,8 +430,7 @@ export function OpportunityManager() {
         {/* Opportunities List */}
         <Card>
           <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Target className="h-5 w-5" />
+            <CardTitle>
               Opportunities
             </CardTitle>
             <CardDescription>
@@ -480,8 +479,7 @@ export function OpportunityManager() {
           <CardHeader>
             <div className="flex justify-between items-center">
               <div>
-                <CardTitle className="flex items-center gap-2">
-                  <Users className="h-5 w-5" />
+                <CardTitle>
                   Revenue Splits
                 </CardTitle>
                 <CardDescription>

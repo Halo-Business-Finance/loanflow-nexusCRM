@@ -356,8 +356,7 @@ export function WorkflowBuilder() {
         {/* Workflows List */}
         <Card>
           <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Workflow className="h-5 w-5" />
+            <CardTitle>
               Workflows
             </CardTitle>
             <CardDescription>
@@ -408,8 +407,7 @@ export function WorkflowBuilder() {
         {/* Workflow Executions */}
         <Card>
           <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Zap className="h-5 w-5" />
+            <CardTitle>
               Recent Executions
             </CardTitle>
             <CardDescription>

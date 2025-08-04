@@ -354,8 +354,7 @@ export function TerritoryManager() {
         {/* Territories List */}
         <Card>
           <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Map className="h-5 w-5" />
+            <CardTitle>
               Territories
             </CardTitle>
             <CardDescription>
@@ -404,8 +403,7 @@ export function TerritoryManager() {
           <CardHeader>
             <div className="flex justify-between items-center">
               <div>
-                <CardTitle className="flex items-center gap-2">
-                  <Users className="h-5 w-5" />
+                <CardTitle>
                   Assignments
                 </CardTitle>
                 <CardDescription>

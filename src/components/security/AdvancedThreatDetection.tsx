@@ -337,8 +337,7 @@ export function AdvancedThreatDetection() {
       {/* Real-time Monitoring Control */}
       <Card>
         <CardHeader>
-          <CardTitle className="flex items-center space-x-2">
-            <Shield className="w-5 h-5" />
+          <CardTitle>
             <span>Real-time AI Threat Monitoring</span>
           </CardTitle>
           <CardDescription>

@@ -78,8 +78,7 @@ export function AIDocumentAnalyzer() {
       {/* Upload Section */}
       <Card className="shadow-soft">
         <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Brain className="h-5 w-5" />
+          <CardTitle>
             <span className="underline">AI Document Analyzer</span>
           </CardTitle>
         </CardHeader>
@@ -151,8 +150,7 @@ export function AIDocumentAnalyzer() {
       {/* Results Section */}
       <Card className="shadow-soft">
         <CardHeader>
-          <CardTitle className="flex items-center gap-2 dark:text-white">
-            <TrendingUp className="h-5 w-5 dark:text-white" />
+          <CardTitle className="dark:text-white">
             <span className="underline">Analysis Results</span>
           </CardTitle>
         </CardHeader>
