@@ -783,115 +783,119 @@ export default function LeadDetail() {
                </div>
              </div>
           </div>
-          <div className="flex gap-3">
-            {/* Quick Action Buttons */}
-            <PhoneDialer 
-              phoneNumber={lead.phone}
-              trigger={
-                <Button
-                  size="sm"
-                  variant="gradient-blue"
-                  className="h-10 px-4 rounded-lg font-medium shadow-md"
-                >
-                  <PhoneIcon className="w-4 h-4 mr-2" />
-                  Call
-                </Button>
-              }
-            />
-            <EmailComposer 
-              recipientEmail={lead.email}
-              recipientName={lead.name}
-              trigger={
-                <Button
-                  size="sm"
-                  variant="gradient-green"
-                  className="h-10 px-4 rounded-lg font-medium shadow-md"
-                >
-                  <Mail className="w-4 h-4 mr-2" />
-                  Email
-                </Button>
-              }
-            />
-            <QuickEmail 
-              recipientEmail={lead.email}
-              recipientName={lead.name}
-              trigger={
-                <Button
-                  size="sm"
-                  variant="gradient-orange"
-                  className="h-10 px-4 rounded-lg font-medium shadow-md"
-                >
-                  <Send className="w-4 h-4 mr-2" />
-                  Quick Email
-                </Button>
-              }
-            />
-            <Button
-              size="sm"
-              variant="gradient-purple"
-              className="h-10 px-4 rounded-lg font-medium shadow-md"
-              onClick={() => navigate(`/leads/${lead.id}/documents`)}
-            >
-              <FileText className="w-4 h-4 mr-2" />
-              Documents
-            </Button>
-            <Button
-              onClick={() => setShowReminderDialog(true)}
-              size="sm"
-              variant="gradient"
-              className="h-10 px-4 rounded-lg font-medium shadow-md"
-            >
-              <Bell className="w-4 h-4 mr-2" />
-              Reminder
-            </Button>
-            
-            {/* Edit/Save Buttons */}
-            <Button 
-              onClick={() => setIsEditing(!isEditing)}
-              variant="modern"
-              className="h-10 px-4 rounded-lg font-medium"
-            >
-              <Edit className="w-4 h-4 mr-2" />
-              {isEditing ? 'Cancel' : 'Edit'}
-            </Button>
-            {isEditing && (
-              <Button 
-                onClick={saveLeadChanges}
+          <div className="flex flex-col gap-3">
+            {/* First Row - Quick Action Buttons */}
+            <div className="flex gap-3 flex-wrap">
+              <PhoneDialer 
+                phoneNumber={lead.phone}
+                trigger={
+                  <Button
+                    size="sm"
+                    variant="gradient-blue"
+                    className="h-10 px-4 rounded-lg font-medium shadow-md"
+                  >
+                    <PhoneIcon className="w-4 h-4 mr-2" />
+                    Call
+                  </Button>
+                }
+              />
+              <EmailComposer 
+                recipientEmail={lead.email}
+                recipientName={lead.name}
+                trigger={
+                  <Button
+                    size="sm"
+                    variant="gradient-green"
+                    className="h-10 px-4 rounded-lg font-medium shadow-md"
+                  >
+                    <Mail className="w-4 h-4 mr-2" />
+                    Email
+                  </Button>
+                }
+              />
+              <QuickEmail 
+                recipientEmail={lead.email}
+                recipientName={lead.name}
+                trigger={
+                  <Button
+                    size="sm"
+                    variant="gradient-orange"
+                    className="h-10 px-4 rounded-lg font-medium shadow-md"
+                  >
+                    <Send className="w-4 h-4 mr-2" />
+                    Quick Email
+                  </Button>
+                }
+              />
+              <Button
+                size="sm"
+                variant="gradient-purple"
+                className="h-10 px-4 rounded-lg font-medium shadow-md"
+                onClick={() => navigate(`/leads/${lead.id}/documents`)}
+              >
+                <FileText className="w-4 h-4 mr-2" />
+                Documents
+              </Button>
+              <Button
+                onClick={() => setShowReminderDialog(true)}
+                size="sm"
                 variant="gradient"
                 className="h-10 px-4 rounded-lg font-medium shadow-md"
               >
-                <Save className="w-4 h-4 mr-2" />
-                Save Changes
+                <Bell className="w-4 h-4 mr-2" />
+                Reminder
               </Button>
-            )}
-            <AlertDialog>
-              <AlertDialogTrigger asChild>
+            </div>
+            
+            {/* Second Row - Edit/Save/Delete Buttons */}
+            <div className="flex gap-3 flex-wrap">
+              <Button 
+                onClick={() => setIsEditing(!isEditing)}
+                variant="modern"
+                className="h-10 px-4 rounded-lg font-medium"
+              >
+                <Edit className="w-4 h-4 mr-2" />
+                {isEditing ? 'Cancel' : 'Edit'}
+              </Button>
+              {isEditing && (
                 <Button 
-                  variant="gradient-red"
+                  onClick={saveLeadChanges}
+                  variant="gradient"
                   className="h-10 px-4 rounded-lg font-medium shadow-md"
                 >
-                  <Trash2 className="w-4 h-4 mr-2" />
-                  Delete Lead
+                  <Save className="w-4 h-4 mr-2" />
+                  Save Changes
                 </Button>
-              </AlertDialogTrigger>
-              <AlertDialogContent>
-                <AlertDialogHeader>
-                  <AlertDialogTitle>Delete Lead</AlertDialogTitle>
-                  <AlertDialogDescription>
-                    Are you sure you want to delete <strong>{lead?.name || 'this lead'}</strong>? This action cannot be undone and you will be redirected back to the leads page.
-                  </AlertDialogDescription>
-                </AlertDialogHeader>
-                <AlertDialogFooter>
-                  <AlertDialogCancel>Cancel</AlertDialogCancel>
-                  <AlertDialogAction
-                    onClick={deleteLead}
-                    className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+              )}
+              <AlertDialog>
+                <AlertDialogTrigger asChild>
+                  <Button 
+                    variant="gradient-red"
+                    className="h-10 px-4 rounded-lg font-medium shadow-md"
                   >
+                    <Trash2 className="w-4 h-4 mr-2" />
                     Delete Lead
-                  </AlertDialogAction>
-                </AlertDialogFooter>
-              </AlertDialogContent>
-            </AlertDialog>
+                  </Button>
+                </AlertDialogTrigger>
+                <AlertDialogContent>
+                  <AlertDialogHeader>
+                    <AlertDialogTitle>Delete Lead</AlertDialogTitle>
+                    <AlertDialogDescription>
+                      Are you sure you want to delete <strong>{lead?.name || 'this lead'}</strong>? This action cannot be undone and you will be redirected back to the leads page.
+                    </AlertDialogDescription>
+                  </AlertDialogHeader>
+                  <AlertDialogFooter>
+                    <AlertDialogCancel>Cancel</AlertDialogCancel>
+                    <AlertDialogAction
+                      onClick={deleteLead}
+                      className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                    >
+                      Delete Lead
+                    </AlertDialogAction>
+                  </AlertDialogFooter>
+                </AlertDialogContent>
+              </AlertDialog>
+            </div>
           </div>
         </div>
 

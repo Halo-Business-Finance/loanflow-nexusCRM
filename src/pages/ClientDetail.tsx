@@ -529,60 +529,67 @@ export default function ClientDetail() {
              </div>
            </div>
           
-          <div className="flex gap-3">
-            <PhoneDialer 
-              trigger={
-                <Button 
-                  variant="gradient-blue"
-                  className="h-10 px-4 rounded-lg font-medium shadow-md"
-                >
-                  <Phone className="w-4 h-4 mr-2" />
-                  Call
-                </Button>
-              }
-            />
-            <EmailComposer 
-              trigger={
-                <Button 
-                  variant="gradient-green"
-                  className="h-10 px-4 rounded-lg font-medium shadow-md"
-                >
-                  <Mail className="w-4 h-4 mr-2" />
-                  Email
-                </Button>
-              }
-            />
-            <Button 
-              variant="gradient"
-              className="h-10 px-4 rounded-lg font-medium shadow-md"
-              onClick={() => setShowReminderDialog(true)}
-            >
-              <Bell className="w-4 h-4 mr-2" />
-              Set Reminder
-            </Button>
-            <Button
-              variant={isEditing ? "gradient" : "modern"}
-              className="h-10 px-4 rounded-lg font-medium shadow-md"
-              onClick={() => {
-                if (isEditing) {
-                  saveClientChanges()
-                } else {
-                  setIsEditing(true)
+          <div className="flex flex-col gap-3">
+            {/* First Row - Communication Buttons */}
+            <div className="flex gap-3 flex-wrap">
+              <PhoneDialer 
+                trigger={
+                  <Button 
+                    variant="gradient-blue"
+                    className="h-10 px-4 rounded-lg font-medium shadow-md"
+                  >
+                    <Phone className="w-4 h-4 mr-2" />
+                    Call
+                  </Button>
                 }
-              }}
-            >
-              {isEditing ? (
-                <>
-                  <Save className="w-4 h-4 mr-2" />
-                  Save Changes
-                </>
-              ) : (
-                <>
-                  <Edit className="w-4 h-4 mr-2" />
-                  Edit Client
-                </>
-              )}
-            </Button>
+              />
+              <EmailComposer 
+                trigger={
+                  <Button 
+                    variant="gradient-green"
+                    className="h-10 px-4 rounded-lg font-medium shadow-md"
+                  >
+                    <Mail className="w-4 h-4 mr-2" />
+                    Email
+                  </Button>
+                }
+              />
+              <Button 
+                variant="gradient"
+                className="h-10 px-4 rounded-lg font-medium shadow-md"
+                onClick={() => setShowReminderDialog(true)}
+              >
+                <Bell className="w-4 h-4 mr-2" />
+                Set Reminder
+              </Button>
+            </div>
+            
+            {/* Second Row - Edit/Save Button */}
+            <div className="flex gap-3 flex-wrap">
+              <Button
+                variant={isEditing ? "gradient" : "modern"}
+                className="h-10 px-4 rounded-lg font-medium shadow-md"
+                onClick={() => {
+                  if (isEditing) {
+                    saveClientChanges()
+                  } else {
+                    setIsEditing(true)
+                  }
+                }}
+              >
+                {isEditing ? (
+                  <>
+                    <Save className="w-4 h-4 mr-2" />
+                    Save Changes
+                  </>
+                ) : (
+                  <>
+                    <Edit className="w-4 h-4 mr-2" />
+                    Edit Client
+                  </>
+                )}
+              </Button>
+            </div>
           </div>
         </div>
 
