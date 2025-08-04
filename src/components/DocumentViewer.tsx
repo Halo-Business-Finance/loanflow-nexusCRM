@@ -30,7 +30,23 @@ export function DocumentViewer({ document, isOpen, onClose }: DocumentViewerProp
       setLoading(true);
       console.log('Getting document URL for:', filePath);
       
-      // Since the bucket is public, we can try the public URL first
+      // Try downloading the file and creating a blob URL to avoid CORS issues
+      try {
+        const { data: fileData, error: downloadError } = await supabase.storage
+          .from('lead-documents')
+          .download(filePath);
+
+        if (!downloadError && fileData) {
+          console.log('Successfully downloaded file, creating blob URL');
+          const blobUrl = URL.createObjectURL(fileData);
+          setDocumentUrl(blobUrl);
+          return blobUrl;
+        }
+      } catch (e) {
+        console.log('Download method failed, trying public URL');
+      }
+      
+      // Fallback to public URL
       const publicUrl = `https://gshxxsniwytjgcnthyfq.supabase.co/storage/v1/object/public/lead-documents/${filePath}`;
       console.log('Trying public URL:', publicUrl);
       
@@ -46,7 +62,7 @@ export function DocumentViewer({ document, isOpen, onClose }: DocumentViewerProp
         console.log('Public URL failed, trying signed URL');
       }
       
-      // Fallback to signed URL
+      // Final fallback to signed URL
       const { data, error } = await supabase.storage
         .from('lead-documents')
         .createSignedUrl(filePath, 3600); // 1 hour expiry
@@ -63,7 +79,7 @@ export function DocumentViewer({ document, isOpen, onClose }: DocumentViewerProp
       console.error('Error getting document URL:', error);
       toast({
         title: "Error",
-        description: "Failed to load document",
+        description: "Failed to load document. You can still download it.",
         variant: "destructive",
       });
       return null;
@@ -76,6 +92,7 @@ export function DocumentViewer({ document, isOpen, onClose }: DocumentViewerProp
     if (!document?.file_path) return;
 
     try {
+      console.log('Downloading document:', document.file_path);
       const { data, error } = await supabase.storage
         .from('lead-documents')
         .download(document.file_path);
