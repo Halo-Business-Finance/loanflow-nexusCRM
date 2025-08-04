@@ -42,6 +42,7 @@ export function DocumentUploadModal({ isOpen, onClose, onUpload, preSelectedLead
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [selectedLead, setSelectedLead] = useState<string>('');
   const [documentType, setDocumentType] = useState<string>('');
+  const [documentName, setDocumentName] = useState<string>('');
   const [notes, setNotes] = useState<string>('');
   const [leads, setLeads] = useState<Lead[]>([]);
   const [uploading, setUploading] = useState(false);
@@ -82,6 +83,11 @@ export function DocumentUploadModal({ isOpen, onClose, onUpload, preSelectedLead
     const file = e.target.files?.[0];
     if (file) {
       setSelectedFile(file);
+      // Auto-populate document name with file name (without extension)
+      if (!documentName) {
+        const nameWithoutExtension = file.name.replace(/\.[^/.]+$/, '');
+        setDocumentName(nameWithoutExtension);
+      }
     }
   };
 
@@ -105,6 +111,7 @@ export function DocumentUploadModal({ isOpen, onClose, onUpload, preSelectedLead
       setSelectedFile(null);
       setSelectedLead('');
       setDocumentType('');
+      setDocumentName('');
       setNotes('');
       onClose();
     } catch (error) {
@@ -166,6 +173,16 @@ export function DocumentUploadModal({ isOpen, onClose, onUpload, preSelectedLead
           </div>
 
           <div className="space-y-2">
+            <Label htmlFor="document-name">Document Name</Label>
+            <Input
+              id="document-name"
+              placeholder="Enter document name..."
+              value={documentName}
+              onChange={(e) => setDocumentName(e.target.value)}
+            />
+          </div>
+
+          <div className="space-y-2">
             <Label htmlFor="file-upload">Select File</Label>
             <div className="border-2 border-dashed border-border rounded-lg p-6 text-center">
               <input
@@ -221,7 +238,7 @@ export function DocumentUploadModal({ isOpen, onClose, onUpload, preSelectedLead
             </Button>
             <Button
               onClick={handleUpload}
-              disabled={!selectedFile || !selectedLead || !documentType || uploading}
+              disabled={!selectedFile || !selectedLead || !documentType || !documentName || uploading}
             >
               {uploading ? 'Uploading...' : 'Upload Document'}
             </Button>
