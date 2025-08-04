@@ -199,7 +199,8 @@ export function LeadAssignment({
       case 'loan_originator': return 'Loan Originator'
       case 'loan_processor': return 'Loan Processor'
       case 'closer': return 'Closer'
-      case 'funder': return 'Funder'
+      case 'funder': return 'Loan Funder'
+      case 'underwriter': return 'Loan Underwriter'
       default: return role
     }
   }
