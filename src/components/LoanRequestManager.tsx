@@ -203,8 +203,7 @@ export default function LoanRequestManager({
 
   return (
     <div className="space-y-4">
-      <div className="flex items-center justify-between">
-        <h3 className="text-lg font-semibold">Loan Requests</h3>
+      <div className="flex items-center justify-end">
         <Dialog open={showAddDialog} onOpenChange={setShowAddDialog}>
           <DialogTrigger asChild>
             <Button variant="outline" size="sm">
