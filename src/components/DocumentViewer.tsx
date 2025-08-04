@@ -169,6 +169,7 @@ export function DocumentViewer({ document, isOpen, onClose }: DocumentViewerProp
   const initializeAdobeViewer = async (url: string) => {
     try {
       console.log('Starting Adobe viewer initialization...');
+      setViewerError(false); // Reset error state
       
       let config = adobeConfig;
       if (!config) {
@@ -190,8 +191,19 @@ export function DocumentViewer({ document, isOpen, onClose }: DocumentViewerProp
         throw new Error('Viewer container not ready');
       }
 
-      // Clear previous viewer
+      // Ensure container has the correct ID
+      viewerRef.current.id = 'adobe-dc-view';
+      // Clear previous viewer content
       viewerRef.current.innerHTML = '';
+
+      // Wait a moment for DOM to be ready
+      await new Promise(resolve => setTimeout(resolve, 100));
+
+      // Verify the container exists in DOM
+      const container = window.document.getElementById('adobe-dc-view');
+      if (!container) {
+        throw new Error('Adobe viewer container not found in DOM');
+      }
 
       console.log('Creating Adobe DC View instance...');
       const adobeDCView = new window.AdobeDC.View({
@@ -226,7 +238,7 @@ export function DocumentViewer({ document, isOpen, onClose }: DocumentViewerProp
       // Show a more helpful error message
       toast({
         title: "Adobe PDF Viewer Error",
-        description: `Failed to load Adobe PDF viewer: ${error.message}. Please try downloading the document or opening in browser.`,
+        description: `Failed to load Adobe PDF viewer: ${error instanceof Error ? error.message : 'Unknown error'}. Please try downloading the document or opening in browser.`,
         variant: "destructive",
       });
     }
