@@ -285,7 +285,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     if (role === 'super_admin') return userRole === 'super_admin'
     
     // Role hierarchy: admin > manager > agent > viewer
-    const roleHierarchy = ['viewer', 'agent', 'manager', 'admin']
+    const roleHierarchy = ['tech', 'agent', 'manager', 'admin']
     const userRoleIndex = roleHierarchy.indexOf(userRole)
     const requiredRoleIndex = roleHierarchy.indexOf(role)
     
