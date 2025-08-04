@@ -396,40 +396,52 @@ export function DocumentViewer({ document, isOpen, onClose }: DocumentViewerProp
           ) : documentUrl ? (
             <div className="h-[70vh] border rounded-lg overflow-hidden relative">
               {isPdf ? (
-                <div className="w-full h-full relative">
-                  {/* Direct PDF embed with error handling */}
-                  <embed
-                    src={documentUrl}
-                    type="application/pdf"
-                    className="w-full h-full"
-                    style={{ minHeight: '500px' }}
-                    onError={() => {
-                      console.log('PDF embed failed, showing fallback');
-                    }}
-                  />
+                <div className="w-full h-full bg-gray-50 flex flex-col">
+                  {/* PDF Viewer Actions */}
+                  <div className="flex items-center justify-between p-3 bg-white border-b">
+                    <div className="flex items-center gap-2">
+                      <FileText className="h-4 w-4 text-red-600" />
+                      <span className="text-sm font-medium">PDF Document</span>
+                    </div>
+                    <div className="flex gap-2">
+                      <Button
+                        size="sm"
+                        onClick={() => window.open(documentUrl, '_blank')}
+                        className="gap-1"
+                      >
+                        <ExternalLink className="h-3 w-3" />
+                        Open in Browser
+                      </Button>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={downloadDocument}
+                        className="gap-1"
+                      >
+                        <Download className="h-3 w-3" />
+                        Download
+                      </Button>
+                    </div>
+                  </div>
                   
-                  {/* Always show action buttons for user control */}
-                  <div className="absolute top-2 right-2 z-10 flex gap-1 bg-white/90 backdrop-blur-sm rounded-lg p-1 shadow-lg">
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => window.open(documentUrl, '_blank')}
-                      className="text-xs px-2 py-1 h-auto"
-                      title="Open in new tab with full controls"
-                    >
-                      <ExternalLink className="h-3 w-3 mr-1" />
-                      Open
-                    </Button>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={downloadDocument}
-                      className="text-xs px-2 py-1 h-auto"
-                      title="Download PDF"
-                    >
-                      <Download className="h-3 w-3 mr-1" />
-                      Save
-                    </Button>
+                  {/* PDF Display Area */}
+                  <div className="flex-1 p-4 flex items-center justify-center">
+                    <div className="text-center space-y-4">
+                      <div className="w-20 h-24 bg-gradient-to-b from-red-50 to-red-100 rounded-lg flex items-center justify-center mx-auto border-2 border-red-200">
+                        <FileText className="h-10 w-10 text-red-600" />
+                      </div>
+                      <div>
+                        <h3 className="font-medium text-lg">{document.document_name}</h3>
+                        <p className="text-sm text-muted-foreground mt-1">
+                          {formatFileSize(document.file_size)} • PDF Document
+                        </p>
+                      </div>
+                      <div className="space-y-2">
+                        <p className="text-sm text-muted-foreground">
+                          Click "Open in Browser" for the best viewing experience with zoom, search, and navigation controls.
+                        </p>
+                      </div>
+                    </div>
                   </div>
                 </div>
               ) : isImage ? (
