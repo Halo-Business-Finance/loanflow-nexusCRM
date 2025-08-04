@@ -396,35 +396,65 @@ export function DocumentViewer({ document, isOpen, onClose }: DocumentViewerProp
           ) : documentUrl ? (
             <div className="h-[70vh] border rounded-lg overflow-hidden relative">
               {isPdf ? (
-                <div className="w-full h-full flex flex-col items-center justify-center bg-muted/50">
-                  <div className="text-center space-y-4">
-                    <div className="w-16 h-20 bg-gradient-to-br from-red-50 to-red-100 rounded-lg flex items-center justify-center mx-auto">
-                      <FileText className="h-8 w-8 text-red-600" />
+                <div className="w-full h-full relative">
+                  {/* PDF Object Embed - more reliable than iframe */}
+                  <object
+                    data={documentUrl}
+                    type="application/pdf"
+                    className="w-full h-full"
+                    style={{ minHeight: '500px' }}
+                  >
+                    {/* Fallback for browsers that don't support object embed */}
+                    <div className="w-full h-full flex flex-col items-center justify-center bg-muted/50">
+                      <div className="text-center space-y-4">
+                        <div className="w-16 h-20 bg-gradient-to-br from-red-50 to-red-100 rounded-lg flex items-center justify-center mx-auto">
+                          <FileText className="h-8 w-8 text-red-600" />
+                        </div>
+                        <div className="text-lg font-medium">PDF Viewer</div>
+                        <p className="text-muted-foreground max-w-md">
+                          Your browser doesn't support inline PDF viewing. Please use the buttons below to view the document.
+                        </p>
+                        <div className="flex gap-2 justify-center">
+                          <Button 
+                            onClick={() => window.open(documentUrl, '_blank')} 
+                            className="gap-2"
+                          >
+                            <ExternalLink className="h-4 w-4" />
+                            Open in New Tab
+                          </Button>
+                          <Button 
+                            variant="outline" 
+                            onClick={downloadDocument} 
+                            className="gap-2"
+                          >
+                            <Download className="h-4 w-4" />
+                            Download
+                          </Button>
+                        </div>
+                      </div>
                     </div>
-                    <div className="text-lg font-medium">PDF Document Ready</div>
-                    <p className="text-muted-foreground max-w-md">
-                      Due to browser security restrictions, PDFs are best viewed in a new tab for full functionality including zoom, search, and navigation controls.
-                    </p>
-                    <div className="flex gap-2 justify-center">
-                      <Button 
-                        onClick={() => window.open(documentUrl, '_blank')} 
-                        className="gap-2"
-                      >
-                        <ExternalLink className="h-4 w-4" />
-                        Open PDF in New Tab
-                      </Button>
-                      <Button 
-                        variant="outline" 
-                        onClick={downloadDocument} 
-                        className="gap-2"
-                      >
-                        <Download className="h-4 w-4" />
-                        Download PDF
-                      </Button>
-                    </div>
-                    <div className="text-xs text-muted-foreground">
-                      File: {document.document_name} • {formatFileSize(document.file_size)}
-                    </div>
+                  </object>
+                  
+                  {/* Floating action buttons */}
+                  <div className="absolute top-2 right-2 z-10 flex gap-1 bg-black/50 rounded-lg p-1">
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => window.open(documentUrl, '_blank')}
+                      className="text-white hover:bg-white/20 text-xs px-2 py-1 h-auto"
+                      title="Open in new tab"
+                    >
+                      <ExternalLink className="h-3 w-3" />
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={downloadDocument}
+                      className="text-white hover:bg-white/20 text-xs px-2 py-1 h-auto"
+                      title="Download PDF"
+                    >
+                      <Download className="h-3 w-3" />
+                    </Button>
                   </div>
                 </div>
               ) : isImage ? (
