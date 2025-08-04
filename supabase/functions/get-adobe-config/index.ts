@@ -12,13 +12,23 @@ serve(async (req) => {
   }
 
   try {
-    // Get Adobe Client ID from Supabase secrets
+    // Get Adobe credentials from Supabase secrets
     const adobeClientId = Deno.env.get('ADOBE_CLIENT_ID') || 'dc-pdf-embed-demo'
+    const adobeApiKey = Deno.env.get('ADOBE_API_KEY') || null
+    const isDemo = adobeClientId === 'dc-pdf-embed-demo'
     
     return new Response(
       JSON.stringify({ 
         clientId: adobeClientId,
-        isDemo: adobeClientId === 'dc-pdf-embed-demo'
+        hasApiKey: !!adobeApiKey,
+        isDemo: isDemo,
+        status: isDemo ? 'demo' : 'licensed',
+        features: {
+          pdfViewer: true,
+          documentEmbed: true,
+          apiAccess: !!adobeApiKey,
+          advancedFeatures: !isDemo && !!adobeApiKey
+        }
       }),
       {
         headers: { 

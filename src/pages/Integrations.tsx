@@ -154,7 +154,15 @@ export default function Integrations() {
   })
   const [adobeConfig, setAdobeConfig] = useState({
     clientId: "",
-    isDemo: true
+    isDemo: true,
+    hasApiKey: false,
+    status: "demo" as "demo" | "licensed",
+    features: {
+      pdfViewer: true,
+      documentEmbed: true,
+      apiAccess: false,
+      advancedFeatures: false
+    }
   })
   const [showAdobeConfig, setShowAdobeConfig] = useState(false)
   const [showAdobeSecretForm, setShowAdobeSecretForm] = useState(false)
@@ -702,20 +710,30 @@ export default function Integrations() {
             <div className="bg-muted/30 rounded-lg p-3 space-y-2">
               <div className="flex items-center justify-between">
                 <span className="text-sm font-medium">Status</span>
-                <Badge className="bg-green-50 text-green-700 border-green-200 text-xs">Connected</Badge>
-              </div>
-              <div className="flex items-center justify-between">
-                <span className="text-sm text-muted-foreground">License</span>
-                <Badge variant={adobeConfig.isDemo ? "secondary" : "default"} className="text-xs">
-                  {adobeConfig.isDemo ? 'Demo' : 'Licensed'}
+                <Badge className={adobeConfig.isDemo ? "bg-orange-50 text-orange-700 border-orange-200" : "bg-green-50 text-green-700 border-green-200"} variant="outline">
+                  {adobeConfig.isDemo ? 'Demo Mode' : 'Licensed'}
                 </Badge>
               </div>
               <div className="flex items-center justify-between">
                 <span className="text-sm text-muted-foreground">Client ID</span>
-                <code className="text-xs bg-background px-1 py-0.5 rounded">
-                  {adobeConfig.clientId ? `${adobeConfig.clientId.substring(0, 8)}...` : 'demo'}
-                </code>
+                <Badge variant="outline" className="text-xs">
+                  {adobeConfig.isDemo ? 'Demo' : 'Configured'}
+                </Badge>
               </div>
+              <div className="flex items-center justify-between">
+                <span className="text-sm text-muted-foreground">API Key</span>
+                <Badge variant={adobeConfig.hasApiKey ? "default" : "secondary"} className="text-xs">
+                  {adobeConfig.hasApiKey ? 'Configured' : 'Not Set'}
+                </Badge>
+              </div>
+              {!adobeConfig.isDemo && (
+                <div className="flex items-center justify-between">
+                  <span className="text-sm text-muted-foreground">Advanced Features</span>
+                  <Badge className="bg-blue-50 text-blue-700 border-blue-200 text-xs">
+                    {adobeConfig.hasApiKey ? 'Available' : 'Limited'}
+                  </Badge>
+                </div>
+              )}
             </div>
 
             {/* Configuration Section */}
@@ -802,17 +820,19 @@ export default function Integrations() {
               </Button>
               <Button
                 size="sm"
-                onClick={() => {
+                onClick={async () => {
+                  // Refresh the Adobe configuration to get latest status
+                  await fetchAdobeConfig()
                   toast({
-                    title: "Adobe Integration Active",
-                    description: "PDF viewer is ready to use.",
+                    title: "Adobe Integration Updated",
+                    description: "Configuration refreshed with latest credentials.",
                   })
                   setShowAdobeConfig(false)
                 }}
                 className="flex-1 text-xs"
               >
                 <CheckCircle className="w-3 h-3 mr-1" />
-                Done
+                Refresh & Close
               </Button>
             </div>
           </div>
