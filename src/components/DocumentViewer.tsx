@@ -152,21 +152,46 @@ export function DocumentViewer({ document, isOpen, onClose }: DocumentViewerProp
       console.log('Loading Adobe PDF SDK...');
       const script = window.document.createElement('script');
       script.src = 'https://acrobatservices.adobe.com/view-sdk/viewer.js';
+      
+      // Set a timeout for the script loading
+      const timeout = setTimeout(() => {
+        console.error('Adobe SDK loading timeout');
+        reject(new Error('Adobe SDK loading timeout - network issue or blocked'));
+      }, 10000); // 10 second timeout
+      
       script.onload = () => {
-        console.log('Adobe PDF SDK loaded successfully');
-        // Give Adobe SDK a moment to initialize
-        setTimeout(() => {
+        clearTimeout(timeout);
+        console.log('Adobe PDF SDK script loaded');
+        
+        // Check if AdobeDC is immediately available
+        if (window.AdobeDC) {
+          console.log('Adobe SDK ready immediately');
+          resolve();
+          return;
+        }
+        
+        // Wait for Adobe SDK to initialize with shorter intervals
+        let attempts = 0;
+        const checkInterval = setInterval(() => {
+          attempts++;
           if (window.AdobeDC) {
+            console.log(`Adobe SDK ready after ${attempts} attempts`);
+            clearInterval(checkInterval);
             resolve();
-          } else {
-            reject(new Error('Adobe SDK loaded but AdobeDC not available'));
+          } else if (attempts > 20) { // 10 seconds total (500ms * 20)
+            console.error('Adobe SDK initialization timeout after script load');
+            clearInterval(checkInterval);
+            reject(new Error('Adobe SDK failed to initialize - possible API key/client ID issue'));
           }
-        }, 1000);
+        }, 500);
       };
+      
       script.onerror = (error) => {
-        console.error('Failed to load Adobe PDF SDK:', error);
-        reject(new Error('Failed to load Adobe PDF SDK'));
+        clearTimeout(timeout);
+        console.error('Failed to load Adobe PDF SDK script:', error);
+        reject(new Error('Failed to load Adobe PDF SDK - network or CDN issue'));
       };
+      
       window.document.head.appendChild(script);
     });
   };
