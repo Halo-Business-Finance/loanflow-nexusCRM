@@ -311,6 +311,16 @@ export function DocumentViewer({ document, isOpen, onClose }: DocumentViewerProp
     }
   }, [documentUrl, isPdf, useAdobeViewer, adobeSDKLoaded, isOpen]);
 
+  // Helper function to format file size
+  const formatFileSize = (bytes?: number) => {
+    if (!bytes) return 'Unknown size'
+    if (bytes === 0) return '0 Bytes'
+    const k = 1024
+    const sizes = ['Bytes', 'KB', 'MB', 'GB']
+    const i = Math.floor(Math.log(bytes) / Math.log(k))
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i]
+  };
+
   if (!document) return null;
 
   return (
@@ -386,44 +396,37 @@ export function DocumentViewer({ document, isOpen, onClose }: DocumentViewerProp
           ) : documentUrl ? (
             <div className="h-[70vh] border rounded-lg overflow-hidden relative">
               {isPdf ? (
-                <>
-                  {/* Simple, reliable PDF viewer */}
-                  <div className="w-full h-full">
-                    <iframe
-                      src={`${documentUrl}#toolbar=1&navpanes=1&scrollbar=1&page=1&view=FitH`}
-                      className="w-full h-full border-0"
-                      title={document.document_name}
-                      style={{ minHeight: '500px' }}
-                    />
+                <div className="w-full h-full flex flex-col items-center justify-center bg-muted/50">
+                  <div className="text-center space-y-4">
+                    <div className="w-16 h-20 bg-gradient-to-br from-red-50 to-red-100 rounded-lg flex items-center justify-center mx-auto">
+                      <FileText className="h-8 w-8 text-red-600" />
+                    </div>
+                    <div className="text-lg font-medium">PDF Document Ready</div>
+                    <p className="text-muted-foreground max-w-md">
+                      Due to browser security restrictions, PDFs are best viewed in a new tab for full functionality including zoom, search, and navigation controls.
+                    </p>
+                    <div className="flex gap-2 justify-center">
+                      <Button 
+                        onClick={() => window.open(documentUrl, '_blank')} 
+                        className="gap-2"
+                      >
+                        <ExternalLink className="h-4 w-4" />
+                        Open PDF in New Tab
+                      </Button>
+                      <Button 
+                        variant="outline" 
+                        onClick={downloadDocument} 
+                        className="gap-2"
+                      >
+                        <Download className="h-4 w-4" />
+                        Download PDF
+                      </Button>
+                    </div>
+                    <div className="text-xs text-muted-foreground">
+                      File: {document.document_name} • {formatFileSize(document.file_size)}
+                    </div>
                   </div>
-                  
-                  {/* Viewer options overlay */}
-                  <div className="absolute top-2 right-2 z-10 flex gap-1 bg-black/50 rounded-lg p-1">
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => window.open(documentUrl, '_blank')}
-                      className="text-white hover:bg-white/20 text-xs px-2 py-1 h-auto"
-                      title="Open in new tab for full features"
-                    >
-                      Full View
-                    </Button>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => {
-                        const link = window.document.createElement('a');
-                        link.href = documentUrl;
-                        link.download = document.document_name;
-                        link.click();
-                      }}
-                      className="text-white hover:bg-white/20 text-xs px-2 py-1 h-auto"
-                      title="Download PDF"
-                    >
-                      Download
-                    </Button>
-                  </div>
-                </>
+                </div>
               ) : isImage ? (
                 <div className="w-full h-full flex items-center justify-center bg-muted/50">
                   <img
