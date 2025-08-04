@@ -56,7 +56,7 @@ interface UserProfile {
   last_name: string | null
   phone_number: string | null
   created_at: string
-  role: 'super_admin' | 'admin' | 'manager' | 'agent' | 'funder' | 'loan_processor' | 'underwriter' | 'closer' | 'tech'
+  role: 'super_admin' | 'admin' | 'manager' | 'agent' | 'loan_originator' | 'funder' | 'loan_processor' | 'underwriter' | 'closer' | 'tech'
   is_active: boolean
   archived_at?: string | null
   archived_by?: string | null
@@ -79,7 +79,7 @@ export default function Users() {
     first_name: "",
     last_name: "",
     phone_number: "",
-    role: "agent" as 'super_admin' | 'admin' | 'manager' | 'agent' | 'funder' | 'loan_processor' | 'underwriter' | 'closer' | 'tech'
+    role: "agent" as 'super_admin' | 'admin' | 'manager' | 'agent' | 'loan_originator' | 'funder' | 'loan_processor' | 'underwriter' | 'closer' | 'tech'
   })
   const [editingUser, setEditingUser] = useState<UserProfile | null>(null)
   const [showNewUserDialog, setShowNewUserDialog] = useState(false)
@@ -640,6 +640,7 @@ export default function Users() {
       case 'admin': return 'default'
       case 'manager': return 'default'
       case 'agent': return 'secondary'
+      case 'loan_originator': return 'secondary'
       case 'funder': return 'secondary'
       case 'loan_processor': return 'secondary'
       case 'underwriter': return 'secondary'
@@ -887,6 +888,7 @@ export default function Users() {
                                user.role === 'admin' ? 'Admin' :
                                user.role === 'manager' ? 'Manager' :
                                user.role === 'agent' ? 'Agent' :
+                               user.role === 'loan_originator' ? 'Originator' :
                                user.role === 'funder' ? 'Funder' :
                                user.role === 'loan_processor' ? 'Processor' :
                                  user.role === 'underwriter' ? 'Underwriter' : 
@@ -1111,6 +1113,7 @@ export default function Users() {
                                user.role === 'admin' ? 'Admin' :
                                user.role === 'manager' ? 'Manager' :
                                user.role === 'agent' ? 'Agent' :
+                               user.role === 'loan_originator' ? 'Originator' :
                                user.role === 'funder' ? 'Funder' :
                                user.role === 'loan_processor' ? 'Processor' :
                                  user.role === 'underwriter' ? 'Underwriter' : 
@@ -1217,7 +1220,8 @@ export default function Users() {
                         <SelectItem value="admin">Administrator</SelectItem>
                       )}
                       <SelectItem value="manager">Manager</SelectItem>
-                      <SelectItem value="agent">Loan Originator (Agent)</SelectItem>
+                       <SelectItem value="agent">Agent</SelectItem>
+                       <SelectItem value="loan_originator">Loan Originator</SelectItem>
                       <SelectItem value="funder">Loan Funder</SelectItem>
                       <SelectItem value="loan_processor">Loan Processor</SelectItem>
                       <SelectItem value="underwriter">Loan Underwriter</SelectItem>

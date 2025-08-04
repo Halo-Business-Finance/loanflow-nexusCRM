@@ -1,7 +1,7 @@
 import { useAuth } from '@/components/auth/AuthProvider';
 import { useCallback } from 'react';
 
-export type UserRole = 'super_admin' | 'admin' | 'manager' | 'agent' | 'loan_processor' | 'funder' | 'underwriter' | 'closer' | 'tech';
+export type UserRole = 'super_admin' | 'admin' | 'manager' | 'agent' | 'loan_originator' | 'loan_processor' | 'funder' | 'underwriter' | 'closer' | 'tech';
 
 interface RoleHierarchy {
   [key: string]: number;
@@ -11,6 +11,7 @@ const ROLE_HIERARCHY: RoleHierarchy = {
   'super_admin': 4,
   'admin': 3,
   'manager': 2,
+  'loan_originator': 1,
   'loan_processor': 1,
   'funder': 1,
   'underwriter': 1,

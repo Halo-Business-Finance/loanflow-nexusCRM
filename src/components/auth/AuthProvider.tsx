@@ -284,8 +284,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     // If checking for super_admin specifically, only super_admin can have it
     if (role === 'super_admin') return userRole === 'super_admin'
     
-    // Role hierarchy: super_admin > admin > manager > agent/loan_processor/funder/underwriter/closer > tech
-    const roleHierarchy = ['tech', 'closer', 'underwriter', 'funder', 'loan_processor', 'agent', 'manager', 'admin']
+    // Role hierarchy: super_admin > admin > manager > agent/loan_originator/loan_processor/funder/underwriter/closer > tech
+    const roleHierarchy = ['tech', 'closer', 'underwriter', 'funder', 'loan_processor', 'loan_originator', 'agent', 'manager', 'admin']
     const userRoleIndex = roleHierarchy.indexOf(userRole)
     const requiredRoleIndex = roleHierarchy.indexOf(role)
     
