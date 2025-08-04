@@ -397,33 +397,38 @@ export function DocumentViewer({ document, isOpen, onClose }: DocumentViewerProp
             <div className="h-[70vh] border rounded-lg overflow-hidden relative">
               {isPdf ? (
                 <div className="w-full h-full relative">
-                  {/* Use PDF.js viewer - most reliable approach */}
-                  <iframe
-                    src={`https://mozilla.github.io/pdf.js/web/viewer.html?file=${encodeURIComponent(documentUrl)}`}
-                    className="w-full h-full border-0"
-                    title={document.document_name}
+                  {/* Direct PDF embed with error handling */}
+                  <embed
+                    src={documentUrl}
+                    type="application/pdf"
+                    className="w-full h-full"
                     style={{ minHeight: '500px' }}
+                    onError={() => {
+                      console.log('PDF embed failed, showing fallback');
+                    }}
                   />
                   
-                  {/* Floating action buttons */}
-                  <div className="absolute top-2 right-2 z-10 flex gap-1 bg-black/50 rounded-lg p-1">
+                  {/* Always show action buttons for user control */}
+                  <div className="absolute top-2 right-2 z-10 flex gap-1 bg-white/90 backdrop-blur-sm rounded-lg p-1 shadow-lg">
                     <Button
-                      variant="ghost"
+                      variant="outline"
                       size="sm"
                       onClick={() => window.open(documentUrl, '_blank')}
-                      className="text-white hover:bg-white/20 text-xs px-2 py-1 h-auto"
-                      title="Open in new tab"
+                      className="text-xs px-2 py-1 h-auto"
+                      title="Open in new tab with full controls"
                     >
-                      <ExternalLink className="h-3 w-3" />
+                      <ExternalLink className="h-3 w-3 mr-1" />
+                      Open
                     </Button>
                     <Button
-                      variant="ghost"
+                      variant="outline"
                       size="sm"
                       onClick={downloadDocument}
-                      className="text-white hover:bg-white/20 text-xs px-2 py-1 h-auto"
+                      className="text-xs px-2 py-1 h-auto"
                       title="Download PDF"
                     >
-                      <Download className="h-3 w-3" />
+                      <Download className="h-3 w-3 mr-1" />
+                      Save
                     </Button>
                   </div>
                 </div>
