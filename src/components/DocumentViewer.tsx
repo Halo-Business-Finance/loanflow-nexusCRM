@@ -200,108 +200,67 @@ export function DocumentViewer({ document, isOpen, onClose }: DocumentViewerProp
   const initializeAdobeViewer = async (url: string) => {
     try {
       console.log('=== Adobe Viewer Initialization Started ===');
-      console.log('Document URL:', url);
-      console.log('Document details:', {
-        name: document?.document_name,
-        type: document?.file_mime_type,
-        size: document?.file_size
-      });
-      
       setViewerError(false); // Reset error state
       
       let config = adobeConfig;
       if (!config) {
-        console.log('No existing config, fetching Adobe config...');
+        console.log('Fetching Adobe config...');
         config = await getAdobeConfig();
-        if (!config) throw new Error('No Adobe config available');
+        if (!config) throw new Error('Adobe configuration unavailable');
       }
-
-      console.log('Using Adobe config:', config);
 
       console.log('Loading Adobe SDK...');
       await loadAdobeSDK();
 
       if (!window.AdobeDC) {
-        throw new Error('Adobe SDK not available after loading');
+        throw new Error('Adobe SDK failed to load');
       }
-      console.log('Adobe SDK confirmed available');
 
       if (!viewerRef.current) {
         throw new Error('Viewer container not ready');
       }
-      console.log('Viewer container confirmed ready');
 
-      // Ensure container has the correct ID
+      // Setup container
       viewerRef.current.id = 'adobe-dc-view';
-      // Clear previous viewer content
       viewerRef.current.innerHTML = '';
-      console.log('Container cleared and ID set');
 
-      // Wait a moment for DOM to be ready
-      await new Promise(resolve => setTimeout(resolve, 100));
+      // Wait for DOM updates
+      await new Promise(resolve => setTimeout(resolve, 200));
 
-      // Verify the container exists in DOM
-      const container = window.document.getElementById('adobe-dc-view');
-      if (!container) {
-        throw new Error('Adobe viewer container not found in DOM');
-      }
-      console.log('Container verified in DOM:', container);
-
-      // Test URL accessibility
-      console.log('Testing URL accessibility...');
-      try {
-        const response = await fetch(url, { method: 'HEAD' });
-        console.log('URL test response:', response.status, response.statusText);
-        if (!response.ok) {
-          throw new Error(`URL not accessible: ${response.status} ${response.statusText}`);
-        }
-      } catch (fetchError) {
-        console.error('URL accessibility test failed:', fetchError);
-        throw new Error(`PDF URL not accessible: ${fetchError instanceof Error ? fetchError.message : 'Unknown error'}`);
-      }
-
-      console.log('Creating Adobe DC View instance...');
+      console.log('Creating Adobe DC View...');
       const adobeDCView = new window.AdobeDC.View({
         clientId: config.clientId,
         divId: 'adobe-dc-view'
       });
-      console.log('Adobe DC View instance created successfully');
 
-      console.log('Calling previewFile with config:', {
-        url,
-        fileName: document?.document_name || 'document.pdf',
-        embedMode: 'SIZED_CONTAINER'
-      });
-
-      // Use a more robust preview configuration
-      adobeDCView.previewFile({
-        content: { location: { url } },
-        metaData: { fileName: document?.document_name || 'document.pdf' }
-      }, {
-        embedMode: 'SIZED_CONTAINER',
-        showAnnotationTools: false,
-        showLeftHandPanel: true,
-        showDownloadPDF: true,
-        showPrintPDF: true,
-        showTopToolbar: true,
-        defaultViewMode: 'FIT_PAGE'
-      });
+      // Preview file with error handling
+      try {
+        adobeDCView.previewFile({
+          content: { location: { url } },
+          metaData: { fileName: document?.document_name || 'document.pdf' }
+        }, {
+          embedMode: 'SIZED_CONTAINER',
+          showAnnotationTools: false,
+          showLeftHandPanel: true,
+          showDownloadPDF: true,
+          showPrintPDF: true,
+          showTopToolbar: true,
+          defaultViewMode: 'FIT_PAGE'
+        });
+      } catch (previewError) {
+        console.error('Adobe previewFile error:', previewError);
+        throw new Error('Failed to preview PDF');
+      }
 
       setAdobeView(adobeDCView);
-      console.log('=== Adobe PDF viewer initialized successfully ===');
+      console.log('Adobe PDF viewer initialized successfully');
       
     } catch (error) {
-      console.error('=== Adobe Viewer Initialization Failed ===');
-      console.error('Error details:', error);
-      console.error('Error stack:', error instanceof Error ? error.stack : 'No stack trace');
+      console.error('Adobe viewer initialization failed:', error);
       setViewerError(true);
       
-      // Show a more helpful error message
-      toast({
-        title: "Adobe PDF Viewer Error",
-        description: `Failed to load Adobe PDF viewer: ${error instanceof Error ? error.message : 'Unknown error'}. Please try downloading the document or opening in browser.`,
-        variant: "destructive",
-      });
+      // Don't show toast immediately, let the fallback UI handle it
+      console.log('Falling back to browser PDF viewer');
     }
   };
 
