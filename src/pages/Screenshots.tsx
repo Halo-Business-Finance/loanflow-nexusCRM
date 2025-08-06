@@ -1,125 +1,109 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { useState, useEffect } from "react";
+import { Camera, Download, ExternalLink } from "lucide-react";
 
 const Screenshots = () => {
-  const [screenshots, setScreenshots] = useState<string[]>([]);
-  const [loading, setLoading] = useState(true);
-
-  const screenshotData = [
+  const pages = [
     {
-      title: "Dashboard - Your CRM Overview",
-      description: "Main dashboard showing your actual metrics, pipeline, and recent activity",
-      filename: "localhost_5173.png"
+      title: "Dashboard Overview",
+      description: "Main dashboard with metrics, pipeline overview, and recent activity",
+      url: "/",
+      route: "dashboard"
     },
     {
-      title: "Pipeline Management",
-      description: "Your interactive sales pipeline with real stages and workflow",
-      filename: "localhost_5173_pipeline.png"
+      title: "Pipeline Management", 
+      description: "Interactive sales pipeline with drag-and-drop functionality",
+      url: "/pipeline",
+      route: "pipeline"
     },
     {
       title: "Lead Management",
-      description: "Your lead management interface with actual contact cards",
-      filename: "localhost_5173_leads.png"
+      description: "Lead cards, contact details, and management tools",
+      url: "/leads", 
+      route: "leads"
     },
     {
       title: "Enterprise Tools",
-      description: "Your advanced business features and workflow management",
-      filename: "localhost_5173_enterprise.png"
+      description: "Advanced workflow automation and business tools",
+      url: "/enterprise",
+      route: "enterprise"
     }
   ];
 
-  useEffect(() => {
-    // Try to load the actual screenshots from the tmp directory
-    const loadScreenshots = async () => {
-      try {
-        const imageUrls = [
-          "tmp://fetched-websites/localhost_5173.png",
-          "tmp://fetched-websites/localhost_5173_pipeline.png", 
-          "tmp://fetched-websites/localhost_5173_leads.png",
-          "tmp://fetched-websites/localhost_5173_enterprise.png"
-        ];
-        setScreenshots(imageUrls);
-      } catch (error) {
-        console.error("Failed to load screenshots:", error);
-      } finally {
-        setLoading(false);
+  const takeScreenshot = async (url: string, title: string) => {
+    try {
+      // Open the page in a new window
+      const newWindow = window.open(url, '_blank', 'width=1200,height=800');
+      
+      if (newWindow) {
+        // Instructions for manual screenshot
+        alert(`Page opened in new window. To take a screenshot:
+
+1. Wait for page to fully load
+2. Use browser screenshot:
+   • Chrome: F12 → Device Toolbar → Screenshot icon
+   • Firefox: F12 → Screenshot icon
+   • Or use your OS screenshot tool
+
+3. Save as "${title.toLowerCase().replace(/\s+/g, '-')}-screenshot.png"`);
       }
-    };
-
-    loadScreenshots();
-  }, []);
-
-  const downloadScreenshot = (filename: string) => {
-    // Create a link to download the screenshot
-    const link = document.createElement('a');
-    link.href = `tmp://fetched-websites/${filename}`;
-    link.download = filename;
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
+    } catch (error) {
+      console.error('Failed to open page:', error);
+    }
   };
 
-  if (loading) {
-    return (
-      <div className="container mx-auto p-6">
-        <div className="flex items-center justify-center min-h-[400px]">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
-        </div>
-      </div>
-    );
-  }
+  const openPageInNewTab = (url: string) => {
+    window.open(url, '_blank');
+  };
 
   return (
     <div className="container mx-auto p-6">
       <div className="mb-8">
-        <h1 className="text-3xl font-bold mb-2">Your CRM Screenshots</h1>
+        <h1 className="text-3xl font-bold mb-2">CRM Screenshots</h1>
         <p className="text-muted-foreground">
-          Actual screenshots of your LoanFlow CRM system - captured live from your application
+          Capture screenshots of your LoanFlow CRM system for presentations and documentation
         </p>
+      </div>
+
+      <div className="mb-6 p-4 bg-blue-50 dark:bg-blue-950 rounded-lg border border-blue-200 dark:border-blue-800">
+        <h2 className="font-semibold text-blue-900 dark:text-blue-100 mb-2">How to Take Screenshots</h2>
+        <div className="text-sm text-blue-800 dark:text-blue-200 space-y-1">
+          <p><strong>Method 1:</strong> Click "Take Screenshot" → Use browser's built-in screenshot tool</p>
+          <p><strong>Method 2:</strong> Click "Open Page" → Use your OS screenshot tool (Windows: Win+Shift+S, Mac: Cmd+Shift+4)</p>
+          <p><strong>Method 3:</strong> Use browser extensions like "Full Page Screen Capture"</p>
+        </div>
       </div>
       
       <div className="grid gap-6 md:grid-cols-2">
-        {screenshotData.map((screenshot, index) => (
+        {pages.map((page, index) => (
           <Card key={index} className="overflow-hidden">
             <CardHeader>
-              <CardTitle>{screenshot.title}</CardTitle>
-              <CardDescription>{screenshot.description}</CardDescription>
+              <CardTitle className="flex items-center gap-2">
+                <Camera className="w-5 h-5" />
+                {page.title}
+              </CardTitle>
+              <CardDescription>{page.description}</CardDescription>
             </CardHeader>
-            <CardContent className="p-0">
-              <div className="relative">
-                <img 
-                  src={screenshots[index]} 
-                  alt={screenshot.title}
-                  className="w-full h-auto border-b"
-                  onError={(e) => {
-                    // If image fails to load, show placeholder
-                    e.currentTarget.style.display = 'none';
-                    e.currentTarget.nextElementSibling?.classList.remove('hidden');
-                  }}
-                />
-                <div className="hidden p-8 text-center bg-muted">
-                  <p className="text-muted-foreground mb-4">
-                    Screenshot not available - please visit the actual page to see it live
-                  </p>
-                  <Button 
-                    onClick={() => window.open(screenshot.filename.includes('pipeline') ? '/pipeline' : 
-                                               screenshot.filename.includes('leads') ? '/leads' :
-                                               screenshot.filename.includes('enterprise') ? '/enterprise' : '/', '_blank')}
-                    variant="outline"
-                  >
-                    View Live Page
-                  </Button>
-                </div>
-              </div>
-              <div className="p-4">
+            <CardContent className="space-y-3">
+              <div className="grid gap-2">
                 <Button 
-                  onClick={() => downloadScreenshot(screenshot.filename)}
-                  className="w-full"
-                  variant="outline"
+                  onClick={() => takeScreenshot(page.url, page.title)}
+                  className="w-full gap-2"
                 >
-                  Download Screenshot
+                  <Camera className="w-4 h-4" />
+                  Take Screenshot
                 </Button>
+                <Button 
+                  onClick={() => openPageInNewTab(page.url)}
+                  variant="outline"
+                  className="w-full gap-2"
+                >
+                  <ExternalLink className="w-4 h-4" />
+                  Open Page
+                </Button>
+              </div>
+              <div className="text-xs text-muted-foreground">
+                URL: <code className="bg-muted px-1 rounded">{page.url}</code>
               </div>
             </CardContent>
           </Card>
@@ -128,48 +112,37 @@ const Screenshots = () => {
       
       <div className="mt-8 space-y-4">
         <Card className="p-6">
-          <h2 className="text-lg font-semibold mb-2">Live Page Access</h2>
-          <p className="text-sm text-muted-foreground mb-4">
-            Since the captured screenshots may not display properly, you can access the live pages directly:
-          </p>
-          <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-4">
-            <Button 
-              onClick={() => window.open('/', '_blank')}
-              variant="outline" 
-              className="w-full"
-            >
-              Dashboard
-            </Button>
-            <Button 
-              onClick={() => window.open('/pipeline', '_blank')}
-              variant="outline" 
-              className="w-full"
-            >
-              Pipeline
-            </Button>
-            <Button 
-              onClick={() => window.open('/leads', '_blank')}
-              variant="outline" 
-              className="w-full"
-            >
-              Leads
-            </Button>
-            <Button 
-              onClick={() => window.open('/enterprise', '_blank')}
-              variant="outline" 
-              className="w-full"
-            >
-              Enterprise
-            </Button>
+          <h2 className="text-lg font-semibold mb-3">Browser Screenshot Instructions</h2>
+          <div className="grid gap-4 md:grid-cols-2">
+            <div>
+              <h3 className="font-medium mb-2">Chrome/Edge</h3>
+              <ol className="text-sm text-muted-foreground space-y-1">
+                <li>1. Press F12 to open Developer Tools</li>
+                <li>2. Click the Device Toolbar icon (mobile/tablet icon)</li>
+                <li>3. Click the Screenshot icon (camera)</li>
+                <li>4. Choose "Capture full size screenshot"</li>
+              </ol>
+            </div>
+            <div>
+              <h3 className="font-medium mb-2">Firefox</h3>
+              <ol className="text-sm text-muted-foreground space-y-1">
+                <li>1. Press F12 to open Developer Tools</li>
+                <li>2. Click the Settings gear icon</li>
+                <li>3. Enable "Take a screenshot of the entire page"</li>
+                <li>4. Click the camera icon in toolbar</li>
+              </ol>
+            </div>
           </div>
         </Card>
-        
+
         <Card className="p-6 bg-muted">
-          <h2 className="text-lg font-semibold mb-2">Alternative: Browser Screenshots</h2>
-          <p className="text-sm text-muted-foreground">
-            To capture your own screenshots: Open each page in your browser, then use your browser's screenshot tool 
-            (usually F12 → Device toolbar → Screenshot icon) or your operating system's screenshot feature.
-          </p>
+          <h2 className="text-lg font-semibold mb-2">Recommended File Names</h2>
+          <div className="grid gap-2 text-sm">
+            <div><code>loanflow-dashboard.png</code> - Dashboard overview</div>
+            <div><code>loanflow-pipeline.png</code> - Pipeline management</div>
+            <div><code>loanflow-leads.png</code> - Lead management</div>
+            <div><code>loanflow-enterprise.png</code> - Enterprise tools</div>
+          </div>
         </Card>
       </div>
     </div>
