@@ -49,9 +49,9 @@ function SecurityProvider() {
 }
 
 function AuthenticatedApp() {
-  const { user, loading } = useAuth();
+  const { user, loading, userRole } = useAuth();
   
-  console.log('AuthenticatedApp state:', { user: !!user, loading });
+  console.log('AuthenticatedApp state:', { user: !!user, loading, userRole, userId: user?.id });
 
   if (loading) {
     console.log('AuthenticatedApp: showing loading spinner');
@@ -60,6 +60,11 @@ function AuthenticatedApp() {
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
       </div>
     );
+  }
+
+  if (!user) {
+    console.log('AuthenticatedApp: no user, should redirect to auth');
+    return <AuthPage />;
   }
 
   return (
