@@ -100,9 +100,9 @@ export function AppSidebar() {
                     onClick={handleUserIconClick}
                   >
                     {user ? (
-                      <UserCheck className="w-4 h-4 text-sidebar-foreground" />
+                      <UserCheck className="w-4 h-4 text-white" />
                     ) : (
-                      <User className="w-4 h-4 text-sidebar-foreground" />
+                      <User className="w-4 h-4 text-white" />
                     )}
                   </Button>
                 </TooltipTrigger>
