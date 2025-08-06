@@ -30,6 +30,7 @@ import Enterprise from "./pages/Enterprise";
 import Integrations from "./pages/Integrations";
 import AITools from "./pages/AITools";
 import APIDocs from "./pages/APIDocs";
+import Screenshots from "./pages/Screenshots";
 import EmergencyMaintenance from "./pages/EmergencyMaintenance";
 import NotFound from "./pages/NotFound";
 import { useKeyboardShortcuts } from "@/hooks/useKeyboardShortcuts";
@@ -89,6 +90,7 @@ function AuthenticatedApp() {
             <Route path="/enterprise" element={<Enterprise />} errorElement={<RouteErrorBoundary />} />
             <Route path="/integrations" element={<Integrations />} errorElement={<RouteErrorBoundary />} />
             <Route path="/ai-tools" element={<AITools />} errorElement={<RouteErrorBoundary />} />
+            <Route path="/screenshots" element={<Screenshots />} errorElement={<RouteErrorBoundary />} />
             <Route path="/api-docs" element={<APIDocs />} errorElement={<RouteErrorBoundary />} />
             <Route path="/resources" element={<Resources />} errorElement={<RouteErrorBoundary />} />
             <Route path="/emergency-maintenance" element={<EmergencyMaintenance />} errorElement={<RouteErrorBoundary />} />
