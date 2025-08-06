@@ -46,17 +46,27 @@ export function LeadForm({ lead, onSubmit, onCancel, isSubmitting = false }: Lea
   }
 
   const handleInputChange = async (field: keyof ContactEntity, value: any) => {
-    // For now, bypass the complex validation and just update the form data
-    // The validation was causing issues with user input
-    console.log('Input change:', field, value)
-    setFormData(prev => ({ ...prev, [field]: value }))
-    
-    // Optional: Add basic validation for critical fields
-    if (field === 'email' && value && typeof value === 'string') {
-      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-      if (!emailRegex.test(value)) {
-        console.warn('Invalid email format')
+    // Implement proper input validation and sanitization
+    if (typeof value === 'string' && value.trim()) {
+      try {
+        const fieldType = field === 'email' ? 'email' : field === 'phone' ? 'phone' : 'text'
+        const validation = await validateAndSanitize(value, fieldType)
+        
+        if (validation.valid) {
+          setFormData(prev => ({ ...prev, [field]: validation.sanitized }))
+        } else {
+          console.warn('Validation failed:', validation.errors)
+          // Still update to allow user to see their input, but mark as invalid
+          setFormData(prev => ({ ...prev, [field]: value }))
+        }
+      } catch (error) {
+        console.error('Validation error:', error)
+        // Fallback to basic validation on error
+        setFormData(prev => ({ ...prev, [field]: value }))
       }
+    } else {
+      // Allow empty values or non-string values (numbers, etc.)
+      setFormData(prev => ({ ...prev, [field]: value }))
     }
   }
 
