@@ -33,11 +33,17 @@ import APIDocs from "./pages/APIDocs";
 import EmergencyMaintenance from "./pages/EmergencyMaintenance";
 import NotFound from "./pages/NotFound";
 import { useKeyboardShortcuts } from "@/hooks/useKeyboardShortcuts";
+import { useEnhancedSecurity } from "@/hooks/useEnhancedSecurity";
 
 const queryClient = new QueryClient();
 
 function KeyboardShortcutsProvider() {
   useKeyboardShortcuts();
+  return null;
+}
+
+function SecurityProvider() {
+  useEnhancedSecurity();
   return null;
 }
 
@@ -58,6 +64,7 @@ function AuthenticatedApp() {
   return (
     <BrowserRouter>
       <KeyboardShortcutsProvider />
+      <SecurityProvider />
       <Routes>
         {/* Public route for authentication */}
         <Route path="/auth" element={<AuthPage />} errorElement={<RouteErrorBoundary />} />

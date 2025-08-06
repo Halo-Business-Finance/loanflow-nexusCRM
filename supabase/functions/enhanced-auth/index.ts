@@ -1,9 +1,20 @@
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.39.3';
 
-const corsHeaders = {
+const enhancedSecurityHeaders = {
   'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type, x-csrf-token',
+  'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+  'Access-Control-Max-Age': '86400',
+  'Content-Security-Policy': "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; connect-src 'self' https://*.supabase.co; frame-src 'none'; object-src 'none'",
+  'X-Frame-Options': 'DENY',
+  'X-Content-Type-Options': 'nosniff',
+  'X-XSS-Protection': '1; mode=block',
+  'Strict-Transport-Security': 'max-age=31536000; includeSubDomains; preload',
+  'Referrer-Policy': 'strict-origin-when-cross-origin',
+  'X-Permitted-Cross-Domain-Policies': 'none',
+  'Cache-Control': 'no-store, no-cache, must-revalidate, private',
+  'Pragma': 'no-cache'
 };
 
 const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
@@ -13,7 +24,7 @@ const supabase = createClient(supabaseUrl, supabaseKey);
 serve(async (req) => {
   // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {
-    return new Response(null, { headers: corsHeaders });
+    return new Response(null, { headers: enhancedSecurityHeaders });
   }
 
   try {
@@ -41,10 +52,10 @@ serve(async (req) => {
   } catch (error: any) {
     console.error('Error in enhanced-auth function:', error);
     return new Response(
-      JSON.stringify({ error: error.message }),
+      JSON.stringify({ error: 'An unexpected error occurred. Please try again.' }),
       { 
         status: 500, 
-        headers: { 'Content-Type': 'application/json', ...corsHeaders } 
+        headers: { 'Content-Type': 'application/json', ...enhancedSecurityHeaders } 
       }
     );
   }
@@ -62,11 +73,11 @@ async function validatePassword(password: string) {
       success: true,
       validation_result: data
     }), {
-      headers: { 'Content-Type': 'application/json', ...corsHeaders },
+      headers: { 'Content-Type': 'application/json', ...enhancedSecurityHeaders },
     });
 
   } catch (error: any) {
-    throw new Error(`Password validation failed: ${error.message}`);
+    throw new Error('Password validation failed');
   }
 }
 
@@ -85,11 +96,11 @@ async function checkRateLimit(identifier: string, actionType: string) {
       success: true,
       rate_limit_result: data
     }), {
-      headers: { 'Content-Type': 'application/json', ...corsHeaders },
+      headers: { 'Content-Type': 'application/json', ...enhancedSecurityHeaders },
     });
 
   } catch (error: any) {
-    throw new Error(`Rate limit check failed: ${error.message}`);
+    throw new Error('Rate limit check failed');
   }
 }
 
@@ -114,11 +125,11 @@ async function logSecurityEvent(req: Request) {
       success: true,
       event_id: data
     }), {
-      headers: { 'Content-Type': 'application/json', ...corsHeaders },
+      headers: { 'Content-Type': 'application/json', ...enhancedSecurityHeaders },
     });
 
   } catch (error: any) {
-    throw new Error(`Security event logging failed: ${error.message}`);
+    throw new Error('Security event logging failed');
   }
 }
 
@@ -170,11 +181,11 @@ async function validateSession(req: Request) {
         requires_mfa: riskScore > 50
       }
     }), {
-      headers: { 'Content-Type': 'application/json', ...corsHeaders },
+      headers: { 'Content-Type': 'application/json', ...enhancedSecurityHeaders },
     });
 
   } catch (error: any) {
-    throw new Error(`Session validation failed: ${error.message}`);
+    throw new Error('Session validation failed');
   }
 }
 
