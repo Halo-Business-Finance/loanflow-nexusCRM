@@ -51,21 +51,30 @@ function SecurityProvider() {
 function AuthenticatedApp() {
   const { user, loading, userRole } = useAuth();
   
-  console.log('AuthenticatedApp state:', { user: !!user, loading, userRole, userId: user?.id });
+  console.log('AuthenticatedApp state:', { 
+    user: !!user, 
+    loading, 
+    userRole, 
+    userId: user?.id,
+    userEmail: user?.email 
+  });
 
   if (loading) {
     console.log('AuthenticatedApp: showing loading spinner');
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+        <p className="ml-3">Loading authentication...</p>
       </div>
     );
   }
 
   if (!user) {
-    console.log('AuthenticatedApp: no user, should redirect to auth');
+    console.log('AuthenticatedApp: no user found, redirecting to auth page');
     return <AuthPage />;
   }
+
+  console.log('AuthenticatedApp: user authenticated, rendering routes');
 
   return (
     <BrowserRouter>
