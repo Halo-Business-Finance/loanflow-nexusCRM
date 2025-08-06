@@ -5,22 +5,22 @@ const Screenshots = () => {
     {
       title: "CRM Dashboard Overview",
       description: "Main dashboard with key metrics, pipeline value, and performance charts",
-      path: "/crm-dashboard.png"
+      path: "/real-crm-dashboard.png"
     },
     {
       title: "Pipeline View",
-      description: "Visual sales funnel showing leads moving through stages",
-      path: "/pipeline-view.png"
+      description: "Interactive sales funnel showing leads moving through stages",
+      path: "/real-pipeline-view.png"
     },
     {
       title: "Lead Management Cards",
       description: "Contact card interface with client details and action buttons",
-      path: "/lead-cards.png"
+      path: "/real-lead-cards.png"
     },
     {
-      title: "Loan Program Matrix",
-      description: "Product comparison table with rates and requirements",
-      path: "/loan-matrix.png"
+      title: "Enterprise Tools",
+      description: "Advanced loan management and workflow tools",
+      path: "/real-enterprise-tools.png"
     }
   ];
 
