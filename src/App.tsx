@@ -11,6 +11,7 @@ import { SecurityManager } from "@/components/security/SecurityManager";
 import { GeoSecurityCheck } from "@/components/GeoSecurityCheck";
 import { AsyncErrorBoundary } from "@/components/AsyncErrorBoundary";
 import { CSPHeaders } from "@/components/security/CSPHeaders";
+import { SecurityEnhancementProvider } from "@/components/security/SecurityEnhancementProvider";
 import { RouteErrorBoundary } from "@/components/RouteErrorBoundary";
 import Index from "./pages/Index";
 import Leads from "./pages/Leads";
@@ -51,16 +52,20 @@ function SecurityProvider() {
 function AuthenticatedApp() {
   const { user, loading, userRole } = useAuth();
   
-  console.log('AuthenticatedApp state:', { 
-    user: !!user, 
-    loading, 
-    userRole, 
-    userId: user?.id,
-    userEmail: user?.email 
-  });
+  // Only log sensitive data in development mode
+  if (import.meta.env.DEV) {
+    console.log('AuthenticatedApp state:', { 
+      user: !!user, 
+      loading, 
+      userRole, 
+      userId: user?.id?.substring(0, 8) + '...' // Only log partial ID
+    });
+  }
 
   if (loading) {
-    console.log('AuthenticatedApp: showing loading spinner');
+    if (import.meta.env.DEV) {
+      console.log('AuthenticatedApp: showing loading spinner');
+    }
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
@@ -70,11 +75,15 @@ function AuthenticatedApp() {
   }
 
   if (!user) {
-    console.log('AuthenticatedApp: no user found, redirecting to auth page');
+    if (import.meta.env.DEV) {
+      console.log('AuthenticatedApp: no user found, redirecting to auth page');
+    }
     return <AuthPage />;
   }
 
-  console.log('AuthenticatedApp: user authenticated, rendering routes');
+  if (import.meta.env.DEV) {
+    console.log('AuthenticatedApp: user authenticated, rendering routes');
+  }
 
   return (
     <BrowserRouter>
@@ -131,11 +140,13 @@ const App = () => {
           <CSPHeaders />
           {/* Temporarily removed GeoSecurityCheck to bypass blocking */}
           <AuthProvider>
-            <TooltipProvider>
-              <Toaster />
-              <Sonner />
-              <AuthenticatedApp />
-            </TooltipProvider>
+            <SecurityEnhancementProvider>
+              <TooltipProvider>
+                <Toaster />
+                <Sonner />
+                <AuthenticatedApp />
+              </TooltipProvider>
+            </SecurityEnhancementProvider>
           </AuthProvider>
         </ThemeProvider>
       </QueryClientProvider>

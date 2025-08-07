@@ -80,7 +80,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const fetchUserRole = async (userId: string) => {
     try {
-      console.log('Fetching user role for userId:', userId)
+      // Only log in development mode
+      if (import.meta.env.DEV) {
+        console.log('Fetching user role for userId:', userId)
+      }
+      
       const { data, error } = await supabase
         .from('user_roles')
         .select('role')
@@ -88,7 +92,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         .eq('is_active', true)
         .maybeSingle()
 
-      console.log('User role query result:', { data, error })
+      if (import.meta.env.DEV) {
+        console.log('User role query result:', { data, error })
+      }
 
       if (error) {
         console.error('Error fetching user role:', error)
@@ -96,7 +102,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       }
 
       const role = data?.role || 'agent'
-      console.log('Setting user role to:', role)
+      if (import.meta.env.DEV) {
+        console.log('Setting user role to:', role)
+      }
       setUserRole(role)
     } catch (error) {
       console.error('Error fetching user role:', error)
