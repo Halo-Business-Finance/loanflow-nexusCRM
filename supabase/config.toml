@@ -6,6 +6,12 @@ verify_jwt = false
 [functions.geo-security]
 verify_jwt = false
 
+[functions.production-geo-security]
+verify_jwt = false
+
+[functions.enhanced-geo-security]
+verify_jwt = false
+
 [functions.microsoft-auth]
 verify_jwt = false
 
@@ -22,4 +28,25 @@ verify_jwt = false
 verify_jwt = false
 
 [functions.security-monitor]
+verify_jwt = false
+
+[functions.blockchain-hash]
+verify_jwt = false
+
+[functions.encrypt-data]
+verify_jwt = false
+
+[functions.get-adobe-config]
+verify_jwt = false
+
+[functions.secure-external-api]
+verify_jwt = false
+
+[functions.send-email]
+verify_jwt = false
+
+[functions.session-security]
+verify_jwt = false
+
+[functions.webhook-security]
 verify_jwt = false

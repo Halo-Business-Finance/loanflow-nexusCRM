@@ -3439,6 +3439,10 @@ export type Database = {
         }
         Returns: undefined
       }
+      decrypt_token: {
+        Args: { p_encrypted_token: string }
+        Returns: string
+      }
       detect_ai_behavior: {
         Args: {
           p_user_id: string
@@ -3456,6 +3460,10 @@ export type Database = {
         }
         Returns: Json
       }
+      encrypt_token: {
+        Args: { p_token: string }
+        Returns: string
+      }
       enhanced_rate_limit_check: {
         Args: {
           p_identifier: string
@@ -3472,6 +3480,14 @@ export type Database = {
       get_recent_failed_attempts: {
         Args: { user_email: string }
         Returns: number
+      }
+      get_secure_email_tokens: {
+        Args: { p_user_id: string; p_email_address: string }
+        Returns: {
+          decrypted_access_token: string
+          decrypted_refresh_token: string
+          expires_at: string
+        }[]
       }
       get_secure_session_data: {
         Args: { p_key: string }
@@ -3538,8 +3554,28 @@ export type Database = {
         Args: { p_user_id: string; p_restored_by?: string }
         Returns: boolean
       }
+      store_secure_email_tokens: {
+        Args: {
+          p_user_id: string
+          p_email_address: string
+          p_display_name: string
+          p_access_token: string
+          p_refresh_token: string
+          p_expires_at: string
+        }
+        Returns: undefined
+      }
       store_secure_session_data: {
         Args: { p_key: string; p_value: string }
+        Returns: undefined
+      }
+      store_secure_session_token: {
+        Args: {
+          p_user_id: string
+          p_session_token: string
+          p_device_fingerprint: string
+          p_user_agent: string
+        }
         Returns: undefined
       }
       trigger_emergency_shutdown: {
@@ -3572,6 +3608,10 @@ export type Database = {
       validate_password_strength: {
         Args: { password: string }
         Returns: Json
+      }
+      validate_secure_session_token: {
+        Args: { p_user_id: string; p_session_token: string }
+        Returns: boolean
       }
       validate_session_security: {
         Args: { p_user_id: string; p_session_token: string }

@@ -52,20 +52,9 @@ function SecurityProvider() {
 function AuthenticatedApp() {
   const { user, loading, userRole } = useAuth();
   
-  // Only log sensitive data in development mode
-  if (import.meta.env.DEV) {
-    console.log('AuthenticatedApp state:', { 
-      user: !!user, 
-      loading, 
-      userRole, 
-      userId: user?.id?.substring(0, 8) + '...' // Only log partial ID
-    });
-  }
+  // Removed logging for production security
 
   if (loading) {
-    if (import.meta.env.DEV) {
-      console.log('AuthenticatedApp: showing loading spinner');
-    }
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
@@ -75,14 +64,7 @@ function AuthenticatedApp() {
   }
 
   if (!user) {
-    if (import.meta.env.DEV) {
-      console.log('AuthenticatedApp: no user found, redirecting to auth page');
-    }
     return <AuthPage />;
-  }
-
-  if (import.meta.env.DEV) {
-    console.log('AuthenticatedApp: user authenticated, rendering routes');
   }
 
   return (
@@ -131,14 +113,18 @@ function AuthenticatedApp() {
 }
 
 const App = () => {
-  console.log('App component rendering...');
+  // Removed console.log for production security
   
   return (
-    <AsyncErrorBoundary onError={(error) => console.error('AsyncErrorBoundary caught:', error)}>
+    <AsyncErrorBoundary onError={(error) => {
+      // Only log errors in development
+      if (import.meta.env.DEV) {
+        console.error('AsyncErrorBoundary caught:', error);
+      }
+    }}>
       <QueryClientProvider client={queryClient}>
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
           <CSPHeaders />
-          {/* Temporarily removed GeoSecurityCheck to bypass blocking */}
           <AuthProvider>
             <SecurityEnhancementProvider>
               <TooltipProvider>
