@@ -174,7 +174,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       // Check rate limiting for signups
       const rateLimitResult = await SecurityManager.checkRateLimit(email, 'signup');
       if (!rateLimitResult.allowed) {
-        throw new Error('Too many signup attempts. Please try again later.');
+        throw new Error('You have reached the maximum of 5 sign-up attempts. Please try again later.');
       }
 
       // Check geo-restrictions

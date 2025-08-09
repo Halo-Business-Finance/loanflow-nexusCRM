@@ -28,7 +28,7 @@ serve(async (req) => {
   }
 
   try {
-    const { action, email, password, ip_address, user_agent, device_fingerprint, location } = await req.json();
+    const { action, email, password, ip_address, user_agent, device_fingerprint, location, identifier, action_type } = await req.json();
     
     console.log(`Enhanced auth request: ${action} for ${email}`);
 
@@ -37,7 +37,7 @@ serve(async (req) => {
         return await validatePassword(password);
       
       case 'check_rate_limit':
-        return await checkRateLimit(ip_address || email, 'login');
+        return await checkRateLimit(identifier || ip_address || email, action_type || 'login');
         
       case 'log_security_event':
         return await logSecurityEvent(req);
