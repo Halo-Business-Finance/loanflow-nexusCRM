@@ -200,13 +200,16 @@ export class EnhancedMFA {
         }
       });
       
-      // Store encrypted code temporarily
+      // Store encrypted code temporarily on server-side session storage
       const encryptedCode = await SecurityManager.encryptSensitiveData(code);
-      localStorage.setItem(`_sms_code_${phoneNumber}`, encryptedCode);
+      await supabase.rpc('store_secure_session_data', {
+        p_key: `_sms_code_${phoneNumber}`,
+        p_value: encryptedCode,
+      });
       
       // Auto-expire in 5 minutes
       setTimeout(() => {
-        localStorage.removeItem(`_sms_code_${phoneNumber}`);
+        supabase.rpc('remove_secure_session_data', { p_key: `_sms_code_${phoneNumber}` });
       }, 300000);
       
       return code; // In production, don't return the actual code
@@ -218,15 +221,18 @@ export class EnhancedMFA {
 
   // Verify SMS code
   static async verifySMSCode(phoneNumber: string, code: string): Promise<boolean> {
-    const encryptedStoredCode = localStorage.getItem(`_sms_code_${phoneNumber}`);
-    if (!encryptedStoredCode) return false;
+    // Retrieve encrypted code from server-side session storage
+    const { data: storedEncrypted, error } = await supabase.rpc('get_secure_session_data', {
+      p_key: `_sms_code_${phoneNumber}`,
+    });
+    if (error || !storedEncrypted) return false;
     
     try {
-      const storedCode = await SecurityManager.decryptSensitiveData(encryptedStoredCode);
+      const storedCode = await SecurityManager.decryptSensitiveData(storedEncrypted as string);
       const isValid = SecurityManager.secureCompare(code, storedCode);
       
       if (isValid) {
-        localStorage.removeItem(`_sms_code_${phoneNumber}`);
+        await supabase.rpc('remove_secure_session_data', { p_key: `_sms_code_${phoneNumber}` });
       }
       
       return isValid;
@@ -250,7 +256,14 @@ export class EnhancedMFA {
     };
     
     const encryptedData = await SecurityManager.encryptSensitiveData(JSON.stringify(verificationData));
-    localStorage.setItem(`_email_verification_${email}`, encryptedData);
+    await supabase.rpc('store_secure_session_data', {
+      p_key: `_email_verification_${email}`,
+      p_value: encryptedData,
+    });
+    // Auto-expire in 15 minutes (client-side cleanup; server TTL is handled separately)
+    setTimeout(() => {
+      supabase.rpc('remove_secure_session_data', { p_key: `_email_verification_${email}` });
+    }, 15 * 60 * 1000);
     
     try {
       await supabase.functions.invoke('secure-external-api', {
@@ -269,18 +282,21 @@ export class EnhancedMFA {
 
   // Verify email token
   static async verifyEmailToken(email: string, token: string): Promise<boolean> {
-    const encryptedData = localStorage.getItem(`_email_verification_${email}`);
-    if (!encryptedData) return false;
+    // Retrieve verification package from server-side session storage
+    const { data: storedEncrypted, error } = await supabase.rpc('get_secure_session_data', {
+      p_key: `_email_verification_${email}`,
+    });
+    if (error || !storedEncrypted) return false;
     
     try {
-      const decryptedData = await SecurityManager.decryptSensitiveData(encryptedData);
+      const decryptedData = await SecurityManager.decryptSensitiveData(storedEncrypted as string);
       const verificationData = JSON.parse(decryptedData);
       
       const isValidToken = SecurityManager.secureCompare(token, verificationData.token);
       const isNotExpired = Date.now() < verificationData.expiresAt;
       
       if (isValidToken && isNotExpired) {
-        localStorage.removeItem(`_email_verification_${email}`);
+        await supabase.rpc('remove_secure_session_data', { p_key: `_email_verification_${email}` });
         return true;
       }
       

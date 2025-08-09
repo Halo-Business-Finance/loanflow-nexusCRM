@@ -21,26 +21,23 @@ export const useSessionSecurity = () => {
       setSessionToken(token);
       
       // Create session record with enhanced security using existing table
-      supabase
-        .from('active_sessions')
-        .insert({
-          user_id: user.id,
-          session_token: token,
-          device_fingerprint: generateDeviceFingerprint(),
-          user_agent: navigator.userAgent,
-          expires_at: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString() // 24 hours
-        })
-        .then(({ error }) => {
-          if (error) {
-            console.error('Secure session creation error:', error);
-            // Log security event for failed session creation
-            supabase.rpc('log_security_event', {
-              p_event_type: 'session_creation_failed',
-              p_severity: 'medium',
-              p_details: { error: error.message }
-            });
-          }
-        });
+       supabase
+         .rpc('create_secure_session', {
+           p_session_token: token,
+           p_device_fingerprint: generateDeviceFingerprint(),
+           p_user_agent: navigator.userAgent
+         })
+         .then(({ error }) => {
+           if (error) {
+             console.error('Secure session creation error:', error);
+             // Log security event for failed session creation
+             supabase.rpc('log_security_event', {
+               p_event_type: 'session_creation_failed',
+               p_severity: 'medium',
+               p_details: { error: error.message }
+             });
+           }
+         });
     }
   }, [user, sessionToken]);
 

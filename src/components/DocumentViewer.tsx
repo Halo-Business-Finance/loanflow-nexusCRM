@@ -78,14 +78,23 @@ export function DocumentViewer({ document, isOpen, onClose }: DocumentViewerProp
           return blobUrl;
         }
       } catch (e) {
-        console.log('Download method failed, trying public URL');
+        console.log('Download method failed, trying signed URL');
       }
       
-      // Fallback to public URL
-      const publicUrl = `https://gshxxsniwytjgcnthyfq.supabase.co/storage/v1/object/public/lead-documents/${filePath}`;
-      console.log('Trying public URL:', publicUrl);
+      // Prefer signed URL for private buckets
+      const { data: signed, error: signedError } = await supabase.storage
+        .from('lead-documents')
+        .createSignedUrl(filePath, 3600); // 1 hour expiry
+
+      if (!signedError && signed?.signedUrl) {
+        console.log('Successfully got signed URL');
+        setDocumentUrl(signed.signedUrl);
+        return signed.signedUrl;
+      }
       
-      // Test if the public URL works
+      // Final fallback to public URL (may be disabled)
+      const publicUrl = `https://gshxxsniwytjgcnthyfq.supabase.co/storage/v1/object/public/lead-documents/${filePath}`;
+      console.log('Trying public URL as fallback:', publicUrl);
       try {
         const response = await fetch(publicUrl, { method: 'HEAD' });
         if (response.ok) {
@@ -94,22 +103,8 @@ export function DocumentViewer({ document, isOpen, onClose }: DocumentViewerProp
           return publicUrl;
         }
       } catch (e) {
-        console.log('Public URL failed, trying signed URL');
+        console.log('Public URL failed as expected for private bucket');
       }
-      
-      // Final fallback to signed URL
-      const { data, error } = await supabase.storage
-        .from('lead-documents')
-        .createSignedUrl(filePath, 3600); // 1 hour expiry
-
-      if (error) {
-        console.error('Supabase storage error:', error);
-        throw error;
-      }
-      
-      console.log('Successfully got signed URL');
-      setDocumentUrl(data.signedUrl);
-      return data.signedUrl;
     } catch (error) {
       console.error('Error getting document URL:', error);
       toast({
