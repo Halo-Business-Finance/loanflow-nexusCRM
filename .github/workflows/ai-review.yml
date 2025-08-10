@@ -12,7 +12,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-        with: { fetch-depth: 0 }
+        with:
+          fetch-depth: 0
 
       - name: Get PR diff + files
         id: diff
@@ -22,7 +23,7 @@ jobs:
             -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
             "https://api.github.com/repos/${{ github.repository }}/pulls/${{ github.event.number }}" > pr.diff
 
-          # Compare API for filenames
+          # Compare API for filenames (uses gh CLI preinstalled on runner)
           BASE_SHA=$(gh api repos/${{ github.repository }}/pulls/${{ github.event.number }} --jq '.base.sha')
           HEAD_SHA=$(gh api repos/${{ github.repository }}/pulls/${{ github.event.number }} --jq '.head.sha')
           gh api repos/${{ github.repository }}/compare/$BASE_SHA...$HEAD_SHA --jq '[.files[].filename] | join(", ")' > files.txt
@@ -42,11 +43,10 @@ jobs:
 import os, json, requests, re
 
 def sanitize(diff):
-    # hard block secrets/binaries
     blocked = [r'\.env', r'\.pem$', r'\.key$', r'\.pfx$', r'\.crt$', r'supabase/.*(service|anon)']
     if any(re.search(b, diff, re.I) for b in blocked):
         return "DIFF REMOVED: matched secret/binary policy."
-    return diff[:180_000]  # ~180 KB cap
+    return diff[:180_000]
 
 with open("pr.diff","r",encoding="utf-8",errors="ignore") as f:
     diff = sanitize(f.read())
@@ -70,7 +70,7 @@ Unified diff (truncated if large):
 r = requests.post("https://api.openai.com/v1/responses",
   headers={"Authorization": f"Bearer {os.environ['OPENAI_API_KEY']}",
            "Content-Type": "application/json"},
-  json={"model":"GPT-5 Thinking", "input": prompt, "max_output_tokens": 1200})
+  json={"model":"gpt-5.1-mini", "input": prompt, "max_output_tokens": 1200})
 r.raise_for_status()
 review = r.json().get("output",[{}])[0].get("content",[{}])[0].get("text","(no output)")
 
