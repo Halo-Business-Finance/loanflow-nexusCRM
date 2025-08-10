@@ -1,52 +1,52 @@
 project_id = "gshxxsniwytjgcnthyfq"
 
 [functions.enhanced-auth]
-verify_jwt = false
+verify_jwt = true
 
 [functions.geo-security]
-verify_jwt = false
+verify_jwt = true
 
 [functions.production-geo-security]
-verify_jwt = false
+verify_jwt = true
 
 [functions.enhanced-geo-security]
-verify_jwt = false
+verify_jwt = true
 
 [functions.microsoft-auth]
-verify_jwt = false
+verify_jwt = true
 
 [functions.audit-log]
-verify_jwt = false
+verify_jwt = true
 
 [functions.ringcentral-auth]
-verify_jwt = false
+verify_jwt = true
 
 [functions.threat-detection]
-verify_jwt = false
+verify_jwt = true
 
 [functions.google-maps-config]
-verify_jwt = false
+verify_jwt = true
 
 [functions.security-monitor]
-verify_jwt = false
+verify_jwt = true
 
 [functions.blockchain-hash]
-verify_jwt = false
+verify_jwt = true
 
 [functions.encrypt-data]
-verify_jwt = false
+verify_jwt = true
 
 [functions.get-adobe-config]
-verify_jwt = false
+verify_jwt = true
 
 [functions.secure-external-api]
-verify_jwt = false
+verify_jwt = true
 
 [functions.send-email]
-verify_jwt = false
+verify_jwt = true
 
 [functions.session-security]
-verify_jwt = false
+verify_jwt = true
 
 [functions.webhook-security]
 verify_jwt = false
