@@ -80,31 +80,17 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const fetchUserRole = async (userId: string) => {
     try {
-      // Only log in development mode
-      if (import.meta.env.DEV) {
-        console.log('Fetching user role for userId:', userId)
-      }
-      
-      const { data, error } = await supabase
-        .from('user_roles')
-        .select('role')
-        .eq('user_id', userId)
-        .eq('is_active', true)
-        .maybeSingle()
-
-      if (import.meta.env.DEV) {
-        console.log('User role query result:', { data, error })
-      }
+      // Prefer secure RPC to avoid RLS issues on user_roles
+      const { data, error } = await supabase.rpc('get_user_role', { user_id: userId })
 
       if (error) {
-        console.error('Error fetching user role:', error)
+        console.error('get_user_role RPC error:', error)
+        setUserRole('agent')
         return
       }
 
-      const role = data?.role || 'agent'
-      if (import.meta.env.DEV) {
-        console.log('Setting user role to:', role)
-      }
+      // Fallback to agent if no active role found
+      const role = (data as string | null) || 'agent'
       setUserRole(role)
     } catch (error) {
       console.error('Error fetching user role:', error)
