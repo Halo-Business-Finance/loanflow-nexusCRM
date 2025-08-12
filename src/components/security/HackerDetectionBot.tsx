@@ -6,6 +6,7 @@ import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Shield, AlertTriangle, Bug, Target, Zap, Activity } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/components/auth/AuthProvider";
 import { useToast } from "@/hooks/use-toast";
 import { secureStorage } from "@/lib/secure-storage";
 
@@ -53,6 +54,8 @@ export function HackerDetectionBot() {
     loadMonitoringState();
   }, []);
   const [loading, setLoading] = useState(true);
+  const { hasRole } = useAuth();
+  const isAdmin = hasRole('admin');
   const { toast } = useToast();
 
   const detectHackerActivity = useCallback(async () => {
@@ -155,6 +158,7 @@ export function HackerDetectionBot() {
   useEffect(() => {
     const fetchHackerData = async () => {
       setLoading(true);
+      if (!isAdmin) { setLoading(false); return; }
       
       // Fetch recent hacker attempts
       const { data: incidents } = await supabase
@@ -271,6 +275,19 @@ export function HackerDetectionBot() {
     if (type.includes('Scan') || type.includes('Port')) return <Zap className="h-4 w-4" />;
     return <AlertTriangle className="h-4 w-4" />;
   };
+
+  if (!isAdmin) {
+    return (
+      <div className="p-6">
+        <Alert variant="destructive">
+          <AlertTriangle className="h-4 w-4" />
+          <AlertDescription>
+            You do not have permission to view hacker threat intelligence.
+          </AlertDescription>
+        </Alert>
+      </div>
+    );
+  }
 
   if (loading) {
     return (

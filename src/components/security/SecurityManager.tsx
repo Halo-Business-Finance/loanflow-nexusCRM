@@ -311,8 +311,8 @@ export function SecurityManager() {
             <TabsTrigger value="data-integrity">Data Integrity</TabsTrigger>
             <TabsTrigger value="monitor">Security Monitor</TabsTrigger>
             {hasRole('admin') && <TabsTrigger value="threats">AI Protection Bot</TabsTrigger>}
-            <TabsTrigger value="darkweb">Dark Web Bot</TabsTrigger>
-            <TabsTrigger value="hacker">Hacker Detection Bot</TabsTrigger>
+            {hasRole('admin') && <TabsTrigger value="darkweb">Dark Web Bot</TabsTrigger>}
+            {hasRole('admin') && <TabsTrigger value="hacker">Hacker Detection Bot</TabsTrigger>}
             <TabsTrigger value="mfa">Multi-Factor Auth</TabsTrigger>
             <TabsTrigger value="notifications">Security Alerts</TabsTrigger>
             {hasRole('admin') && <TabsTrigger value="policies">Password Policy</TabsTrigger>}
@@ -429,13 +429,17 @@ export function SecurityManager() {
           </TabsContent>
         )}
 
-        <TabsContent value="darkweb" className="space-y-4">
-          <DarkWebSecurityBot />
-        </TabsContent>
+        {hasRole('admin') && (
+          <TabsContent value="darkweb" className="space-y-4">
+            <DarkWebSecurityBot />
+          </TabsContent>
+        )}
 
-        <TabsContent value="hacker" className="space-y-4">
-          <HackerDetectionBot />
-        </TabsContent>
+        {hasRole('admin') && (
+          <TabsContent value="hacker" className="space-y-4">
+            <HackerDetectionBot />
+          </TabsContent>
+        )}
 
         <TabsContent value="mfa" className="space-y-4">
           <Card>

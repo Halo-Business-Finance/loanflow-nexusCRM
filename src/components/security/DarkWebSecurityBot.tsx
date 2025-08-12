@@ -6,6 +6,7 @@ import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Shield, AlertTriangle, Eye, Globe, Users, Activity } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/components/auth/AuthProvider";
 import { useToast } from "@/hooks/use-toast";
 import { secureStorage } from "@/lib/secure-storage";
 
@@ -52,6 +53,8 @@ export function DarkWebSecurityBot() {
     loadMonitoringState();
   }, []);
   const [loading, setLoading] = useState(true);
+  const { hasRole } = useAuth();
+  const isAdmin = hasRole('admin');
   const { toast } = useToast();
 
   const detectDarkWebActivity = useCallback(async () => {
@@ -125,8 +128,7 @@ export function DarkWebSecurityBot() {
   useEffect(() => {
     const fetchDarkWebData = async () => {
       setLoading(true);
-      
-      // Fetch recent dark web threats
+      if (!isAdmin) { setLoading(false); return; }
       const { data: incidents } = await supabase
         .from('threat_incidents')
         .select('*')
@@ -223,6 +225,19 @@ export function DarkWebSecurityBot() {
       default: return 'text-gray-600 dark:text-gray-400';
     }
   };
+
+  if (!isAdmin) {
+    return (
+      <div className="p-6">
+        <Alert variant="destructive">
+          <AlertTriangle className="h-4 w-4" />
+          <AlertDescription>
+            You do not have permission to view dark web threat intelligence.
+          </AlertDescription>
+        </Alert>
+      </div>
+    );
+  }
 
   if (loading) {
     return (
