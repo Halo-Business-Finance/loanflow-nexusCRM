@@ -310,7 +310,7 @@ export function SecurityManager() {
             <TabsTrigger value="overview">Overview</TabsTrigger>
             <TabsTrigger value="data-integrity">Data Integrity</TabsTrigger>
             <TabsTrigger value="monitor">Security Monitor</TabsTrigger>
-            <TabsTrigger value="threats">AI Protection Bot</TabsTrigger>
+            {hasRole('admin') && <TabsTrigger value="threats">AI Protection Bot</TabsTrigger>}
             <TabsTrigger value="darkweb">Dark Web Bot</TabsTrigger>
             <TabsTrigger value="hacker">Hacker Detection Bot</TabsTrigger>
             <TabsTrigger value="mfa">Multi-Factor Auth</TabsTrigger>
@@ -423,9 +423,11 @@ export function SecurityManager() {
           <SecurityMonitor />
         </TabsContent>
 
-        <TabsContent value="threats" className="space-y-4">
-          <AdvancedThreatDetection />
-        </TabsContent>
+        {hasRole('admin') && (
+          <TabsContent value="threats" className="space-y-4">
+            <AdvancedThreatDetection />
+          </TabsContent>
+        )}
 
         <TabsContent value="darkweb" className="space-y-4">
           <DarkWebSecurityBot />

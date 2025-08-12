@@ -5,6 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Progress } from "@/components/ui/progress";
 import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/components/auth/AuthProvider";
 import { useToast } from "@/hooks/use-toast";
 import { secureStorage } from "@/lib/secure-storage";
 import { Shield, AlertTriangle, Bot, Eye, TrendingUp, Zap } from "lucide-react";
@@ -42,6 +43,8 @@ export function AdvancedThreatDetection() {
   });
   const [loading, setLoading] = useState(true);
   const [monitoring, setMonitoring] = useState(false);
+  const { hasRole } = useAuth();
+  const isAdmin = hasRole('admin');
 
   // Load monitoring state from secure storage
   useEffect(() => {
@@ -157,7 +160,7 @@ export function AdvancedThreatDetection() {
 
   // Real-time Monitoring
   useEffect(() => {
-    if (monitoring) {
+    if (monitoring && isAdmin) {
       const interval = setInterval(async () => {
         await trackUserBehavior();
         
@@ -167,6 +170,7 @@ export function AdvancedThreatDetection() {
           .select('*')
           .order('created_at', { ascending: false })
           .limit(10);
+
 
         if (newThreats) {
           setThreats(newThreats as ThreatIncident[]);
@@ -190,7 +194,7 @@ export function AdvancedThreatDetection() {
   const fetchSecurityData = async () => {
     setLoading(true);
     try {
-      // Fetch recent threats
+      if (!isAdmin) { setThreats([]); setLoading(false); return; }
       const { data: threatData } = await supabase
         .from('threat_incidents')
         .select('*')
@@ -241,7 +245,7 @@ export function AdvancedThreatDetection() {
 
   useEffect(() => {
     fetchSecurityData();
-  }, []);
+  }, [isAdmin]);
 
   const getSeverityColor = (severity: string) => {
     switch (severity) {
@@ -262,6 +266,19 @@ export function AdvancedThreatDetection() {
       default: return 'text-gray-600';
     }
   };
+
+  if (!isAdmin) {
+    return (
+      <div className="p-6">
+        <Alert variant="destructive">
+          <AlertTriangle className="h-4 w-4" />
+          <AlertDescription>
+            You do not have permission to view threat intelligence data.
+          </AlertDescription>
+        </Alert>
+      </div>
+    );
+  }
 
   if (loading) {
     return (
