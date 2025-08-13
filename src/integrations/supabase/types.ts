@@ -3501,7 +3501,7 @@ export type Database = {
         Returns: string
       }
       get_user_role: {
-        Args: { user_id?: string }
+        Args: { p_user_id?: string }
         Returns: Database["public"]["Enums"]["user_role"]
       }
       has_role: {
