@@ -18,12 +18,29 @@ serve(async (req) => {
       Deno.env.get('SUPABASE_ANON_KEY') ?? ''
     )
 
-    const webhookSecret = Deno.env.get('WEBHOOK_SECRET') ?? 'default-secret-key';
+    const webhookSecret = Deno.env.get('WEBHOOK_SECRET');
+    
+    // Critical security check: ensure webhook secret is configured
+    if (!webhookSecret || webhookSecret === 'default-secret-key' || webhookSecret.trim() === '') {
+      console.error('CRITICAL: WEBHOOK_SECRET not configured or using default value');
+      // Log security event for missing secret
+      await supabase.rpc('log_security_event', {
+        p_event_type: 'webhook_misconfiguration',
+        p_severity: 'critical',
+        p_details: { error: 'WEBHOOK_SECRET not properly configured' }
+      });
+      return new Response(JSON.stringify({ error: 'Service unavailable' }), {
+        status: 503,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    }
+
     const signature = req.headers.get('x-webhook-signature');
     const body = await req.text();
 
-    // Verify webhook signature
-    if (!signature || !verifyWebhookSignature(body, signature, webhookSecret)) {
+    // Verify webhook signature (now async)
+    const isValidSignature = await verifyWebhookSignature(body, signature || '', webhookSecret);
+    if (!signature || !isValidSignature) {
       console.log('Invalid webhook signature');
       return new Response(JSON.stringify({ error: 'Invalid signature' }), {
         status: 401,
@@ -82,7 +99,7 @@ serve(async (req) => {
   }
 });
 
-function verifyWebhookSignature(payload: string, signature: string, secret: string): boolean {
+async function verifyWebhookSignature(payload: string, signature: string, secret: string): Promise<boolean> {
   try {
     // Create HMAC signature
     const encoder = new TextEncoder();
@@ -90,21 +107,20 @@ function verifyWebhookSignature(payload: string, signature: string, secret: stri
     const data = encoder.encode(payload);
     
     // Use Web Crypto API to create HMAC
-    return crypto.subtle.importKey(
+    const cryptoKey = await crypto.subtle.importKey(
       'raw',
       key,
       { name: 'HMAC', hash: 'SHA-256' },
       false,
       ['sign']
-    ).then(cryptoKey => {
-      return crypto.subtle.sign('HMAC', cryptoKey, data);
-    }).then(signatureBuffer => {
-      const expectedSignature = Array.from(new Uint8Array(signatureBuffer))
-        .map(b => b.toString(16).padStart(2, '0'))
-        .join('');
-      
-      return signature === `sha256=${expectedSignature}`;
-    }).catch(() => false);
+    );
+    
+    const signatureBuffer = await crypto.subtle.sign('HMAC', cryptoKey, data);
+    const expectedSignature = Array.from(new Uint8Array(signatureBuffer))
+      .map(b => b.toString(16).padStart(2, '0'))
+      .join('');
+    
+    return signature === `sha256=${expectedSignature}`;
   } catch (error) {
     console.error('Signature verification error:', error);
     return false;

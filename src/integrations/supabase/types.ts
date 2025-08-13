@@ -1447,6 +1447,7 @@ export type Database = {
           expires_at: string | null
           id: string
           is_active: boolean
+          key_material: string | null
           key_name: string
           key_purpose: string
           last_rotated: string | null
@@ -1457,6 +1458,7 @@ export type Database = {
           expires_at?: string | null
           id?: string
           is_active?: boolean
+          key_material?: string | null
           key_name: string
           key_purpose: string
           last_rotated?: string | null
@@ -1467,6 +1469,7 @@ export type Database = {
           expires_at?: string | null
           id?: string
           is_active?: boolean
+          key_material?: string | null
           key_name?: string
           key_purpose?: string
           last_rotated?: string | null
@@ -3474,6 +3477,10 @@ export type Database = {
         Returns: Json
       }
       fix_null_numeric_fields: {
+        Args: Record<PropertyKey, never>
+        Returns: string
+      }
+      get_active_encryption_key: {
         Args: Record<PropertyKey, never>
         Returns: string
       }
