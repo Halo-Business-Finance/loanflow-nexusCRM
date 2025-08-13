@@ -25,6 +25,12 @@ export const useEnhancedInputValidation = () => {
 
       if (error) {
         console.error('Server-side validation error:', error);
+        // Log security event for validation failures
+        await supabase.rpc('log_security_event', {
+          p_event_type: 'input_validation_error',
+          p_severity: 'low',
+          p_details: { error: error.message, input_type: fieldType }
+        });
         return {
           isValid: false,
           errors: ['Validation service unavailable'],
@@ -33,14 +39,35 @@ export const useEnhancedInputValidation = () => {
       }
 
       const validationResult = data as any;
-      return {
+      const result = {
         isValid: validationResult.valid,
         sanitizedValue: validationResult.sanitized,
         errors: validationResult.errors || [],
         securityFlags: validationResult.security_flags || []
       };
+
+      // Log suspicious input patterns
+      if (!validationResult.valid && validationResult.errors?.some((error: string) => 
+        error.includes('malicious') || error.includes('Invalid characters'))) {
+        await supabase.rpc('log_security_event', {
+          p_event_type: 'suspicious_input_detected',
+          p_severity: 'high',
+          p_details: { 
+            input_preview: input.substring(0, 50),
+            field_type: fieldType,
+            errors: validationResult.errors
+          }
+        });
+      }
+
+      return result;
     } catch (error) {
       console.error('Input validation error:', error);
+      await supabase.rpc('log_security_event', {
+        p_event_type: 'input_validation_exception',
+        p_severity: 'medium',
+        p_details: { error: String(error), input_type: fieldType }
+      });
       return {
         isValid: false,
         errors: ['Validation failed'],

@@ -63,36 +63,64 @@ export const useSessionSecurity = () => {
     return btoa(JSON.stringify(fingerprint));
   }, []);
 
-  // Validate session periodically
+  // Enhanced session validation with security checks
   const validateSession = useCallback(async (): Promise<boolean> => {
     if (!user || !sessionToken) return false;
 
     try {
+      // Get real IP address for security validation
+      const response = await fetch('https://api.ipify.org?format=json');
+      const ipData = await response.json();
+      
       const { data, error } = await supabase.rpc('validate_session_with_security_checks', {
         p_user_id: user.id,
         p_session_token: sessionToken,
-        p_ip_address: null, // Could be enhanced to get real IP
+        p_ip_address: ipData.ip,
         p_user_agent: navigator.userAgent
       });
 
       if (error) {
         console.error('Session validation error:', error);
+        // Log security event for failed validation
+        await supabase.rpc('log_security_event', {
+          p_event_type: 'session_validation_failed',
+          p_severity: 'medium',
+          p_details: { error: error.message }
+        });
         return false;
       }
 
-      const result = data as unknown as SessionValidationResult;
+      const result = data as unknown as SessionValidationResult & {
+        risk_score: number;
+        security_flags: string[];
+      };
       
       if (!result.valid) {
-        toast.error(`Session invalid: ${result.reason}`);
+        toast.error(`Session invalid: ${result.reason}`, {
+          description: result.risk_score > 30 ? 'Suspicious activity detected' : undefined
+        });
+        
         if (result.requires_reauth) {
           await signOut();
         }
         return false;
       }
 
+      // Show warning for high-risk sessions
+      if (result.risk_score > 30) {
+        toast.warning('Security notice: Unusual session activity detected', {
+          description: 'Your session is being monitored for security.'
+        });
+      }
+
       return true;
     } catch (error) {
       console.error('Session validation error:', error);
+      await supabase.rpc('log_security_event', {
+        p_event_type: 'session_validation_error',
+        p_severity: 'medium',
+        p_details: { error: String(error) }
+      });
       return false;
     }
   }, [user, sessionToken, signOut]);
