@@ -81,7 +81,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const fetchUserRole = async (userId: string) => {
     try {
       // Prefer secure RPC to avoid RLS issues on user_roles
-      const { data, error } = await supabase.rpc('get_user_role', { user_id: userId })
+      const { data, error } = await supabase.rpc('get_user_role', { p_user_id: userId })
 
       if (error) {
         console.error('get_user_role RPC error:', error)

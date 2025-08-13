@@ -3484,6 +3484,15 @@ export type Database = {
         Args: Record<PropertyKey, never>
         Returns: string
       }
+      get_email_tokens_secure: {
+        Args: { p_email_address: string }
+        Returns: {
+          access_token: string
+          refresh_token: string
+          expires_at: string
+          is_expired: boolean
+        }[]
+      }
       get_recent_failed_attempts: {
         Args: { user_email: string }
         Returns: number

@@ -53,7 +53,7 @@ export default function Settings() {
       if (user?.id) {
         try {
           const { data: role, error } = await supabase.rpc('get_user_role', {
-            user_id: user.id
+            p_user_id: user.id
           })
           
           if (!error && role) {
