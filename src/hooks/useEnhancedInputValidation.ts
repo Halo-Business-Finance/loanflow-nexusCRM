@@ -1,0 +1,133 @@
+import { useCallback } from 'react';
+import { supabase } from '@/integrations/supabase/client';
+
+export interface ValidationResult {
+  isValid: boolean;
+  sanitizedValue?: string;
+  errors: string[];
+  securityFlags: string[];
+}
+
+export const useEnhancedInputValidation = () => {
+  const validateAndSanitize = useCallback(async (
+    input: string,
+    fieldType: 'email' | 'phone' | 'text' | 'financial' | 'url' = 'text',
+    maxLength = 255,
+    allowHtml = false
+  ): Promise<ValidationResult> => {
+    try {
+      const { data, error } = await supabase.rpc('validate_and_sanitize_input_enhanced', {
+        p_input: input,
+        p_field_type: fieldType,
+        p_max_length: maxLength,
+        p_allow_html: allowHtml
+      });
+
+      if (error) {
+        console.error('Server-side validation error:', error);
+        return {
+          isValid: false,
+          errors: ['Validation service unavailable'],
+          securityFlags: ['validation_service_error']
+        };
+      }
+
+      const validationResult = data as any;
+      return {
+        isValid: validationResult.valid,
+        sanitizedValue: validationResult.sanitized,
+        errors: validationResult.errors || [],
+        securityFlags: validationResult.security_flags || []
+      };
+    } catch (error) {
+      console.error('Input validation error:', error);
+      return {
+        isValid: false,
+        errors: ['Validation failed'],
+        securityFlags: ['validation_exception']
+      };
+    }
+  }, []);
+
+  const validateFinancialData = useCallback(async (
+    amount: string | number,
+    fieldName: string
+  ): Promise<ValidationResult> => {
+    const stringAmount = String(amount);
+    
+    // Client-side pre-validation
+    if (!stringAmount || stringAmount.trim() === '') {
+      return {
+        isValid: false,
+        errors: [`${fieldName} is required`],
+        securityFlags: []
+      };
+    }
+
+    // Check for reasonable financial amounts
+    const numericAmount = parseFloat(stringAmount);
+    if (isNaN(numericAmount) || numericAmount < 0) {
+      return {
+        isValid: false,
+        errors: [`${fieldName} must be a valid positive number`],
+        securityFlags: ['invalid_financial_format']
+      };
+    }
+
+    // Check for suspiciously large amounts (potential data manipulation)
+    if (numericAmount > 100000000) { // 100 million
+      return {
+        isValid: false,
+        errors: [`${fieldName} exceeds maximum allowed amount`],
+        securityFlags: ['suspicious_large_amount']
+      };
+    }
+
+    return await validateAndSanitize(stringAmount, 'financial');
+  }, [validateAndSanitize]);
+
+  const validateEmail = useCallback(async (email: string): Promise<ValidationResult> => {
+    // Enhanced email validation with additional security checks
+    const result = await validateAndSanitize(email, 'email');
+    
+    // Additional client-side checks for suspicious patterns
+    const suspiciousPatterns = [
+      /temp.*mail/i,
+      /throw.*away/i,
+      /disposable/i,
+      /fake.*mail/i
+    ];
+
+    const securityFlags = [...(result.securityFlags || [])];
+    if (suspiciousPatterns.some(pattern => pattern.test(email))) {
+      securityFlags.push('suspicious_email_pattern');
+    }
+
+    return {
+      ...result,
+      securityFlags
+    };
+  }, [validateAndSanitize]);
+
+  const validatePhone = useCallback(async (phone: string): Promise<ValidationResult> => {
+    // Remove all non-digits for validation
+    const digitsOnly = phone.replace(/\D/g, '');
+    
+    if (digitsOnly.length < 10 || digitsOnly.length > 15) {
+      return {
+        isValid: false,
+        errors: ['Phone number must be 10-15 digits'],
+        securityFlags: ['invalid_phone_length']
+      };
+    }
+
+    return await validateAndSanitize(phone, 'phone');
+  }, [validateAndSanitize]);
+
+  return {
+    validateAndSanitize,
+    validateFinancialData,
+    validateEmail,
+    validatePhone
+  };
+};
