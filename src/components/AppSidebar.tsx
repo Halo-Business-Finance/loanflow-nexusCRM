@@ -24,7 +24,7 @@ import {
 const navigationItems = [
   { title: "Dashboard", url: "/", icon: Home, description: "View overview of leads, pipeline, and key metrics" },
   { title: "Leads", url: "/leads", icon: Target, description: "Manage potential customers and track lead progress" },
-  { title: "Existing Clients", url: "/clients", icon: Users, description: "View and manage your current client base" },
+  { title: "Existing Borrowers", url: "/clients", icon: Users, description: "View and manage your current borrower base" },
   { title: "Pipeline", url: "/pipeline", icon: BarChart3, description: "Track deals through your sales pipeline" },
   { title: "Activities", url: "/activities", icon: Calendar, description: "Schedule and track meetings, calls, and tasks" },
   { title: "Documents", url: "/documents", icon: FileText, description: "Manage loan documents and client files" },
@@ -227,7 +227,7 @@ export function AppSidebar() {
                   </div>
                 </TooltipTrigger>
                 <TooltipContent side="right">
-                  <p>Open phone dialer to make calls to leads and clients</p>
+                  <p>Open phone dialer to make calls to leads and borrowers</p>
                 </TooltipContent>
               </Tooltip>
               
@@ -245,7 +245,7 @@ export function AppSidebar() {
                   </div>
                 </TooltipTrigger>
                 <TooltipContent side="right">
-                  <p>Compose and send emails to leads and clients</p>
+                  <p>Compose and send emails to leads and borrowers</p>
                 </TooltipContent>
               </Tooltip>
             </div>
