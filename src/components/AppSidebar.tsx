@@ -27,7 +27,7 @@ const navigationItems = [
   { title: "Existing Borrowers", url: "/existing-borrowers", icon: Users, description: "View and manage your current borrower base" },
   { title: "Pipeline", url: "/pipeline", icon: BarChart3, description: "Track deals through your sales pipeline" },
   { title: "Activities", url: "/activities", icon: Calendar, description: "Schedule and track meetings, calls, and tasks" },
-  { title: "Documents", url: "/documents", icon: FileText, description: "Manage loan documents and client files" },
+  { title: "Documents", url: "/documents", icon: FileText, description: "Manage loan documents and borrower files" },
   { title: "Resources", url: "/resources", icon: BookOpen, description: "Access training materials and documentation" },
 ]
 
