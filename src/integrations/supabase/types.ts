@@ -2749,6 +2749,33 @@ export type Database = {
         }
         Relationships: []
       }
+      role_change_mfa_verifications: {
+        Row: {
+          created_at: string
+          expires_at: string
+          id: string
+          used_at: string | null
+          user_id: string
+          verification_token: string
+        }
+        Insert: {
+          created_at?: string
+          expires_at?: string
+          id?: string
+          used_at?: string | null
+          user_id: string
+          verification_token: string
+        }
+        Update: {
+          created_at?: string
+          expires_at?: string
+          id?: string
+          used_at?: string | null
+          user_id?: string
+          verification_token?: string
+        }
+        Relationships: []
+      }
       secure_session_data: {
         Row: {
           created_at: string
@@ -3428,6 +3455,15 @@ export type Database = {
         Args: { p_user_id: string; p_archived_by?: string; p_reason?: string }
         Returns: boolean
       }
+      assign_user_role: {
+        Args: {
+          p_target_user_id: string
+          p_new_role: Database["public"]["Enums"]["user_role"]
+          p_reason?: string
+          p_mfa_verified?: boolean
+        }
+        Returns: Json
+      }
       check_rate_limit: {
         Args: {
           p_identifier: string
@@ -3517,6 +3553,10 @@ export type Database = {
       fix_null_numeric_fields: {
         Args: Record<PropertyKey, never>
         Returns: string
+      }
+      generate_role_change_mfa_verification: {
+        Args: Record<PropertyKey, never>
+        Returns: Json
       }
       get_active_encryption_key: {
         Args: Record<PropertyKey, never>
@@ -3612,6 +3652,14 @@ export type Database = {
         Args: { p_user_id: string; p_restored_by?: string }
         Returns: boolean
       }
+      revoke_user_role: {
+        Args: {
+          p_target_user_id: string
+          p_reason?: string
+          p_mfa_verified?: boolean
+        }
+        Returns: Json
+      }
       store_secure_email_tokens: {
         Args: {
           p_user_id: string
@@ -3691,6 +3739,10 @@ export type Database = {
       verify_data_integrity: {
         Args: { p_table_name: string; p_record_id?: string }
         Returns: Json
+      }
+      verify_role_change_mfa: {
+        Args: { p_token: string }
+        Returns: boolean
       }
     }
     Enums: {
