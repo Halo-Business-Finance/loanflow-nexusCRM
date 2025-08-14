@@ -88,25 +88,21 @@ export const useSecureContacts = () => {
     console.log('Creating contact with data:', contactData);
 
     try {
-      // Separate sensitive fields
-      const sensitiveFields = {
-        email: contactData.email,
-        phone: contactData.phone,
-        credit_score: contactData.credit_score?.toString(),
-        income: contactData.income?.toString(),
-        loan_amount: contactData.loan_amount?.toString()
-      };
-
-      // Non-sensitive fields for main table - include email directly for now
+      // Non-sensitive fields for main table - include all fields directly for now to test
       const mainFields = {
         name: contactData.name || '',
-        email: contactData.email || '', // Include email directly for now
+        email: contactData.email || '',
+        phone: contactData.phone || '',
         business_name: contactData.business_name,
         location: contactData.location,
         stage: contactData.stage,
         priority: contactData.priority,
         loan_type: contactData.loan_type,
         notes: contactData.notes,
+        credit_score: contactData.credit_score,
+        loan_amount: contactData.loan_amount,
+        income: contactData.income,
+        annual_revenue: contactData.annual_revenue,
         user_id: user.id
       };
 
@@ -126,38 +122,14 @@ export const useSecureContacts = () => {
 
       console.log('Contact created successfully:', newContact);
 
-      // Try to encrypt sensitive fields but don't fail the whole operation if it fails
-      let encryptionErrors = [];
-      for (const [fieldName, fieldValue] of Object.entries(sensitiveFields)) {
-        if (fieldValue && fieldValue.trim()) {
-          try {
-            console.log(`Encrypting field ${fieldName}...`);
-            const { error: encryptError } = await supabase.rpc('encrypt_contact_field_enhanced', {
-              p_contact_id: newContact.id,
-              p_field_name: fieldName,
-              p_field_value: fieldValue.trim()
-            });
-
-            if (encryptError) {
-              console.error(`Error encrypting ${fieldName}:`, encryptError);
-              encryptionErrors.push(`${fieldName}: ${encryptError.message}`);
-            } else {
-              console.log(`Successfully encrypted ${fieldName}`);
-            }
-          } catch (encryptError) {
-            console.error(`Exception encrypting ${fieldName}:`, encryptError);
-            encryptionErrors.push(`${fieldName}: ${encryptError.message}`);
-          }
-        }
-      }
+      // Skip encryption for now to test basic functionality
+      console.log('Skipping encryption for debugging');
 
       await fetchSecureContacts();
       
       toast({
         title: "Success",
-        description: encryptionErrors.length > 0 
-          ? `Contact created (some encryption issues: ${encryptionErrors.length})`
-          : "Contact created securely"
+        description: "Contact created successfully (encryption disabled for testing)"
       });
 
       return newContact;
