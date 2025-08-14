@@ -3721,6 +3721,10 @@ export type Database = {
         Args: { user_email: string }
         Returns: number
       }
+      get_secure_contact_data: {
+        Args: { contact_id_param: string }
+        Returns: Json
+      }
       get_secure_email_tokens: {
         Args: { p_user_id: string; p_email_address: string }
         Returns: {
