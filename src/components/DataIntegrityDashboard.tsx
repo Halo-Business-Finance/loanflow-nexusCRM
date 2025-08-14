@@ -118,7 +118,7 @@ export function DataIntegrityDashboard() {
       
       toast({
         title: "Data Audit Complete",
-        description: `Found ${issues.length} total issues across your data.`
+        description: `Found ${issues.length} field issues across ${auditResults.summary.totalIssues} records.`
       });
     } catch (error) {
       console.error('Data audit error:', error);
@@ -227,7 +227,7 @@ export function DataIntegrityDashboard() {
               <AlertDescription>
                 <div className="grid grid-cols-3 gap-4 mt-2">
                   <div>
-                    <span className="font-medium">Total Issues:</span> {auditResults.summary.totalIssues}
+                    <span className="font-medium">Field Issues:</span> {fieldIssues.length}
                   </div>
                   <div>
                     <span className="font-medium">Critical:</span> {auditResults.summary.criticalIssues}
