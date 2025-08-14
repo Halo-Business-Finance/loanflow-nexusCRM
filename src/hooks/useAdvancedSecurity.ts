@@ -19,15 +19,14 @@ interface SecurityEventParams {
 export const useAdvancedSecurity = () => {
   const { user } = useAuth();
 
-  // Enhanced rate limiting with database tracking
+  // Enhanced rate limiting with secure database tracking
   const checkRateLimit = useCallback(async (
     action: string, 
     maxAttempts: number = 5, 
     windowMinutes: number = 15
   ): Promise<RateLimitResult> => {
     try {
-      const { data, error } = await supabase.rpc('check_rate_limit', {
-        p_identifier: user?.id || 'anonymous',
+      const { data, error } = await supabase.rpc('check_user_rate_limit_secure', {
         p_action_type: action,
         p_max_attempts: maxAttempts,
         p_window_minutes: windowMinutes
@@ -40,7 +39,7 @@ export const useAdvancedSecurity = () => {
       console.error('Rate limit check failed:', error);
       return { allowed: false, attempts_remaining: 0, reset_time: new Date().toISOString() };
     }
-  }, [user?.id]);
+  }, []);
 
   // Create security alerts
   const createSecurityAlert = useCallback(async (

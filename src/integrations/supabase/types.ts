@@ -3782,6 +3782,14 @@ export type Database = {
         }
         Returns: Json
       }
+      check_user_rate_limit_secure: {
+        Args: {
+          p_action_type: string
+          p_max_attempts?: number
+          p_window_minutes?: number
+        }
+        Returns: Json
+      }
       cleanup_expired_sessions: {
         Args: Record<PropertyKey, never>
         Returns: number
