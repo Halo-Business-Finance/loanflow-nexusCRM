@@ -121,7 +121,8 @@ export function SecurityManager() {
       const { data: mfa } = await supabase
         .from('mfa_settings')
         .select('*')
-        .single();
+        .eq('user_id', user?.id)
+        .maybeSingle();
 
       if (mfa) {
         setMfaSettings({
@@ -129,6 +130,12 @@ export function SecurityManager() {
           is_enabled: mfa.is_enabled,
           preferred_method: mfa.preferred_method || 'totp',
           phone_number: mfa.phone_number
+        });
+      } else {
+        // No MFA settings exist yet, keep default state
+        setMfaSettings({
+          is_enabled: false,
+          preferred_method: 'totp'
         });
       }
 
@@ -178,12 +185,13 @@ export function SecurityManager() {
 
       if (error) throw error;
 
+      // Update local state immediately
+      setMfaSettings(prev => ({ ...prev, is_enabled: true }));
+
       toast({
         title: "MFA Enabled",
         description: "Multi-factor authentication has been enabled for your account.",
       });
-
-      fetchSecurityData();
     } catch (error: any) {
       toast({
         title: "Error",
@@ -202,12 +210,13 @@ export function SecurityManager() {
 
       if (error) throw error;
 
+      // Update local state immediately
+      setMfaSettings(prev => ({ ...prev, is_enabled: false }));
+
       toast({
         title: "MFA Disabled",
         description: "Multi-factor authentication has been disabled.",
       });
-
-      fetchSecurityData();
     } catch (error: any) {
       toast({
         title: "Error",
