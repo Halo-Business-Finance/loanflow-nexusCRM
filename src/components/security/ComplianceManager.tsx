@@ -147,18 +147,21 @@ export const ComplianceManager: React.FC = () => {
 
       // Simulate report generation (in a real implementation, this would be handled by a background job)
       setTimeout(async () => {
-        const { error: updateError } = await supabase
-          .from('compliance_reports')
-          .update({
-            status: 'completed',
-            completed_at: new Date().toISOString(),
-            report_data: {
-              compliance_score: metrics.gdpr_compliance_score,
-              metrics: metrics,
-              generated_at: new Date().toISOString()
-            }
-          })
-          .eq('id', data.id);
+      const { error: updateError } = await supabase
+        .from('compliance_reports')
+        .update({
+          status: 'completed',
+          completed_at: new Date().toISOString(),
+          report_data: {
+            compliance_score: metrics.gdpr_compliance_score,
+            data_retention_compliance: metrics.data_retention_compliance,
+            encryption_compliance: metrics.encryption_compliance,
+            audit_trail_compliance: metrics.audit_trail_compliance,
+            access_control_compliance: metrics.access_control_compliance,
+            generated_at: new Date().toISOString()
+          }
+        })
+        .eq('id', data.id);
 
         if (!updateError) {
           toast.success(`${reportType} compliance report generated successfully`);
@@ -267,7 +270,7 @@ export const ComplianceManager: React.FC = () => {
             <div className="space-y-4">
               <div className="flex items-center justify-between">
                 <span className="text-sm font-medium">GDPR Compliance Score</span>
-                <Badge variant={complianceStatus.color as any}>
+                <Badge variant={complianceStatus.color === 'success' ? 'default' : complianceStatus.color === 'warning' ? 'secondary' : 'destructive'}>
                   {metrics.gdpr_compliance_score}% - {complianceStatus.label}
                 </Badge>
               </div>
@@ -385,7 +388,7 @@ export const ComplianceManager: React.FC = () => {
                               </p>
                             </div>
                             <div className="flex items-center gap-2">
-                              <Badge variant={report.status === 'completed' ? 'success' : 'warning'}>
+                              <Badge variant={report.status === 'completed' ? 'default' : 'secondary'}>
                                 {report.status}
                               </Badge>
                               {report.status === 'completed' && (
