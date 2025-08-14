@@ -3829,6 +3829,10 @@ export type Database = {
         }
         Returns: Json
       }
+      ensure_ai_bots_active: {
+        Args: Record<PropertyKey, never>
+        Returns: undefined
+      }
       fix_null_numeric_fields: {
         Args: Record<PropertyKey, never>
         Returns: string
