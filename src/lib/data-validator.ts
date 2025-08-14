@@ -81,8 +81,8 @@ export class DataFieldValidator {
       result.warnings.push('Phone number format may be invalid')
     }
 
-    // Check for missing important business fields
-    if (contactEntity?.loan_amount && contactEntity.loan_amount > 100000 && !contactEntity.business_name) {
+    // Check for missing important business fields - should no longer trigger warnings after the migration
+    if (contactEntity?.loan_amount && contactEntity.loan_amount > 100000 && (!contactEntity.business_name || contactEntity.business_name.trim() === '')) {
       result.warnings.push('Large loan amount without business name specified')
     }
 
@@ -624,7 +624,12 @@ export class DataFieldValidator {
   }
 
   private isValidPhoneNumber(phone: string): boolean {
-    // Remove all non-digit characters
+    // Check if already in formatted format: (XXX) XXX-XXXX
+    if (/^\(\d{3}\) \d{3}-\d{4}$/.test(phone)) {
+      return true;
+    }
+    
+    // Remove all non-digit characters and check length
     const cleaned = phone.replace(/\D/g, '')
     // US phone numbers should be 10 or 11 digits (with or without country code)
     return cleaned.length === 10 || cleaned.length === 11
