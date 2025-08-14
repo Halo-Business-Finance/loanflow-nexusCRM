@@ -450,9 +450,9 @@ export function SecurityManager() {
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
-              <div className="flex items-center justify-between">
+              <div className="flex items-center justify-between p-4 border border-border rounded-lg bg-card">
                 <div>
-                  <Label htmlFor="mfa-enabled" className="text-base">Enable MFA</Label>
+                  <Label htmlFor="mfa-enabled" className="text-base font-medium text-foreground">Enable MFA</Label>
                   <p className="text-sm text-muted-foreground">
                     Require a second form of authentication when signing in
                   </p>
@@ -467,6 +467,7 @@ export function SecurityManager() {
                       disableMFA();
                     }
                   }}
+                  className="data-[state=checked]:bg-primary data-[state=unchecked]:bg-muted-foreground/30"
                 />
               </div>
 
