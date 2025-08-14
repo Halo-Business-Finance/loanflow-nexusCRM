@@ -80,8 +80,38 @@ export const useSecureContacts = () => {
   };
 
   const createSecureContact = async (contactData: Partial<ContactEntity>) => {
+    console.log('=== CONTACT CREATION DEBUG ===');
+    console.log('User object:', user);
+    console.log('User ID:', user?.id);
+    console.log('Contact data:', contactData);
+
     if (!user) {
       console.error('No user found for contact creation');
+      toast({
+        title: "Error",
+        description: "You must be logged in to create contacts",
+        variant: "destructive"
+      });
+      return null;
+    }
+
+    // Test authentication first
+    try {
+      console.log('Testing authentication...');
+      const { data: authTest, error: authError } = await supabase.auth.getUser();
+      console.log('Auth test result:', { authTest, authError });
+      
+      if (authError) {
+        console.error('Auth test failed:', authError);
+        toast({
+          title: "Authentication Error",
+          description: "Please sign out and sign back in",
+          variant: "destructive"
+        });
+        return null;
+      }
+    } catch (authErr) {
+      console.error('Auth test exception:', authErr);
       return null;
     }
 
@@ -93,16 +123,16 @@ export const useSecureContacts = () => {
         name: contactData.name || '',
         email: contactData.email || '',
         phone: contactData.phone || '',
-        business_name: contactData.business_name,
-        location: contactData.location,
-        stage: contactData.stage,
-        priority: contactData.priority,
-        loan_type: contactData.loan_type,
-        notes: contactData.notes,
-        credit_score: contactData.credit_score,
-        loan_amount: contactData.loan_amount,
-        income: contactData.income,
-        annual_revenue: contactData.annual_revenue,
+        business_name: contactData.business_name || '',
+        location: contactData.location || '',
+        stage: contactData.stage || 'New Lead',
+        priority: contactData.priority || 'medium',
+        loan_type: contactData.loan_type || '',
+        notes: contactData.notes || '',
+        credit_score: contactData.credit_score || null,
+        loan_amount: contactData.loan_amount || null,
+        income: contactData.income || null,
+        annual_revenue: contactData.annual_revenue || null,
         user_id: user.id
       };
 
