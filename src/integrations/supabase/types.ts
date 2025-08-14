@@ -3663,6 +3663,10 @@ export type Database = {
         }
         Returns: Json
       }
+      validate_document_access: {
+        Args: { p_document_id: string; p_action?: string }
+        Returns: boolean
+      }
       validate_password_strength: {
         Args: { password: string }
         Returns: Json
