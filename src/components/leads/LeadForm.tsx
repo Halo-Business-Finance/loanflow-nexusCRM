@@ -18,7 +18,6 @@ interface LeadFormProps {
 }
 
 export function LeadForm({ lead, onSubmit, onCancel, isSubmitting = false }: LeadFormProps) {
-  const { canAccessLeads } = useRoleBasedAccess()
   const { isValidating, validateAndSanitize } = useSecureForm()
   
   const [formData, setFormData] = useState<ContactEntity>({

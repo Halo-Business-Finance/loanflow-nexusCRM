@@ -204,11 +204,23 @@ export default function Leads() {
 
   const handleFormSubmit = async (data: ContactEntity) => {
     try {
+      if (!user) {
+        toast({
+          title: "Error",
+          description: "You must be logged in to create leads",
+          variant: "destructive"
+        });
+        return;
+      }
+
       if (editingLead) {
         // Update existing lead
         const { error } = await supabase
           .from('contact_entities')
-          .update(data)
+          .update({
+            ...data,
+            updated_at: new Date().toISOString()
+          })
           .eq('id', editingLead.contact_entity_id);
 
         if (error) throw error;
@@ -223,7 +235,7 @@ export default function Leads() {
           .from('contact_entities')
           .insert({
             ...data,
-            user_id: user?.id
+            user_id: user.id
           })
           .select()
           .single();
@@ -233,7 +245,7 @@ export default function Leads() {
         const { error: leadError } = await supabase
           .from('leads')
           .insert({
-            user_id: user?.id,
+            user_id: user.id,
             contact_entity_id: contactEntity.id
           });
 
@@ -248,11 +260,12 @@ export default function Leads() {
       setIsFormOpen(false);
       setEditingLead(null);
       fetchLeadsOverview();
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error saving lead:', error);
+      const errorMessage = error?.message || "Failed to save lead";
       toast({
         title: "Error",
-        description: "Failed to save lead",
+        description: errorMessage,
         variant: "destructive"
       });
     }
