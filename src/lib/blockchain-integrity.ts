@@ -200,7 +200,7 @@ export class BlockchainIntegrity {
     try {
       // Use secure function instead of direct table access
       const { data, error } = await supabase.rpc(
-        'get_verified_blockchain_records_secure',
+        'get_verified_blockchain_records_safe',
         {
           p_record_type: recordType,
           p_record_id: recordId
