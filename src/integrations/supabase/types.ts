@@ -3413,6 +3413,30 @@ export type Database = {
         }
         Relationships: []
       }
+      user_settings: {
+        Row: {
+          created_at: string
+          data_protection_settings: Json | null
+          id: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          data_protection_settings?: Json | null
+          id?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          data_protection_settings?: Json | null
+          id?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       workflow_executions: {
         Row: {
           completed_at: string | null
@@ -3501,6 +3525,10 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      anonymize_user_data: {
+        Args: { p_user_id: string }
+        Returns: boolean
+      }
       archive_user: {
         Args: { p_user_id: string; p_archived_by?: string; p_reason?: string }
         Returns: boolean
@@ -3813,6 +3841,10 @@ export type Database = {
               user_id?: string
             }
           | { required_role: string; user_id?: string }
+        Returns: boolean
+      }
+      initiate_gdpr_data_deletion: {
+        Args: { p_user_id: string }
         Returns: boolean
       }
       is_account_locked: {
