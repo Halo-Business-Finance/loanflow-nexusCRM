@@ -1,3 +1,4 @@
+import { DocumentSecurityAlert } from "@/components/security/DocumentSecurityAlert"
 import Layout from "@/components/Layout"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
@@ -98,6 +99,9 @@ export default function Documents() {
 
   return (
     <Layout>
+      {/* Document Security Alert */}
+      <DocumentSecurityAlert />
+      
       {/* Add Document Test Component */}
       <DocumentTest />
       
