@@ -167,8 +167,12 @@ export function AppSidebar() {
             <SidebarMenu>
               {settingsItems.map((item) => {
                 // Only show Security, Users, and Enterprise to admins and super_admins
-                if ((item.title === "Security" || item.title === "Users" || item.title === "Enterprise") && !hasRole('admin') && !hasRole('super_admin')) {
-                  return null;
+                if ((item.title === "Security" || item.title === "Users" || item.title === "Enterprise")) {
+                  console.log(`Checking access for ${item.title}: hasRole('admin')=${hasRole('admin')}, hasRole('super_admin')=${hasRole('super_admin')}`)
+                  if (!hasRole('admin') && !hasRole('super_admin')) {
+                    console.log(`Hiding ${item.title} - no admin access`)
+                    return null;
+                  }
                 }
                 return (
                   <SidebarMenuItem key={item.title}>
