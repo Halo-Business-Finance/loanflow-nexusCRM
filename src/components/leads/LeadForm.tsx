@@ -42,16 +42,13 @@ export function LeadForm({ lead, onSubmit, onCancel, isSubmitting = false }: Lea
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     
-    // Validate form data before submission
-    const { isValid, sanitizedData, errors } = await validateFormData(formData)
-    
-    if (!isValid) {
-      console.warn('Form validation failed:', errors)
-      // You could show specific field errors here if needed
+    // Basic client-side validation for required fields
+    if (!formData.name || !formData.email) {
+      console.warn('Name and email are required')
       return
     }
     
-    await onSubmit(sanitizedData as ContactEntity)
+    await onSubmit(formData)
   }
 
   const handleInputChange = (field: keyof ContactEntity, value: any) => {
