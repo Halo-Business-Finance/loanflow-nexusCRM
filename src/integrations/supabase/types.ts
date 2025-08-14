@@ -7,7 +7,7 @@ export type Json =
   | Json[]
 
 export type Database = {
-  // Allows to automatically instanciate createClient with right options
+  // Allows to automatically instantiate createClient with right options
   // instead of createClient<Database, { PostgrestVersion: 'XX' }>(URL, KEY)
   __InternalSupabase: {
     PostgrestVersion: "12.2.12 (cd3cf9e)"
@@ -3068,6 +3068,51 @@ export type Database = {
         }
         Relationships: []
       }
+      security_alerts: {
+        Row: {
+          alert_type: string
+          auto_resolved: boolean | null
+          created_at: string
+          description: string
+          id: string
+          ip_address: unknown | null
+          metadata: Json | null
+          resolved_at: string | null
+          severity: string
+          title: string
+          user_agent: string | null
+          user_id: string | null
+        }
+        Insert: {
+          alert_type: string
+          auto_resolved?: boolean | null
+          created_at?: string
+          description: string
+          id?: string
+          ip_address?: unknown | null
+          metadata?: Json | null
+          resolved_at?: string | null
+          severity: string
+          title: string
+          user_agent?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          alert_type?: string
+          auto_resolved?: boolean | null
+          created_at?: string
+          description?: string
+          id?: string
+          ip_address?: unknown | null
+          metadata?: Json | null
+          resolved_at?: string | null
+          severity?: string
+          title?: string
+          user_agent?: string | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       security_config: {
         Row: {
           created_at: string
@@ -3190,6 +3235,39 @@ export type Database = {
           notification_type?: string
           severity?: string
           title?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      session_anomalies: {
+        Row: {
+          anomaly_type: string
+          created_at: string
+          details: Json | null
+          id: string
+          resolved: boolean | null
+          risk_score: number
+          session_token: string
+          user_id: string
+        }
+        Insert: {
+          anomaly_type: string
+          created_at?: string
+          details?: Json | null
+          id?: string
+          resolved?: boolean | null
+          risk_score?: number
+          session_token: string
+          user_id: string
+        }
+        Update: {
+          anomaly_type?: string
+          created_at?: string
+          details?: Json | null
+          id?: string
+          resolved?: boolean | null
+          risk_score?: number
+          session_token?: string
           user_id?: string
         }
         Relationships: []
@@ -3675,15 +3753,15 @@ export type Database = {
         Returns: boolean
       }
       archive_user: {
-        Args: { p_user_id: string; p_archived_by?: string; p_reason?: string }
+        Args: { p_archived_by?: string; p_reason?: string; p_user_id: string }
         Returns: boolean
       }
       assign_user_role: {
         Args: {
-          p_target_user_id: string
+          p_mfa_verified?: boolean
           p_new_role: Database["public"]["Enums"]["user_role"]
           p_reason?: string
-          p_mfa_verified?: boolean
+          p_target_user_id: string
         }
         Returns: Json
       }
@@ -3697,8 +3775,8 @@ export type Database = {
       }
       check_rate_limit: {
         Args: {
-          p_identifier: string
           p_action_type: string
+          p_identifier: string
           p_max_attempts?: number
           p_window_minutes?: number
         }
@@ -3719,34 +3797,34 @@ export type Database = {
       create_audit_log: {
         Args: {
           p_action: string
-          p_table_name?: string
-          p_record_id?: string
-          p_old_values?: Json
           p_new_values?: Json
+          p_old_values?: Json
+          p_record_id?: string
+          p_table_name?: string
         }
         Returns: string
       }
       create_blockchain_record: {
         Args: {
-          p_record_type: string
-          p_record_id: string
           p_data_hash: string
           p_metadata?: Json
+          p_record_id: string
+          p_record_type: string
         }
         Returns: string
       }
       create_secure_session: {
         Args:
           | {
-              p_session_token: string
-              p_device_fingerprint: string
-              p_user_agent: string
-            }
-          | {
-              p_user_id: string
-              p_session_token: string
               p_device_fingerprint: string
               p_ip_address: unknown
+              p_session_token: string
+              p_user_agent: string
+              p_user_id: string
+            }
+          | {
+              p_device_fingerprint: string
+              p_session_token: string
               p_user_agent: string
             }
         Returns: undefined
@@ -3757,18 +3835,18 @@ export type Database = {
       }
       detect_ai_behavior: {
         Args: {
-          p_user_id: string
           p_request_pattern: Json
           p_timing_data: Json
+          p_user_id: string
         }
         Returns: number
       }
       detect_login_anomalies: {
         Args: {
-          p_user_id: string
+          p_geo_data: Json
           p_ip_address: unknown
           p_user_agent: string
-          p_geo_data: Json
+          p_user_id: string
         }
         Returns: Json
       }
@@ -3802,9 +3880,9 @@ export type Database = {
       }
       encrypt_profile_field: {
         Args: {
-          p_profile_id: string
           p_field_name: string
           p_field_value: string
+          p_profile_id: string
         }
         Returns: undefined
       }
@@ -3822,10 +3900,10 @@ export type Database = {
       }
       enhanced_rate_limit_check: {
         Args: {
-          p_identifier: string
           p_action_type: string
-          p_user_agent?: string
+          p_identifier: string
           p_request_fingerprint?: string
+          p_user_agent?: string
         }
         Returns: Json
       }
@@ -3849,9 +3927,9 @@ export type Database = {
         Args: { p_email_address: string }
         Returns: {
           access_token: string
-          refresh_token: string
           expires_at: string
           is_expired: boolean
+          refresh_token: string
         }[]
       }
       get_masked_contact_data: {
@@ -3879,7 +3957,7 @@ export type Database = {
         Returns: Json
       }
       get_secure_email_tokens: {
-        Args: { p_user_id: string; p_email_address: string }
+        Args: { p_email_address: string; p_user_id: string }
         Returns: {
           decrypted_access_token: string
           decrypted_refresh_token: string
@@ -3899,104 +3977,104 @@ export type Database = {
         Returns: Database["public"]["Enums"]["user_role"]
       }
       get_verified_blockchain_records_final: {
-        Args: { p_record_type?: string; p_record_id?: string }
+        Args: { p_record_id?: string; p_record_type?: string }
         Returns: {
-          blockchain_id: string
-          record_type: string
-          record_id: string
-          data_hash: string
+          action: string
+          audit_created_at: string
+          audit_id: string
           blockchain_hash: string
+          blockchain_id: string
+          data_hash: string
+          new_values_hash: string
+          old_values_hash: string
+          record_id: string
+          record_type: string
+          table_name: string
+          timestamp_hash: string
           transaction_hash: string
+          user_id: string
           verification_status: string
           verified_at: string
-          audit_id: string
-          user_id: string
-          action: string
-          table_name: string
-          old_values_hash: string
-          new_values_hash: string
-          timestamp_hash: string
-          audit_created_at: string
         }[]
       }
       get_verified_blockchain_records_masked: {
-        Args: { p_record_type?: string; p_record_id?: string }
+        Args: { p_record_id?: string; p_record_type?: string }
         Returns: {
-          id: string
-          record_type: string
-          record_id: string
-          data_hash_masked: string
-          blockchain_hash_masked: string
-          block_number: number
-          transaction_hash_masked: string
-          verified_at: string
-          verification_status: string
-          created_at: string
-          user_id: string
           action: string
           audit_verified: boolean
+          block_number: number
+          blockchain_hash_masked: string
+          created_at: string
+          data_hash_masked: string
+          id: string
+          record_id: string
+          record_type: string
+          transaction_hash_masked: string
+          user_id: string
+          verification_status: string
+          verified_at: string
         }[]
       }
       get_verified_blockchain_records_safe: {
-        Args: { p_record_type?: string; p_record_id?: string }
+        Args: { p_record_id?: string; p_record_type?: string }
         Returns: {
-          id: string
-          record_type: string
-          record_id: string
-          data_hash: string
-          blockchain_hash: string
-          block_number: number
-          transaction_hash: string
-          verified_at: string
-          verification_status: string
-          created_at: string
-          updated_at: string
-          metadata: Json
-          user_id: string
           action: string
           audit_verified: boolean
+          block_number: number
+          blockchain_hash: string
+          created_at: string
+          data_hash: string
+          id: string
+          metadata: Json
+          record_id: string
+          record_type: string
+          transaction_hash: string
+          updated_at: string
+          user_id: string
+          verification_status: string
+          verified_at: string
         }[]
       }
       get_verified_blockchain_records_secure: {
         Args:
           | Record<PropertyKey, never>
-          | { p_record_type?: string; p_record_id?: string }
+          | { p_record_id?: string; p_record_type?: string }
         Returns: {
-          id: string
-          record_type: string
-          record_id: string
-          data_hash: string
-          blockchain_hash: string
-          block_number: number
-          transaction_hash: string
-          verified_at: string
-          verification_status: string
-          created_at: string
-          updated_at: string
-          metadata: Json
-          user_id: string
           action: string
           audit_verified: boolean
+          block_number: number
+          blockchain_hash: string
+          created_at: string
+          data_hash: string
+          id: string
+          metadata: Json
+          record_id: string
+          record_type: string
+          transaction_hash: string
+          updated_at: string
+          user_id: string
+          verification_status: string
+          verified_at: string
         }[]
       }
       get_verified_blockchain_records_secure_view: {
-        Args: { p_record_type?: string; p_record_id?: string }
+        Args: { p_record_id?: string; p_record_type?: string }
         Returns: {
-          id: string
-          record_type: string
-          record_id: string
-          data_hash: string
-          blockchain_hash: string
-          block_number: number
-          transaction_hash: string
-          verified_at: string
-          verification_status: string
-          created_at: string
-          updated_at: string
-          metadata: Json
-          user_id: string
           action: string
           audit_verified: boolean
+          block_number: number
+          blockchain_hash: string
+          created_at: string
+          data_hash: string
+          id: string
+          metadata: Json
+          record_id: string
+          record_type: string
+          transaction_hash: string
+          updated_at: string
+          user_id: string
+          verification_status: string
+          verified_at: string
         }[]
       }
       has_role: {
@@ -4025,30 +4103,30 @@ export type Database = {
         Returns: Json
       }
       lock_account: {
-        Args: { user_email: string; lock_reason?: string }
+        Args: { lock_reason?: string; user_email: string }
         Returns: string
       }
       log_enhanced_security_event: {
         Args: {
-          p_user_id?: string
-          p_event_type?: string
-          p_severity?: string
           p_details?: Json
-          p_ip_address?: unknown
-          p_user_agent?: string
           p_device_fingerprint?: string
+          p_event_type?: string
+          p_ip_address?: unknown
           p_location?: Json
+          p_severity?: string
+          p_user_agent?: string
+          p_user_id?: string
         }
         Returns: string
       }
       log_security_event: {
         Args: {
-          p_user_id?: string
-          p_event_type?: string
-          p_severity?: string
           p_details?: Json
+          p_event_type?: string
           p_ip_address?: unknown
+          p_severity?: string
           p_user_agent?: string
+          p_user_id?: string
         }
         Returns: string
       }
@@ -4065,25 +4143,25 @@ export type Database = {
         Returns: undefined
       }
       restore_user: {
-        Args: { p_user_id: string; p_restored_by?: string }
+        Args: { p_restored_by?: string; p_user_id: string }
         Returns: boolean
       }
       revoke_user_role: {
         Args: {
-          p_target_user_id: string
-          p_reason?: string
           p_mfa_verified?: boolean
+          p_reason?: string
+          p_target_user_id: string
         }
         Returns: Json
       }
       store_secure_email_tokens: {
         Args: {
-          p_user_id: string
-          p_email_address: string
-          p_display_name: string
           p_access_token: string
-          p_refresh_token: string
+          p_display_name: string
+          p_email_address: string
           p_expires_at: string
+          p_refresh_token: string
+          p_user_id: string
         }
         Returns: undefined
       }
@@ -4093,19 +4171,19 @@ export type Database = {
       }
       store_secure_session_token: {
         Args: {
-          p_user_id: string
-          p_session_token: string
           p_device_fingerprint: string
+          p_session_token: string
           p_user_agent: string
+          p_user_id: string
         }
         Returns: undefined
       }
       trigger_emergency_shutdown: {
         Args: {
-          p_threat_type: string
           p_severity: string
-          p_trigger_source: string
           p_threat_data?: Json
+          p_threat_type: string
+          p_trigger_source: string
         }
         Returns: boolean
       }
@@ -4123,24 +4201,24 @@ export type Database = {
       }
       validate_and_sanitize_input: {
         Args: {
-          p_input: string
-          p_field_type?: string
-          p_max_length?: number
           p_allow_html?: boolean
+          p_field_type?: string
+          p_input: string
+          p_max_length?: number
         }
         Returns: Json
       }
       validate_and_sanitize_input_enhanced: {
         Args: {
-          p_input: string
-          p_field_type?: string
-          p_max_length?: number
           p_allow_html?: boolean
+          p_field_type?: string
+          p_input: string
+          p_max_length?: number
         }
         Returns: Json
       }
       validate_blockchain_access: {
-        Args: { record_id_param?: string; operation_param?: string }
+        Args: { operation_param?: string; record_id_param?: string }
         Returns: boolean
       }
       validate_contact_access_enhanced: {
@@ -4153,14 +4231,14 @@ export type Database = {
       }
       validate_credential_access: {
         Args: {
-          p_table_name: string
-          p_record_id: string
           p_access_type: string
+          p_record_id: string
+          p_table_name: string
         }
         Returns: boolean
       }
       validate_document_access: {
-        Args: { p_document_id: string; p_action?: string }
+        Args: { p_action?: string; p_document_id: string }
         Returns: boolean
       }
       validate_password_strength: {
@@ -4168,31 +4246,31 @@ export type Database = {
         Returns: Json
       }
       validate_secure_session_token: {
-        Args: { p_user_id: string; p_session_token: string }
+        Args: { p_session_token: string; p_user_id: string }
         Returns: boolean
       }
       validate_session_security: {
         Args:
-          | { p_user_id: string; p_session_token: string }
           | {
-              p_user_id: string
-              p_session_token: string
               p_ip_address: unknown
+              p_session_token: string
               p_user_agent: string
+              p_user_id: string
             }
+          | { p_session_token: string; p_user_id: string }
         Returns: Json
       }
       validate_session_with_security_checks: {
         Args: {
-          p_user_id: string
-          p_session_token: string
           p_ip_address?: unknown
+          p_session_token: string
           p_user_agent?: string
+          p_user_id: string
         }
         Returns: Json
       }
       verify_data_integrity: {
-        Args: { p_table_name: string; p_record_id?: string }
+        Args: { p_record_id?: string; p_table_name: string }
         Returns: Json
       }
       verify_role_change_mfa: {

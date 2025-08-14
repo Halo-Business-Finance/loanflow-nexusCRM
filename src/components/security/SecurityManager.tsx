@@ -16,6 +16,7 @@ import { SecurityMonitor } from "./SecurityMonitor";
 import { DarkWebSecurityBot } from "./DarkWebSecurityBot";
 import { HackerDetectionBot } from "./HackerDetectionBot";
 import { DataIntegrityDashboard } from "@/components/DataIntegrityDashboard";
+import { EnhancedSecurityMonitor } from "./EnhancedSecurityMonitor";
 import Layout from "@/components/Layout";
 
 interface SecurityNotification {
@@ -386,16 +387,16 @@ export function SecurityManager() {
             )}
           </div>
 
-          {/* Real-time Security Monitoring */}
+          {/* Enhanced Security Monitoring */}
           <Card className="max-w-4xl">
             <CardHeader className="pb-3">
-              <CardTitle className="text-lg">Real-time Security Monitoring</CardTitle>
+              <CardTitle className="text-lg">Enhanced Security Monitoring</CardTitle>
               <CardDescription className="text-sm">
-                Live threat detection and system security status
+                Advanced threat detection and real-time security monitoring
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <SecurityMonitor />
+              <EnhancedSecurityMonitor />
             </CardContent>
           </Card>
 
