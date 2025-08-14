@@ -52,6 +52,13 @@ export class DataFieldValidator {
     // Handle both nested contact_entities and direct contact entity data
     const contactEntity = leadData.contact_entities || leadData.contact_entity || leadData
     
+    // If no contact entity data exists, that's a critical error
+    if (!contactEntity || (leadData.contact_entities === null && leadData.contact_entity_id)) {
+      result.errors.push('Missing contact entity data')
+      result.isValid = false
+      return result
+    }
+    
     // Check required fields from contact entity
     if (!contactEntity?.name) {
       result.errors.push('Name is required')
