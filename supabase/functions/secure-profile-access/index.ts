@@ -16,19 +16,20 @@ Deno.serve(async (req) => {
   }
 
   try {
-    const { action, profile_id, updates } = await req.json()
+    const { action, profile_id, updates, profile_ids } = await req.json()
     
-    // Get the authenticated user
+    // Get the authenticated user from the request header
     const authHeader = req.headers.get('authorization')
     if (!authHeader) {
       throw new Error('Missing authorization header')
     }
 
-    const { data: { user }, error: userError } = await supabase.auth.getUser(
-      authHeader.replace('Bearer ', '')
-    )
+    // Extract the JWT token
+    const token = authHeader.replace('Bearer ', '')
+    const { data: { user }, error: userError } = await supabase.auth.getUser(token)
     
     if (userError || !user) {
+      console.error('Authentication error:', userError)
       throw new Error('Invalid authentication')
     }
 
@@ -83,8 +84,8 @@ async function getMaskedProfile(profileId: string, requestingUserId: string) {
 
 async function getMultipleProfiles(req: Request, requestingUserId: string) {
   try {
-    const body = await req.json()
-    const { profile_ids } = body
+    const body = await req.text()
+    const { profile_ids } = JSON.parse(body)
     
     if (!Array.isArray(profile_ids)) {
       throw new Error('profile_ids must be an array')

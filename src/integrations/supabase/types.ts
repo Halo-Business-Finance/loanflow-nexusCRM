@@ -3952,6 +3952,10 @@ export type Database = {
         }
         Returns: boolean
       }
+      update_profile_secure: {
+        Args: { p_profile_id: string; p_updates: Json }
+        Returns: Json
+      }
       user_has_opportunity_split: {
         Args: { opportunity_id: string; user_id?: string }
         Returns: boolean
