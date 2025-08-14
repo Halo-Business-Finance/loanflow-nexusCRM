@@ -12,6 +12,7 @@ import { GeoSecurityCheck } from "@/components/GeoSecurityCheck";
 import { AsyncErrorBoundary } from "@/components/AsyncErrorBoundary";
 import { CSPHeaders } from "@/components/security/CSPHeaders";
 import { MasterSecurityDashboard } from "@/components/security/MasterSecurityDashboard";
+import Layout from "@/components/Layout";
 import { SecurityEnhancementProvider } from "@/components/security/SecurityEnhancementProvider";
 import { SecurityProvider as EnhancedSecurityProvider } from "@/components/security/SecurityProvider";
 import { RouteErrorBoundary } from "@/components/RouteErrorBoundary";
@@ -93,7 +94,7 @@ function AuthenticatedApp() {
             <Route path="/settings" element={<Settings />} errorElement={<RouteErrorBoundary />} />
             <Route path="/users" element={<Users />} errorElement={<RouteErrorBoundary />} />
             <Route path="/users-leads" element={<UsersLeads />} errorElement={<RouteErrorBoundary />} />
-            <Route path="/security" element={<MasterSecurityDashboard />} errorElement={<RouteErrorBoundary />} />
+            <Route path="/security" element={<Layout><MasterSecurityDashboard /></Layout>} errorElement={<RouteErrorBoundary />} />
             <Route path="/enterprise" element={<Enterprise />} errorElement={<RouteErrorBoundary />} />
             <Route path="/integrations" element={<Integrations />} errorElement={<RouteErrorBoundary />} />
             <Route path="/ai-tools" element={<AITools />} errorElement={<RouteErrorBoundary />} />
