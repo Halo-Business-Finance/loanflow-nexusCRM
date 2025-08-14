@@ -229,6 +229,74 @@ export class DataIntegrityFixer {
           }
         }
       }
+
+      // Fix contacts missing priority field
+      const { data: missingPriority, error: priorityError } = await supabase
+        .from('contact_entities')
+        .select('id, name, priority')
+        .or('priority.is.null,priority.eq.""')
+      
+      if (priorityError) {
+        console.error('❌ Error fetching priority issues:', priorityError)
+      } else if (missingPriority && missingPriority.length > 0) {
+        console.log(`📋 Found ${missingPriority.length} contacts with missing priority`)
+        
+        for (const contact of missingPriority) {
+          try {
+            console.log(`🔨 Setting default priority for ${contact.name}`)
+            
+            const { error: updateError } = await supabase
+              .from('contact_entities')
+              .update({ priority: 'medium' })
+              .eq('id', contact.id)
+            
+            if (!updateError) {
+              result.fixed++
+              console.log(`✅ Successfully set priority for ${contact.name}`)
+            } else {
+              console.error(`❌ Failed to set priority:`, updateError)
+              result.errors.push(`Failed to set priority: ${updateError.message}`)
+            }
+          } catch (error) {
+            console.error(`❌ Exception setting priority:`, error)
+            result.errors.push(`Exception setting priority: ${error}`)
+          }
+        }
+      }
+
+      // Fix contacts missing stage field
+      const { data: missingStage, error: stageError } = await supabase
+        .from('contact_entities')
+        .select('id, name, stage')
+        .or('stage.is.null,stage.eq.""')
+      
+      if (stageError) {
+        console.error('❌ Error fetching stage issues:', stageError)
+      } else if (missingStage && missingStage.length > 0) {
+        console.log(`📋 Found ${missingStage.length} contacts with missing stage`)
+        
+        for (const contact of missingStage) {
+          try {
+            console.log(`🔨 Setting default stage for ${contact.name}`)
+            
+            const { error: updateError } = await supabase
+              .from('contact_entities')
+              .update({ stage: 'New Lead' })
+              .eq('id', contact.id)
+            
+            if (!updateError) {
+              result.fixed++
+              console.log(`✅ Successfully set stage for ${contact.name}`)
+            } else {
+              console.error(`❌ Failed to set stage:`, updateError)
+              result.errors.push(`Failed to set stage: ${updateError.message}`)
+            }
+          } catch (error) {
+            console.error(`❌ Exception setting stage:`, error)
+            result.errors.push(`Exception setting stage: ${error}`)
+          }
+        }
+      }
       
       console.log(`🎉 Auto-fix completed: ${result.fixed} fixes, ${result.errors.length} errors`)
       
