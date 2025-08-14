@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react"
 import { useAuth } from "@/components/auth/AuthProvider"
-import { ProfileSecurityAlert } from "@/components/security/ProfileSecurityAlert"
+
 import Layout from "@/components/Layout"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
@@ -665,8 +665,6 @@ export default function Users() {
     <TooltipProvider delayDuration={300}>
       <Layout>
       <div className="space-y-6">
-        {/* Security Enhancement Alert */}
-        <ProfileSecurityAlert />
         
         {/* Header */}
         <div className="flex justify-between items-center">
