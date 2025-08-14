@@ -559,12 +559,12 @@ export default function Dashboard() {
                 </CardTitle>
               </div>
               <div className="relative">
-                <Search className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
+                <Search className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground dark:text-white" />
                 <Input
                   placeholder="Filter stages..."
                   value={pipelineFilter}
                   onChange={(e) => setPipelineFilter(e.target.value)}
-                  className="pl-10 w-40 h-8 rounded-lg bg-background/50 border-border/30"
+                  className="pl-10 w-40 h-8 rounded-lg bg-background/50 border-border/30 dark:text-white dark:placeholder-white/70"
                 />
               </div>
             </div>
@@ -580,8 +580,8 @@ export default function Dashboard() {
                   <div className="space-y-2">
                     <div className="flex justify-between items-center">
                       <div className="flex items-center gap-2">
-                        <div className="w-6 h-6 rounded-md bg-primary/10 flex items-center justify-center">
-                          <span className="text-xs font-bold text-primary">{index + 1}</span>
+                        <div className="w-6 h-6 rounded-md bg-primary/10 dark:bg-primary/20 flex items-center justify-center">
+                          <span className="text-xs font-bold text-primary dark:text-white">{index + 1}</span>
                         </div>
                         <span className="font-medium text-foreground text-sm">{stage.name}</span>
                       </div>
