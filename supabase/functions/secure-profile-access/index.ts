@@ -39,7 +39,7 @@ Deno.serve(async (req) => {
       case 'get_masked_profile':
         return await getMaskedProfile(profile_id, user.id)
       case 'get_multiple_profiles':
-        return await getMultipleProfiles(req, user.id)
+        return await getMultipleProfiles(profile_ids, user.id)
       case 'update_profile_secure':
         return await updateProfileSecure(profile_id, updates, user.id)
       case 'migrate_existing_data':
@@ -82,17 +82,14 @@ async function getMaskedProfile(profileId: string, requestingUserId: string) {
   }
 }
 
-async function getMultipleProfiles(req: Request, requestingUserId: string) {
+async function getMultipleProfiles(profileIds: string[], requestingUserId: string) {
   try {
-    const body = await req.text()
-    const { profile_ids } = JSON.parse(body)
-    
-    if (!Array.isArray(profile_ids)) {
+    if (!Array.isArray(profileIds)) {
       throw new Error('profile_ids must be an array')
     }
 
     // Get masked data for each profile
-    const profilePromises = profile_ids.map(async (profileId: string) => {
+    const profilePromises = profileIds.map(async (profileId: string) => {
       const { data, error } = await supabase.rpc('get_masked_profile_data', {
         p_profile_id: profileId,
         p_requesting_user_id: requestingUserId
@@ -109,7 +106,7 @@ async function getMultipleProfiles(req: Request, requestingUserId: string) {
     const profiles = await Promise.all(profilePromises)
     const validProfiles = profiles.filter(p => p !== null)
 
-    console.log(`Multiple profiles accessed: ${profile_ids.length} requested, ${validProfiles.length} returned`)
+    console.log(`Multiple profiles accessed: ${profileIds.length} requested, ${validProfiles.length} returned`)
 
     return new Response(
       JSON.stringify({ data: validProfiles }),

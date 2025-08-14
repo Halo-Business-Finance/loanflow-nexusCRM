@@ -3710,7 +3710,7 @@ export type Database = {
         Returns: Json
       }
       get_masked_profile_data: {
-        Args: { p_profile_id: string; p_requesting_user_id?: string }
+        Args: { p_profile_id: string; p_requesting_user_id: string }
         Returns: Json
       }
       get_masked_ringcentral_credentials: {
