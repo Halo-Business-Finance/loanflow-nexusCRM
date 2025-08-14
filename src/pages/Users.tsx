@@ -93,10 +93,14 @@ export default function Users() {
   const navigate = useNavigate()
 
   useEffect(() => {
+    console.log('Users page - user:', user?.email, 'hasRole admin:', hasRole('admin'), 'hasRole super_admin:', hasRole('super_admin'))
+    
     if (hasRole('admin') || hasRole('super_admin')) {
+      console.log('User has admin access, fetching users...')
       fetchUsers()
       fetchUsersWithLeads()
     } else {
+      console.log('User does not have admin access')
       toast({
         title: "Access Denied",
         description: "You need admin privileges to view this page",
@@ -104,9 +108,10 @@ export default function Users() {
       })
       navigate('/leads')
     }
-  }, [user, hasRole])
+  }, [user, hasRole, navigate])
 
   const fetchUsers = async () => {
+    console.log('fetchUsers called')
     try {
       setLoading(true)
       
