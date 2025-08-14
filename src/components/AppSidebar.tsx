@@ -34,7 +34,6 @@ const navigationItems = [
 const settingsItems = [
   { title: "Settings", url: "/settings", icon: Settings, description: "Configure application preferences and account settings" },
   { title: "Users", url: "/users", icon: UserCheck, description: "Manage team members and user permissions (Admin only)" },
-  { title: "Users & Leads", url: "/users-leads", icon: Users, description: "View user activity and lead assignments" },
   { title: "Enterprise", url: "/enterprise", icon: Building2, description: "Advanced business features and workflow management (Admin only)" },
   { title: "Integrations", url: "/integrations", icon: Zap, description: "Connect external tools and services" },
   { title: "AI Tools", url: "/ai-tools", icon: Target, description: "Access AI-powered features and automation" },

@@ -1,171 +1,134 @@
-import { useState, useEffect } from "react"
-import { useAuth } from "@/components/auth/AuthProvider"
-
+import React, { useState, useEffect } from "react"
+import { useNavigate } from "react-router-dom"
 import Layout from "@/components/Layout"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { Badge } from "@/components/ui/badge"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
-import { Label } from "@/components/ui/label"
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Separator } from "@/components/ui/separator"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
-import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog"
+import { Separator } from "@/components/ui/separator"
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
-import { supabase } from "@/integrations/supabase/client"
-import { useToast } from "@/hooks/use-toast"
-import { PhoneDialer } from "@/components/PhoneDialer"
-import { EmailComposer } from "@/components/EmailComposer"
 import { 
-  Users as UsersIcon, 
-  UserPlus, 
   Search, 
-  Edit, 
-  Trash2, 
-  Mail, 
+  Eye, 
   Phone, 
-  Calendar,
-  Shield,
-  User,
-  Key,
+  Mail, 
+  DollarSign, 
+  Calendar, 
+  Filter, 
+  User, 
+  Building, 
+  TrendingUp,
+  UserPlus,
+  RotateCcw,
+  Trash2,
+  Edit3,
   Archive,
-  RotateCcw
+  Undo2,
+  Shield,
+  UserCheck,
+  Activity,
+  UsersIcon
 } from "lucide-react"
+import { supabase } from "@/integrations/supabase/client"
+import { useAuth } from "@/components/auth/AuthProvider"
+import { useToast } from "@/hooks/use-toast"
+import { formatCurrency } from "@/lib/utils"
+import { Lead } from "@/types/lead"
 
-// Phone number formatting function
-const formatPhoneNumber = (value: string) => {
-  // Remove all non-digits
-  const phoneNumber = value.replace(/\D/g, '')
-  
-  // Format based on length
-  if (phoneNumber.length < 4) {
-    return phoneNumber
-  } else if (phoneNumber.length < 7) {
-    return `(${phoneNumber.slice(0, 3)}) ${phoneNumber.slice(3)}`
-  } else {
-    return `(${phoneNumber.slice(0, 3)}) ${phoneNumber.slice(3, 6)}-${phoneNumber.slice(6, 10)}`
-  }
+interface UserWithLeads {
+  id: string
+  email: string
+  name?: string
+  role: string
+  leads: Lead[]
+  totalLeadValue: number
+  activeLeads: number
+  convertedLeads: number
 }
 
 interface UserProfile {
   id: string
-  email: string
+  user_id: string
   first_name: string | null
   last_name: string | null
-  phone_number: string | null
-  created_at: string
-  role: 'super_admin' | 'admin' | 'manager' | 'agent' | 'loan_originator' | 'funder' | 'loan_processor' | 'underwriter' | 'closer' | 'tech'
+  email: string
+  phone: string | null
+  role: string
   is_active: boolean
-  archived_at?: string | null
-  archived_by?: string | null
-  archive_reason?: string | null
+  archived_at: string | null
+  archive_reason: string | null
+  created_at: string
+  updated_at: string
 }
 
 export default function Users() {
-  const { hasRole, user: currentUser, userRole: currentUserRole } = useAuth()
-  const { toast } = useToast()
+  // User Management State
   const [users, setUsers] = useState<UserProfile[]>([])
-  const [archivedUsers, setArchivedUsers] = useState<UserProfile[]>([])
-  const [loading, setLoading] = useState(true)
-  const [searchTerm, setSearchTerm] = useState("")
-  const [archiveReason, setArchiveReason] = useState("")
-  const [showArchiveDialog, setShowArchiveDialog] = useState(false)
-  const [userToArchive, setUserToArchive] = useState<UserProfile | null>(null)
-  const [newUser, setNewUser] = useState({
-    email: "",
-    password: "",
-    first_name: "",
-    last_name: "",
-    phone_number: "",
-    role: "agent" as 'super_admin' | 'admin' | 'manager' | 'agent' | 'loan_originator' | 'funder' | 'loan_processor' | 'underwriter' | 'closer' | 'tech'
-  })
-  const [editingUser, setEditingUser] = useState<UserProfile | null>(null)
   const [showNewUserDialog, setShowNewUserDialog] = useState(false)
-  const [showEditDialog, setShowEditDialog] = useState(false)
-  const [showPasswordDialog, setShowPasswordDialog] = useState(false)
-  const [passwordChangeUser, setPasswordChangeUser] = useState<UserProfile | null>(null)
-  const [newPassword, setNewPassword] = useState("")
-  const [confirmPassword, setConfirmPassword] = useState("")
+  const [editingUser, setEditingUser] = useState<UserProfile | null>(null)
+  const [newUserData, setNewUserData] = useState({
+    firstName: '',
+    lastName: '',
+    email: '',
+    phone: '',
+    role: 'agent' as const,
+    password: ''
+  })
+
+  // Users & Leads State
+  const [usersWithLeads, setUsersWithLeads] = useState<UserWithLeads[]>([])
+  const [selectedUser, setSelectedUser] = useState<string | null>(null)
+
+  // Shared State
+  const [searchTerm, setSearchTerm] = useState("")
+  const [loading, setLoading] = useState(true)
+  const { user, hasRole } = useAuth()
+  const { toast } = useToast()
+  const navigate = useNavigate()
 
   useEffect(() => {
     if (hasRole('admin') || hasRole('super_admin')) {
       fetchUsers()
-      fetchArchivedUsers()
+      fetchUsersWithLeads()
     } else {
-      setLoading(false)
+      toast({
+        title: "Access Denied",
+        description: "You need admin privileges to view this page",
+        variant: "destructive"
+      })
+      navigate('/leads')
     }
-  }, [hasRole])
-
-  // Add manual refresh function
-  const refreshUserData = () => {
-    setLoading(true)
-    fetchUsers()
-    fetchArchivedUsers()
-  }
-
-  // Redirect if not admin or super_admin
-  if (!hasRole('admin') && !hasRole('super_admin')) {
-    return (
-      <Layout>
-        <div className="flex items-center justify-center min-h-[400px]">
-          <div className="text-center">
-            <Shield className="h-12 w-12 mx-auto mb-4 text-muted-foreground" />
-            <h2 className="text-xl font-semibold mb-2">Access Denied</h2>
-            <p className="text-muted-foreground">You need admin privileges to access user management.</p>
-          </div>
-        </div>
-      </Layout>
-    )
-  }
+  }, [user, hasRole])
 
   const fetchUsers = async () => {
     try {
+      setLoading(true)
+      
       const { data: profiles, error: profilesError } = await supabase
         .from('profiles')
         .select(`
-          id,
-          first_name,
-          last_name,
-          phone_number,
-          email,
-          created_at,
-          archived_at,
-          archived_by,
-          archive_reason
+          *,
+          user_roles!inner(role, is_active)
         `)
-        .is('archived_at', null)
+        .order('created_at', { ascending: false })
 
       if (profilesError) throw profilesError
 
-      const { data: roles, error: rolesError } = await supabase
-        .from('user_roles')
-        .select('user_id, role, is_active')
+      // Transform the data to include role information
+      const transformedUsers = profiles?.map((profile: any) => ({
+        ...profile,
+        user_id: profile.id,
+        phone: profile.phone || '',
+        role: Array.isArray(profile.user_roles) ? profile.user_roles[0]?.role || 'agent' : 'agent'
+      })) || []
 
-      if (rolesError) throw rolesError
-
-      // Combine the data - only show users with active roles and existing profiles (not archived)
-      const combinedUsers: UserProfile[] = profiles
-        .map(profile => {
-          const role = roles.find(r => r.user_id === profile.id && r.is_active === true)
-          
-          if (!role || profile.archived_at) return null // Skip users without active roles or archived users
-          
-          return {
-            ...profile,
-            email: profile.email || '',
-            role: role.role || 'agent',
-            is_active: role.is_active || false,
-            archived_at: profile.archived_at,
-            archived_by: profile.archived_by,
-            archive_reason: profile.archive_reason
-          }
-        })
-        .filter(Boolean) as UserProfile[] // Remove null entries
-
-      setUsers(combinedUsers)
+      setUsers(transformedUsers)
     } catch (error) {
       console.error('Error fetching users:', error)
       toast({
@@ -178,1223 +141,525 @@ export default function Users() {
     }
   }
 
-  const fetchArchivedUsers = async () => {
+  const fetchUsersWithLeads = async () => {
     try {
+      setLoading(true)
+      
       const { data: profiles, error: profilesError } = await supabase
         .from('profiles')
         .select(`
           id,
+          email,
           first_name,
           last_name,
-          phone_number,
-          email,
-          created_at,
-          archived_at,
-          archived_by,
-          archive_reason
+          user_roles!inner(role)
         `)
-        .not('archived_at', 'is', null)
 
       if (profilesError) throw profilesError
 
-      const { data: roles, error: rolesError } = await supabase
-        .from('user_roles')
-        .select('user_id, role, is_active')
+      const usersData: UserWithLeads[] = []
 
-      if (rolesError) throw rolesError
+      for (const profile of profiles || []) {
+        const { data: leads, error: leadsError } = await supabase
+          .from('leads')
+          .select(`
+            *,
+            contact_entities(*)
+          `)
+          .eq('user_id', profile.id)
 
-      // Combine the data for archived users
-      const combinedArchivedUsers: UserProfile[] = profiles
-        .map(profile => {
-          const role = roles.find(r => r.user_id === profile.id)
-          
-          if (!role) return null
-          
-          return {
-            ...profile,
-            email: profile.email || '',
-            role: role.role || 'agent',
-            is_active: role.is_active || false,
-            archived_at: profile.archived_at,
-            archived_by: profile.archived_by,
-            archive_reason: profile.archive_reason
+        if (leadsError) {
+          console.error('Error fetching leads for user:', profile.id, leadsError)
+          continue
+        }
+
+        const transformedLeads = leads?.map(lead => ({
+          ...lead,
+          contact_entity: lead.contact_entities
+        })) || []
+
+        const totalLeadValue = transformedLeads.reduce((sum, lead) => {
+          return sum + (lead.contact_entity?.loan_amount || 0)
+        }, 0)
+
+        const activeLeads = transformedLeads.filter(lead => 
+          lead.contact_entity?.stage && !['Lost', 'Loan Funded'].includes(lead.contact_entity.stage)
+        ).length
+
+        const convertedLeads = transformedLeads.filter(lead => 
+          lead.contact_entity?.stage === 'Loan Funded'
+        ).length
+
+        usersData.push({
+          id: profile.id,
+          email: profile.email,
+          name: profile.first_name && profile.last_name 
+            ? `${profile.first_name} ${profile.last_name}` 
+            : profile.first_name || profile.email,
+          role: Array.isArray(profile.user_roles) ? profile.user_roles[0]?.role || 'agent' : 'agent',
+          leads: transformedLeads,
+          totalLeadValue,
+          activeLeads,
+          convertedLeads
+        })
+      }
+
+      setUsersWithLeads(usersData)
+    } catch (error) {
+      console.error('Error fetching users with leads:', error)
+      toast({
+        title: "Error",
+        description: "Failed to fetch user lead data",
+        variant: "destructive"
+      })
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const createNewUser = async () => {
+    try {
+      const { data, error } = await supabase.auth.signUp({
+        email: newUserData.email,
+        password: newUserData.password,
+        options: {
+          data: {
+            first_name: newUserData.firstName,
+            last_name: newUserData.lastName,
+            phone: newUserData.phone,
+            role: newUserData.role
           }
-        })
-        .filter(Boolean) as UserProfile[]
-
-      setArchivedUsers(combinedArchivedUsers)
-    } catch (error) {
-      console.error('Error fetching archived users:', error)
-    }
-  }
-
-  const archiveUser = async () => {
-    if (!userToArchive) return
-
-    try {
-      const { error } = await supabase.rpc('archive_user', {
-        p_user_id: userToArchive.id,
-        p_reason: archiveReason || 'User archived by administrator'
-      })
-
-      if (error) throw error
-
-      toast({
-        title: "Success",
-        description: `User ${userToArchive.first_name} ${userToArchive.last_name} has been archived`
-      })
-
-      setShowArchiveDialog(false)
-      setUserToArchive(null)
-      setArchiveReason("")
-      fetchUsers()
-      fetchArchivedUsers()
-    } catch (error) {
-      console.error('Error archiving user:', error)
-      toast({
-        title: "Error",
-        description: "Failed to archive user",
-        variant: "destructive"
-      })
-    }
-  }
-
-  const restoreUser = async (userId: string, userName: string) => {
-    try {
-      const { error } = await supabase.rpc('restore_user', {
-        p_user_id: userId
-      })
-
-      if (error) throw error
-
-      toast({
-        title: "Success",
-        description: `User ${userName} has been restored from archive`
-      })
-
-      fetchUsers()
-      fetchArchivedUsers()
-    } catch (error) {
-      console.error('Error restoring user:', error)
-      toast({
-        title: "Error",
-        description: "Failed to restore user",
-        variant: "destructive"
-      })
-    }
-  }
-
-  const createUser = async () => {
-    console.log('Starting user creation with data:', newUser)
-    
-    try {
-      // Check if trying to create super_admin without being super_admin
-      if (newUser.role === 'super_admin' && currentUserRole !== 'super_admin') {
-        toast({
-          title: "Access Denied",
-          description: "Only super administrators can create other super administrators",
-          variant: "destructive"
-        })
-        return
-      }
-
-      // Check if trying to create admin without being super_admin or admin
-      if (newUser.role === 'admin' && currentUserRole !== 'super_admin' && currentUserRole !== 'admin') {
-        toast({
-          title: "Access Denied",
-          description: "Only super administrators or administrators can create other administrators",
-          variant: "destructive"
-        })
-        return
-      }
-
-      console.log('Attempting to create user with admin privileges...')
-      
-      // Use admin.createUser to bypass email verification for admin-created accounts
-      const { data, error } = await supabase.auth.admin.createUser({
-        email: newUser.email,
-        password: newUser.password,
-        email_confirm: true, // Automatically confirm email for admin-created users
-        user_metadata: {
-          first_name: newUser.first_name,
-          last_name: newUser.last_name,
-          phone_number: newUser.phone_number
         }
       })
 
-      console.log('Admin user creation result:', { data, error })
-
       if (error) throw error
-      if (!data.user) throw new Error('Failed to create user')
 
-      // The profile will be created automatically by the trigger
-      // The trigger also creates a default 'agent' role, so we need to update it if different
-      console.log('Updating user role to:', newUser.role)
-      
-      const { error: roleError } = await supabase
-        .from('user_roles')
-        .update({ role: newUser.role as any })
-        .eq('user_id', data.user.id)
-        .eq('is_active', true)
+      if (data.user) {
+        const { error: roleError } = await supabase
+          .from('user_roles')
+          .update({ role: newUserData.role })
+          .eq('user_id', data.user.id)
 
-      if (roleError) {
-        console.error('Role update error:', roleError)
-        throw roleError
-      }
-
-      // Update the profile with phone number (in case trigger didn't handle it)
-      const { error: profileError } = await supabase
-        .from('profiles')
-        .update({ phone_number: newUser.phone_number })
-        .eq('id', data.user.id)
-
-      if (profileError) {
-        console.error('Phone number update error:', profileError)
-        // Don't throw error here as user creation was successful
+        if (roleError) {
+          console.error('Error updating user role:', roleError)
+        }
       }
 
       toast({
         title: "Success",
-        description: "User created successfully"
+        description: "User created successfully",
       })
 
-      setNewUser({
-        email: "",
-        password: "",
-        first_name: "",
-        last_name: "",
-        phone_number: "",
-        role: "agent"
-      })
       setShowNewUserDialog(false)
+      setNewUserData({
+        firstName: '',
+        lastName: '',
+        email: '',
+        phone: '',
+        role: 'agent',
+        password: ''
+      })
+
       fetchUsers()
+      fetchUsersWithLeads()
     } catch (error: any) {
-      console.error('Error creating user:', error)
-      
-      let errorMessage = "Failed to create user"
-      
-      // Handle specific error types
-      if (error.code === 'weak_password') {
-        errorMessage = "Password is too weak or has been found in data breaches. Please choose a stronger, unique password with at least 8 characters, including uppercase, lowercase, numbers, and symbols."
-      } else if (error.code === 'email_address_not_authorized') {
-        errorMessage = "This email address is not authorized to sign up."
-      } else if (error.code === 'signup_disabled') {
-        errorMessage = "User registration is currently disabled."
-      } else if (error.message) {
-        errorMessage = error.message
-      }
-      
       toast({
         title: "Error",
-        description: errorMessage,
+        description: error.message || "Failed to create user",
         variant: "destructive"
       })
     }
   }
 
-  const updateUser = async () => {
-    if (!editingUser) return
-
+  const deleteUser = async (userId: string) => {
     try {
-      // Check if trying to assign super_admin role without being super_admin
-      if (editingUser.role === 'super_admin' && currentUserRole !== 'super_admin') {
-        toast({
-          title: "Access Denied",
-          description: "Only super administrators can assign the super administrator role",
-          variant: "destructive"
-        })
-        return
-      }
-
-      // Check if trying to assign admin role without being super_admin or admin
-      if (editingUser.role === 'admin' && currentUserRole !== 'super_admin' && currentUserRole !== 'admin') {
-        toast({
-          title: "Access Denied",
-          description: "Only super administrators or administrators can assign the administrator role",
-          variant: "destructive"
-        })
-        return
-      }
-
-      console.log('Updating user with data:', {
-        first_name: editingUser.first_name,
-        last_name: editingUser.last_name,
-        phone_number: editingUser.phone_number,
-        user_id: editingUser.id
-      })
-
-      // Update profile
-      const { data: profileData, error: profileError } = await supabase
-        .from('profiles')
-        .update({
-          first_name: editingUser.first_name,
-          last_name: editingUser.last_name,
-          phone_number: editingUser.phone_number
-        })
-        .eq('id', editingUser.id)
-        .select()
-
-      console.log('Profile update result:', { profileData, profileError })
-
-      if (profileError) {
-        console.error('Profile update error:', profileError)
-        throw profileError
-      }
-
-      // Update role - Delete existing active roles, then insert the new one
-      // Step 1: Delete all active roles for this user
-      const { error: deleteError } = await supabase
-        .from('user_roles')
-        .delete()
-        .eq('user_id', editingUser.id)
-        .eq('is_active', true)
-
-      if (deleteError) {
-        console.error('Error deleting existing active roles:', deleteError)
-        throw deleteError
-      }
-
-      // Step 2: Insert the new active role
-      const { data: roleData, error: roleError } = await supabase
-        .from('user_roles')
-        .insert({
-          user_id: editingUser.id,
-          role: editingUser.role as any,
-          is_active: true
-        })
-        .select()
-
-      console.log('Role insert result:', { roleData, roleError })
-
-      if (roleError) {
-        console.error('Role update error:', roleError)
-        throw roleError
-      }
-
-      toast({
-        title: "Success",
-        description: "User updated successfully"
-      })
-
-      setShowEditDialog(false)
-      setEditingUser(null)
-      fetchUsers()
-    } catch (error) {
-      console.error('Error updating user:', error)
-      toast({
-        title: "Error",
-        description: `Failed to update user: ${error.message || 'Unknown error'}`,
-        variant: "destructive"
-      })
-    }
-  }
-
-  const deleteUser = async (userId: string, userEmail: string) => {
-    try {
-      console.log('Starting user deletion for:', userId, userEmail)
-      
-      // First, delete associated data
-      // Delete user roles
-      const { error: roleError } = await supabase
-        .from('user_roles')
-        .delete()
-        .eq('user_id', userId)
-
-      console.log('Role deletion result:', { roleError })
-      if (roleError) throw roleError
-
-      // Delete user profile
-      const { error: profileError } = await supabase
-        .from('profiles')
-        .delete()
-        .eq('id', userId)
-
-      console.log('Profile deletion result:', { profileError })
-      if (profileError) throw profileError
-
-      // Delete user sessions
-      const { error: sessionError } = await supabase
-        .from('user_sessions')
-        .delete()
-        .eq('user_id', userId)
-
-      console.log('Session deletion result:', { sessionError })
-      if (sessionError) throw sessionError
-
-      // Delete notifications
-      const { error: notificationError } = await supabase
-        .from('notifications')
-        .delete()
-        .eq('user_id', userId)
-
-      console.log('Notification deletion result:', { notificationError })
-      if (notificationError) throw notificationError
-
-      // Note: We cannot delete from auth.users table directly through the client
-      // The user's auth record will remain but they won't be able to access the system
-      // without the associated profile and role records
-
-      console.log('User deletion completed successfully')
-      toast({
-        title: "Success!",
-        description: `User ${userEmail} has been deleted successfully.`,
-      })
-
-      fetchUsers() // Refresh the users list
-    } catch (error) {
-      console.error('Error deleting user:', error)
-      toast({
-        title: "Error",
-        description: "Failed to delete user",
-        variant: "destructive",
-      })
-    }
-  }
-
-  const toggleUserStatus = async (userId: string, currentStatus: boolean) => {
-    try {
-      // Only allow activation/deactivation, not archiving
-      // This is for temporary status changes, not permanent archiving
-      const { error } = await supabase
-        .from('user_roles')
-        .update({ is_active: !currentStatus })
-        .eq('user_id', userId)
-        .eq('archived_at', null) // Only update non-archived users
-
+      const { error } = await supabase.auth.admin.deleteUser(userId)
       if (error) throw error
 
       toast({
         title: "Success",
-        description: `User ${currentStatus ? 'temporarily deactivated' : 'activated'} successfully. Use archive for permanent deactivation.`
+        description: "User deleted successfully",
       })
 
       fetchUsers()
-    } catch (error) {
-      console.error('Error updating user status:', error)
-      toast({
-        title: "Error",
-        description: "Failed to update user status",
-        variant: "destructive"
-      })
-    }
-  }
-
-  const changeUserPassword = async () => {
-    if (!passwordChangeUser) return
-
-    // Validate passwords
-    if (newPassword !== confirmPassword) {
-      toast({
-        title: "Error",
-        description: "Passwords do not match",
-        variant: "destructive"
-      })
-      return
-    }
-
-    if (newPassword.length < 8) {
-      toast({
-        title: "Error",
-        description: "Password must be at least 8 characters long",
-        variant: "destructive"
-      })
-      return
-    }
-
-    try {
-      // Use admin functions to update user password
-      const { error } = await supabase.auth.admin.updateUserById(
-        passwordChangeUser.id,
-        { password: newPassword }
-      )
-
-      if (error) throw error
-
-      toast({
-        title: "Success",
-        description: `Password updated successfully for ${passwordChangeUser.first_name} ${passwordChangeUser.last_name}`
-      })
-
-      // Reset form and close dialog
-      setNewPassword("")
-      setConfirmPassword("")
-      setPasswordChangeUser(null)
-      setShowPasswordDialog(false)
+      fetchUsersWithLeads()
     } catch (error: any) {
-      console.error('Error changing password:', error)
       toast({
-        title: "Error",
-        description: error.message || "Failed to change password",
+        title: "Error", 
+        description: error.message || "Failed to delete user",
         variant: "destructive"
       })
     }
   }
 
-  const filteredUsers = users.filter(user => 
-    user.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    `${user.first_name} ${user.last_name}`.toLowerCase().includes(searchTerm.toLowerCase())
+  const refreshUserData = () => {
+    fetchUsers()
+    fetchUsersWithLeads()
+  }
+
+  const filteredUsers = users.filter(user =>
+    `${user.first_name} ${user.last_name} ${user.email}`.toLowerCase().includes(searchTerm.toLowerCase())
+  )
+
+  const filteredUsersWithLeads = usersWithLeads.filter(user =>
+    `${user.name} ${user.email}`.toLowerCase().includes(searchTerm.toLowerCase())
   )
 
   const getRoleBadgeVariant = (role: string) => {
     switch (role) {
-      case 'super_admin': return 'default'
+      case 'super_admin': return 'destructive'
       case 'admin': return 'default'
-      case 'manager': return 'default'
-      case 'agent': return 'secondary'
-      case 'loan_originator': return 'secondary'
-      case 'funder': return 'secondary'
-      case 'loan_processor': return 'secondary'
-      case 'underwriter': return 'secondary'
-      case 'closer': return 'secondary'
-      case 'tech': return 'outline'
+      case 'manager': return 'secondary'
       default: return 'outline'
     }
-  }
-
-  if (loading) {
-    return (
-      <Layout>
-        <div className="flex items-center justify-center min-h-[400px]">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
-        </div>
-      </Layout>
-    )
   }
 
   return (
     <TooltipProvider delayDuration={300}>
       <Layout>
-      <div className="space-y-6">
-        
-        {/* Header */}
-        <div className="flex justify-between items-center">
-          <div>
-            <h1 className="text-3xl font-bold text-foreground">User Management</h1>
-            <p className="text-white">Manage loan originators and team members</p>
-          </div>
-          
-          <div className="flex gap-2">
-            <Button 
-              variant="outline" 
-              onClick={refreshUserData}
-              disabled={loading}
-              className="gap-2"
-            >
-              <RotateCcw className={`h-4 w-4 ${loading ? 'animate-spin' : ''}`} />
-              Refresh
-            </Button>
-            
-            <Dialog open={showNewUserDialog} onOpenChange={setShowNewUserDialog}>
-              <DialogTrigger asChild>
-                <Button className="gap-2">
-                  <UserPlus className="h-4 w-4 text-white" />
-                  Add User
-                </Button>
-            </DialogTrigger>
-            <DialogContent className="sm:max-w-[500px]">
-              <DialogHeader>
-                <DialogTitle>Create New User</DialogTitle>
-              </DialogHeader>
-              <div className="space-y-4">
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="firstName">First Name</Label>
-                    <Input
-                      id="firstName"
-                      value={newUser.first_name}
-                      onChange={(e) => setNewUser({...newUser, first_name: e.target.value})}
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="lastName">Last Name</Label>
-                    <Input
-                      id="lastName"
-                      value={newUser.last_name}
-                      onChange={(e) => setNewUser({...newUser, last_name: e.target.value})}
-                    />
-                  </div>
-                </div>
-                
-                <div className="space-y-2">
-                  <Label htmlFor="email">Email</Label>
-                  <Input
-                    id="email"
-                    type="email"
-                    value={newUser.email}
-                    onChange={(e) => setNewUser({...newUser, email: e.target.value})}
-                  />
-                </div>
-                
-                <div className="space-y-2">
-                  <Label htmlFor="password">Password</Label>
-                  <Input
-                    id="password"
-                    type="password"
-                    value={newUser.password}
-                    onChange={(e) => setNewUser({...newUser, password: e.target.value})}
-                    placeholder="Enter a strong password"
-                  />
-                  <p className="text-xs text-muted-foreground">
-                    Password must be at least 8 characters with uppercase, lowercase, numbers, and symbols. Avoid common passwords.
-                  </p>
-                </div>
-                
-                <div className="space-y-2">
-                  <Label htmlFor="phone">Phone Number</Label>
-                  <Input
-                    id="phone"
-                    value={newUser.phone_number}
-                    onChange={(e) => {
-                      const formatted = formatPhoneNumber(e.target.value)
-                      setNewUser({...newUser, phone_number: formatted})
-                    }}
-                    placeholder="(555) 123-4567"
-                    maxLength={14}
-                  />
-                </div>
-                
-                <div className="space-y-2">
-                  <Label htmlFor="role">Role</Label>
-                  <Select 
-                    value={newUser.role} 
-                    onValueChange={(value: any) => {
-                      console.log('Role selection changed:', value)
-                      setNewUser({...newUser, role: value})
-                    }}
-                  >
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select a role" />
-                    </SelectTrigger>
-                    <SelectContent className="bg-background border shadow-lg z-50">
-                      {currentUserRole === 'super_admin' && (
-                        <SelectItem value="super_admin">Super Administrator</SelectItem>
-                      )}
-                      {(currentUserRole === 'super_admin' || currentUserRole === 'admin') && (
-                        <SelectItem value="admin">Administrator</SelectItem>
-                      )}
-                      <SelectItem value="manager">Manager</SelectItem>
-                      <SelectItem value="agent">Loan Originator (Agent)</SelectItem>
-                      <SelectItem value="funder">Loan Funder</SelectItem>
-                      <SelectItem value="loan_processor">Loan Processor</SelectItem>
-                      <SelectItem value="underwriter">Loan Underwriter</SelectItem>
-                      <SelectItem value="closer">Closer</SelectItem>
-                      <SelectItem value="tech">Tech</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-                
-                <div className="flex gap-2 pt-4">
-                  <Button onClick={createUser} className="flex-1">Create User</Button>
-                  <Button variant="outline" onClick={() => setShowNewUserDialog(false)}>Cancel</Button>
-                </div>
-              </div>
-            </DialogContent>
-          </Dialog>
-        </div>
-        </div>
-
-        {/* Search and Filter */}
-        <Card>
-          <CardContent className="p-4">
-            <div className="flex gap-4 items-center">
-              <div className="relative flex-1">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-white" />
-                <Input
-                  placeholder="Search users by name or email..."
-                  className="pl-10"
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                />
-              </div>
-              <div className="flex items-center gap-2 text-sm text-white">
-                <UsersIcon className="h-4 w-4 text-white" />
-                {filteredUsers.length} users
-              </div>
+        <div className="space-y-6">
+          {/* Header */}
+          <div className="flex justify-between items-center">
+            <div>
+              <h1 className="text-3xl font-bold text-foreground">User Management</h1>
+              <p className="text-muted-foreground">Manage team members and analyze user performance</p>
             </div>
-          </CardContent>
-        </Card>
-
-        {/* Users Table with Tabs */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <UsersIcon className="h-5 w-5 text-white" />
-              Team Members
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <Tabs defaultValue="active" className="w-full">
-              <TabsList className="grid w-full grid-cols-2">
-                <TabsTrigger value="active">Active Users ({users.length})</TabsTrigger>
-                <TabsTrigger value="archived">Archived Users ({archivedUsers.length})</TabsTrigger>
-              </TabsList>
+            
+            <div className="flex gap-2">
+              <Button 
+                variant="outline" 
+                onClick={refreshUserData}
+                disabled={loading}
+                className="gap-2"
+              >
+                <RotateCcw className={`h-4 w-4 ${loading ? 'animate-spin' : ''}`} />
+                Refresh
+              </Button>
               
-              <TabsContent value="active" className="mt-6">
-                <div className="overflow-x-auto">
-                  <table className="w-full">
-                    <thead>
-                      <tr className="border-b border-border">
-                        <th className="text-left py-3 px-4 font-medium text-white">User</th>
-                        <th className="text-left py-3 px-4 font-medium text-white">Contact</th>
-                        <th className="text-left py-3 px-4 font-medium text-white">Role</th>
-                        <th className="text-left py-3 px-4 font-medium text-white">Status</th>
-                        <th className="text-right py-3 px-4 font-medium text-white">Actions</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {filteredUsers.map((user) => (
-                        <tr key={user.id} className="border-b border-border hover:bg-muted/50 transition-colors">
-                          {/* User Column */}
-                          <td className="py-4 px-4">
-                            <div className="flex items-center gap-3">
-                               <Avatar className="h-10 w-10">
-                                 <AvatarFallback className="bg-primary/10 text-white font-medium">
-                                   {user.first_name?.[0]}{user.last_name?.[0]}
-                                 </AvatarFallback>
-                               </Avatar>
-                              <div>
-                                <p className="font-medium text-foreground">
-                                  {user.first_name} {user.last_name}
-                                </p>
-                                <p className="text-sm text-white">{user.email}</p>
-                              </div>
-                            </div>
-                          </td>
+              <Dialog open={showNewUserDialog} onOpenChange={setShowNewUserDialog}>
+                <DialogTrigger asChild>
+                  <Button className="gap-2">
+                    <UserPlus className="h-4 w-4" />
+                    Add User
+                  </Button>
+                </DialogTrigger>
+                <DialogContent className="sm:max-w-[425px]">
+                  <DialogHeader>
+                    <DialogTitle>Add New User</DialogTitle>
+                    <DialogDescription>
+                      Create a new user account for your team.
+                    </DialogDescription>
+                  </DialogHeader>
+                  <div className="grid gap-4 py-4">
+                    <div className="grid grid-cols-2 gap-4">
+                      <div className="space-y-2">
+                        <Label htmlFor="firstName">First Name</Label>
+                        <Input
+                          id="firstName"
+                          value={newUserData.firstName}
+                          onChange={(e) => setNewUserData(prev => ({ ...prev, firstName: e.target.value }))}
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <Label htmlFor="lastName">Last Name</Label>
+                        <Input
+                          id="lastName"
+                          value={newUserData.lastName}
+                          onChange={(e) => setNewUserData(prev => ({ ...prev, lastName: e.target.value }))}
+                        />
+                      </div>
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="email">Email</Label>
+                      <Input
+                        id="email"
+                        type="email"
+                        value={newUserData.email}
+                        onChange={(e) => setNewUserData(prev => ({ ...prev, email: e.target.value }))}
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="phone">Phone</Label>
+                      <Input
+                        id="phone"
+                        value={newUserData.phone}
+                        onChange={(e) => setNewUserData(prev => ({ ...prev, phone: e.target.value }))}
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="role">Role</Label>
+                      <Select value={newUserData.role} onValueChange={(value: any) => setNewUserData(prev => ({ ...prev, role: value }))}>
+                        <SelectTrigger>
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="agent">Agent</SelectItem>
+                          <SelectItem value="manager">Manager</SelectItem>
+                          <SelectItem value="admin">Admin</SelectItem>
+                          {hasRole('super_admin') && <SelectItem value="super_admin">Super Admin</SelectItem>}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="password">Password</Label>
+                      <Input
+                        id="password"
+                        type="password"
+                        value={newUserData.password}
+                        onChange={(e) => setNewUserData(prev => ({ ...prev, password: e.target.value }))}
+                      />
+                    </div>
+                  </div>
+                  <DialogFooter>
+                    <Button type="submit" onClick={createNewUser}>Create User</Button>
+                  </DialogFooter>
+                </DialogContent>
+              </Dialog>
+            </div>
+          </div>
 
-                          {/* Contact Column */}
-                          <td className="py-4 px-4">
+          {/* Search */}
+          <div className="flex items-center gap-4">
+            <div className="relative flex-1 max-w-md">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
+              <Input
+                placeholder="Search users..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="pl-10"
+              />
+            </div>
+          </div>
+
+          {/* Tabs */}
+          <Tabs defaultValue="management" className="w-full">
+            <TabsList className="grid w-full grid-cols-2">
+              <TabsTrigger value="management" className="flex items-center gap-2">
+                <UserCheck className="h-4 w-4" />
+                User Management
+              </TabsTrigger>
+              <TabsTrigger value="analytics" className="flex items-center gap-2">
+                <Activity className="h-4 w-4" />
+                Users & Leads Analytics
+              </TabsTrigger>
+            </TabsList>
+
+            <TabsContent value="management" className="space-y-6 mt-6">
+              {/* User Management Grid */}
+              <div className="grid gap-4">
+                {loading ? (
+                  <div className="text-center py-8">
+                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
+                    <p className="text-muted-foreground">Loading users...</p>
+                  </div>
+                ) : filteredUsers.length === 0 ? (
+                  <div className="text-center py-8">
+                    <UsersIcon className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+                    <h3 className="text-lg font-semibold">No users found</h3>
+                    <p className="text-muted-foreground">Add your first team member to get started.</p>
+                  </div>
+                ) : (
+                  filteredUsers.map((user) => (
+                    <Card key={user.id} className="hover:shadow-md transition-shadow">
+                      <CardContent className="p-6">
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center space-x-4">
+                            <Avatar className="h-12 w-12">
+                              <AvatarImage src="" />
+                              <AvatarFallback className="bg-primary text-primary-foreground">
+                                {user.first_name?.charAt(0)}{user.last_name?.charAt(0)}
+                              </AvatarFallback>
+                            </Avatar>
                             <div className="space-y-1">
-                              {user.phone_number ? (
-                                <PhoneDialer 
-                                  trigger={
-                                    <button className="flex items-center gap-2 text-sm text-white hover:text-primary transition-colors">
-                                      <Phone className="h-4 w-4 text-white" />
-                                      {user.phone_number}
-                                    </button>
-                                  }
-                                />
-                              ) : (
-                                <span className="text-sm text-white">No phone</span>
-                              )}
-                              <div className="flex items-center gap-2 text-sm text-white">
-                                <Calendar className="h-4 w-4 text-white" />
-                                {new Date(user.created_at).toLocaleDateString()}
-                              </div>
-                            </div>
-                          </td>
-
-                          {/* Role Column */}
-                          <td className="py-4 px-4">
-                            <Badge variant={getRoleBadgeVariant(user.role)} className="capitalize">
-                              {user.role === 'super_admin' ? 'Super Administrator' : 
-                               user.role === 'admin' ? 'Admin' :
-                               user.role === 'manager' ? 'Manager' :
-                               user.role === 'agent' ? 'Agent' :
-                               user.role === 'loan_originator' ? 'Originator' :
-                               user.role === 'funder' ? 'Funder' :
-                               user.role === 'loan_processor' ? 'Processor' :
-                                 user.role === 'underwriter' ? 'Underwriter' : 
-                                 user.role === 'closer' ? 'Closer' :
-                                 user.role === 'tech' ? 'Tech' : 'Unknown'}
-                            </Badge>
-                          </td>
-
-                          {/* Status Column */}
-                          <td className="py-4 px-4">
-                            <div className="flex items-center gap-2">
-                              <div className={`h-2 w-2 rounded-full ${user.is_active ? 'bg-green-500' : 'bg-red-500'}`} />
-                              <span className={`text-sm font-medium ${user.is_active ? 'text-green-700' : 'text-red-700'}`}>
-                                {user.is_active ? 'Active' : 'Inactive'}
-                              </span>
-                            </div>
-                          </td>
-
-                          {/* Actions Column */}
-                          <td className="py-4 px-4">
-                            <div className="flex items-center justify-end gap-2">
-                              <Tooltip>
-                                <TooltipTrigger asChild>
-                                  <Button
-                                    variant="default"
-                                    size="sm"
-                                    onClick={() => {
-                                      setEditingUser(user)
-                                      setShowEditDialog(true)
-                                    }}
-                                    className="h-8 w-8 p-0"
-                                  >
-                                    <Edit className="h-4 w-4 text-white" />
-                                  </Button>
-                                </TooltipTrigger>
-                                <TooltipContent>
-                                  <p>Edit user profile and role settings</p>
-                                </TooltipContent>
-                              </Tooltip>
-                              
-                              <Tooltip>
-                                <TooltipTrigger asChild>
-                                  <Button
-                                    variant="default"
-                                    size="sm"
-                                    onClick={() => {
-                                      setPasswordChangeUser(user)
-                                      setShowPasswordDialog(true)
-                                    }}
-                                    className="h-8 w-8 p-0"
-                                  >
-                                    <Key className="h-4 w-4 text-white" />
-                                  </Button>
-                                </TooltipTrigger>
-                                <TooltipContent>
-                                  <p>Change user's password</p>
-                                </TooltipContent>
-                              </Tooltip>
-
-                              <Tooltip>
-                                <TooltipTrigger asChild>
-                                  <Button
-                                    variant="default"
-                                    size="sm"
-                                    onClick={() => toggleUserStatus(user.id, user.is_active)}
-                                    className="h-8 w-8 p-0"
-                                  >
-                                    {user.is_active ? <Shield className="h-4 w-4 text-white" /> : <User className="h-4 w-4 text-white" />}
-                                  </Button>
-                                </TooltipTrigger>
-                                <TooltipContent>
-                                  <p>{user.is_active ? 'Temporarily deactivate user' : 'Activate user'}</p>
-                                </TooltipContent>
-                              </Tooltip>
-
-                              {user.email !== currentUser?.email && (
-                                <>
-                                  <Tooltip>
-                                    <TooltipTrigger asChild>
-                                      <Button
-                                        variant="default"
-                                        size="sm"
-                                        onClick={() => {
-                                          setUserToArchive(user)
-                                          setShowArchiveDialog(true)
-                                        }}
-                                        className="h-8 w-8 p-0"
-                                      >
-                                        <Archive className="h-4 w-4 text-white" />
-                                      </Button>
-                                    </TooltipTrigger>
-                                    <TooltipContent>
-                                      <p>Archive user (safe, reversible removal)</p>
-                                    </TooltipContent>
-                                  </Tooltip>
-                                  
-                                  <AlertDialog>
-                                    <AlertDialogTrigger asChild>
-                                      <Button variant="ghost" size="sm" className="h-8 w-8 p-0 text-red-600 hover:text-red-700 hover:bg-red-50">
-                                        <Trash2 className="h-4 w-4" />
-                                      </Button>
-                                    </AlertDialogTrigger>
-                                    <AlertDialogContent className="sm:max-w-[500px]">
-                                      <AlertDialogHeader>
-                                        <AlertDialogTitle className="flex items-center gap-2 text-red-600">
-                                          <Trash2 className="h-5 w-5" />
-                                          Confirm User Deletion
-                                        </AlertDialogTitle>
-                                        <AlertDialogDescription className="space-y-3">
-                                          <div className="p-4 bg-red-50 dark:bg-red-950/20 rounded-lg border border-red-200 dark:border-red-800">
-                                            <p className="font-semibold text-red-800 dark:text-red-200">
-                                              ⚠️ This action cannot be undone!
-                                            </p>
-                                          </div>
-                                          
-                                          <p>
-                                            You are about to permanently delete <strong>{user.first_name} {user.last_name}</strong> ({user.email}).
-                                          </p>
-                                          
-                                          <div className="space-y-1 text-sm">
-                                            <p className="font-medium">This will permanently remove:</p>
-                                            <ul className="list-disc list-inside space-y-1 ml-2">
-                                              <li>User profile and personal information</li>
-                                              <li>User roles and permissions</li>
-                                              <li>Active sessions and login history</li>
-                                              <li>All notifications and system records</li>
-                                            </ul>
-                                          </div>
-                                          
-                                          <div className="p-3 bg-blue-50 dark:bg-blue-950/20 rounded-lg border border-blue-200 dark:border-blue-800">
-                                            <p className="text-sm text-blue-700 dark:text-blue-300">
-                                              <strong>Recommended:</strong> Consider archiving this user instead. Archiving preserves their data while deactivating access, and allows restoration if needed.
-                                            </p>
-                                          </div>
-                                        </AlertDialogDescription>
-                                      </AlertDialogHeader>
-                                      <AlertDialogFooter className="gap-2">
-                                        <AlertDialogCancel className="flex-1">
-                                          Cancel
-                                        </AlertDialogCancel>
-                                        <Button
-                                          variant="outline"
-                                          onClick={() => {
-                                            setUserToArchive(user)
-                                            setShowArchiveDialog(true)
-                                          }}
-                                          className="flex-1"
-                                        >
-                                          <Archive className="h-4 w-4 mr-2" />
-                                          Archive Instead
-                                        </Button>
-                                        <AlertDialogAction
-                                          onClick={() => deleteUser(user.id, user.email)}
-                                          className="bg-destructive text-destructive-foreground hover:bg-destructive/90 flex-1"
-                                        >
-                                          <Trash2 className="h-4 w-4 mr-2" />
-                                          Delete Permanently
-                                        </AlertDialogAction>
-                                      </AlertDialogFooter>
-                                    </AlertDialogContent>
-                                  </AlertDialog>
-                                </>
-                              )}
-                            </div>
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                  
-                  {filteredUsers.length === 0 && (
-                    <div className="text-center py-8">
-                      <p className="text-muted-foreground">No active users found matching your search.</p>
-                    </div>
-                  )}
-                </div>
-              </TabsContent>
-              
-              <TabsContent value="archived" className="mt-6">
-                <div className="overflow-x-auto">
-                  <table className="w-full">
-                    <thead>
-                      <tr className="border-b border-border">
-                        <th className="text-left py-3 px-4 font-medium text-white">User</th>
-                        <th className="text-left py-3 px-4 font-medium text-white">Archived Date</th>
-                        <th className="text-left py-3 px-4 font-medium text-white">Role</th>
-                        <th className="text-left py-3 px-4 font-medium text-white">Reason</th>
-                        <th className="text-right py-3 px-4 font-medium text-white">Actions</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {archivedUsers.map((user) => (
-                        <tr key={user.id} className="border-b border-border hover:bg-muted/50 transition-colors opacity-75">
-                          {/* User Column */}
-                          <td className="py-4 px-4">
-                            <div className="flex items-center gap-3">
-                               <Avatar className="h-10 w-10">
-                                 <AvatarFallback className="bg-muted text-muted-foreground font-medium">
-                                   {user.first_name?.[0]}{user.last_name?.[0]}
-                                 </AvatarFallback>
-                               </Avatar>
-                              <div>
-                                <p className="font-medium text-muted-foreground">
+                              <div className="flex items-center gap-2">
+                                <h3 className="font-semibold text-foreground">
                                   {user.first_name} {user.last_name}
-                                </p>
-                                <p className="text-sm text-muted-foreground">{user.email}</p>
+                                </h3>
+                                <Badge variant={getRoleBadgeVariant(user.role)}>
+                                  {user.role.replace('_', ' ')}
+                                </Badge>
+                                {!user.is_active && (
+                                  <Badge variant="secondary">Archived</Badge>
+                                )}
+                              </div>
+                              <div className="flex items-center gap-4 text-sm text-muted-foreground">
+                                <span className="flex items-center gap-1">
+                                  <Mail className="h-3 w-3" />
+                                  {user.email}
+                                </span>
+                                {user.phone && (
+                                  <span className="flex items-center gap-1">
+                                    <Phone className="h-3 w-3" />
+                                    {user.phone}
+                                  </span>
+                                )}
+                                <span className="flex items-center gap-1">
+                                  <Calendar className="h-3 w-3" />
+                                  {new Date(user.created_at).toLocaleDateString()}
+                                </span>
                               </div>
                             </div>
-                          </td>
+                          </div>
+                          
+                          <div className="flex items-center gap-2">
+                            <Tooltip>
+                              <TooltipTrigger asChild>
+                                <Button
+                                  variant="ghost"
+                                  size="sm"
+                                  onClick={() => setEditingUser(user)}
+                                >
+                                  <Edit3 className="h-4 w-4" />
+                                </Button>
+                              </TooltipTrigger>
+                              <TooltipContent>Edit User</TooltipContent>
+                            </Tooltip>
+                            
+                            <Tooltip>
+                              <TooltipTrigger asChild>
+                                <Button
+                                  variant="ghost"
+                                  size="sm"
+                                  onClick={() => deleteUser(user.user_id)}
+                                  className="text-destructive hover:text-destructive"
+                                >
+                                  <Trash2 className="h-4 w-4" />
+                                </Button>
+                              </TooltipTrigger>
+                              <TooltipContent>Delete User</TooltipContent>
+                            </Tooltip>
+                          </div>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  ))
+                )}
+              </div>
+            </TabsContent>
 
-                          {/* Archived Date Column */}
-                          <td className="py-4 px-4">
-                            <div className="text-sm text-muted-foreground">
-                              {user.archived_at ? new Date(user.archived_at).toLocaleDateString() : 'Unknown'}
-                            </div>
-                          </td>
-
-                          {/* Role Column */}
-                          <td className="py-4 px-4">
-                            <Badge variant="outline" className="capitalize">
-                              {user.role === 'super_admin' ? 'Super Administrator' : 
-                               user.role === 'admin' ? 'Admin' :
-                               user.role === 'manager' ? 'Manager' :
-                               user.role === 'agent' ? 'Agent' :
-                               user.role === 'loan_originator' ? 'Originator' :
-                               user.role === 'funder' ? 'Funder' :
-                               user.role === 'loan_processor' ? 'Processor' :
-                                 user.role === 'underwriter' ? 'Underwriter' : 
-                                 user.role === 'closer' ? 'Closer' :
-                                 user.role === 'tech' ? 'Tech' : 'Unknown'}
-                            </Badge>
-                          </td>
-
-                          {/* Reason Column */}
-                          <td className="py-4 px-4">
-                            <div className="text-sm text-muted-foreground max-w-xs truncate">
-                              {user.archive_reason || 'No reason provided'}
-                            </div>
-                          </td>
-
-                          {/* Actions Column */}
-                          <td className="py-4 px-4">
-                            <div className="flex items-center justify-end gap-2">
-                              <Button
-                                variant="outline"
-                                size="sm"
-                                onClick={() => restoreUser(user.id, `${user.first_name} ${user.last_name}`)}
-                                className="h-8 px-3"
-                              >
-                                <RotateCcw className="h-4 w-4 mr-1" />
-                                Restore
-                              </Button>
-                            </div>
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                  
-                  {archivedUsers.length === 0 && (
-                    <div className="text-center py-8">
-                      <p className="text-muted-foreground">No archived users found.</p>
-                    </div>
-                  )}
-                </div>
-              </TabsContent>
-            </Tabs>
-          </CardContent>
-        </Card>
-
-        {/* Edit User Dialog */}
-        <Dialog open={showEditDialog} onOpenChange={setShowEditDialog}>
-          <DialogContent className="sm:max-w-[500px]">
-            <DialogHeader>
-              <DialogTitle>Edit User</DialogTitle>
-            </DialogHeader>
-            {editingUser && (
-              <div className="space-y-4">
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="editFirstName">First Name</Label>
-                    <Input
-                      id="editFirstName"
-                      value={editingUser.first_name || ''}
-                      onChange={(e) => setEditingUser({...editingUser, first_name: e.target.value})}
-                    />
+            <TabsContent value="analytics" className="space-y-6 mt-6">
+              {/* Users & Leads Analytics */}
+              <div className="grid gap-6">
+                {loading ? (
+                  <div className="text-center py-8">
+                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
+                    <p className="text-muted-foreground">Loading user analytics...</p>
                   </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="editLastName">Last Name</Label>
-                    <Input
-                      id="editLastName"
-                      value={editingUser.last_name || ''}
-                      onChange={(e) => setEditingUser({...editingUser, last_name: e.target.value})}
-                    />
+                ) : filteredUsersWithLeads.length === 0 ? (
+                  <div className="text-center py-8">
+                    <TrendingUp className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+                    <h3 className="text-lg font-semibold">No user data found</h3>
+                    <p className="text-muted-foreground">User performance data will appear here once leads are created.</p>
                   </div>
-                </div>
-                
-                <div className="space-y-2">
-                  <Label htmlFor="editPhone">Phone Number</Label>
-                  <Input
-                    id="editPhone"
-                    value={editingUser.phone_number || ''}
-                    onChange={(e) => {
-                      const formatted = formatPhoneNumber(e.target.value)
-                      setEditingUser({...editingUser, phone_number: formatted})
-                    }}
-                    placeholder="(555) 123-4567"
-                    maxLength={14}
-                  />
-                </div>
-                
-                <div className="space-y-2">
-                  <Label htmlFor="editRole">Role</Label>
-                  <Select 
-                    value={editingUser.role} 
-                    onValueChange={(value: any) => {
-                      console.log('Edit role selection changed:', value)
-                      setEditingUser({...editingUser, role: value})
-                    }}
-                  >
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select a role" />
-                    </SelectTrigger>
-                    <SelectContent className="bg-background border shadow-lg z-50">
-                      {currentUserRole === 'super_admin' && (
-                        <SelectItem value="super_admin">Super Administrator</SelectItem>
-                      )}
-                      {(currentUserRole === 'super_admin' || currentUserRole === 'admin') && (
-                        <SelectItem value="admin">Administrator</SelectItem>
-                      )}
-                      <SelectItem value="manager">Manager</SelectItem>
-                       <SelectItem value="agent">Agent</SelectItem>
-                       <SelectItem value="loan_originator">Loan Originator</SelectItem>
-                      <SelectItem value="funder">Loan Funder</SelectItem>
-                      <SelectItem value="loan_processor">Loan Processor</SelectItem>
-                      <SelectItem value="underwriter">Loan Underwriter</SelectItem>
-                      <SelectItem value="closer">Closer</SelectItem>
-                      <SelectItem value="tech">Tech</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-                
-                <div className="flex gap-2 pt-4">
-                  <Button onClick={updateUser} className="flex-1">Update User</Button>
-                  <Button variant="outline" onClick={() => setShowEditDialog(false)}>Cancel</Button>
-                </div>
+                ) : (
+                  filteredUsersWithLeads.map((userWithLeads) => (
+                    <Card key={userWithLeads.id} className="hover:shadow-md transition-shadow">
+                      <CardContent className="p-6">
+                        <div className="flex items-start justify-between mb-4">
+                          <div className="flex items-center space-x-4">
+                            <Avatar className="h-12 w-12">
+                              <AvatarFallback className="bg-primary text-primary-foreground">
+                                {userWithLeads.name?.charAt(0) || userWithLeads.email.charAt(0)}
+                              </AvatarFallback>
+                            </Avatar>
+                            <div>
+                              <h3 className="font-semibold text-foreground flex items-center gap-2">
+                                {userWithLeads.name}
+                                <Badge variant={getRoleBadgeVariant(userWithLeads.role)}>
+                                  {userWithLeads.role.replace('_', ' ')}
+                                </Badge>
+                              </h3>
+                              <p className="text-sm text-muted-foreground">{userWithLeads.email}</p>
+                            </div>
+                          </div>
+                          
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => setSelectedUser(selectedUser === userWithLeads.id ? null : userWithLeads.id)}
+                          >
+                            <Eye className="h-4 w-4 mr-2" />
+                            {selectedUser === userWithLeads.id ? 'Hide' : 'View'} Leads
+                          </Button>
+                        </div>
+                        
+                        {/* Performance Metrics */}
+                        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4">
+                          <div className="text-center p-3 bg-primary/5 rounded-lg">
+                            <div className="flex items-center justify-center gap-2 mb-1">
+                              <UsersIcon className="h-4 w-4 text-primary" />
+                              <span className="text-sm font-medium text-primary">Total Leads</span>
+                            </div>
+                            <p className="text-2xl font-bold">{userWithLeads.leads.length}</p>
+                          </div>
+                          
+                          <div className="text-center p-3 bg-green-50 rounded-lg">
+                            <div className="flex items-center justify-center gap-2 mb-1">
+                              <Activity className="h-4 w-4 text-green-600" />
+                              <span className="text-sm font-medium text-green-600">Active</span>
+                            </div>
+                            <p className="text-2xl font-bold text-green-600">{userWithLeads.activeLeads}</p>
+                          </div>
+                          
+                          <div className="text-center p-3 bg-blue-50 rounded-lg">
+                            <div className="flex items-center justify-center gap-2 mb-1">
+                              <Building className="h-4 w-4 text-blue-600" />
+                              <span className="text-sm font-medium text-blue-600">Converted</span>
+                            </div>
+                            <p className="text-2xl font-bold text-blue-600">{userWithLeads.convertedLeads}</p>
+                          </div>
+                          
+                          <div className="text-center p-3 bg-purple-50 rounded-lg">
+                            <div className="flex items-center justify-center gap-2 mb-1">
+                              <DollarSign className="h-4 w-4 text-purple-600" />
+                              <span className="text-sm font-medium text-purple-600">Total Value</span>
+                            </div>
+                            <p className="text-2xl font-bold text-purple-600">
+                              {formatCurrency(userWithLeads.totalLeadValue)}
+                            </p>
+                          </div>
+                        </div>
+                        
+                        {/* Lead Details */}
+                        {selectedUser === userWithLeads.id && (
+                          <div className="border-t pt-4">
+                            <h4 className="font-semibold mb-3">Lead Details</h4>
+                            {userWithLeads.leads.length === 0 ? (
+                              <p className="text-muted-foreground text-center py-4">No leads found for this user.</p>
+                            ) : (
+                              <div className="space-y-2 max-h-64 overflow-y-auto">
+                                {userWithLeads.leads.map((lead) => (
+                                  <div key={lead.id} className="flex items-center justify-between p-3 bg-muted/30 rounded-lg">
+                                    <div>
+                                      <p className="font-medium">{lead.contact_entity?.name || 'Unnamed Lead'}</p>
+                                      <div className="flex items-center gap-4 text-sm text-muted-foreground">
+                                        <span>{lead.contact_entity?.business_name || 'No business name'}</span>
+                                        <span>{lead.contact_entity?.loan_type || 'Unknown type'}</span>
+                                      </div>
+                                    </div>
+                                    <div className="text-right">
+                                      <Badge variant={lead.contact_entity?.stage === 'Loan Funded' ? 'default' : 'secondary'}>
+                                        {lead.contact_entity?.stage || 'No stage'}
+                                      </Badge>
+                                      <p className="text-sm font-medium text-primary mt-1">
+                                        {formatCurrency(lead.contact_entity?.loan_amount || 0)}
+                                      </p>
+                                    </div>
+                                  </div>
+                                ))}
+                              </div>
+                            )}
+                          </div>
+                        )}
+                      </CardContent>
+                    </Card>
+                  ))
+                )}
               </div>
-            )}
-          </DialogContent>
-        </Dialog>
-
-        {/* Change Password Dialog */}
-        <Dialog open={showPasswordDialog} onOpenChange={setShowPasswordDialog}>
-          <DialogContent className="sm:max-w-[400px]">
-            <DialogHeader>
-              <DialogTitle>Change Password</DialogTitle>
-            </DialogHeader>
-            {passwordChangeUser && (
-              <div className="space-y-4">
-                <div className="p-4 bg-muted/20 rounded-lg">
-                  <p className="text-sm text-muted-foreground">
-                    Changing password for:
-                  </p>
-                  <p className="font-semibold">
-                    {passwordChangeUser.first_name} {passwordChangeUser.last_name}
-                  </p>
-                  <p className="text-sm text-muted-foreground">
-                    {passwordChangeUser.email}
-                  </p>
-                </div>
-                
-                <div className="space-y-2">
-                  <Label htmlFor="newPassword">New Password</Label>
-                  <Input
-                    id="newPassword"
-                    type="password"
-                    value={newPassword}
-                    onChange={(e) => setNewPassword(e.target.value)}
-                    placeholder="Enter new password"
-                  />
-                </div>
-                
-                <div className="space-y-2">
-                  <Label htmlFor="confirmPassword">Confirm Password</Label>
-                  <Input
-                    id="confirmPassword"
-                    type="password"
-                    value={confirmPassword}
-                    onChange={(e) => setConfirmPassword(e.target.value)}
-                    placeholder="Confirm new password"
-                  />
-                </div>
-                
-                <div className="p-3 bg-yellow-50 dark:bg-yellow-950/20 rounded-lg border border-yellow-200 dark:border-yellow-800">
-                  <p className="text-xs text-yellow-700 dark:text-yellow-300">
-                    Password must be at least 8 characters long. The user will need to use this new password for their next login.
-                  </p>
-                </div>
-                
-                <div className="flex gap-2 pt-4">
-                  <Button 
-                    onClick={changeUserPassword} 
-                    className="flex-1"
-                    disabled={!newPassword || !confirmPassword}
-                  >
-                    <Key className="h-4 w-4 mr-2 text-primary-foreground" />
-                    Change Password
-                  </Button>
-                  <Button 
-                    variant="outline" 
-                    onClick={() => {
-                      setShowPasswordDialog(false)
-                      setNewPassword("")
-                      setConfirmPassword("")
-                      setPasswordChangeUser(null)
-                    }}
-                  >
-                    Cancel
-                  </Button>
-                </div>
-              </div>
-            )}
-          </DialogContent>
-        </Dialog>
-
-        {/* Archive User Dialog */}
-        <Dialog open={showArchiveDialog} onOpenChange={setShowArchiveDialog}>
-          <DialogContent className="sm:max-w-[500px]">
-            <DialogHeader>
-              <DialogTitle className="flex items-center gap-2 text-orange-600">
-                <Archive className="h-5 w-5" />
-                Confirm User Archive
-              </DialogTitle>
-            </DialogHeader>
-            {userToArchive && (
-              <div className="space-y-4">
-                <div className="p-4 bg-orange-50 dark:bg-orange-950/20 rounded-lg border border-orange-200 dark:border-orange-800">
-                  <p className="font-semibold text-orange-800 dark:text-orange-200 mb-2">
-                    📦 Archive Confirmation
-                  </p>
-                  <p className="text-sm text-orange-700 dark:text-orange-300 mb-2">
-                    You are about to archive:
-                  </p>
-                  <p className="font-semibold text-orange-900 dark:text-orange-100">
-                    {userToArchive.first_name} {userToArchive.last_name}
-                  </p>
-                  <p className="text-sm text-orange-700 dark:text-orange-300">
-                    {userToArchive.email}
-                  </p>
-                </div>
-                
-                <div className="space-y-1 text-sm">
-                  <p className="font-medium">This archive action will:</p>
-                  <ul className="list-disc list-inside space-y-1 ml-2 text-muted-foreground">
-                    <li>Deactivate the user's access to the system</li>
-                    <li>Move them to the "Archived Users" tab</li>
-                    <li>Preserve all their data for future restoration</li>
-                    <li>Allow you to restore them at any time</li>
-                  </ul>
-                </div>
-                
-                <div className="space-y-2">
-                  <Label htmlFor="archiveReason">Reason for archiving (optional)</Label>
-                  <Textarea
-                    id="archiveReason"
-                    value={archiveReason}
-                    onChange={(e) => setArchiveReason(e.target.value)}
-                    placeholder="e.g., Employee left company, Role change, etc."
-                    rows={2}
-                  />
-                </div>
-                
-                <div className="p-3 bg-green-50 dark:bg-green-950/20 rounded-lg border border-green-200 dark:border-green-800">
-                  <p className="text-xs text-green-700 dark:text-green-300">
-                    ✅ Safe action: Unlike deletion, archiving preserves all user data and can be easily reversed by using the "Restore" button in the Archived Users tab.
-                  </p>
-                </div>
-                
-                <div className="flex gap-2 pt-4">
-                  <Button 
-                    variant="outline" 
-                    onClick={() => {
-                      setShowArchiveDialog(false)
-                      setArchiveReason("")
-                      setUserToArchive(null)
-                    }}
-                    className="flex-1"
-                  >
-                    Cancel
-                  </Button>
-                  <Button 
-                    onClick={archiveUser} 
-                    className="flex-1 bg-orange-600 hover:bg-orange-700 text-white"
-                  >
-                    <Archive className="h-4 w-4 mr-2" />
-                    Confirm Archive
-                  </Button>
-                </div>
-              </div>
-            )}
-          </DialogContent>
-        </Dialog>
-      </div>
-    </Layout>
-  </TooltipProvider>
+            </TabsContent>
+          </Tabs>
+        </div>
+      </Layout>
+    </TooltipProvider>
   )
 }

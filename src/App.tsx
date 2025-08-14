@@ -93,8 +93,7 @@ function AuthenticatedApp() {
             <Route path="/activities" element={<Activities />} errorElement={<RouteErrorBoundary />} />
             <Route path="/reports" element={<Reports />} errorElement={<RouteErrorBoundary />} />
             <Route path="/settings" element={<Settings />} errorElement={<RouteErrorBoundary />} />
-            <Route path="/users" element={<Users />} errorElement={<RouteErrorBoundary />} />
-            <Route path="/users-leads" element={<UsersLeads />} errorElement={<RouteErrorBoundary />} />
+            <Route path="/users" element={<Layout><Users /></Layout>} errorElement={<RouteErrorBoundary />} />
             <Route path="/security" element={<Layout><MasterSecurityDashboard /></Layout>} errorElement={<RouteErrorBoundary />} />
             <Route path="/security/military" element={<Layout><MilitaryGradeSecurityDashboard /></Layout>} errorElement={<RouteErrorBoundary />} />
             <Route path="/enterprise" element={<Enterprise />} errorElement={<RouteErrorBoundary />} />
