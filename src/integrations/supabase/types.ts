@@ -683,6 +683,44 @@ export type Database = {
         }
         Relationships: []
       }
+      contact_encrypted_fields: {
+        Row: {
+          contact_id: string
+          created_at: string | null
+          encrypted_value: string
+          field_hash: string
+          field_name: string
+          id: string
+          updated_at: string | null
+        }
+        Insert: {
+          contact_id: string
+          created_at?: string | null
+          encrypted_value: string
+          field_hash: string
+          field_name: string
+          id?: string
+          updated_at?: string | null
+        }
+        Update: {
+          contact_id?: string
+          created_at?: string | null
+          encrypted_value?: string
+          field_hash?: string
+          field_name?: string
+          id?: string
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "contact_encrypted_fields_contact_id_fkey"
+            columns: ["contact_id"]
+            isOneToOne: false
+            referencedRelation: "contact_entities"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       contact_entities: {
         Row: {
           annual_revenue: number | null
@@ -3537,6 +3575,14 @@ export type Database = {
         }
         Returns: Json
       }
+      encrypt_contact_field: {
+        Args: {
+          p_contact_id: string
+          p_field_name: string
+          p_field_value: string
+        }
+        Returns: undefined
+      }
       encrypt_profile_field: {
         Args: {
           p_profile_id: string
@@ -3578,6 +3624,10 @@ export type Database = {
           expires_at: string
           is_expired: boolean
         }[]
+      }
+      get_masked_contact_data: {
+        Args: { p_contact_id: string; p_requesting_user_id?: string }
+        Returns: Json
       }
       get_masked_profile_data: {
         Args: { p_profile_id: string; p_requesting_user_id?: string }
