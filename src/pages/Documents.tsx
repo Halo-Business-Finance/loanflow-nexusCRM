@@ -99,9 +99,6 @@ export default function Documents() {
 
   return (
     <Layout>
-      {/* Document Security Alert */}
-      <DocumentSecurityAlert />
-      
       {/* Add Document Test Component */}
       <DocumentTest />
       
