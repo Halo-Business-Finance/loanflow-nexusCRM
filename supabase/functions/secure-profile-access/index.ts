@@ -16,24 +16,39 @@ Deno.serve(async (req) => {
   }
 
   try {
-    const { action, profile_id, updates, profile_ids } = await req.json()
+    console.log('=== Secure profile access request started ===')
+    console.log('Method:', req.method)
+    console.log('Headers:', Object.fromEntries(req.headers.entries()))
     
-    // Get the authenticated user from the request header
+    const body = await req.json().catch(e => {
+      console.error('Failed to parse JSON body:', e)
+      throw new Error('Invalid JSON in request body')
+    })
+    
+    console.log('Request body:', JSON.stringify(body, null, 2))
+    const { action, profile_id, updates, profile_ids } = body
+    
+    // Get the authenticated user
     const authHeader = req.headers.get('authorization')
     if (!authHeader) {
+      console.error('Missing authorization header')
       throw new Error('Missing authorization header')
     }
 
-    // Extract the JWT token
+    // Extract the JWT token from the authorization header
     const token = authHeader.replace('Bearer ', '')
+    console.log('Attempting to authenticate user with token...')
+    
     const { data: { user }, error: userError } = await supabase.auth.getUser(token)
     
     if (userError || !user) {
-      console.error('Authentication error:', userError)
-      throw new Error('Invalid authentication')
+      console.error('Authentication failed:', userError)
+      throw new Error('Authentication failed: ' + (userError?.message || 'No user found'))
     }
+    
+    console.log('User authenticated successfully:', user.id, user.email)
 
-    console.log(`Secure profile access request: ${action} by user ${user.id}`)
+    console.log(`Processing action: ${action}`)
 
     switch (action) {
       case 'get_masked_profile':
@@ -45,15 +60,21 @@ Deno.serve(async (req) => {
       case 'migrate_existing_data':
         return await migrateExistingData(user.id)
       default:
+        console.error('Invalid action:', action)
         return new Response(
-          JSON.stringify({ error: 'Invalid action' }),
+          JSON.stringify({ error: 'Invalid action: ' + action }),
           { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 400 }
         )
     }
   } catch (error) {
-    console.error('Secure profile access error:', error)
+    console.error('=== ERROR in secure profile access ===')
+    console.error('Error:', error)
+    console.error('Stack:', error.stack)
     return new Response(
-      JSON.stringify({ error: error.message }),
+      JSON.stringify({ 
+        error: error.message,
+        details: 'Check function logs for more information'
+      }),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 500 }
     )
   }
@@ -61,16 +82,19 @@ Deno.serve(async (req) => {
 
 async function getMaskedProfile(profileId: string, requestingUserId: string) {
   try {
+    console.log('Getting masked profile:', profileId, 'for user:', requestingUserId)
+    
     const { data, error } = await supabase.rpc('get_masked_profile_data', {
       p_profile_id: profileId,
       p_requesting_user_id: requestingUserId
     })
 
     if (error) {
+      console.error('RPC error in get_masked_profile_data:', error)
       throw error
     }
 
-    console.log(`Profile data accessed for ${profileId} by ${requestingUserId}`)
+    console.log('Profile data retrieved successfully')
 
     return new Response(
       JSON.stringify({ data }),
@@ -84,6 +108,8 @@ async function getMaskedProfile(profileId: string, requestingUserId: string) {
 
 async function getMultipleProfiles(profileIds: string[], requestingUserId: string) {
   try {
+    console.log('Getting multiple profiles:', profileIds, 'for user:', requestingUserId)
+    
     if (!Array.isArray(profileIds)) {
       throw new Error('profile_ids must be an array')
     }
@@ -120,12 +146,19 @@ async function getMultipleProfiles(profileIds: string[], requestingUserId: strin
 
 async function updateProfileSecure(profileId: string, updates: any, requestingUserId: string) {
   try {
+    console.log('Updating profile securely:', profileId, 'by user:', requestingUserId)
+    
     // Validate that user can update this profile
     if (profileId !== requestingUserId) {
       // Check if user has admin permissions
-      const { data: role } = await supabase.rpc('get_user_role', {
+      const { data: role, error: roleError } = await supabase.rpc('get_user_role', {
         p_user_id: requestingUserId
       })
+      
+      if (roleError) {
+        console.error('Error getting user role:', roleError)
+        throw new Error('Failed to verify permissions')
+      }
       
       if (!role || !['admin', 'super_admin'].includes(role)) {
         throw new Error('Unauthorized to update this profile')
@@ -138,6 +171,7 @@ async function updateProfileSecure(profileId: string, updates: any, requestingUs
     })
 
     if (error) {
+      console.error('RPC error in update_profile_secure:', error)
       throw error
     }
 
@@ -155,53 +189,71 @@ async function updateProfileSecure(profileId: string, updates: any, requestingUs
 
 async function migrateExistingData(requestingUserId: string) {
   try {
+    console.log('=== Starting data migration ===')
+    console.log('Requested by user:', requestingUserId)
+    
     // Check if user has admin permissions for migration
-    const { data: role } = await supabase.rpc('get_user_role', {
+    const { data: role, error: roleError } = await supabase.rpc('get_user_role', {
       p_user_id: requestingUserId
     })
     
+    if (roleError) {
+      console.error('Error getting user role:', roleError)
+      throw new Error('Failed to verify permissions: ' + roleError.message)
+    }
+    
+    console.log('User role:', role)
+    
     if (!role || !['admin', 'super_admin'].includes(role)) {
-      throw new Error('Unauthorized to perform data migration')
+      throw new Error('Unauthorized to perform data migration. Required role: admin or super_admin. Your role: ' + (role || 'none'))
     }
 
-    // Get all profiles with sensitive data
+    // Get all profiles with sensitive data that haven't been encrypted yet
+    console.log('Fetching profiles to migrate...')
     const { data: profiles, error: profilesError } = await supabase
       .from('profiles')
       .select('id, email, phone_number')
       .not('email', 'is', null)
-      .not('phone_number', 'is', null)
 
     if (profilesError) {
-      throw profilesError
+      console.error('Error fetching profiles:', profilesError)
+      throw new Error('Failed to fetch profiles: ' + profilesError.message)
     }
+
+    console.log(`Found ${profiles?.length || 0} profiles to potentially migrate`)
 
     let migratedCount = 0
     
     // Encrypt existing sensitive data
-    for (const profile of profiles || []) {
-      if (profile.email) {
-        await supabase.rpc('encrypt_profile_field', {
-          p_profile_id: profile.id,
-          p_field_name: 'email',
-          p_field_value: profile.email
-        })
+    if (profiles && profiles.length > 0) {
+      for (const profile of profiles) {
+        console.log(`Processing profile ${profile.id}...`)
+        
+        try {
+          if (profile.email) {
+            await supabase.rpc('encrypt_profile_field', {
+              p_profile_id: profile.id,
+              p_field_name: 'email',
+              p_field_value: profile.email
+            })
+            console.log(`Encrypted email for profile ${profile.id}`)
+          }
+          
+          if (profile.phone_number) {
+            await supabase.rpc('encrypt_profile_field', {
+              p_profile_id: profile.id,
+              p_field_name: 'phone_number',
+              p_field_value: profile.phone_number
+            })
+            console.log(`Encrypted phone for profile ${profile.id}`)
+          }
+          
+          migratedCount++
+        } catch (encryptError) {
+          console.error(`Error encrypting data for profile ${profile.id}:`, encryptError)
+          // Continue with other profiles even if one fails
+        }
       }
-      
-      if (profile.phone_number) {
-        await supabase.rpc('encrypt_profile_field', {
-          p_profile_id: profile.id,
-          p_field_name: 'phone_number',
-          p_field_value: profile.phone_number
-        })
-      }
-      
-      // Clear sensitive data from main table
-      await supabase
-        .from('profiles')
-        .update({ email: null, phone_number: null })
-        .eq('id', profile.id)
-      
-      migratedCount++
     }
 
     console.log(`Data migration completed: ${migratedCount} profiles migrated`)
@@ -210,12 +262,13 @@ async function migrateExistingData(requestingUserId: string) {
       JSON.stringify({ 
         success: true, 
         migrated_profiles: migratedCount,
-        message: 'Existing sensitive data has been encrypted and migrated successfully'
+        message: `Successfully migrated ${migratedCount} profiles with encryption`
       }),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     )
   } catch (error) {
-    console.error('Error during data migration:', error)
+    console.error('=== ERROR during data migration ===')
+    console.error('Error:', error)
     throw error
   }
 }
