@@ -238,9 +238,16 @@ export default function Leads() {
             user_id: user.id
           })
           .select()
-          .single();
+          .maybeSingle();
 
-        if (contactError) throw contactError;
+        if (contactError) {
+          console.error('Contact entity creation error:', contactError);
+          throw new Error(`Failed to create contact: ${contactError.message}`);
+        }
+
+        if (!contactEntity) {
+          throw new Error('Contact entity was not created successfully');
+        }
 
         const { error: leadError } = await supabase
           .from('leads')
