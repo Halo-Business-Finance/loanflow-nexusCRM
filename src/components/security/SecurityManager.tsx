@@ -332,14 +332,14 @@ export function SecurityManager() {
 
         <TabsContent value="overview" className="space-y-4">
           {/* Security Overview Cards */}
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-4 max-w-4xl">
             <Card>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                 <CardTitle className="text-sm font-medium">Security Status</CardTitle>
                 <Shield className="h-4 w-4 text-muted-foreground" />
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold text-accent">Secure</div>
+                <div className="text-xl font-bold text-accent">Secure</div>
                 <p className="text-xs text-foreground/70">
                   All security features are active
                 </p>
@@ -352,7 +352,7 @@ export function SecurityManager() {
                 <Lock className="h-4 w-4 text-muted-foreground" />
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold text-foreground">
+                <div className="text-xl font-bold text-foreground">
                   {mfaSettings.is_enabled ? 'Enabled' : 'Disabled'}
                 </div>
                 <p className="text-xs text-foreground/70">
@@ -367,7 +367,7 @@ export function SecurityManager() {
                 <AlertTriangle className="h-4 w-4 text-muted-foreground" />
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold text-foreground">
+                <div className="text-xl font-bold text-foreground">
                   {securityNotifications.filter(n => !n.is_read).length}
                 </div>
                 <p className="text-xs text-foreground/70">
@@ -383,7 +383,7 @@ export function SecurityManager() {
                   <Users className="h-4 w-4 text-muted-foreground" />
                 </CardHeader>
                 <CardContent>
-                  <div className="text-2xl font-bold text-foreground">{userRoles.filter(r => r.is_active).length}</div>
+                  <div className="text-xl font-bold text-foreground">{userRoles.filter(r => r.is_active).length}</div>
                   <p className="text-xs text-foreground/70">
                     System-wide user count
                   </p>
@@ -392,10 +392,10 @@ export function SecurityManager() {
             )}
           </div>
 
-          <Card>
-            <CardHeader>
-              <CardTitle>Recent Security Activity</CardTitle>
-              <CardDescription>
+          <Card className="max-w-4xl">
+            <CardHeader className="pb-3">
+              <CardTitle className="text-lg">Recent Security Activity</CardTitle>
+              <CardDescription className="text-sm">
                 Latest security events for your account
               </CardDescription>
             </CardHeader>
@@ -403,17 +403,17 @@ export function SecurityManager() {
               {securityNotifications.length === 0 ? (
                 <p className="text-foreground/70">No recent security activity</p>
               ) : (
-                <div className="space-y-2">
+                <div className="space-y-2 max-h-96 overflow-y-auto">
                   {securityNotifications.slice(0, 5).map((notification) => (
-                    <div key={notification.id} className="flex items-center justify-between p-2 border rounded">
-                      <div className="flex-1">
-                        <div className="font-medium text-foreground">{notification.title}</div>
-                        <div className="text-sm text-foreground/70">{notification.message}</div>
+                    <div key={notification.id} className="flex items-center justify-between p-2 border rounded-md bg-card/50">
+                      <div className="flex-1 min-w-0">
+                        <div className="font-medium text-sm truncate">{notification.title}</div>
+                        <div className="text-xs text-foreground/70 truncate">{notification.message}</div>
                         <div className="text-xs text-foreground/50">
                           {new Date(notification.created_at).toLocaleDateString()}
                         </div>
                       </div>
-                      <Badge variant={getSeverityColor(notification.severity)}>
+                      <Badge variant={getSeverityColor(notification.severity)} className="text-xs">
                         {notification.severity}
                       </Badge>
                     </div>
@@ -425,44 +425,54 @@ export function SecurityManager() {
         </TabsContent>
 
         <TabsContent value="data-integrity" className="space-y-4">
-          <DataIntegrityDashboard />
+          <div className="max-w-4xl">
+            <DataIntegrityDashboard />
+          </div>
         </TabsContent>
 
         <TabsContent value="monitor" className="space-y-4">
-          <SecurityMonitor />
+          <div className="max-w-4xl">
+            <SecurityMonitor />
+          </div>
         </TabsContent>
 
         {hasRole('admin') && (
           <TabsContent value="threats" className="space-y-4">
-            <AdvancedThreatDetection />
+            <div className="max-w-4xl">
+              <AdvancedThreatDetection />
+            </div>
           </TabsContent>
         )}
 
         {hasRole('admin') && (
           <TabsContent value="darkweb" className="space-y-4">
-            <DarkWebSecurityBot />
+            <div className="max-w-4xl">
+              <DarkWebSecurityBot />
+            </div>
           </TabsContent>
         )}
 
         {hasRole('admin') && (
           <TabsContent value="hacker" className="space-y-4">
-            <HackerDetectionBot />
+            <div className="max-w-4xl">
+              <HackerDetectionBot />
+            </div>
           </TabsContent>
         )}
 
         <TabsContent value="mfa" className="space-y-4">
-          <Card>
-            <CardHeader>
-              <CardTitle>Multi-Factor Authentication</CardTitle>
-              <CardDescription>
+          <Card className="max-w-4xl">
+            <CardHeader className="pb-3">
+              <CardTitle className="text-lg">Multi-Factor Authentication</CardTitle>
+              <CardDescription className="text-sm">
                 Add an extra layer of security to your account
               </CardDescription>
             </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="flex items-center justify-between p-4 border border-border rounded-lg bg-card">
+            <CardContent className="space-y-3">
+              <div className="flex items-center justify-between p-3 border border-border rounded-lg bg-card">
                 <div>
-                  <Label htmlFor="mfa-enabled" className="text-base font-medium text-foreground">Enable MFA</Label>
-                  <p className="text-sm text-muted-foreground">
+                  <Label htmlFor="mfa-enabled" className="text-sm font-medium text-foreground">Enable MFA</Label>
+                  <p className="text-xs text-muted-foreground">
                     Require a second form of authentication when signing in
                   </p>
                 </div>
@@ -481,12 +491,12 @@ export function SecurityManager() {
               </div>
 
               {mfaSettings.is_enabled && (
-                <div className="space-y-4 p-4 border rounded">
-                  <div className="space-y-2">
-                    <Label htmlFor="preferred-method">Preferred Method</Label>
+                <div className="space-y-3 p-3 border rounded">
+                  <div className="space-y-1">
+                    <Label htmlFor="preferred-method" className="text-sm">Preferred Method</Label>
                     <select
                       id="preferred-method"
-                      className="w-full p-2 border rounded"
+                      className="w-full p-2 border rounded text-sm h-8"
                       value={mfaSettings.preferred_method}
                       onChange={(e) => setMfaSettings(prev => ({
                         ...prev,
@@ -500,8 +510,8 @@ export function SecurityManager() {
                   </div>
 
                   {mfaSettings.preferred_method === 'sms' && (
-                    <div className="space-y-2">
-                      <Label htmlFor="phone-number">Phone Number</Label>
+                    <div className="space-y-1">
+                      <Label htmlFor="phone-number" className="text-sm">Phone Number</Label>
                       <Input
                         id="phone-number"
                         type="tel"
@@ -511,13 +521,14 @@ export function SecurityManager() {
                           ...prev,
                           phone_number: e.target.value
                         }))}
+                        className="h-8"
                       />
                     </div>
                   )}
 
                   <Alert>
                     <AlertTriangle className="h-4 w-4" />
-                    <AlertDescription>
+                    <AlertDescription className="text-xs">
                       Make sure you have access to your chosen authentication method before enabling MFA.
                     </AlertDescription>
                   </Alert>
