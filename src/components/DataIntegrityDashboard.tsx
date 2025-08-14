@@ -28,6 +28,10 @@ export function DataIntegrityDashboard() {
   const runDataAudit = async () => {
     console.log('🔍 RUN DATA AUDIT BUTTON CLICKED!');
     setLoading(true);
+    // Clear previous results first
+    setFieldIssues([]);
+    setAuditResults(null);
+    
     try {
       console.log('📊 Creating DataFieldValidator...');
       const validator = new DataFieldValidator();
@@ -192,12 +196,17 @@ export function DataIntegrityDashboard() {
       setAutoFixResults(results);
       
       toast({
-        title: "Auto-Fix Complete",
-        description: `Fixed ${results.fixed} issues. ${results.errors.length} errors encountered.`,
-        variant: results.errors.length > 0 ? "destructive" : "default"
+        title: results.fixed > 0 ? "Auto-fix Successful!" : "Auto-fix Complete",
+        description: results.fixed > 0 
+          ? `Fixed ${results.fixed} issues. Running fresh audit...`
+          : results.errors.length > 0 
+            ? results.errors[0]
+            : "No issues found to fix.",
+        variant: results.fixed > 0 ? "default" : results.errors.some(e => e.includes('resolved')) ? "default" : "destructive"
       });
       
-      // Re-run audit to show updated results
+      // Always re-run audit after auto-fix to show current state
+      console.log('🔄 Re-running audit after auto-fix...');
       await runDataAudit();
     } catch (error) {
       console.error('❌ Auto-fix error:', error);

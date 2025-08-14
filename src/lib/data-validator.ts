@@ -130,8 +130,8 @@ export class DataFieldValidator {
       warnings: []
     }
 
-    // Check required fields
-    if (!entryData.stage) {
+    // Check required fields - after migration, these should all be present
+    if (!entryData.stage || entryData.stage.trim() === '') {
       result.errors.push('Stage is required for pipeline entry')
       result.isValid = false
     }
