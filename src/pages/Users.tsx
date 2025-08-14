@@ -126,14 +126,24 @@ export default function Users() {
       if (profilesError) throw profilesError
 
       // Transform the data to include role information
-      const transformedUsers = profiles?.map((profile: any) => ({
-        ...profile,
-        user_id: profile.id,
-        phone: profile.phone || '',
-        role: profile.user_roles && profile.user_roles.length > 0 
-          ? profile.user_roles.find((ur: any) => ur.is_active)?.role || profile.user_roles[0]?.role || 'agent' 
-          : 'agent'
-      })) || []
+      const transformedUsers = profiles?.map((profile: any) => {
+        console.log('Processing profile:', profile.id, profile.email, 'user_roles:', profile.user_roles)
+        
+        // Handle user_roles array properly
+        let userRole = 'agent'
+        if (profile.user_roles && Array.isArray(profile.user_roles) && profile.user_roles.length > 0) {
+          // Find active role or use first role
+          const activeRole = profile.user_roles.find((ur: any) => ur.is_active !== false)
+          userRole = activeRole?.role || profile.user_roles[0]?.role || 'agent'
+        }
+        
+        return {
+          ...profile,
+          user_id: profile.id,
+          phone: profile.phone || '',
+          role: userRole
+        }
+      }) || []
 
       console.log('Fetched users:', transformedUsers.length, transformedUsers)
 
@@ -205,7 +215,9 @@ export default function Users() {
           name: profile.first_name && profile.last_name 
             ? `${profile.first_name} ${profile.last_name}` 
             : profile.first_name || profile.email,
-          role: Array.isArray(profile.user_roles) ? profile.user_roles[0]?.role || 'agent' : 'agent',
+          role: profile.user_roles && Array.isArray(profile.user_roles) && profile.user_roles.length > 0 
+            ? profile.user_roles[0]?.role || 'agent' 
+            : 'agent',
           leads: transformedLeads,
           totalLeadValue,
           activeLeads,
