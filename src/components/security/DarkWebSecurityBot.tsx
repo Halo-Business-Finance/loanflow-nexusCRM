@@ -40,17 +40,19 @@ export function DarkWebSecurityBot() {
   });
   const [isMonitoring, setIsMonitoring] = useState(false);
 
-  // Load monitoring state from secure storage
+  // Auto-activate monitoring on high alert mode
   useEffect(() => {
-    const loadMonitoringState = async () => {
+    const initializeHighAlert = async () => {
       try {
-        const storedState = await secureStorage.getItem('dark-web-monitoring');
-        setIsMonitoring(storedState === 'true');
+        // Always start in high alert mode for persistent monitoring
+        setIsMonitoring(true);
+        await secureStorage.setItem('dark-web-monitoring', 'true');
+        console.log('🌐 Dark Web Security Bot: HIGH ALERT MODE ACTIVATED');
       } catch (error) {
-        console.error("Error loading monitoring state:", error);
+        console.error("Error initializing high alert mode:", error);
       }
     };
-    loadMonitoringState();
+    initializeHighAlert();
   }, []);
   const [loading, setLoading] = useState(true);
   const { hasRole } = useAuth();
@@ -171,17 +173,18 @@ export function DarkWebSecurityBot() {
   useEffect(() => {
     let interval: NodeJS.Timeout;
     
-    if (isMonitoring) {
-      interval = setInterval(async () => {
-        const newThreat = await detectDarkWebActivity();
-        setThreats(prev => [newThreat, ...prev.slice(0, 9)]);
-        setMetrics(prev => ({
-          ...prev,
-          threats_blocked: prev.threats_blocked + 1,
-          threat_level: prev.threats_blocked > 10 ? "critical" : "high"
-        }));
-      }, 8000);
-    }
+    // Always monitoring in high alert mode - scan every 5 seconds
+    interval = setInterval(async () => {
+      if (!isMonitoring) return;
+      
+      const newThreat = await detectDarkWebActivity();
+      setThreats(prev => [newThreat, ...prev.slice(0, 9)]);
+      setMetrics(prev => ({
+        ...prev,
+        threats_blocked: prev.threats_blocked + 1,
+        threat_level: prev.threats_blocked > 10 ? "critical" : "high"
+      }));
+    }, 5000); // High alert: scan every 5 seconds
 
     return () => {
       if (interval) clearInterval(interval);
@@ -264,12 +267,12 @@ export function DarkWebSecurityBot() {
           <CardTitle className="flex items-center gap-2">
             <Globe className="h-5 w-5" />
             Dark Web Security Bot
-            <Badge variant={isMonitoring ? "default" : "outline"}>
-              {isMonitoring ? "Active" : "Inactive"}
+            <Badge variant="destructive" className="animate-pulse">
+              HIGH ALERT - CONTINUOUS MONITORING
             </Badge>
           </CardTitle>
           <CardDescription>
-            AI-powered monitoring for dark web threats, Tor networks, and credential leaks
+            🚨 HIGH ALERT MODE: Continuous AI monitoring for dark web threats, Tor networks, and credential leaks
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
