@@ -318,9 +318,7 @@ export function SecurityManager() {
           <TabsList>
             <TabsTrigger value="overview">Overview</TabsTrigger>
             <TabsTrigger value="data-integrity">Data Integrity</TabsTrigger>
-            {hasRole('admin') && <TabsTrigger value="threats">AI Protection Bot</TabsTrigger>}
-            {hasRole('admin') && <TabsTrigger value="darkweb">Dark Web Bot</TabsTrigger>}
-            {hasRole('admin') && <TabsTrigger value="hacker">Hacker Detection Bot</TabsTrigger>}
+            {hasRole('admin') && <TabsTrigger value="security-bots">Security Bots</TabsTrigger>}
             <TabsTrigger value="mfa">Multi-Factor Auth</TabsTrigger>
             {hasRole('admin') && <TabsTrigger value="policies">Password Policy</TabsTrigger>}
             {hasRole('admin') && <TabsTrigger value="admin-panel">Admin Panel</TabsTrigger>}
@@ -489,25 +487,40 @@ export function SecurityManager() {
         </TabsContent>
 
         {hasRole('admin') && (
-          <TabsContent value="threats" className="space-y-4">
-            <div className="max-w-4xl">
-              <AdvancedThreatDetection />
-            </div>
-          </TabsContent>
-        )}
+          <TabsContent value="security-bots" className="space-y-4">
+            <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-4 max-w-6xl">
+              {/* AI Protection Bot */}
+              <Card className="col-span-1">
+                <CardHeader className="pb-3">
+                  <CardTitle className="text-lg">AI Protection Bot</CardTitle>
+                  <CardDescription className="text-sm">Advanced threat detection and protection</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <AdvancedThreatDetection />
+                </CardContent>
+              </Card>
 
-        {hasRole('admin') && (
-          <TabsContent value="darkweb" className="space-y-4">
-            <div className="max-w-4xl">
-              <DarkWebSecurityBot />
-            </div>
-          </TabsContent>
-        )}
+              {/* Dark Web Security Bot */}
+              <Card className="col-span-1">
+                <CardHeader className="pb-3">
+                  <CardTitle className="text-lg">Dark Web Security Bot</CardTitle>
+                  <CardDescription className="text-sm">Monitor dark web for security threats</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <DarkWebSecurityBot />
+                </CardContent>
+              </Card>
 
-        {hasRole('admin') && (
-          <TabsContent value="hacker" className="space-y-4">
-            <div className="max-w-4xl">
-              <HackerDetectionBot />
+              {/* Hacker Detection Bot */}
+              <Card className="col-span-1">
+                <CardHeader className="pb-3">
+                  <CardTitle className="text-lg">Hacker Detection Bot</CardTitle>
+                  <CardDescription className="text-sm">Real-time hacker detection and prevention</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <HackerDetectionBot />
+                </CardContent>
+              </Card>
             </div>
           </TabsContent>
         )}
