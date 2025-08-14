@@ -3679,6 +3679,26 @@ export type Database = {
           audit_verified: boolean
         }[]
       }
+      get_verified_blockchain_records_safe: {
+        Args: { p_record_type?: string; p_record_id?: string }
+        Returns: {
+          id: string
+          record_type: string
+          record_id: string
+          data_hash: string
+          blockchain_hash: string
+          block_number: number
+          transaction_hash: string
+          verified_at: string
+          verification_status: string
+          created_at: string
+          updated_at: string
+          metadata: Json
+          user_id: string
+          action: string
+          audit_verified: boolean
+        }[]
+      }
       get_verified_blockchain_records_secure: {
         Args:
           | Record<PropertyKey, never>
@@ -3801,6 +3821,14 @@ export type Database = {
           p_trigger_source: string
           p_threat_data?: Json
         }
+        Returns: boolean
+      }
+      user_has_opportunity_split: {
+        Args: { opportunity_id: string; user_id?: string }
+        Returns: boolean
+      }
+      user_owns_opportunity: {
+        Args: { opportunity_id: string; user_id?: string }
         Returns: boolean
       }
       validate_and_sanitize_input: {
