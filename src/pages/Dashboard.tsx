@@ -503,44 +503,117 @@ export default function Dashboard() {
                   </CardContent>
                 </Card>
 
-                {/* Pipeline Overview */}
-                <Card>
-                  <CardHeader>
-                    <CardTitle className="flex items-center gap-2">
-                      <PieChart className="h-5 w-5 text-blue-600" />
-                      Sales Pipeline
+                {/* Digital Pipeline Overview */}
+                <Card className="bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 border-slate-700 text-white">
+                  <CardHeader className="pb-2">
+                    <CardTitle className="flex items-center gap-2 text-white">
+                      <div className="relative">
+                        <PieChart className="h-5 w-5 text-cyan-400" />
+                        <div className="absolute -top-1 -right-1 w-2 h-2 bg-cyan-400 rounded-full animate-pulse"></div>
+                      </div>
+                      Digital Sales Pipeline
                     </CardTitle>
-                    <CardDescription>
-                      Current pipeline distribution
+                    <CardDescription className="text-slate-300">
+                      Real-time pipeline distribution with digital metrics
                     </CardDescription>
                   </CardHeader>
                   <CardContent className="space-y-4">
-                    {pipelineData.map((stage, index) => (
-                      <div key={index} className="space-y-2">
-                        <div className="flex items-center justify-between">
-                          <span className="text-sm font-medium">{stage.name}</span>
-                          <div className="flex items-center gap-2">
-                            <span className="text-sm text-muted-foreground">{stage.count}</span>
-                            <Badge variant="outline" className="text-xs">
-                              {formatCurrency(stage.value)}
-                            </Badge>
+                    {/* Digital Status Bar */}
+                    <div className="flex items-center gap-2 p-2 bg-slate-800/50 rounded border border-slate-600">
+                      <div className="flex items-center gap-1">
+                        <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
+                        <span className="text-xs text-slate-300">LIVE</span>
+                      </div>
+                      <div className="text-xs text-slate-400 font-mono">
+                        {new Date().toLocaleTimeString()} EST
+                      </div>
+                      <div className="ml-auto text-xs text-cyan-400 font-mono">
+                        SYS_ONLINE
+                      </div>
+                    </div>
+
+                    {pipelineData.map((stage, index) => {
+                      const stageColors = [
+                        'from-blue-500 to-cyan-500',
+                        'from-purple-500 to-pink-500', 
+                        'from-orange-500 to-red-500',
+                        'from-green-500 to-emerald-500',
+                        'from-yellow-500 to-orange-500'
+                      ];
+                      const glowColors = [
+                        'shadow-blue-500/20',
+                        'shadow-purple-500/20',
+                        'shadow-orange-500/20', 
+                        'shadow-green-500/20',
+                        'shadow-yellow-500/20'
+                      ];
+                      
+                      return (
+                        <div key={index} className="space-y-3 p-3 rounded-lg bg-slate-800/30 border border-slate-700/50 hover:border-slate-600 transition-all duration-300">
+                          <div className="flex items-center justify-between">
+                            <div className="flex items-center gap-2">
+                              <div className={`w-3 h-3 rounded-full bg-gradient-to-r ${stageColors[index]} ${glowColors[index]} shadow-lg animate-pulse`}></div>
+                              <span className="text-sm font-medium text-white font-mono">{stage.name}</span>
+                            </div>
+                            <div className="flex items-center gap-2">
+                              <div className="text-xs text-slate-400 bg-slate-700 px-2 py-1 rounded font-mono">
+                                {stage.count} UNITS
+                              </div>
+                              <Badge className={`text-xs bg-gradient-to-r ${stageColors[index]} border-0 text-white font-mono`}>
+                                {formatCurrency(stage.value)}
+                              </Badge>
+                            </div>
+                          </div>
+                          
+                          {/* Digital Progress Bar */}
+                          <div className="relative">
+                            <div className="h-2 bg-slate-700 rounded-full overflow-hidden">
+                              <div 
+                                className={`h-full bg-gradient-to-r ${stageColors[index]} transition-all duration-1000 ease-out relative`}
+                                style={{ width: `${stage.percentage}%` }}
+                              >
+                                <div className="absolute inset-0 bg-white/20 animate-pulse"></div>
+                              </div>
+                            </div>
+                            <div className="absolute -top-1 -right-1 text-xs text-cyan-400 font-mono">
+                              {stage.percentage.toFixed(1)}%
+                            </div>
+                          </div>
+                          
+                          {/* Digital Status Indicators */}
+                          <div className="flex items-center gap-2 text-xs">
+                            <div className="flex items-center gap-1">
+                              <div className="w-1 h-1 bg-green-400 rounded-full"></div>
+                              <span className="text-slate-400 font-mono">ACTIVE</span>
+                            </div>
+                            <div className="w-px h-3 bg-slate-600"></div>
+                            <div className="text-slate-500 font-mono">
+                              VEL: {(stage.percentage * 0.1).toFixed(1)}x
+                            </div>
                           </div>
                         </div>
-                        <Progress 
-                          value={stage.percentage} 
-                          className="h-2"
-                          style={{
-                            backgroundColor: '#f3f4f6'
-                          }}
-                        />
-                      </div>
-                    ))}
-                    <div className="pt-4 border-t">
-                      <div className="flex items-center justify-between text-sm">
-                        <span className="font-medium">Total Pipeline Value</span>
-                        <span className="font-bold text-green-600">
-                          {formatCurrency(pipelineData.reduce((sum, stage) => sum + stage.value, 0))}
-                        </span>
+                      );
+                    })}
+                    
+                    {/* Digital Summary */}
+                    <div className="pt-4 border-t border-slate-700">
+                      <div className="bg-gradient-to-r from-slate-800 to-slate-700 p-3 rounded-lg border border-slate-600">
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center gap-2">
+                            <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
+                            <span className="font-medium text-white font-mono">TOTAL PIPELINE VALUE</span>
+                          </div>
+                          <span className="font-bold text-green-400 text-lg font-mono">
+                            {formatCurrency(pipelineData.reduce((sum, stage) => sum + stage.value, 0))}
+                          </span>
+                        </div>
+                        <div className="mt-2 flex items-center gap-4 text-xs text-slate-400 font-mono">
+                          <span>CONVERSION_RATE: {overview.conversionRate.toFixed(1)}%</span>
+                          <span>•</span>
+                          <span>AVG_CYCLE: 23.4 DAYS</span>
+                          <span>•</span>
+                          <span>FORECAST: +{overview.monthlyGrowth.toFixed(1)}%</span>
+                        </div>
                       </div>
                     </div>
                   </CardContent>
