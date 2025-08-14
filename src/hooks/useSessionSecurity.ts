@@ -17,19 +17,37 @@ export const useSessionSecurity = () => {
   // Cleanup session on logout
   const cleanupSession = useCallback(async () => {
     if (sessionToken && user) {
-      await supabase
-        .from('active_sessions')
-        .update({ is_active: false })
-        .eq('session_token', sessionToken)
-        .eq('user_id', user.id);
+      try {
+        await supabase
+          .from('active_sessions')
+          .update({ is_active: false })
+          .eq('session_token', sessionToken)
+          .eq('user_id', user.id);
+      } catch (error) {
+        // Silently handle cleanup errors - don't prevent signout
+        console.warn('Session cleanup warning:', error);
+      }
     }
     setSessionToken(null);
   }, [sessionToken, user]);
 
   // Enhanced logout with session cleanup
   const secureSignOut = useCallback(async () => {
-    await cleanupSession();
-    await signOut();
+    try {
+      await cleanupSession();
+      await signOut();
+    } catch (error) {
+      console.error('Sign out error:', error);
+      // Force cleanup even if there's an error
+      setSessionToken(null);
+      // Still attempt to sign out from Supabase auth
+      try {
+        await signOut();
+      } catch (authError) {
+        console.error('Auth sign out error:', authError);
+        // Even if auth signout fails, we've cleaned up our session
+      }
+    }
   }, [cleanupSession, signOut]);
 
   // Generate session token on login (simplified approach)
