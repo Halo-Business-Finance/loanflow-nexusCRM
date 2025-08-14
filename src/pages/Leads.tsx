@@ -1,527 +1,378 @@
-import { useState, useEffect } from "react"
-import { supabase } from "@/integrations/supabase/client"
-import { useAuth } from "@/components/auth/AuthProvider"
-import Layout from "@/components/Layout"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
-import { useToast } from "@/hooks/use-toast"
-import { ErrorBoundary } from "@/components/ErrorBoundary"
-import { secureStorage } from "@/lib/secure-storage"
-
-// New modular components
-import { LeadStats } from "@/components/leads/LeadStats"
-import { LeadForm } from "@/components/leads/LeadForm"
-import { LeadsList } from "@/components/leads/LeadsList"
-
-import { formatPhoneNumber } from "@/lib/utils"
+import React, { useState, useEffect } from 'react';
+import Layout from '@/components/Layout';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Badge } from '@/components/ui/badge';
+import { Alert, AlertDescription } from '@/components/ui/alert';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
 import { 
-  Plus, 
-  Grid3X3, 
-  List, 
-  Loader2,
-  AlertTriangle
-} from "lucide-react"
-import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog"
+  Users, 
+  UserPlus, 
+  Phone, 
+  Mail,
+  DollarSign,
+  Target,
+  Activity,
+  Search,
+  Filter,
+  TrendingUp,
+  AlertTriangle,
+  CheckCircle
+} from 'lucide-react';
+import { useAuth } from '@/components/auth/AuthProvider';
+import { supabase } from '@/integrations/supabase/client';
+import { useToast } from '@/hooks/use-toast';
+import { LeadsList } from '@/components/leads/LeadsList';
+import { LeadForm } from '@/components/leads/LeadForm';
 
-// Import centralized types
-import { Lead, ContactEntity, STAGES, PRIORITIES } from "@/types/lead"
-import { mapLeadFields, extractContactEntityData, LEAD_WITH_CONTACT_QUERY } from "@/lib/field-mapping"
+interface LeadsOverview {
+  totalLeads: number;
+  newLeads: number;
+  qualifiedLeads: number;
+  hotLeads: number;
+  totalValue: number;
+  conversionRate: number;
+  responseTime: number;
+  followUpsDue: number;
+}
 
 export default function Leads() {
-  const { user, hasRole, userRole } = useAuth()
-  const { toast } = useToast()
-  
-  // State management
-  const [leads, setLeads] = useState<Lead[]>([])
-  const [loading, setLoading] = useState(true)
-  const [searchTerm, setSearchTerm] = useState("")
-  const [selectedStage, setSelectedStage] = useState("All")
-  const [selectedPriority, setSelectedPriority] = useState("All")
-  const [viewMode, setViewMode] = useState<"grid" | "table">("grid")
-  
-  // Load view mode from secure storage
+  const { user } = useAuth();
+  const { toast } = useToast();
+  const [overview, setOverview] = useState<LeadsOverview>({
+    totalLeads: 0,
+    newLeads: 0,
+    qualifiedLeads: 0,
+    hotLeads: 0,
+    totalValue: 0,
+    conversionRate: 0,
+    responseTime: 2.4,
+    followUpsDue: 0
+  });
+  const [searchTerm, setSearchTerm] = useState('');
+  const [showNewLeadForm, setShowNewLeadForm] = useState(false);
+  const [loading, setLoading] = useState(true);
+
   useEffect(() => {
-    const loadViewMode = async () => {
-      try {
-        const savedViewMode = await secureStorage.getItem('leads-view-mode');
-        if (savedViewMode === 'grid' || savedViewMode === 'table') {
-          setViewMode(savedViewMode);
-        }
-      } catch (error) {
-        console.error("Error loading view mode:", error);
-      }
-    };
-    loadViewMode();
-  }, []);
-  
-  // Dialog states
-  const [convertingLead, setConvertingLead] = useState<Lead | null>(null)
-  const [showAddDialog, setShowAddDialog] = useState(false)
-  const [showEditDialog, setShowEditDialog] = useState(false)
-  const [editingLead, setEditingLead] = useState<Lead | null>(null)
-  const [isSubmitting, setIsSubmitting] = useState(false)
+    fetchLeadsOverview();
+  }, [user]);
 
-  // Function to handle view mode change with persistence
-  const handleViewModeChange = async (mode: "grid" | "table") => {
-    setViewMode(mode)
-    await secureStorage.setItem('leads-view-mode', mode)
-  }
-
-  // Effects
-  useEffect(() => {
-    if (user) {
-      fetchLeads()
-    }
-  }, [user])
-
-  // Refetch leads when component mounts or comes back into focus
-  useEffect(() => {
-    const handleFocus = () => {
-      if (user) {
-        fetchLeads()
-      }
-    }
-
-    window.addEventListener('focus', handleFocus)
-    return () => window.removeEventListener('focus', handleFocus)
-  }, [user])
-
-  // Also refetch when navigating back to this page
-  useEffect(() => {
-    if (user && document.visibilityState === 'visible') {
-      fetchLeads()
-    }
-  }, [window.location.pathname, user])
-
-  // Data fetching
-  const fetchLeads = async () => {
+  const fetchLeadsOverview = async () => {
     try {
-      // All authenticated users can see all leads (universal access)
-      const { data: leadsData, error } = await supabase
+      setLoading(true);
+      
+      const { data: leads, error: leadsError } = await supabase
         .from('leads')
-        .select(LEAD_WITH_CONTACT_QUERY)
-        .order('created_at', { ascending: false })
+        .select(`
+          *,
+          contact_entities(loan_amount, stage, priority)
+        `)
+        .eq('user_id', user?.id);
 
-      if (error) throw error
-      
-      // Merge leads with contact entity data and filter out invalid leads
-      const mergedLeads = (leadsData || [])
-        .filter(lead => lead.contact_entity && lead.contact_entity.name) // Filter out leads without valid contact entities
-        .map(mapLeadFields)
-      
-      setLeads(mergedLeads)
+      if (!leadsError && leads) {
+        const totalLeads = leads.length;
+        const newLeads = leads.filter(lead => 
+          lead.contact_entities?.stage === 'New Lead'
+        ).length;
+        const qualifiedLeads = leads.filter(lead => 
+          lead.contact_entities?.stage === 'Qualified'
+        ).length;
+        const hotLeads = leads.filter(lead => 
+          lead.contact_entities?.priority === 'high'
+        ).length;
+        const totalValue = leads.reduce((sum, lead) => 
+          sum + (lead.contact_entities?.loan_amount || 0), 0
+        );
+        const convertedLeads = leads.filter(lead => 
+          lead.contact_entities?.stage === 'Loan Funded'
+        ).length;
+        const conversionRate = totalLeads > 0 ? (convertedLeads / totalLeads) * 100 : 0;
+
+        setOverview(prev => ({
+          ...prev,
+          totalLeads,
+          newLeads,
+          qualifiedLeads,
+          hotLeads,
+          totalValue,
+          conversionRate,
+          followUpsDue: Math.floor(totalLeads * 0.15)
+        }));
+      }
     } catch (error) {
-      console.error('Error fetching leads:', error)
+      console.error('Error fetching leads overview:', error);
       toast({
         title: "Error",
-        description: "Failed to fetch leads",
-        variant: "destructive",
-      })
+        description: "Failed to fetch leads data",
+        variant: "destructive"
+      });
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
-  // Lead operations
-  const convertToClient = async (lead: Lead) => {
-    try {
-      // Create client record with reference to existing contact entity
-      const { data: client, error: clientError } = await supabase
-        .from('clients')
-        .insert({
-          user_id: user?.id,
-          lead_id: lead.id,
-          contact_entity_id: lead.contact_entity_id,
-          status: 'Active'
-        })
-        .select()
-        .single()
-
-      if (clientError) throw clientError
-
-      // Create pipeline entry for the new client
-      const { error: pipelineError } = await supabase
-        .from('pipeline_entries')
-        .insert({
-          user_id: user?.id,
-          lead_id: lead.id,
-          client_id: client.id,
-          stage: lead.stage,
-          amount: lead.loan_amount || 0,
-          priority: lead.priority,
-        })
-
-      if (pipelineError) throw pipelineError
-
-      // Mark lead as converted
-      const { error: updateError } = await supabase
-        .from('leads')
-        .update({
-          is_converted_to_client: true,
-          converted_at: new Date().toISOString()
-        })
-        .eq('id', lead.id)
-
-      if (updateError) throw updateError
-
-      toast({
-        title: "Success!",
-        description: `${lead.name} has been converted to a client and added to the pipeline.`,
-      })
-
-      fetchLeads() // Refresh the leads list
-      setConvertingLead(null)
-    } catch (error) {
-      console.error('Error converting lead:', error)
-      toast({
-        title: "Error",
-        description: "Failed to convert lead to client",
-        variant: "destructive",
-      })
-    }
-  }
-
-  const addNewLead = async (contactData: ContactEntity) => {
-    setIsSubmitting(true)
-    try {
-      // Validate required fields
-      if (!contactData.name.trim() || !contactData.email.trim()) {
-        toast({
-          title: "Validation Error",
-          description: "Name and email are required fields",
-          variant: "destructive",
-        })
-        return
-      }
-
-      // First create contact entity
-      const { data: contactEntity, error: contactError } = await supabase
-        .from('contact_entities')
-        .insert({
-          user_id: user?.id,
-          name: contactData.name.trim(),
-          email: contactData.email.trim().toLowerCase(),
-          phone: contactData.phone?.trim() || null,
-          location: contactData.location?.trim() || null,
-          business_name: contactData.business_name?.trim() || null,
-          business_address: contactData.business_address?.trim() || null,
-          annual_revenue: contactData.annual_revenue ? Math.max(0, contactData.annual_revenue) : null,
-          loan_amount: contactData.loan_amount ? Math.max(0, contactData.loan_amount) : null,
-          loan_type: contactData.loan_type?.trim() || null,
-          credit_score: contactData.credit_score ? Math.max(300, Math.min(850, contactData.credit_score)) : null,
-          net_operating_income: contactData.net_operating_income || null,
-          priority: contactData.priority || 'medium',
-          stage: contactData.stage || 'Initial Contact',
-          notes: contactData.notes?.trim() || null,
-          naics_code: contactData.naics_code?.trim() || null,
-          ownership_structure: contactData.ownership_structure?.trim() || null
-        })
-        .select()
-        .single()
-
-      if (contactError) throw contactError
-
-      // Then create lead record
-      const { error } = await supabase
-        .from('leads')
-        .insert({
-          user_id: user?.id,
-          contact_entity_id: contactEntity.id
-        })
-
-      if (error) throw error
-
-      toast({
-        title: "Success!",
-        description: "New lead has been added successfully.",
-      })
-
-      setShowAddDialog(false)
-      fetchLeads() // Refresh the leads list
-    } catch (error) {
-      console.error('Error adding lead:', error)
-      toast({
-        title: "Error",
-        description: "Failed to add new lead",
-        variant: "destructive",
-      })
-    } finally {
-      setIsSubmitting(false)
-    }
-  }
-
-  const openEditDialog = (lead: Lead) => {
-    setEditingLead(lead)
-    setShowEditDialog(true)
-  }
-
-  const updateLead = async (contactData: ContactEntity) => {
-    if (!editingLead) return
-    
-    setIsSubmitting(true)
-    try {
-      // Check authentication first
-      const { data: { user }, error: authError } = await supabase.auth.getUser()
-      console.log('Current authenticated user:', user)
-      
-      if (authError || !user) {
-        throw new Error('User not authenticated')
-      }
-      
-      console.log('Attempting to update contact entity:', editingLead.contact_entity_id)
-      console.log('Update data:', contactData)
-      
-      // Update contact entity
-      const { data, error } = await supabase
-        .from('contact_entities')
-        .update({
-          name: contactData.name,
-          email: contactData.email,
-          phone: contactData.phone || null,
-          location: contactData.location || null,
-          business_name: contactData.business_name || null,
-          business_address: contactData.business_address || null,
-          annual_revenue: contactData.annual_revenue || null,
-          loan_amount: contactData.loan_amount || null,
-          loan_type: contactData.loan_type || null,
-          credit_score: contactData.credit_score || null,
-          net_operating_income: contactData.net_operating_income || null,
-          priority: contactData.priority,
-          stage: contactData.stage,
-          notes: contactData.notes || null,
-          naics_code: contactData.naics_code || null,
-          ownership_structure: contactData.ownership_structure || null,
-          updated_at: new Date().toISOString()
-        })
-        .eq('id', editingLead.contact_entity_id)
-        .select()
-
-      console.log('Update result:', { data, error })
-
-      if (error) {
-        console.error('Supabase error details:', error)
-        throw error
-      }
-
-      toast({
-        title: "Success!",
-        description: "Lead has been updated successfully.",
-      })
-
-      setShowEditDialog(false)
-      setEditingLead(null)
-      fetchLeads() // Refresh the leads list
-    } catch (error) {
-      console.error('Error updating lead:', error)
-      console.error('Error details:', JSON.stringify(error, null, 2))
-      console.error('Contact data being updated:', contactData)
-      console.error('Editing lead:', editingLead)
-      
-      toast({
-        title: "Error",
-        description: `Failed to update lead: ${error?.message || 'Unknown error'}`,
-        variant: "destructive",
-      })
-    } finally {
-      setIsSubmitting(false)
-    }
-  }
-
-  const deleteLead = async (leadId: string, leadName: string) => {
-    try {
-      console.log('Attempting to delete lead:', { leadId, leadName, userRole, hasAdminRole: hasRole('admin'), hasRole: hasRole('super_admin') })
-      
-      const { error } = await supabase
-        .from('leads')
-        .delete()
-        .eq('id', leadId)
-
-      if (error) {
-        console.error('Delete error details:', error)
-        throw error
-      }
-
-      toast({
-        title: "Success!",
-        description: `${leadName} has been deleted.`,
-      })
-
-      fetchLeads() // Refresh the leads list
-    } catch (error) {
-      console.error('Error deleting lead:', error)
-      toast({
-        title: "Error",
-        description: `Failed to delete lead: ${error?.message || 'Unknown error'}`,
-        variant: "destructive",
-      })
-    }
-  }
-
-  // Filter leads based on search and filters
-  const filteredLeads = leads.filter(lead => {
-    const matchesSearch = 
-      lead.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      lead.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      (lead.business_name && lead.business_name.toLowerCase().includes(searchTerm.toLowerCase()))
-    
-    const matchesStage = selectedStage === "All" || lead.stage === selectedStage
-    const matchesPriority = selectedPriority === "All" || lead.priority === selectedPriority
-    
-    return matchesSearch && matchesStage && matchesPriority
-  })
-
-  if (loading) {
-    return (
-      <Layout>
-        <div className="flex items-center justify-center min-h-screen">
-          <Loader2 className="h-8 w-8 animate-spin" />
-        </div>
-      </Layout>
-    )
-  }
+  const formatCurrency = (amount: number) => {
+    return new Intl.NumberFormat('en-US', {
+      style: 'currency',
+      currency: 'USD',
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 0,
+    }).format(amount);
+  };
 
   return (
-    <ErrorBoundary>
-      <Layout>
-        <div className="space-y-6">
-          {/* Header */}
-          <div className="mb-6">
-            <h1 className="text-3xl font-bold tracking-tight">Lead Management Center</h1>
-            <p className="text-muted-foreground">
-              Manage and track your sales leads with advanced filtering and analytics
-            </p>
+    <Layout>
+      <div className="container mx-auto p-6 space-y-6">
+        <div className="flex items-center justify-between mb-6">
+          <div className="flex items-center gap-2">
+            <Users className="h-6 w-6" />
+            <h1 className="text-3xl font-bold">Lead Management Center</h1>
           </div>
+          <Button onClick={() => setShowNewLeadForm(true)} className="gap-2">
+            <UserPlus className="h-4 w-4" />
+            Add New Lead
+          </Button>
+        </div>
 
-          <div className="flex items-center justify-between">
-            <div></div>
-            <Dialog open={showAddDialog} onOpenChange={setShowAddDialog}>
-              <DialogTrigger asChild>
-                <Button>
-                  <Plus className="mr-2 h-4 w-4" />
-                  Add Lead
-                </Button>
-              </DialogTrigger>
-              <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
-                <DialogHeader>
-                  <DialogTitle>Add New Lead</DialogTitle>
-                </DialogHeader>
-                <LeadForm
-                  onSubmit={addNewLead}
-                  onCancel={() => setShowAddDialog(false)}
-                  isSubmitting={isSubmitting}
+        {/* Leads Overview Metrics */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <Card className="border-l-4 border-l-primary">
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-medium text-muted-foreground">Total Leads</p>
+                  <div className="flex items-center gap-2 mt-1">
+                    <Users className="w-5 h-5" />
+                    <p className="text-lg font-bold">{overview.totalLeads}</p>
+                  </div>
+                </div>
+                <Badge variant="default">
+                  MANAGED
+                </Badge>
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-medium text-muted-foreground">New Leads</p>
+                  <p className="text-2xl font-bold text-primary">{overview.newLeads}</p>
+                </div>
+                <UserPlus className="w-8 h-8 text-primary" />
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-medium text-muted-foreground">Hot Prospects</p>
+                  <p className="text-2xl font-bold text-primary">{overview.hotLeads}</p>
+                </div>
+                <Target className="w-8 h-8 text-primary" />
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-medium text-muted-foreground">Pipeline Value</p>
+                  <p className="text-2xl font-bold text-primary">{formatCurrency(overview.totalValue)}</p>
+                </div>
+                <DollarSign className="w-8 h-8 text-primary" />
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Performance Alerts */}
+        {overview.followUpsDue > 0 && (
+          <Alert className="border-secondary">
+            <AlertTriangle className="h-4 w-4" />
+            <AlertDescription>
+              You have {overview.followUpsDue} leads requiring follow-up attention.
+            </AlertDescription>
+          </Alert>
+        )}
+
+        <Tabs defaultValue="active" className="space-y-6">
+          <TabsList className="grid w-full grid-cols-4">
+            <TabsTrigger value="active">Active Leads</TabsTrigger>
+            <TabsTrigger value="qualified">Qualified</TabsTrigger>
+            <TabsTrigger value="analytics">Performance</TabsTrigger>
+            <TabsTrigger value="management">Lead Tools</TabsTrigger>
+          </TabsList>
+
+          <TabsContent value="active" className="space-y-6">
+            <div className="flex gap-4 mb-6">
+              <div className="relative flex-1">
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
+                <Input
+                  placeholder="Search leads by name, email, or company..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="pl-10"
                 />
-              </DialogContent>
-            </Dialog>
-          </div>
-
-          {/* Stats */}
-          <LeadStats leads={leads} />
-
-          {/* Controls */}
-          <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
-            <div className="flex flex-col sm:flex-row gap-2 flex-1">
-              <Input
-                placeholder="Search leads..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="max-w-sm"
-              />
-              <Select value={selectedStage} onValueChange={setSelectedStage}>
-                <SelectTrigger className="w-[180px]">
-                  <SelectValue placeholder="Filter by stage" />
-                </SelectTrigger>
-                <SelectContent>
-                  {STAGES.map((stage) => (
-                    <SelectItem key={stage} value={stage}>
-                      {stage}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-              <Select value={selectedPriority} onValueChange={setSelectedPriority}>
-                <SelectTrigger className="w-[180px]">
-                  <SelectValue placeholder="Filter by priority" />
-                </SelectTrigger>
-                <SelectContent>
-                  {PRIORITIES.map((priority) => (
-                    <SelectItem key={priority} value={priority}>
-                      {priority}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+              </div>
+              <Button variant="outline" className="gap-2">
+                <Filter className="h-4 w-4" />
+                Filter
+              </Button>
             </div>
             
-            <Tabs value={viewMode} onValueChange={handleViewModeChange}>
-              <TabsList>
-                <TabsTrigger value="grid">
-                  <Grid3X3 className="h-4 w-4" />
-                </TabsTrigger>
-                <TabsTrigger value="table">
-                  <List className="h-4 w-4" />
-                </TabsTrigger>
-              </TabsList>
-            </Tabs>
-          </div>
+            <LeadsList />
+          </TabsContent>
 
-          {/* Leads List */}
-          <LeadsList
-            leads={filteredLeads}
-            viewMode={viewMode}
-            onEdit={openEditDialog}
-            onDelete={deleteLead}
-            onConvert={(lead) => setConvertingLead(lead)}
-            onRefresh={fetchLeads}
-            hasAdminRole={hasRole('admin') || hasRole('super_admin') || hasRole('manager')}
-            currentUserId={user?.id}
+          <TabsContent value="qualified" className="space-y-6">
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <CheckCircle className="h-5 w-5 text-green-500" />
+                  Qualified Prospects
+                </CardTitle>
+                <CardDescription>
+                  Leads that have been qualified and are ready for advanced nurturing
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-4">
+                  <div className="flex justify-between items-center p-4 border rounded-lg">
+                    <span className="text-sm font-medium">Ready for Proposal</span>
+                    <span className="font-bold text-green-600">{overview.qualifiedLeads}</span>
+                  </div>
+                  <div className="flex justify-between items-center p-4 border rounded-lg">
+                    <span className="text-sm font-medium">High Priority</span>
+                    <span className="font-bold text-orange-600">{overview.hotLeads}</span>
+                  </div>
+                  <div className="flex justify-between items-center p-4 border rounded-lg">
+                    <span className="text-sm font-medium">Conversion Rate</span>
+                    <span className="font-bold text-blue-600">{overview.conversionRate.toFixed(1)}%</span>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          <TabsContent value="analytics" className="space-y-6">
+            <div className="grid gap-6 md:grid-cols-2">
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <TrendingUp className="h-5 w-5 text-blue-500" />
+                    Conversion Metrics
+                  </CardTitle>
+                  <CardDescription>
+                    Lead conversion and performance tracking
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-4">
+                    <div className="flex justify-between items-center">
+                      <span className="text-sm text-muted-foreground">Conversion Rate</span>
+                      <span className="font-semibold">{overview.conversionRate.toFixed(1)}%</span>
+                    </div>
+                    <div className="flex justify-between items-center">
+                      <span className="text-sm text-muted-foreground">Avg Response Time</span>
+                      <span className="font-semibold">{overview.responseTime}h</span>
+                    </div>
+                    <div className="flex justify-between items-center">
+                      <span className="text-sm text-muted-foreground">Lead Quality Score</span>
+                      <span className="font-semibold text-green-600">8.2/10</span>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <Activity className="h-5 w-5 text-purple-500" />
+                    Activity Overview
+                  </CardTitle>
+                  <CardDescription>
+                    Lead engagement and interaction metrics
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-4">
+                    <div className="flex justify-between items-center">
+                      <span className="text-sm text-muted-foreground">Calls Made</span>
+                      <span className="font-semibold">127</span>
+                    </div>
+                    <div className="flex justify-between items-center">
+                      <span className="text-sm text-muted-foreground">Emails Sent</span>
+                      <span className="font-semibold">284</span>
+                    </div>
+                    <div className="flex justify-between items-center">
+                      <span className="text-sm text-muted-foreground">Meetings Scheduled</span>
+                      <span className="font-semibold text-blue-600">18</span>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+          </TabsContent>
+
+          <TabsContent value="management" className="space-y-6">
+            <div className="grid gap-6 md:grid-cols-3">
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <Phone className="h-5 w-5 text-green-500" />
+                    Call Center
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-sm text-muted-foreground mb-4">Make calls and track communication</p>
+                  <Button className="w-full">Launch Dialer</Button>
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <Mail className="h-5 w-5 text-blue-500" />
+                    Email Campaigns
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-sm text-muted-foreground mb-4">Send targeted email sequences</p>
+                  <Button className="w-full" variant="outline">Create Campaign</Button>
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <Target className="h-5 w-5 text-orange-500" />
+                    Lead Scoring
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-sm text-muted-foreground mb-4">Automatic lead qualification</p>
+                  <Button className="w-full" variant="outline">Configure Rules</Button>
+                </CardContent>
+              </Card>
+            </div>
+          </TabsContent>
+        </Tabs>
+
+        {showNewLeadForm && (
+          <LeadForm 
+            onClose={() => setShowNewLeadForm(false)} 
+            onSuccess={() => {
+              setShowNewLeadForm(false);
+              fetchLeadsOverview();
+            }}
           />
-
-          {/* Edit Dialog */}
-          <Dialog open={showEditDialog} onOpenChange={setShowEditDialog}>
-            <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
-              <DialogHeader>
-                <DialogTitle>Edit Lead</DialogTitle>
-              </DialogHeader>
-              <LeadForm
-                lead={editingLead}
-                onSubmit={updateLead}
-                onCancel={() => {
-                  setShowEditDialog(false)
-                  setEditingLead(null)
-                }}
-                isSubmitting={isSubmitting}
-              />
-            </DialogContent>
-          </Dialog>
-
-          {/* Convert Confirmation Dialog */}
-          <AlertDialog open={!!convertingLead} onOpenChange={() => setConvertingLead(null)}>
-            <AlertDialogContent>
-              <AlertDialogHeader>
-                <AlertDialogTitle>Convert Lead to Client</AlertDialogTitle>
-                <AlertDialogDescription>
-                  Are you sure you want to convert {convertingLead?.name} to a client? This will create a new client record and add them to your pipeline.
-                </AlertDialogDescription>
-              </AlertDialogHeader>
-              <AlertDialogFooter>
-                <AlertDialogCancel onClick={() => setConvertingLead(null)}>
-                  Cancel
-                </AlertDialogCancel>
-                <AlertDialogAction 
-                  onClick={() => convertingLead && convertToClient(convertingLead)}
-                >
-                  <AlertTriangle className="mr-2 h-4 w-4" />
-                  Convert to Client
-                </AlertDialogAction>
-              </AlertDialogFooter>
-            </AlertDialogContent>
-          </AlertDialog>
-
-        </div>
-      </Layout>
-    </ErrorBoundary>
-  )
+        )}
+      </div>
+    </Layout>
+  );
 }

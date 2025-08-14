@@ -1,200 +1,217 @@
-import Layout from "@/components/Layout"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Badge } from "@/components/ui/badge"
-import { Button } from "@/components/ui/button"
-import { Progress } from "@/components/ui/progress"
+import React, { useState, useEffect } from 'react';
+import Layout from '@/components/Layout';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Badge } from '@/components/ui/badge';
+import { Alert, AlertDescription } from '@/components/ui/alert';
 import { 
   BarChart3, 
   TrendingUp, 
   Users, 
-  DollarSign, 
-  FileText, 
-  Calendar,
-  Target,
+  DollarSign,
   Activity,
-  AlertCircle,
+  Target,
+  AlertTriangle,
   CheckCircle,
   Clock,
-  ArrowUpRight
-} from "lucide-react"
-import { LineChart, Line, XAxis, YAxis, ResponsiveContainer, AreaChart, Area } from "recharts"
-import Dashboard from "@/components/Dashboard"
+  Phone,
+  Mail,
+  Building
+} from 'lucide-react';
+import { useAuth } from '@/components/auth/AuthProvider';
+import { supabase } from '@/integrations/supabase/client';
 
-const dashboardData = [
-  { month: 'Jan', leads: 65, revenue: 120000 },
-  { month: 'Feb', leads: 85, revenue: 180000 },
-  { month: 'Mar', leads: 92, revenue: 220000 },
-  { month: 'Apr', leads: 78, revenue: 195000 },
-  { month: 'May', leads: 105, revenue: 285000 },
-  { month: 'Jun', leads: 118, revenue: 320000 },
-]
+interface DashboardOverview {
+  totalLeads: number;
+  activeLeads: number;
+  convertedLeads: number;
+  totalRevenue: number;
+  todaysCalls: number;
+  emailsSent: number;
+  activeUsers: number;
+  conversionRate: number;
+}
 
-const quickStats = [
-  { title: "Total Leads", value: "542", change: "+12%", icon: Users, color: "text-blue-500" },
-  { title: "Active Deals", value: "89", change: "+8%", icon: Target, color: "text-green-500" },
-  { title: "Revenue", value: "$1.3M", change: "+15%", icon: DollarSign, color: "text-purple-500" },
-  { title: "Conversion", value: "24%", change: "+3%", icon: TrendingUp, color: "text-orange-500" },
-]
+export default function Dashboard() {
+  const { user } = useAuth();
+  const [overview, setOverview] = useState<DashboardOverview>({
+    totalLeads: 0,
+    activeLeads: 0,
+    convertedLeads: 0,
+    totalRevenue: 0,
+    todaysCalls: 0,
+    emailsSent: 0,
+    activeUsers: 0,
+    conversionRate: 0
+  });
+  const [loading, setLoading] = useState(true);
 
-const recentActivities = [
-  { id: 1, type: "lead", message: "New lead: John Smith - $250k loan", time: "2 hours ago", status: "new" },
-  { id: 2, type: "deal", message: "Deal closed: ABC Corp - $500k", time: "4 hours ago", status: "success" },
-  { id: 3, type: "document", message: "Document verified: Tax returns", time: "6 hours ago", status: "verified" },
-  { id: 4, type: "meeting", message: "Meeting scheduled with Sarah Johnson", time: "1 day ago", status: "scheduled" },
-]
+  useEffect(() => {
+    fetchDashboardData();
+  }, [user]);
 
-export default function DashboardPage() {
+  const fetchDashboardData = async () => {
+    try {
+      setLoading(true);
+      
+      // Fetch leads data
+      const { data: leads, error: leadsError } = await supabase
+        .from('leads')
+        .select(`
+          *,
+          contact_entities(loan_amount, stage)
+        `)
+        .eq('user_id', user?.id);
+
+      if (!leadsError && leads) {
+        const totalLeads = leads.length;
+        const activeLeads = leads.filter(lead => 
+          lead.contact_entities?.stage && 
+          !['Lost', 'Loan Funded'].includes(lead.contact_entities.stage)
+        ).length;
+        const convertedLeads = leads.filter(lead => 
+          lead.contact_entities?.stage === 'Loan Funded'
+        ).length;
+        const totalRevenue = leads.reduce((sum, lead) => 
+          sum + (lead.contact_entities?.loan_amount || 0), 0
+        );
+        const conversionRate = totalLeads > 0 ? (convertedLeads / totalLeads) * 100 : 0;
+
+        setOverview(prev => ({
+          ...prev,
+          totalLeads,
+          activeLeads,
+          convertedLeads,
+          totalRevenue,
+          conversionRate
+        }));
+      }
+    } catch (error) {
+      console.error('Error fetching dashboard data:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const formatCurrency = (amount: number) => {
+    return new Intl.NumberFormat('en-US', {
+      style: 'currency',
+      currency: 'USD',
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 0,
+    }).format(amount);
+  };
+
   return (
     <Layout>
-      <div className="space-y-6">
-        {/* Header */}
-        <div className="mb-6">
-          <h1 className="text-3xl font-bold tracking-tight">Dashboard Center</h1>
-          <p className="text-muted-foreground">
-            Overview of your business performance and key metrics
+      <div className="container mx-auto p-6 space-y-6">
+        <div className="flex items-center gap-2 mb-6">
+          <BarChart3 className="h-6 w-6" />
+          <h1 className="text-3xl font-bold">Command Dashboard</h1>
+          <p className="text-muted-foreground ml-4">
+            Real-time business intelligence and performance monitoring
           </p>
         </div>
 
-        <Tabs defaultValue="overview" className="space-y-6">
+        {/* Dashboard Overview Metrics */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <Card className="border-l-4 border-l-primary">
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-medium text-muted-foreground">Total Leads</p>
+                  <div className="flex items-center gap-2 mt-1">
+                    <Users className="w-5 h-5" />
+                    <p className="text-lg font-bold">{overview.totalLeads}</p>
+                  </div>
+                </div>
+                <Badge variant="default">
+                  TRACKED
+                </Badge>
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-medium text-muted-foreground">Active Pipeline</p>
+                  <p className="text-2xl font-bold text-primary">{overview.activeLeads}</p>
+                </div>
+                <Activity className="w-8 h-8 text-primary" />
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-medium text-muted-foreground">Conversion Rate</p>
+                  <p className="text-2xl font-bold text-primary">{overview.conversionRate.toFixed(1)}%</p>
+                </div>
+                <Target className="w-8 h-8 text-primary" />
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-medium text-muted-foreground">Total Revenue</p>
+                  <p className="text-2xl font-bold text-primary">{formatCurrency(overview.totalRevenue)}</p>
+                </div>
+                <DollarSign className="w-8 h-8 text-primary" />
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Performance Alerts */}
+        {overview.conversionRate < 15 && (
+          <Alert className="border-secondary">
+            <AlertTriangle className="h-4 w-4" />
+            <AlertDescription>
+              Conversion rate is below target. Consider reviewing lead qualification process.
+            </AlertDescription>
+          </Alert>
+        )}
+
+        <Tabs defaultValue="performance" className="space-y-6">
           <TabsList className="grid w-full grid-cols-3">
-            <TabsTrigger value="overview">Business Overview</TabsTrigger>
-            <TabsTrigger value="performance">Performance Metrics</TabsTrigger>
+            <TabsTrigger value="performance">Performance Analytics</TabsTrigger>
             <TabsTrigger value="activity">Recent Activity</TabsTrigger>
+            <TabsTrigger value="team">Team Overview</TabsTrigger>
           </TabsList>
-
-          <TabsContent value="overview" className="space-y-6">
-            {/* Quick Stats */}
-            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
-              {quickStats.map((stat, index) => (
-                <Card key={index}>
-                  <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                    <CardTitle className="text-sm font-medium">{stat.title}</CardTitle>
-                    <stat.icon className={`h-4 w-4 ${stat.color}`} />
-                  </CardHeader>
-                  <CardContent>
-                    <div className="text-2xl font-bold">{stat.value}</div>
-                    <div className="flex items-center gap-1 text-xs text-muted-foreground">
-                      <ArrowUpRight className="h-3 w-3 text-green-500" />
-                      <span className="text-green-500">{stat.change}</span>
-                      <span>vs last month</span>
-                    </div>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
-
-            {/* Charts */}
-            <div className="grid gap-6 md:grid-cols-2">
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <BarChart3 className="h-5 w-5 text-blue-500" />
-                    Lead Generation Trend
-                  </CardTitle>
-                  <CardDescription>
-                    Monthly lead acquisition over the last 6 months
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="h-80">
-                    <ResponsiveContainer width="100%" height="100%">
-                      <LineChart data={dashboardData}>
-                        <XAxis dataKey="month" />
-                        <YAxis />
-                        <Line 
-                          type="monotone" 
-                          dataKey="leads" 
-                          stroke="hsl(var(--primary))" 
-                          strokeWidth={2}
-                          dot={{ fill: "hsl(var(--primary))" }}
-                        />
-                      </LineChart>
-                    </ResponsiveContainer>
-                  </div>
-                </CardContent>
-              </Card>
-
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <DollarSign className="h-5 w-5 text-green-500" />
-                    Revenue Growth
-                  </CardTitle>
-                  <CardDescription>
-                    Monthly revenue trend and growth patterns
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="h-80">
-                    <ResponsiveContainer width="100%" height="100%">
-                      <AreaChart data={dashboardData}>
-                        <XAxis dataKey="month" />
-                        <YAxis />
-                        <Area 
-                          type="monotone" 
-                          dataKey="revenue" 
-                          stroke="hsl(var(--primary))" 
-                          fill="hsl(var(--primary))"
-                          fillOpacity={0.3}
-                        />
-                      </AreaChart>
-                    </ResponsiveContainer>
-                  </div>
-                </CardContent>
-              </Card>
-            </div>
-
-            {/* Original Dashboard Component */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Activity className="h-5 w-5 text-purple-500" />
-                  Detailed Analytics
-                </CardTitle>
-                <CardDescription>
-                  Comprehensive business overview and insights
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <Dashboard />
-              </CardContent>
-            </Card>
-          </TabsContent>
 
           <TabsContent value="performance" className="space-y-6">
             <div className="grid gap-6 md:grid-cols-2">
               <Card>
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
-                    <Target className="h-5 w-5 text-orange-500" />
-                    Goal Progress
+                    <TrendingUp className="h-5 w-5 text-green-500" />
+                    Revenue Performance
                   </CardTitle>
                   <CardDescription>
-                    Monthly targets and achievement rates
+                    Monthly revenue tracking and forecasting
                   </CardDescription>
                 </CardHeader>
-                <CardContent className="space-y-4">
-                  <div>
-                    <div className="flex justify-between text-sm mb-2">
-                      <span>Lead Generation</span>
-                      <span>85%</span>
+                <CardContent>
+                  <div className="space-y-4">
+                    <div className="flex justify-between items-center">
+                      <span className="text-sm text-muted-foreground">This Month</span>
+                      <span className="font-semibold">{formatCurrency(overview.totalRevenue)}</span>
                     </div>
-                    <Progress value={85} />
-                  </div>
-                  <div>
-                    <div className="flex justify-between text-sm mb-2">
-                      <span>Revenue Target</span>
-                      <span>72%</span>
+                    <div className="flex justify-between items-center">
+                      <span className="text-sm text-muted-foreground">Converted Deals</span>
+                      <span className="font-semibold">{overview.convertedLeads}</span>
                     </div>
-                    <Progress value={72} />
-                  </div>
-                  <div>
-                    <div className="flex justify-between text-sm mb-2">
-                      <span>Conversion Rate</span>
-                      <span>94%</span>
+                    <div className="flex justify-between items-center">
+                      <span className="text-sm text-muted-foreground">Success Rate</span>
+                      <span className="font-semibold text-green-600">{overview.conversionRate.toFixed(1)}%</span>
                     </div>
-                    <Progress value={94} />
                   </div>
                 </CardContent>
               </Card>
@@ -202,29 +219,27 @@ export default function DashboardPage() {
               <Card>
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
-                    <TrendingUp className="h-5 w-5 text-green-500" />
-                    Key Metrics
+                    <Activity className="h-5 w-5 text-blue-500" />
+                    Pipeline Health
                   </CardTitle>
                   <CardDescription>
-                    Important performance indicators
+                    Active opportunities and engagement metrics
                   </CardDescription>
                 </CardHeader>
-                <CardContent className="space-y-4">
-                  <div className="flex justify-between items-center">
-                    <span className="text-sm">Average Deal Size</span>
-                    <Badge variant="default">$285k</Badge>
-                  </div>
-                  <div className="flex justify-between items-center">
-                    <span className="text-sm">Sales Cycle</span>
-                    <Badge variant="secondary">45 days</Badge>
-                  </div>
-                  <div className="flex justify-between items-center">
-                    <span className="text-sm">Win Rate</span>
-                    <Badge variant="default">68%</Badge>
-                  </div>
-                  <div className="flex justify-between items-center">
-                    <span className="text-sm">Customer Satisfaction</span>
-                    <Badge variant="default">4.8/5</Badge>
+                <CardContent>
+                  <div className="space-y-4">
+                    <div className="flex justify-between items-center">
+                      <span className="text-sm text-muted-foreground">Active Opportunities</span>
+                      <span className="font-semibold">{overview.activeLeads}</span>
+                    </div>
+                    <div className="flex justify-between items-center">
+                      <span className="text-sm text-muted-foreground">Total Prospects</span>
+                      <span className="font-semibold">{overview.totalLeads}</span>
+                    </div>
+                    <div className="flex justify-between items-center">
+                      <span className="text-sm text-muted-foreground">Pipeline Value</span>
+                      <span className="font-semibold text-blue-600">{formatCurrency(overview.totalRevenue * 0.3)}</span>
+                    </div>
                   </div>
                 </CardContent>
               </Card>
@@ -232,35 +247,69 @@ export default function DashboardPage() {
           </TabsContent>
 
           <TabsContent value="activity" className="space-y-6">
+            <div className="grid gap-6 md:grid-cols-3">
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <Phone className="h-5 w-5 text-purple-500" />
+                    Call Activity
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-bold">{overview.todaysCalls}</div>
+                  <p className="text-sm text-muted-foreground">Calls today</p>
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <Mail className="h-5 w-5 text-orange-500" />
+                    Email Outreach
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-bold">{overview.emailsSent}</div>
+                  <p className="text-sm text-muted-foreground">Emails sent</p>
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <Building className="h-5 w-5 text-teal-500" />
+                    Business Growth
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-bold">{overview.convertedLeads}</div>
+                  <p className="text-sm text-muted-foreground">Deals closed</p>
+                </CardContent>
+              </Card>
+            </div>
+          </TabsContent>
+
+          <TabsContent value="team" className="space-y-6">
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
-                  <Activity className="h-5 w-5 text-blue-500" />
-                  Recent Activity Feed
+                  <Users className="h-5 w-5 text-indigo-500" />
+                  Team Performance
                 </CardTitle>
                 <CardDescription>
-                  Latest updates and activities across your CRM
+                  Team metrics and collaboration overview
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                <div className="space-y-4">
-                  {recentActivities.map((activity) => (
-                    <div key={activity.id} className="flex items-center gap-4 p-4 border rounded-lg">
-                      <div className="flex-shrink-0">
-                        {activity.status === 'success' && <CheckCircle className="h-5 w-5 text-green-500" />}
-                        {activity.status === 'new' && <AlertCircle className="h-5 w-5 text-blue-500" />}
-                        {activity.status === 'verified' && <CheckCircle className="h-5 w-5 text-purple-500" />}
-                        {activity.status === 'scheduled' && <Clock className="h-5 w-5 text-orange-500" />}
-                      </div>
-                      <div className="flex-1">
-                        <p className="text-sm font-medium">{activity.message}</p>
-                        <p className="text-xs text-muted-foreground">{activity.time}</p>
-                      </div>
-                      <Badge variant="outline" className="capitalize">
-                        {activity.status}
-                      </Badge>
-                    </div>
-                  ))}
+                <div className="grid gap-4 md:grid-cols-2">
+                  <div className="flex justify-between items-center p-4 border rounded-lg">
+                    <span className="text-sm font-medium">Active Team Members</span>
+                    <span className="font-bold text-indigo-600">{overview.activeUsers}</span>
+                  </div>
+                  <div className="flex justify-between items-center p-4 border rounded-lg">
+                    <span className="text-sm font-medium">Collaboration Score</span>
+                    <span className="font-bold text-green-600">94%</span>
+                  </div>
                 </div>
               </CardContent>
             </Card>
@@ -268,5 +317,5 @@ export default function DashboardPage() {
         </Tabs>
       </div>
     </Layout>
-  )
+  );
 }
