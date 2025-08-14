@@ -1,6 +1,7 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Camera, Download, ExternalLink } from "lucide-react";
+import Layout from "@/components/Layout";
 
 const Screenshots = () => {
   const pages = [
@@ -57,6 +58,7 @@ const Screenshots = () => {
   };
 
   return (
+    <Layout>
     <div className="container mx-auto p-6">
       <div className="mb-8">
         <h1 className="text-3xl font-bold mb-2">CRM Screenshots</h1>
@@ -146,6 +148,7 @@ const Screenshots = () => {
         </Card>
       </div>
     </div>
+    </Layout>
   );
 };
 
