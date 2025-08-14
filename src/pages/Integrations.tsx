@@ -314,14 +314,18 @@ export default function Integrations() {
     <Layout>
       <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted/20">
         <div className="container mx-auto p-6 space-y-8">
-          {/* Modern Header Section */}
-          <div className="text-center space-y-4 py-8">
+          {/* Header Section */}
+          <div className="mb-6">
+            <h1 className="text-3xl font-bold tracking-tight">Integrations & AI Center</h1>
+            <p className="text-muted-foreground">
+              Connect with external services and configure AI-powered automation tools
+            </p>
+          </div>
+          
+          <div className="text-center space-y-4 py-4">
             <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-primary rounded-2xl mb-4 animate-fade-in">
               <Sparkles className="w-8 h-8 text-white" />
             </div>
-            <h1 className="text-4xl font-bold bg-gradient-to-r from-foreground to-foreground/80 bg-clip-text text-transparent">
-              Integrations & AI Tools
-            </h1>
             <p className="text-lg text-foreground/70 max-w-2xl mx-auto">
               Supercharge your CRM with powerful integrations and AI-powered automation tools
             </p>

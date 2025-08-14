@@ -179,10 +179,12 @@ export default function Settings() {
 
   return (
     <Layout>
-      <div className="container mx-auto p-6 space-y-6">
-        <div className="flex items-center gap-2">
-          <SettingsIcon className="h-6 w-6" />
-          <h1 className="text-3xl font-bold tracking-tight">Settings</h1>
+      <div className="space-y-6">
+        <div className="mb-6">
+          <h1 className="text-3xl font-bold tracking-tight">Settings Center</h1>
+          <p className="text-muted-foreground">
+            Configure your profile, preferences, and account settings
+          </p>
         </div>
 
         <Tabs defaultValue="profile" className="space-y-6">

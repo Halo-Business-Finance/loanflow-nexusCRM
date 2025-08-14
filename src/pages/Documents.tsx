@@ -104,11 +104,15 @@ export default function Documents() {
       
       <div className="space-y-6">
         {/* Header */}
+        <div className="mb-6">
+          <h1 className="text-3xl font-bold tracking-tight">Document Management Center</h1>
+          <p className="text-muted-foreground">
+            Manage and track lead financial documents with secure upload and verification
+          </p>
+        </div>
+        
         <div className="flex justify-between items-center">
-          <div>
-            <h1 className="text-3xl font-bold text-foreground">Internal Document Portal</h1>
-            <p className="text-muted-foreground">Manage and track lead financial documents</p>
-          </div>
+          <div></div>
           <Button onClick={() => setShowUploadModal(true)} className="gap-2">
             <Upload className="h-4 w-4" />
             Upload Document

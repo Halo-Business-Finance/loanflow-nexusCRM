@@ -397,12 +397,15 @@ export default function Users() {
       <Layout>
         <div className="space-y-6">
           {/* Header */}
+          <div className="mb-6">
+            <h1 className="text-3xl font-bold tracking-tight">User Management Center</h1>
+            <p className="text-muted-foreground">
+              Manage team members, analyze user performance, and control access permissions
+            </p>
+          </div>
+          
           <div className="flex justify-between items-center">
-            <div>
-              <h1 className="text-3xl font-bold text-foreground">User Management</h1>
-              <p className="text-muted-foreground">Manage team members and analyze user performance</p>
-            </div>
-            
+            <div></div>
             <div className="flex gap-2">
               <Button 
                 variant="outline" 

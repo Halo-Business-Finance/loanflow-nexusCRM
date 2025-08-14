@@ -196,25 +196,29 @@ export default function Pipeline() {
   return (
     <Layout>
       <div className="space-y-6">
-      {/* Header */}
-      <div className="flex justify-between items-center">
-        <div>
-          <h1 className="text-3xl font-bold text-foreground dark:text-white">Sales Pipeline</h1>
-          <p className="text-foreground">Track deals through your sales process</p>
+        {/* Header */}
+        <div className="mb-6">
+          <h1 className="text-3xl font-bold tracking-tight">Sales Pipeline Center</h1>
+          <p className="text-muted-foreground">
+            Track deals through your sales process with interactive pipeline management and analytics
+          </p>
         </div>
-        <div className="flex gap-4">
-          <div className="text-center">
-            <div className="text-2xl font-bold text-foreground dark:text-white">{totalLeads}</div>
-            <div className="text-sm text-foreground">Total Leads</div>
-          </div>
-          <div className="text-center">
-            <div className="text-2xl font-bold text-foreground dark:text-white">
-              ${(totalValue / 1000000).toFixed(1)}M
+
+        {/* Pipeline Overview */}
+        <div className="flex justify-between items-center">
+          <div className="flex gap-4">
+            <div className="text-center">
+              <div className="text-2xl font-bold text-foreground dark:text-white">{totalLeads}</div>
+              <div className="text-sm text-foreground">Total Leads</div>
             </div>
-            <div className="text-sm text-foreground">Pipeline Value</div>
+            <div className="text-center">
+              <div className="text-2xl font-bold text-foreground dark:text-white">
+                ${(totalValue / 1000000).toFixed(1)}M
+              </div>
+              <div className="text-sm text-foreground">Pipeline Value</div>
+            </div>
           </div>
         </div>
-      </div>
 
       <Tabs defaultValue="interactive" className="w-full">
         <TabsList>

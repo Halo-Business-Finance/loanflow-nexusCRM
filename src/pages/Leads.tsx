@@ -388,13 +388,15 @@ export default function Leads() {
       <Layout>
         <div className="space-y-6">
           {/* Header */}
+          <div className="mb-6">
+            <h1 className="text-3xl font-bold tracking-tight">Lead Management Center</h1>
+            <p className="text-muted-foreground">
+              Manage and track your sales leads with advanced filtering and analytics
+            </p>
+          </div>
+
           <div className="flex items-center justify-between">
-            <div>
-              <h1 className="text-3xl font-bold tracking-tight">Leads</h1>
-              <p className="text-muted-foreground">
-                Manage and track your sales leads
-              </p>
-            </div>
+            <div></div>
             <Dialog open={showAddDialog} onOpenChange={setShowAddDialog}>
               <DialogTrigger asChild>
                 <Button>

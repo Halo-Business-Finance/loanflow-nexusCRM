@@ -99,11 +99,15 @@ export default function Reports() {
     <Layout>
       <div className="space-y-6">
         {/* Header */}
+        <div className="mb-6">
+          <h1 className="text-3xl font-bold tracking-tight">Analytics & Reports Center</h1>
+          <p className="text-muted-foreground">
+            Performance insights, business metrics, and data-driven analytics
+          </p>
+        </div>
+        
         <div className="flex justify-between items-center">
-          <div>
-            <h1 className="text-3xl font-bold text-foreground">Reports & Analytics</h1>
-            <p className="text-foreground">Performance insights and business metrics</p>
-          </div>
+          <div></div>
           <div className="flex gap-2">
             <Button variant="outline" className="gap-2" onClick={refetch}>
               <RefreshCw className="h-4 w-4 text-white" />
