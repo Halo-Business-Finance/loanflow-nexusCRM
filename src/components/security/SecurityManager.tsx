@@ -515,9 +515,6 @@ export function SecurityManager() {
                       HIGH ALERT MODE
                     </Badge>
                   </div>
-                  <Button size="sm" variant="outline" className="w-full text-xs">
-                    View Details
-                  </Button>
                 </CardContent>
               </Card>
 
@@ -547,9 +544,6 @@ export function SecurityManager() {
                       MONITORING DARK WEB
                     </Badge>
                   </div>
-                  <Button size="sm" variant="outline" className="w-full text-xs">
-                    View Details
-                  </Button>
                 </CardContent>
               </Card>
 
@@ -579,11 +573,26 @@ export function SecurityManager() {
                       SCANNING FOR ATTACKS
                     </Badge>
                   </div>
-                  <Button size="sm" variant="outline" className="w-full text-xs">
-                    View Details
-                  </Button>
                 </CardContent>
               </Card>
+            </div>
+
+            {/* Detailed Views */}
+            <div className="space-y-6 max-w-6xl">
+              <div className="border-t pt-6">
+                <h3 className="text-lg font-semibold mb-4">AI Protection Bot - Detailed View</h3>
+                <AdvancedThreatDetection />
+              </div>
+              
+              <div className="border-t pt-6">
+                <h3 className="text-lg font-semibold mb-4">Dark Web Security Bot - Detailed View</h3>
+                <DarkWebSecurityBot />
+              </div>
+              
+              <div className="border-t pt-6">
+                <h3 className="text-lg font-semibold mb-4">Hacker Detection Bot - Detailed View</h3>
+                <HackerDetectionBot />
+              </div>
             </div>
           </TabsContent>
         )}
