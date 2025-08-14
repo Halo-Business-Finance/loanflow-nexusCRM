@@ -598,8 +598,8 @@ export default function Dashboard() {
                         className="h-2 rounded-full bg-background/50" 
                       />
                       <div className="flex justify-between text-xs">
-                        <span className="text-muted-foreground">Progress</span>
-                        <span className="font-medium text-primary">{stage.percentage}%</span>
+                        <span className="text-muted-foreground dark:text-white/70">Progress</span>
+                        <span className="font-medium text-primary dark:text-white">{stage.percentage}%</span>
                       </div>
                     </div>
                   </div>
