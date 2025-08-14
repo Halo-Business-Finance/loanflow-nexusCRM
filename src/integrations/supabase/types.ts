@@ -89,6 +89,151 @@ export type Database = {
         }
         Relationships: []
       }
+      ai_bot_activity: {
+        Row: {
+          activity_type: string
+          bot_id: string | null
+          created_at: string | null
+          details: Json
+          execution_time_ms: number | null
+          id: string
+          status: string
+        }
+        Insert: {
+          activity_type: string
+          bot_id?: string | null
+          created_at?: string | null
+          details?: Json
+          execution_time_ms?: number | null
+          id?: string
+          status?: string
+        }
+        Update: {
+          activity_type?: string
+          bot_id?: string | null
+          created_at?: string | null
+          details?: Json
+          execution_time_ms?: number | null
+          id?: string
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ai_bot_activity_bot_id_fkey"
+            columns: ["bot_id"]
+            isOneToOne: false
+            referencedRelation: "ai_security_bots"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      ai_bot_alerts: {
+        Row: {
+          acknowledged: boolean | null
+          acknowledged_at: string | null
+          acknowledged_by: string | null
+          alert_type: string
+          auto_response_taken: boolean | null
+          bot_id: string | null
+          confidence_score: number
+          created_at: string | null
+          description: string
+          id: string
+          metadata: Json | null
+          requires_human_review: boolean | null
+          resolved: boolean | null
+          resolved_at: string | null
+          severity: string
+          threat_indicators: Json | null
+          title: string
+        }
+        Insert: {
+          acknowledged?: boolean | null
+          acknowledged_at?: string | null
+          acknowledged_by?: string | null
+          alert_type: string
+          auto_response_taken?: boolean | null
+          bot_id?: string | null
+          confidence_score?: number
+          created_at?: string | null
+          description: string
+          id?: string
+          metadata?: Json | null
+          requires_human_review?: boolean | null
+          resolved?: boolean | null
+          resolved_at?: string | null
+          severity: string
+          threat_indicators?: Json | null
+          title: string
+        }
+        Update: {
+          acknowledged?: boolean | null
+          acknowledged_at?: string | null
+          acknowledged_by?: string | null
+          alert_type?: string
+          auto_response_taken?: boolean | null
+          bot_id?: string | null
+          confidence_score?: number
+          created_at?: string | null
+          description?: string
+          id?: string
+          metadata?: Json | null
+          requires_human_review?: boolean | null
+          resolved?: boolean | null
+          resolved_at?: string | null
+          severity?: string
+          threat_indicators?: Json | null
+          title?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ai_bot_alerts_bot_id_fkey"
+            columns: ["bot_id"]
+            isOneToOne: false
+            referencedRelation: "ai_security_bots"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      ai_security_bots: {
+        Row: {
+          bot_name: string
+          bot_type: string
+          configuration: Json
+          created_at: string | null
+          id: string
+          last_activity: string | null
+          performance_metrics: Json | null
+          sensitivity_level: string
+          status: string
+          updated_at: string | null
+        }
+        Insert: {
+          bot_name: string
+          bot_type: string
+          configuration?: Json
+          created_at?: string | null
+          id?: string
+          last_activity?: string | null
+          performance_metrics?: Json | null
+          sensitivity_level?: string
+          status?: string
+          updated_at?: string | null
+        }
+        Update: {
+          bot_name?: string
+          bot_type?: string
+          configuration?: Json
+          created_at?: string | null
+          id?: string
+          last_activity?: string | null
+          performance_metrics?: Json | null
+          sensitivity_level?: string
+          status?: string
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
       api_request_analytics: {
         Row: {
           ai_confidence_score: number | null
@@ -3629,6 +3774,10 @@ export type Database = {
       }
       detect_security_threats: {
         Args: Record<PropertyKey, never>
+        Returns: Json
+      }
+      emergency_shutdown_ai_bots: {
+        Args: { p_reason?: string }
         Returns: Json
       }
       encrypt_contact_field: {
