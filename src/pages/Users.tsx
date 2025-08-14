@@ -122,15 +122,23 @@ export default function Users() {
       if (hasRole('admin') || hasRole('super_admin')) {
         console.log('Using admin edge function to fetch users...')
         
+        // Get the current session token
+        const { data: session } = await supabase.auth.getSession()
+        if (!session?.session?.access_token) {
+          throw new Error('No access token available')
+        }
+
         const { data: edgeResponse, error: edgeError } = await supabase.functions.invoke('admin-get-users', {
           headers: {
-            'Authorization': `Bearer ${(await supabase.auth.getSession()).data.session?.access_token}`
+            'Authorization': `Bearer ${session.session.access_token}`
           }
         })
 
+        console.log('Edge function response:', edgeResponse, edgeError)
+
         if (edgeError) {
           console.error('Edge function error:', edgeError)
-          throw new Error('Failed to fetch users via admin function')
+          throw new Error(`Failed to fetch users via admin function: ${edgeError.message}`)
         }
 
         if (edgeResponse?.users) {

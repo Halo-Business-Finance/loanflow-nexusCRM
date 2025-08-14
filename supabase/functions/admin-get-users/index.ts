@@ -26,6 +26,8 @@ Deno.serve(async (req) => {
   try {
     // Get the authorization header
     const authHeader = req.headers.get('authorization')
+    console.log('Authorization header received:', authHeader ? 'Present' : 'Missing')
+    
     if (!authHeader) {
       console.error('No authorization header provided')
       return new Response(
@@ -43,24 +45,25 @@ Deno.serve(async (req) => {
       Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
     )
 
-    // Create client with user token to verify their permissions
+    // Create client with user token to verify their identity
     const supabaseUser = createClient(
       Deno.env.get('SUPABASE_URL') ?? '',
-      Deno.env.get('SUPABASE_ANON_KEY') ?? ''
+      Deno.env.get('SUPABASE_ANON_KEY') ?? '',
+      {
+        global: {
+          headers: {
+            Authorization: authHeader,
+          },
+        },
+      }
     )
 
-    // Set the authorization header for the user client
-    supabaseUser.auth.setSession({ 
-      access_token: authHeader.replace('Bearer ', ''), 
-      refresh_token: '' 
-    })
-
-    // Verify the user has admin privileges
-    const { data: { user }, error: userError } = await supabaseUser.auth.getUser()
+    // Verify the user exists and get their info
+    const { data: { user }, error: userError } = await supabaseUser.auth.getUser(authHeader.replace('Bearer ', ''))
     if (userError || !user) {
       console.error('Failed to get user:', userError)
       return new Response(
-        JSON.stringify({ error: 'Invalid token' }),
+        JSON.stringify({ error: 'Invalid token', details: userError?.message }),
         { 
           status: 401, 
           headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
@@ -70,18 +73,18 @@ Deno.serve(async (req) => {
 
     console.log('User authenticated:', user.id, user.email)
 
-    // Check user role using admin client
+    // Check user role using admin client (bypasses RLS)
     const { data: userRoles, error: roleError } = await supabaseAdmin
       .from('user_roles')
       .select('role')
       .eq('user_id', user.id)
       .eq('is_active', true)
 
-    console.log('User roles:', userRoles, roleError)
+    console.log('User roles query result:', userRoles, roleError)
 
     const hasAdminRole = userRoles?.some(r => r.role === 'admin' || r.role === 'super_admin')
     if (!hasAdminRole) {
-      console.error('User does not have admin role:', user.email)
+      console.error('User does not have admin role:', user.email, 'roles:', userRoles)
       return new Response(
         JSON.stringify({ error: 'Insufficient privileges' }),
         { 
