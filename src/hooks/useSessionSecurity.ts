@@ -125,12 +125,14 @@ export const useSessionSecurity = () => {
         return false;
       }
 
-      // Update last activity silently
+      // Update last activity with enhanced monitoring
       await supabase
         .from('active_sessions')
         .update({ 
           last_activity: new Date().toISOString(),
-          user_agent: navigator.userAgent
+          user_agent: navigator.userAgent,
+          page_url: window.location.pathname,
+          referrer: document.referrer || null
         })
         .eq('id', data.id);
 
@@ -147,18 +149,25 @@ export const useSessionSecurity = () => {
     setLastActivity(new Date());
   }, []);
 
-  // Set up activity tracking
+  // Enhanced activity tracking with throttling
   useEffect(() => {
-    const events = ['mousedown', 'mousemove', 'keypress', 'scroll', 'touchstart', 'click'];
+    const events = ['mousedown', 'mousemove', 'keypress', 'scroll', 'touchstart', 'click', 'focus', 'blur'];
+    let activityTimeout: NodeJS.Timeout;
+    
+    const throttledActivity = () => {
+      clearTimeout(activityTimeout);
+      activityTimeout = setTimeout(trackActivity, 1000); // Throttle to once per second
+    };
     
     events.forEach(event => {
-      document.addEventListener(event, trackActivity, true);
+      document.addEventListener(event, throttledActivity, true);
     });
 
     return () => {
       events.forEach(event => {
-        document.removeEventListener(event, trackActivity, true);
+        document.removeEventListener(event, throttledActivity, true);
       });
+      clearTimeout(activityTimeout);
     };
   }, [trackActivity]);
 

@@ -41,6 +41,11 @@ export const getEnhancedSecurityHeaders = (config: SecurityHeadersConfig = {}) =
       "base-uri 'self'",
       "form-action 'self'",
       "frame-ancestors 'none'",
+      "manifest-src 'self'",
+      "media-src 'self'",
+      "worker-src 'self'",
+      "child-src 'none'",
+      "report-uri /csp-violation-report-endpoint",
       "upgrade-insecure-requests"
     ].join('; ');
 
@@ -67,6 +72,10 @@ export const getEnhancedSecurityHeaders = (config: SecurityHeadersConfig = {}) =
   headers['X-XSS-Protection'] = '1; mode=block';
   headers['X-Permitted-Cross-Domain-Policies'] = 'none';
   headers['X-Download-Options'] = 'noopen';
+  headers['X-DNS-Prefetch-Control'] = 'off';
+  headers['Expect-CT'] = 'max-age=86400, enforce';
+  headers['Feature-Policy'] = "geolocation 'none'; microphone 'none'; camera 'none'";
+  headers['Permissions-Policy'] = 'geolocation=(), microphone=(), camera=(), payment=(), usb=()';
   headers['Cache-Control'] = 'no-store, no-cache, must-revalidate, private';
   headers['Pragma'] = 'no-cache';
   headers['Expires'] = '0';
@@ -90,7 +99,10 @@ export const applyClientSecurityHeaders = () => {
       "img-src 'self' data: https: blob:",
       "connect-src 'self' https://*.supabase.co wss://*.supabase.co",
       "frame-src 'none'",
-      "object-src 'none'"
+      "object-src 'none'",
+      "manifest-src 'self'",
+      "media-src 'self'",
+      "worker-src 'self'"
     ].join('; '));
     document.head.appendChild(csp);
   }

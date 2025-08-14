@@ -12,7 +12,7 @@ export const useEnhancedInputValidation = () => {
   const validateAndSanitize = useCallback(async (
     input: string,
     fieldType: 'email' | 'phone' | 'text' | 'financial' | 'url' = 'text',
-    maxLength = 255,
+    maxLength = 100, // Tighter default limit for better security
     allowHtml = false
   ): Promise<ValidationResult> => {
     try {
@@ -114,15 +114,18 @@ export const useEnhancedInputValidation = () => {
   }, [validateAndSanitize]);
 
   const validateEmail = useCallback(async (email: string): Promise<ValidationResult> => {
-    // Enhanced email validation with additional security checks
-    const result = await validateAndSanitize(email, 'email');
+    // Enhanced email validation with tighter length limit
+    const result = await validateAndSanitize(email, 'email', 254); // RFC 5321 limit
     
     // Additional client-side checks for suspicious patterns
     const suspiciousPatterns = [
       /temp.*mail/i,
       /throw.*away/i,
       /disposable/i,
-      /fake.*mail/i
+      /fake.*mail/i,
+      /mailinator/i,
+      /guerrillamail/i,
+      /10minutemail/i
     ];
 
     const securityFlags = [...(result.securityFlags || [])];
@@ -148,7 +151,7 @@ export const useEnhancedInputValidation = () => {
       };
     }
 
-    return await validateAndSanitize(phone, 'phone');
+    return await validateAndSanitize(phone, 'phone', 20); // Tighter limit for phone numbers
   }, [validateAndSanitize]);
 
   return {
