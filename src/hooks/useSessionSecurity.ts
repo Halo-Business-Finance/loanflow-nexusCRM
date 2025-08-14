@@ -103,27 +103,7 @@ export const useSessionSecurity = () => {
     if (!user || !sessionToken) return false;
 
     try {
-      // Try to get real IP address for security validation (optional)
-      let userIpAddress = null;
-      try {
-        const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), 2000);
-        
-        const response = await fetch('https://api.ipify.org?format=json', {
-          signal: controller.signal
-        });
-        clearTimeout(timeoutId);
-        
-        if (response.ok) {
-          const ipData = await response.json();
-          userIpAddress = ipData.ip;
-        }
-      } catch (ipError) {
-        // IP lookup failed - continue without it (security graceful degradation)
-        console.warn('IP address lookup failed, continuing with session validation:', ipError);
-      }
-      
-      // Use simplified validation approach
+      // Use simplified validation approach without external IP lookup
       const { data, error } = await supabase
         .from('active_sessions')
         .select('*')
@@ -131,51 +111,36 @@ export const useSessionSecurity = () => {
         .eq('session_token', sessionToken)
         .eq('is_active', true)
         .gt('expires_at', new Date().toISOString())
-        .single();
+        .maybeSingle();
 
       if (error) {
-        console.error('Session validation error:', error);
-        
-        // Show user-friendly message instead of cryptic error
-        toast.error('Session expired', {
-          description: 'Please refresh the page to continue.'
-        });
+        console.warn('Session validation error:', error);
+        // Don't show toast for validation errors during periodic checks
         return false;
       }
 
       if (!data) {
-        toast.error('Session not found', {
-          description: 'Please log in again.'
-        });
-        await secureSignOut();
+        // Session not found or expired - only show toast for user-initiated actions
+        console.warn('Session not found or expired');
         return false;
       }
 
-      // Update last activity
+      // Update last activity silently
       await supabase
         .from('active_sessions')
         .update({ 
           last_activity: new Date().toISOString(),
-          ip_address: userIpAddress,
           user_agent: navigator.userAgent
         })
         .eq('id', data.id);
 
       return true;
     } catch (error) {
-      console.error('Session validation error:', error);
-      
-      // Only show toast for genuine errors, not network timeouts
-      const isNetworkError = error instanceof TypeError && error.message.includes('fetch');
-      if (!isNetworkError) {
-        toast.error('Session validation failed', {
-          description: 'Please try logging in again if this continues.'
-        });
-      }
-      
+      console.warn('Session validation error:', error);
+      // Don't show error toasts for periodic validation failures
       return false;
     }
-  }, [user, sessionToken, secureSignOut]);
+  }, [user, sessionToken]);
 
   // Track user activity
   const trackActivity = useCallback(() => {
