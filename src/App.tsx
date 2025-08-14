@@ -29,6 +29,7 @@ import Activities from "./pages/Activities";
 import Reports from "./pages/Reports";
 import Settings from "./pages/Settings";
 import Users from "./pages/Users";
+console.log('Users component imported:', Users);
 import UsersLeads from "./pages/UsersLeads";
 import Resources from "./pages/Resources";
 import Enterprise from "./pages/Enterprise";
@@ -94,6 +95,8 @@ function AuthenticatedApp() {
             <Route path="/reports" element={<Reports />} errorElement={<RouteErrorBoundary />} />
             <Route path="/settings" element={<Settings />} errorElement={<RouteErrorBoundary />} />
             <Route path="/users" element={<Users />} errorElement={<RouteErrorBoundary />} />
+            {/* Debug route */}
+            <Route path="/users-debug" element={<div>Users route test</div>} errorElement={<RouteErrorBoundary />} />
             <Route path="/security" element={<Layout><MasterSecurityDashboard /></Layout>} errorElement={<RouteErrorBoundary />} />
             <Route path="/security/military" element={<Layout><MilitaryGradeSecurityDashboard /></Layout>} errorElement={<RouteErrorBoundary />} />
             <Route path="/enterprise" element={<Enterprise />} errorElement={<RouteErrorBoundary />} />
