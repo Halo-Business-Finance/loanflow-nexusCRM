@@ -3487,6 +3487,26 @@ export type Database = {
         }
         Relationships: []
       }
+      verified_blockchain_records_secure: {
+        Row: {
+          action: string | null
+          audit_verified: boolean | null
+          block_number: number | null
+          blockchain_hash: string | null
+          created_at: string | null
+          data_hash: string | null
+          id: string | null
+          metadata: Json | null
+          record_id: string | null
+          record_type: string | null
+          transaction_hash: string | null
+          updated_at: string | null
+          user_id: string | null
+          verification_status: string | null
+          verified_at: string | null
+        }
+        Relationships: []
+      }
     }
     Functions: {
       archive_user: {
@@ -3703,6 +3723,26 @@ export type Database = {
         Args:
           | Record<PropertyKey, never>
           | { p_record_type?: string; p_record_id?: string }
+        Returns: {
+          id: string
+          record_type: string
+          record_id: string
+          data_hash: string
+          blockchain_hash: string
+          block_number: number
+          transaction_hash: string
+          verified_at: string
+          verification_status: string
+          created_at: string
+          updated_at: string
+          metadata: Json
+          user_id: string
+          action: string
+          audit_verified: boolean
+        }[]
+      }
+      get_verified_blockchain_records_secure_view: {
+        Args: { p_record_type?: string; p_record_id?: string }
         Returns: {
           id: string
           record_type: string
