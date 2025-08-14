@@ -34,6 +34,7 @@ import { useAuth } from "@/components/auth/AuthProvider"
 import { useToast } from "@/hooks/use-toast"
 import { formatCurrency } from "@/lib/utils"
 import { Lead } from "@/types/lead"
+import { UserRole } from "@/hooks/useRoleBasedAccess"
 
 interface UserWithLeads {
   id: string
@@ -53,7 +54,7 @@ interface UserProfile {
   last_name: string | null
   email: string
   phone: string | null
-  role: string
+  role: UserRole
   is_active: boolean
   archived_at: string | null
   archive_reason: string | null
@@ -71,7 +72,7 @@ export default function Users() {
     lastName: '',
     email: '',
     phone: '',
-    role: 'agent' as const,
+    role: 'agent' as UserRole,
     password: ''
   })
 
@@ -311,6 +312,47 @@ export default function Users() {
     }
   }
 
+  const updateUser = async () => {
+    if (!editingUser) return
+    
+    try {
+      // Update profile information
+      const { error: profileError } = await supabase
+        .from('profiles')
+        .update({
+          first_name: editingUser.first_name,
+          last_name: editingUser.last_name,
+          phone_number: editingUser.phone
+        })
+        .eq('id', editingUser.user_id)
+
+      if (profileError) throw profileError
+
+      // Update user role
+      const { error: roleError } = await supabase
+        .from('user_roles')
+        .update({ role: editingUser.role as UserRole })
+        .eq('user_id', editingUser.user_id)
+
+      if (roleError) throw roleError
+
+      toast({
+        title: "Success",
+        description: "User updated successfully",
+      })
+
+      setEditingUser(null)
+      fetchUsers()
+      fetchUsersWithLeads()
+    } catch (error: any) {
+      toast({
+        title: "Error",
+        description: error.message || "Failed to update user",
+        variant: "destructive"
+      })
+    }
+  }
+
   const deleteUser = async (userId: string) => {
     try {
       const { error } = await supabase.auth.admin.deleteUser(userId)
@@ -441,7 +483,7 @@ export default function Users() {
                             </div>
                             <div className="space-y-2">
                               <Label htmlFor="role">Role</Label>
-                              <Select value={newUserData.role} onValueChange={(value: any) => setNewUserData(prev => ({ ...prev, role: value }))}>
+                              <Select value={newUserData.role} onValueChange={(value: UserRole) => setNewUserData(prev => ({ ...prev, role: value }))}>
                                 <SelectTrigger>
                                   <SelectValue />
                                 </SelectTrigger>
@@ -465,6 +507,84 @@ export default function Users() {
                           </div>
                           <DialogFooter>
                             <Button type="submit" onClick={createNewUser}>Create User</Button>
+                          </DialogFooter>
+                        </DialogContent>
+                      </Dialog>
+
+                      {/* Edit User Dialog */}
+                      <Dialog open={!!editingUser} onOpenChange={() => setEditingUser(null)}>
+                        <DialogContent className="sm:max-w-[425px]">
+                          <DialogHeader>
+                            <DialogTitle>Edit User</DialogTitle>
+                            <DialogDescription>
+                              Update user information and permissions.
+                            </DialogDescription>
+                          </DialogHeader>
+                          {editingUser && (
+                            <div className="grid gap-4 py-4">
+                              <div className="grid grid-cols-2 gap-4">
+                                <div className="space-y-2">
+                                  <Label htmlFor="editFirstName">First Name</Label>
+                                  <Input
+                                    id="editFirstName"
+                                    value={editingUser.first_name || ''}
+                                    onChange={(e) => setEditingUser(prev => prev ? ({ ...prev, first_name: e.target.value }) : null)}
+                                  />
+                                </div>
+                                <div className="space-y-2">
+                                  <Label htmlFor="editLastName">Last Name</Label>
+                                  <Input
+                                    id="editLastName"
+                                    value={editingUser.last_name || ''}
+                                    onChange={(e) => setEditingUser(prev => prev ? ({ ...prev, last_name: e.target.value }) : null)}
+                                  />
+                                </div>
+                              </div>
+                              <div className="space-y-2">
+                                <Label htmlFor="editEmail">Email</Label>
+                                <Input
+                                  id="editEmail"
+                                  type="email"
+                                  value={editingUser.email}
+                                  disabled
+                                  className="bg-muted"
+                                />
+                                <p className="text-xs text-muted-foreground">Email cannot be changed</p>
+                              </div>
+                              <div className="space-y-2">
+                                <Label htmlFor="editPhone">Phone</Label>
+                                <Input
+                                  id="editPhone"
+                                  value={editingUser.phone || ''}
+                                  onChange={(e) => setEditingUser(prev => prev ? ({ ...prev, phone: e.target.value }) : null)}
+                                />
+                              </div>
+                              <div className="space-y-2">
+                                <Label htmlFor="editRole">Role</Label>
+                                <Select 
+                                  value={editingUser.role} 
+                                  onValueChange={(value: UserRole) => setEditingUser(prev => prev ? ({ ...prev, role: value }) : null)}
+                                >
+                                  <SelectTrigger>
+                                    <SelectValue />
+                                  </SelectTrigger>
+                                  <SelectContent>
+                                    <SelectItem value="agent">Agent</SelectItem>
+                                    <SelectItem value="manager">Manager</SelectItem>
+                                    <SelectItem value="admin">Admin</SelectItem>
+                                    {hasRole('super_admin') && <SelectItem value="super_admin">Super Admin</SelectItem>}
+                                  </SelectContent>
+                                </Select>
+                              </div>
+                            </div>
+                          )}
+                          <DialogFooter>
+                            <Button variant="outline" onClick={() => setEditingUser(null)}>
+                              Cancel
+                            </Button>
+                            <Button onClick={updateUser}>
+                              Save Changes
+                            </Button>
                           </DialogFooter>
                         </DialogContent>
                       </Dialog>
