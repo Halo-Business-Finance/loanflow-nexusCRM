@@ -301,7 +301,13 @@ export class DataIntegrityFixer {
       console.log(`🎉 Auto-fix completed: ${result.fixed} fixes, ${result.errors.length} errors`)
       
       if (result.fixed === 0 && result.errors.length === 0) {
-        result.errors.push('No data integrity issues found for your records.')
+        // Check if there are actually any issues to fix by doing a quick validation
+        const issueCheck = await this.checkForRemainingIssues()
+        if (issueCheck.hasIssues) {
+          result.errors.push('Some data integrity issues were detected but could not be automatically fixed. Please check the audit results for details.')
+        } else {
+          result.errors.push('✅ All data integrity issues have been resolved! Your data is now consistent.')
+        }
       }
       
       return result
@@ -309,6 +315,53 @@ export class DataIntegrityFixer {
       console.error('❌ Auto-fix failed:', error)
       result.errors.push(`Auto-fix failed: ${error}`)
       return result
+    }
+  }
+
+  private async checkForRemainingIssues(): Promise<{ hasIssues: boolean; issueCount: number }> {
+    try {
+      let issueCount = 0
+
+      // Check for contacts without proper priority
+      const { data: priorityIssues } = await supabase
+        .from('contact_entities')
+        .select('id')
+        .or('priority.is.null,priority.eq.""')
+      issueCount += priorityIssues?.length || 0
+
+      // Check for contacts without proper stage
+      const { data: stageIssues } = await supabase
+        .from('contact_entities')
+        .select('id')
+        .or('stage.is.null,stage.eq.""')
+      issueCount += stageIssues?.length || 0
+
+      // Check for null loan amounts
+      const { data: loanIssues } = await supabase
+        .from('contact_entities')
+        .select('id')
+        .is('loan_amount', null)
+      issueCount += loanIssues?.length || 0
+
+      // Check for large loans without business names
+      const { data: businessIssues } = await supabase
+        .from('contact_entities')
+        .select('id')
+        .gt('loan_amount', 100000)
+        .or('business_name.is.null,business_name.eq.""')
+      issueCount += businessIssues?.length || 0
+
+      // Check for pipeline entries without amounts
+      const { data: pipelineIssues } = await supabase
+        .from('pipeline_entries')
+        .select('id')
+        .or('amount.is.null,amount.eq.0')
+      issueCount += pipelineIssues?.length || 0
+
+      return { hasIssues: issueCount > 0, issueCount }
+    } catch (error) {
+      console.error('Error checking for remaining issues:', error)
+      return { hasIssues: true, issueCount: 0 }
     }
   }
 }
