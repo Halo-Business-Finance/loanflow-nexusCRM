@@ -3595,6 +3595,26 @@ export type Database = {
         Args: { p_user_id?: string }
         Returns: Database["public"]["Enums"]["user_role"]
       }
+      get_verified_blockchain_records_secure: {
+        Args: Record<PropertyKey, never>
+        Returns: {
+          id: string
+          record_type: string
+          record_id: string
+          data_hash: string
+          blockchain_hash: string
+          block_number: number
+          transaction_hash: string
+          verified_at: string
+          verification_status: string
+          created_at: string
+          updated_at: string
+          metadata: Json
+          user_id: string
+          action: string
+          audit_verified: boolean
+        }[]
+      }
       has_role: {
         Args:
           | {
@@ -3721,6 +3741,14 @@ export type Database = {
       }
       validate_secure_session_token: {
         Args: { p_user_id: string; p_session_token: string }
+        Returns: boolean
+      }
+      validate_sensitive_table_access: {
+        Args: {
+          p_table_name: string
+          p_operation: string
+          p_record_id?: string
+        }
         Returns: boolean
       }
       validate_session_security: {
