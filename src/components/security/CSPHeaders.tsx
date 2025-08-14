@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
-import { applyClientSecurityHeaders } from '@/lib/security-headers';
+import { applyClientSecurityHeaders, getEnhancedSecurityHeaders } from '@/lib/security-headers';
 
 interface SecurityHeader {
   header_name: string;
