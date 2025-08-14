@@ -135,17 +135,21 @@ export function DataIntegrityDashboard() {
   };
 
   const runAutoFix = async () => {
-    console.log('🔧 Auto-fix button clicked, starting process...');
+    console.log('🔧 AUTO-FIX BUTTON CLICKED - STARTING PROCESS');
+    alert('Auto-fix button clicked! Check console for logs.');
     setLoading(true);
     try {
-      // Use the new DataIntegrityFixer that respects RLS
+      console.log('🔧 Creating DataIntegrityFixer...');
       const fixer = new DataIntegrityFixer();
       
-      // First check authentication
+      console.log('🔧 Checking authentication...');
       const authCheck = await fixer.checkAuthAndPermissions();
-      console.log('🔐 Authentication status:', authCheck);
+      console.log('🔐 AUTHENTICATION STATUS:', authCheck);
+      alert(`Auth check result: ${JSON.stringify(authCheck)}`);
       
       if (!authCheck.authenticated) {
+        console.log('❌ USER NOT AUTHENTICATED');
+        alert('User not authenticated!');
         toast({
           title: "Authentication Required",
           description: "Please log in to use the auto-fix feature.",
@@ -155,9 +159,11 @@ export function DataIntegrityDashboard() {
         return;
       }
       
-      console.log('✅ User authenticated, proceeding with auto-fix...');
+      console.log('✅ USER AUTHENTICATED, PROCEEDING WITH AUTO-FIX...');
+      alert('User authenticated, starting fix...');
       const results = await fixer.fixCurrentUserContactIssues();
-      console.log('✅ Auto-fix results:', results);
+      console.log('✅ AUTO-FIX RESULTS:', results);
+      alert(`Fix results: ${JSON.stringify(results)}`);
       setAutoFixResults(results);
       
       toast({
