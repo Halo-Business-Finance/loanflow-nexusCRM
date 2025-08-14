@@ -18,7 +18,7 @@ interface LeadFormProps {
 }
 
 export function LeadForm({ lead, onSubmit, onCancel, isSubmitting = false }: LeadFormProps) {
-  const { isValidating, validateAndSanitize } = useSecureForm()
+  const { validateFormData } = useSecureForm()
   
   const [formData, setFormData] = useState<ContactEntity>({
     name: lead?.name || "",
@@ -41,32 +41,22 @@ export function LeadForm({ lead, onSubmit, onCancel, isSubmitting = false }: Lea
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    await onSubmit(formData)
+    
+    // Validate form data before submission
+    const { isValid, sanitizedData, errors } = await validateFormData(formData)
+    
+    if (!isValid) {
+      console.warn('Form validation failed:', errors)
+      // You could show specific field errors here if needed
+      return
+    }
+    
+    await onSubmit(sanitizedData as ContactEntity)
   }
 
-  const handleInputChange = async (field: keyof ContactEntity, value: any) => {
-    // Implement proper input validation and sanitization
-    if (typeof value === 'string' && value.trim()) {
-      try {
-        const fieldType = field === 'email' ? 'email' : field === 'phone' ? 'phone' : 'text'
-        const validation = await validateAndSanitize(value, fieldType)
-        
-        if (validation.valid) {
-          setFormData(prev => ({ ...prev, [field]: validation.sanitized }))
-        } else {
-          console.warn('Validation failed:', validation.errors)
-          // Still update to allow user to see their input, but mark as invalid
-          setFormData(prev => ({ ...prev, [field]: value }))
-        }
-      } catch (error) {
-        console.error('Validation error:', error)
-        // Fallback to basic validation on error
-        setFormData(prev => ({ ...prev, [field]: value }))
-      }
-    } else {
-      // Allow empty values or non-string values (numbers, etc.)
-      setFormData(prev => ({ ...prev, [field]: value }))
-    }
+  const handleInputChange = (field: keyof ContactEntity, value: any) => {
+    // Update form data immediately for responsive UI
+    setFormData(prev => ({ ...prev, [field]: value }))
   }
 
   return (
@@ -233,7 +223,7 @@ export function LeadForm({ lead, onSubmit, onCancel, isSubmitting = false }: Lea
         <Button type="button" variant="outline" onClick={onCancel}>
           Cancel
         </Button>
-        <Button type="submit" disabled={isSubmitting || isValidating}>
+        <Button type="submit" disabled={isSubmitting}>
           {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
           {lead ? "Update Lead" : "Create Lead"}
         </Button>
