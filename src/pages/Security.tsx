@@ -3,7 +3,7 @@ import { EnhancedSecurityDashboard } from '@/components/security/EnhancedSecurit
 import { PersistentAISecurityMonitor } from '@/components/security/PersistentAISecurityMonitor';
 import { DarkWebSecurityBot } from '@/components/security/DarkWebSecurityBot';
 import { AdvancedThreatDetection } from '@/components/security/AdvancedThreatDetection';
-import { HackerDetectionBot } from '@/components/security/HackerDetectionBot';
+import { ThreatDetectionMonitor } from '@/components/security/ThreatDetectionMonitor';
 import { MicrosoftAuthenticatorSetup } from '@/components/auth/MicrosoftAuthenticatorSetup';
 import { SecurityWrapper } from '@/components/SecurityWrapper';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -86,7 +86,7 @@ const SecurityPage: React.FC = () => {
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <HackerDetectionBot />
+                  <ThreatDetectionMonitor />
                 </CardContent>
               </Card>
             </div>

@@ -10,7 +10,7 @@ import { useAuth } from "@/components/auth/AuthProvider";
 import { useToast } from "@/hooks/use-toast";
 import { secureStorage } from "@/lib/secure-storage";
 
-interface HackerAttempt {
+interface SecurityThreatAttempt {
   id: string;
   type: string;
   severity: "low" | "medium" | "high" | "critical";
@@ -22,18 +22,18 @@ interface HackerAttempt {
   metadata: Record<string, any>;
 }
 
-interface HackerMetrics {
-  attacks_blocked: number;
+interface SecurityMetrics {
+  threats_blocked: number;
   sql_injections: number;
   brute_force_attempts: number;
   vulnerability_scans: number;
   threat_level: "low" | "medium" | "high" | "critical";
 }
 
-export function HackerDetectionBot() {
-  const [attempts, setAttempts] = useState<HackerAttempt[]>([]);
-  const [metrics, setMetrics] = useState<HackerMetrics>({
-    attacks_blocked: 0,
+export function ThreatDetectionMonitor() {
+  const [attempts, setAttempts] = useState<SecurityThreatAttempt[]>([]);
+  const [metrics, setMetrics] = useState<SecurityMetrics>({
+    threats_blocked: 0,
     sql_injections: 0,
     brute_force_attempts: 0,
     vulnerability_scans: 0,
@@ -83,7 +83,7 @@ export function HackerDetectionBot() {
       "network_scan"
     ];
 
-    const mockAttempt: HackerAttempt = {
+    const mockAttempt: SecurityThreatAttempt = {
       id: crypto.randomUUID(),
       type: attackTypes[Math.floor(Math.random() * attackTypes.length)],
       severity: Math.random() > 0.8 ? "critical" : Math.random() > 0.6 ? "high" : Math.random() > 0.3 ? "medium" : "low",
@@ -171,7 +171,7 @@ export function HackerDetectionBot() {
         .limit(10);
 
       if (incidents) {
-        const formattedAttempts: HackerAttempt[] = incidents.map(incident => {
+        const formattedAttempts: SecurityThreatAttempt[] = incidents.map(incident => {
           const data = incident.incident_data as any;
           return {
             id: incident.id,
@@ -194,7 +194,7 @@ export function HackerDetectionBot() {
       const scanCount = incidents?.filter(i => i.incident_type.includes('scan')).length || 0;
 
       setMetrics({
-        attacks_blocked: incidents?.length || 0,
+        threats_blocked: incidents?.length || 0,
         sql_injections: sqlCount,
         brute_force_attempts: bruteCount,
         vulnerability_scans: scanCount,
@@ -217,10 +217,10 @@ export function HackerDetectionBot() {
       const newAttempt = await detectHackerActivity();
       setAttempts(prev => [newAttempt, ...prev.slice(0, 9)]);
       setMetrics(prev => {
-        const newCount = prev.attacks_blocked + 1;
+        const newCount = prev.threats_blocked + 1;
         return {
           ...prev,
-          attacks_blocked: newCount,
+          threats_blocked: newCount,
           sql_injections: newAttempt.type.includes('SQL') ? prev.sql_injections + 1 : prev.sql_injections,
           brute_force_attempts: newAttempt.type.includes('Brute') ? prev.brute_force_attempts + 1 : prev.brute_force_attempts,
           vulnerability_scans: newAttempt.type.includes('Scan') ? prev.vulnerability_scans + 1 : prev.vulnerability_scans,
@@ -349,8 +349,8 @@ export function HackerDetectionBot() {
                     <div className="flex items-center space-x-2">
                       <Shield className="h-4 w-4 text-green-600" />
                       <div>
-                        <p className="text-sm font-medium">Attacks Blocked</p>
-                        <p className="text-2xl font-bold">{metrics.attacks_blocked}</p>
+                        <p className="text-sm font-medium">Threats Blocked</p>
+                        <p className="text-2xl font-bold">{metrics.threats_blocked}</p>
                       </div>
                     </div>
                   </CardContent>

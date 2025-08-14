@@ -14,7 +14,7 @@ import { useAuth } from "@/components/auth/AuthProvider";
 import { AdvancedThreatDetection } from "./AdvancedThreatDetection";
 import { SecurityMonitor } from "./SecurityMonitor";
 import { DarkWebSecurityBot } from "./DarkWebSecurityBot";
-import { HackerDetectionBot } from "./HackerDetectionBot";
+import { ThreatDetectionMonitor } from "./ThreatDetectionMonitor";
 import { DataIntegrityDashboard } from "@/components/DataIntegrityDashboard";
 import { EnhancedSecurityMonitor } from "./EnhancedSecurityMonitor";
 import Layout from "@/components/Layout";
@@ -592,7 +592,7 @@ export function SecurityManager() {
               
               <div className="border-t pt-6">
                 <h3 className="text-lg font-semibold mb-4">Hacker Detection Bot - Detailed View</h3>
-                <HackerDetectionBot />
+                <ThreatDetectionMonitor />
               </div>
             </div>
           </TabsContent>
