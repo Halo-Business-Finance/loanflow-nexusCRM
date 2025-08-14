@@ -258,6 +258,21 @@ async function migrateExistingData(requestingUserId: string) {
 
     console.log(`Data migration completed: ${migratedCount} profiles migrated`)
 
+    // Log the migration completion event
+    try {
+      await supabase.from('security_events').insert({
+        user_id: requestingUserId,
+        event_type: 'profile_data_migration_completed',
+        severity: 'low',
+        details: {
+          migrated_profiles: migratedCount,
+          timestamp: new Date().toISOString()
+        }
+      });
+    } catch (logError) {
+      console.warn('Failed to log migration completion:', logError);
+    }
+
     return new Response(
       JSON.stringify({ 
         success: true, 

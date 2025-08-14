@@ -4,35 +4,80 @@ import { Button } from "@/components/ui/button";
 import { Shield, Lock, AlertTriangle, CheckCircle } from "lucide-react";
 import { useSecureProfiles } from "@/hooks/useSecureProfiles";
 import { useAuth } from "@/components/auth/AuthProvider";
+import { supabase } from "@/integrations/supabase/client";
 
 export const ProfileSecurityAlert: React.FC = () => {
   const { migrateExistingData } = useSecureProfiles();
   const { userRole } = useAuth();
   const [migrationStatus, setMigrationStatus] = React.useState<'pending' | 'completed' | 'error'>('pending');
+  const [isCheckingStatus, setIsCheckingStatus] = React.useState(true);
+
+  // Check if migration has already been completed
+  React.useEffect(() => {
+    const checkMigrationStatus = async () => {
+      try {
+        // Check localStorage first for quick response
+        const storedStatus = localStorage.getItem('profile_migration_status');
+        if (storedStatus === 'completed') {
+          setMigrationStatus('completed');
+          setIsCheckingStatus(false);
+          return;
+        }
+
+        // Check if there are any security events indicating migration completion
+        const { data, error } = await supabase
+          .from('security_events')
+          .select('id')
+          .eq('event_type', 'profile_data_migration_completed')
+          .limit(1);
+        
+        if (!error && data && data.length > 0) {
+          setMigrationStatus('completed');
+          localStorage.setItem('profile_migration_status', 'completed');
+        }
+      } catch (error) {
+        console.warn('Could not check migration status:', error);
+      } finally {
+        setIsCheckingStatus(false);
+      }
+    };
+
+    if (userRole && ['admin', 'super_admin'].includes(userRole)) {
+      checkMigrationStatus();
+    } else {
+      setIsCheckingStatus(false);
+    }
+  }, [userRole]);
 
   const handleMigration = async () => {
     try {
       const success = await migrateExistingData();
-      setMigrationStatus(success ? 'completed' : 'error');
+      if (success) {
+        setMigrationStatus('completed');
+        localStorage.setItem('profile_migration_status', 'completed');
+      } else {
+        setMigrationStatus('error');
+      }
     } catch (error) {
       setMigrationStatus('error');
     }
   };
 
+  // Don't show for non-admin users
   if (!['admin', 'super_admin'].includes(userRole || '')) {
     return null;
   }
 
-  if (migrationStatus === 'completed') {
-    return (
-      <Alert className="border-green-200 bg-green-50">
-        <CheckCircle className="h-4 w-4 text-green-600" />
-        <AlertDescription className="text-green-800">
-          <strong>Security Enhancement Complete:</strong> All customer personal information has been encrypted and secured with field-level protection. Access is now role-based with data masking.
-        </AlertDescription>
-      </Alert>
-    );
+  // Don't show if still checking status
+  if (isCheckingStatus) {
+    return null;
   }
+
+  // Don't show if migration is already completed
+  if (migrationStatus === 'completed') {
+    return null;
+  }
+
 
   return (
     <Alert className="border-amber-200 bg-amber-50">
