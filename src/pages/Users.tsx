@@ -125,8 +125,12 @@ export default function Users() {
         ...profile,
         user_id: profile.id,
         phone: profile.phone || '',
-        role: Array.isArray(profile.user_roles) ? profile.user_roles[0]?.role || 'agent' : 'agent'
+        role: profile.user_roles && profile.user_roles.length > 0 
+          ? profile.user_roles.find((ur: any) => ur.is_active)?.role || profile.user_roles[0]?.role || 'agent' 
+          : 'agent'
       })) || []
+
+      console.log('Fetched users:', transformedUsers.length, transformedUsers)
 
       setUsers(transformedUsers)
     } catch (error) {

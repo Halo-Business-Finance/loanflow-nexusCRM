@@ -131,15 +131,16 @@ const App = () => {
           <CSPHeaders />
           {/* ProductionSecurityHeaders now included in MasterSecurityDashboard */}
           <AuthProvider>
-            <SecurityEnhancementProvider>
-              <EnhancedSecurityProvider>
+            {/* Temporarily disabled security enhancement providers to prevent auto-refresh */}
+            {/* <SecurityEnhancementProvider>
+              <EnhancedSecurityProvider> */}
                 <TooltipProvider>
                   <Toaster />
                   <Sonner />
                   <AuthenticatedApp />
                 </TooltipProvider>
-              </EnhancedSecurityProvider>
-            </SecurityEnhancementProvider>
+            {/* </EnhancedSecurityProvider>
+            </SecurityEnhancementProvider> */}
           </AuthProvider>
         </ThemeProvider>
       </QueryClientProvider>
