@@ -115,7 +115,7 @@ export const RealTimeSecurityMonitor: React.FC = () => {
         setThreatAlerts(threats.map(t => ({
           id: t.id,
           type: t.notification_type,
-          severity: t.severity,
+          severity: (t.severity as 'low' | 'medium' | 'high' | 'critical'),
           message: t.message,
           timestamp: t.created_at
         })));
@@ -170,7 +170,7 @@ export const RealTimeSecurityMonitor: React.FC = () => {
                 <div className="flex items-center gap-2">
                   {getSeverityIcon(event.severity)}
                   <span className="text-sm font-medium">{event.event_type}</span>
-                  <Badge variant="outline" size="sm">{event.severity}</Badge>
+                  <Badge variant="outline">{event.severity}</Badge>
                 </div>
                 <span className="text-xs text-muted-foreground">
                   {new Date(event.created_at).toLocaleTimeString()}
