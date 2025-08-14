@@ -3986,6 +3986,14 @@ export type Database = {
         Args: { record_id_param?: string; operation_param?: string }
         Returns: boolean
       }
+      validate_contact_access_enhanced: {
+        Args: {
+          p_contact_id: string
+          p_operation?: string
+          p_requesting_user_id?: string
+        }
+        Returns: boolean
+      }
       validate_credential_access: {
         Args: {
           p_table_name: string
