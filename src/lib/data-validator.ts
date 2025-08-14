@@ -488,26 +488,36 @@ export class DataFieldValidator {
       // 5. Fix contact entities with null loan amounts (set reasonable defaults)
       const { data: nullLoanAmounts } = await supabase
         .from('contact_entities')
-        .select('id, loan_amount, business_name')
+        .select('id, loan_amount, business_name, user_id')
         .is('loan_amount', null)
         
       console.log('Found null loan amounts:', nullLoanAmounts?.length || 0)
+      console.log('Null loan amount records:', nullLoanAmounts)
 
       if (nullLoanAmounts && nullLoanAmounts.length > 0) {
         for (const contact of nullLoanAmounts) {
-          // Set default loan amount based on whether it's a business
-          const defaultLoanAmount = contact.business_name ? 100000 : 50000
-          
-          const { error } = await supabase
-            .from('contact_entities')
-            .update({ loan_amount: defaultLoanAmount })
-            .eq('id', contact.id)
-          
-          if (!error) {
-            result.fixed++
-            console.log(`Fixed contact ${contact.id} loan amount: ${defaultLoanAmount}`)
-          } else {
-            result.errors.push(`Failed to fix contact loan amount ${contact.id}: ${error.message}`)
+          try {
+            // Set default loan amount based on whether it's a business
+            const defaultLoanAmount = contact.business_name ? 100000 : 50000
+            
+            console.log(`Attempting to fix contact ${contact.id} with loan amount ${defaultLoanAmount}`)
+            
+            const { error, data } = await supabase
+              .from('contact_entities')
+              .update({ loan_amount: defaultLoanAmount })
+              .eq('id', contact.id)
+              .select()
+            
+            if (!error) {
+              result.fixed++
+              console.log(`✅ Fixed contact ${contact.id} loan amount: ${defaultLoanAmount}`)
+            } else {
+              console.error(`❌ Failed to fix contact ${contact.id}:`, error)
+              result.errors.push(`Failed to fix contact loan amount ${contact.id}: ${error.message}`)
+            }
+          } catch (contactError) {
+            console.error(`❌ Exception fixing contact ${contact.id}:`, contactError)
+            result.errors.push(`Exception fixing contact ${contact.id}: ${contactError}`)
           }
         }
       }
