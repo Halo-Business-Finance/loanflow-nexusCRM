@@ -131,10 +131,10 @@ export const MicrosoftAuthenticatorSetup: React.FC = () => {
   const generateQRCodeSVG = (data: string) => {
     // Simple QR code placeholder - in production, use a QR code library
     return (
-      <div className="w-48 h-48 bg-background border-2 border-muted rounded-lg flex items-center justify-center">
+      <div className="w-48 h-48 bg-card border-2 border-border rounded-lg flex items-center justify-center">
         <div className="text-center">
-          <QrCode className="w-16 h-16 mx-auto mb-2 text-muted-foreground" />
-          <p className="text-sm text-muted-foreground">QR Code</p>
+          <QrCode className="w-16 h-16 mx-auto mb-2 text-foreground" />
+          <p className="text-sm text-foreground">QR Code</p>
           <p className="text-xs text-muted-foreground mt-2 font-mono break-all px-2">
             {data.substring(0, 40)}...
           </p>
@@ -167,7 +167,7 @@ export const MicrosoftAuthenticatorSetup: React.FC = () => {
                       ? 'bg-primary text-primary-foreground' 
                       : currentStep === step.id 
                         ? 'bg-primary/20 text-primary border-2 border-primary' 
-                        : 'bg-muted text-muted-foreground'
+                        : 'bg-muted text-muted-foreground border border-border'
                     }
                   `}>
                     {step.completed ? <CheckCircle className="w-4 h-4" /> : step.id}
@@ -175,14 +175,14 @@ export const MicrosoftAuthenticatorSetup: React.FC = () => {
                   {index < steps.length - 1 && (
                     <div className={`
                       flex-1 h-0.5 mx-2
-                      ${step.completed ? 'bg-primary' : 'bg-muted'}
+                      ${step.completed ? 'bg-primary' : 'bg-border'}
                     `} />
                   )}
                 </div>
               ))}
             </div>
             <div className="text-center">
-              <h3 className="font-medium">{steps[currentStep - 1]?.title}</h3>
+              <h3 className="font-medium text-foreground">{steps[currentStep - 1]?.title}</h3>
               <p className="text-sm text-muted-foreground">{steps[currentStep - 1]?.description}</p>
             </div>
           </div>
@@ -211,7 +211,7 @@ export const MicrosoftAuthenticatorSetup: React.FC = () => {
           {currentStep === 2 && qrCodeData && (
             <div className="space-y-6">
               <div className="text-center">
-                <h3 className="text-lg font-medium mb-4">Scan QR Code with Microsoft Authenticator</h3>
+                <h3 className="text-lg font-medium mb-4 text-foreground">Scan QR Code with Microsoft Authenticator</h3>
                 <div className="flex justify-center mb-4">
                   {generateQRCodeSVG(qrCodeData)}
                 </div>
@@ -219,8 +219,8 @@ export const MicrosoftAuthenticatorSetup: React.FC = () => {
                   <p className="text-sm text-muted-foreground">
                     Or enter this secret key manually:
                   </p>
-                  <div className="bg-muted p-3 rounded-lg">
-                    <code className="text-sm font-mono break-all">{secret}</code>
+                  <div className="bg-muted p-3 rounded-lg border border-border">
+                    <code className="text-sm font-mono break-all text-foreground">{secret}</code>
                   </div>
                 </div>
               </div>
@@ -237,7 +237,7 @@ export const MicrosoftAuthenticatorSetup: React.FC = () => {
           {currentStep === 3 && (
             <div className="space-y-4">
               <div>
-                <Label htmlFor="verification-code">Enter 6-digit code from Microsoft Authenticator</Label>
+                <Label htmlFor="verification-code" className="text-foreground">Enter 6-digit code from Microsoft Authenticator</Label>
                 <Input
                   id="verification-code"
                   type="text"
@@ -245,7 +245,7 @@ export const MicrosoftAuthenticatorSetup: React.FC = () => {
                   value={verificationCode}
                   onChange={(e) => setVerificationCode(e.target.value.replace(/\D/g, '').slice(0, 6))}
                   maxLength={6}
-                  className="text-center text-2xl tracking-wider"
+                  className="text-center text-2xl tracking-wider bg-background text-foreground border-border"
                 />
               </div>
               <Button 
@@ -267,12 +267,12 @@ export const MicrosoftAuthenticatorSetup: React.FC = () => {
                   Save these backup codes in a secure location. You can use them to access your account if you lose your device.
                 </AlertDescription>
               </Alert>
-              <div className="bg-muted p-4 rounded-lg">
-                <h4 className="font-medium mb-3">Backup Recovery Codes</h4>
+              <div className="bg-muted p-4 rounded-lg border border-border">
+                <h4 className="font-medium mb-3 text-foreground">Backup Recovery Codes</h4>
                 <div className="grid grid-cols-2 gap-2">
                   {backupCodes.map((code, index) => (
-                    <div key={index} className="bg-background p-2 rounded border">
-                      <code className="text-sm">{code}</code>
+                    <div key={index} className="bg-card p-2 rounded border border-border">
+                      <code className="text-sm text-foreground">{code}</code>
                     </div>
                   ))}
                 </div>
