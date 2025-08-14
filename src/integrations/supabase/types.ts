@@ -4146,6 +4146,10 @@ export type Database = {
         Args: Record<PropertyKey, never>
         Returns: Json
       }
+      process_automated_security_response: {
+        Args: { p_event_data: Json; p_event_type: string }
+        Returns: Json
+      }
       remove_secure_session_data: {
         Args: { p_key: string }
         Returns: undefined
@@ -4248,6 +4252,15 @@ export type Database = {
       validate_document_access: {
         Args: { p_action?: string; p_document_id: string }
         Returns: boolean
+      }
+      validate_enhanced_session: {
+        Args: {
+          p_device_fingerprint?: Json
+          p_ip_address?: unknown
+          p_session_token: string
+          p_user_id: string
+        }
+        Returns: Json
       }
       validate_password_strength: {
         Args: { password: string }
