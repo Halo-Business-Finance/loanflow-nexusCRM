@@ -25,10 +25,15 @@ export function DataIntegrityDashboard() {
   const [autoFixResults, setAutoFixResults] = useState<any>(null);
 
   const runDataAudit = async () => {
+    console.log('Run Data Audit button clicked!');
+    console.log('Current loading state:', loading);
     setLoading(true);
     try {
+      console.log('Creating DataFieldValidator...');
       const validator = new DataFieldValidator();
+      console.log('Calling performDataAudit...');
       const results = await validator.performDataAudit();
+      console.log('Audit results received:', results);
       setAuditResults(results);
       
       // Convert audit results to field issues format
@@ -188,7 +193,11 @@ export function DataIntegrityDashboard() {
         <CardContent className="space-y-4">
           <div className="flex gap-4">
             <Button 
-              onClick={runDataAudit} 
+              onClick={() => {
+                console.log('Run Data Audit button clicked!');
+                console.log('Loading state:', loading);
+                runDataAudit();
+              }} 
               disabled={loading}
               className="flex items-center gap-2"
             >
