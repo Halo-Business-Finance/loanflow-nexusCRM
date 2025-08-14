@@ -128,10 +128,13 @@ export function DataIntegrityDashboard() {
   };
 
   const runAutoFix = async () => {
+    console.log('Auto-fix button clicked, starting process...');
     setLoading(true);
     try {
       const validator = new DataFieldValidator();
+      console.log('Created validator, calling autoFixDataIssues...');
       const results = await validator.autoFixDataIssues();
+      console.log('Auto-fix results:', results);
       setAutoFixResults(results);
       
       toast({
