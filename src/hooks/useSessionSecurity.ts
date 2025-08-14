@@ -14,6 +14,24 @@ export const useSessionSecurity = () => {
   const [sessionToken, setSessionToken] = useState<string | null>(null);
   const [lastActivity, setLastActivity] = useState<Date>(new Date());
 
+  // Cleanup session on logout
+  const cleanupSession = useCallback(async () => {
+    if (sessionToken && user) {
+      await supabase
+        .from('active_sessions')
+        .update({ is_active: false })
+        .eq('session_token', sessionToken)
+        .eq('user_id', user.id);
+    }
+    setSessionToken(null);
+  }, [sessionToken, user]);
+
+  // Enhanced logout with session cleanup
+  const secureSignOut = useCallback(async () => {
+    await cleanupSession();
+    await signOut();
+  }, [cleanupSession, signOut]);
+
   // Generate session token on login (using server-side session management)
   useEffect(() => {
     if (user && !sessionToken) {
@@ -68,20 +86,30 @@ export const useSessionSecurity = () => {
     if (!user || !sessionToken) return false;
 
     try {
-      // Get real IP address for security validation with timeout
-      const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 3000);
-      
-      const response = await fetch('https://api.ipify.org?format=json', {
-        signal: controller.signal
-      });
-      clearTimeout(timeoutId);
-      const ipData = await response.json();
+      // Try to get real IP address for security validation (optional)
+      let userIpAddress = null;
+      try {
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 2000);
+        
+        const response = await fetch('https://api.ipify.org?format=json', {
+          signal: controller.signal
+        });
+        clearTimeout(timeoutId);
+        
+        if (response.ok) {
+          const ipData = await response.json();
+          userIpAddress = ipData.ip;
+        }
+      } catch (ipError) {
+        // IP lookup failed - continue without it (security graceful degradation)
+        console.warn('IP address lookup failed, continuing with session validation:', ipError);
+      }
       
       const { data, error } = await supabase.rpc('validate_session_with_security_checks', {
         p_user_id: user.id,
         p_session_token: sessionToken,
-        p_ip_address: ipData.ip,
+        p_ip_address: userIpAddress,
         p_user_agent: navigator.userAgent
       });
 
@@ -92,8 +120,13 @@ export const useSessionSecurity = () => {
           p_event_type: 'session_validation_failed',
           p_severity: 'medium',
           p_details: { error: error.message },
-          p_ip_address: ipData.ip,
+          p_ip_address: userIpAddress,
           p_user_agent: navigator.userAgent
+        });
+        
+        // Show user-friendly message instead of cryptic error
+        toast.error('Session security check failed', {
+          description: 'Please refresh the page if this continues.'
         });
         return false;
       }
@@ -130,7 +163,7 @@ export const useSessionSecurity = () => {
             risk_score: result.risk_score,
             security_flags: result.security_flags 
           },
-          p_ip_address: ipData.ip,
+          p_ip_address: userIpAddress,
           p_user_agent: navigator.userAgent
         });
       }
@@ -138,18 +171,30 @@ export const useSessionSecurity = () => {
       return true;
     } catch (error) {
       console.error('Session validation error:', error);
+      
+      // Only show toast for genuine errors, not network timeouts
+      const isNetworkError = error instanceof TypeError && error.message.includes('fetch');
+      if (!isNetworkError) {
+        toast.error('Session validation failed', {
+          description: 'Please try logging in again if this continues.'
+        });
+      }
+      
       if (user) {
         await supabase.rpc('log_enhanced_security_event', {
           p_user_id: user.id,
           p_event_type: 'session_validation_error',
-          p_severity: 'medium',
-          p_details: { error: String(error) },
+          p_severity: isNetworkError ? 'low' : 'medium',
+          p_details: { 
+            error: String(error),
+            error_type: isNetworkError ? 'network_timeout' : 'validation_error'
+          },
           p_user_agent: navigator.userAgent
         });
       }
       return false;
     }
-  }, [user, sessionToken, signOut]);
+  }, [user, sessionToken, secureSignOut]);
 
   // Track user activity
   const trackActivity = useCallback(() => {
@@ -199,23 +244,6 @@ export const useSessionSecurity = () => {
     return () => clearTimeout(timeoutWarning);
   }, [lastActivity, user, trackActivity]);
 
-  // Cleanup session on logout
-  const cleanupSession = useCallback(async () => {
-    if (sessionToken && user) {
-      await supabase
-        .from('active_sessions')
-        .update({ is_active: false })
-        .eq('session_token', sessionToken)
-        .eq('user_id', user.id);
-    }
-    setSessionToken(null);
-  }, [sessionToken, user]);
-
-  // Enhanced logout with session cleanup
-  const secureSignOut = useCallback(async () => {
-    await cleanupSession();
-    await signOut();
-  }, [cleanupSession, signOut]);
 
   return {
     validateSession,
