@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import Layout from '@/components/Layout';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
 import { Alert, AlertDescription } from '@/components/ui/alert';
+import { Button } from '@/components/ui/button';
 import { 
   BarChart3, 
   TrendingUp, 
@@ -16,7 +16,9 @@ import {
   Clock,
   Phone,
   Mail,
-  Building
+  Building,
+  Shield,
+  RefreshCw
 } from 'lucide-react';
 import { useAuth } from '@/components/auth/AuthProvider';
 import { supabase } from '@/integrations/supabase/client';
@@ -103,17 +105,38 @@ export default function Dashboard() {
   };
 
   return (
-    <Layout>
-      <div className="container mx-auto p-6 space-y-6">
-        <div className="flex items-center gap-2 mb-6">
-          <BarChart3 className="h-6 w-6" />
-          <h1 className="text-3xl font-bold">Command Dashboard</h1>
-          <p className="text-muted-foreground ml-4">
-            Real-time business intelligence and performance monitoring
-          </p>
+    <div className="min-h-screen bg-background">
+      {/* Header */}
+      <div className="border-b bg-card">
+        <div className="container mx-auto px-6 py-4">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div className="flex items-center justify-center w-10 h-10 rounded-lg bg-primary/10">
+                <Shield className="h-5 w-5 text-primary" />
+              </div>
+              <div>
+                <h1 className="text-xl font-semibold">Command Dashboard</h1>
+                <p className="text-sm text-muted-foreground">
+                  Real-time business intelligence and performance monitoring
+                </p>
+              </div>
+            </div>
+            <Button 
+              onClick={fetchDashboardData} 
+              variant="outline" 
+              size="sm"
+              disabled={loading}
+            >
+              <RefreshCw className={`h-4 w-4 mr-2 ${loading ? 'animate-spin' : ''}`} />
+              Refresh
+            </Button>
+          </div>
         </div>
+      </div>
 
-        {/* Dashboard Overview Metrics */}
+      {/* Main Content */}
+      <div className="container mx-auto p-6 space-y-6">
+        {/* Overview Metrics */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           <Card className="border-l-4 border-l-primary">
             <CardContent className="p-6">
@@ -121,49 +144,56 @@ export default function Dashboard() {
                 <div>
                   <p className="text-sm font-medium text-muted-foreground">Total Leads</p>
                   <div className="flex items-center gap-2 mt-1">
-                    <Users className="w-5 h-5" />
-                    <p className="text-lg font-bold">{overview.totalLeads}</p>
+                    <Users className="w-5 h-5 text-primary" />
+                    <p className="text-2xl font-bold">{overview.totalLeads}</p>
                   </div>
                 </div>
-                <Badge variant="default">
-                  TRACKED
-                </Badge>
+                <Badge variant="default">TRACKED</Badge>
               </div>
             </CardContent>
           </Card>
 
-          <Card>
+          <Card className="border-l-4 border-l-secondary">
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm font-medium text-muted-foreground">Active Pipeline</p>
-                  <p className="text-2xl font-bold text-primary">{overview.activeLeads}</p>
+                  <div className="flex items-center gap-2 mt-1">
+                    <Activity className="w-5 h-5 text-secondary" />
+                    <p className="text-2xl font-bold">{overview.activeLeads}</p>
+                  </div>
                 </div>
-                <Activity className="w-8 h-8 text-primary" />
+                <Badge variant="secondary">ACTIVE</Badge>
               </div>
             </CardContent>
           </Card>
 
-          <Card>
+          <Card className="border-l-4 border-l-accent">
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm font-medium text-muted-foreground">Conversion Rate</p>
-                  <p className="text-2xl font-bold text-primary">{overview.conversionRate.toFixed(1)}%</p>
+                  <div className="flex items-center gap-2 mt-1">
+                    <Target className="w-5 h-5 text-accent" />
+                    <p className="text-2xl font-bold">{overview.conversionRate.toFixed(1)}%</p>
+                  </div>
                 </div>
-                <Target className="w-8 h-8 text-primary" />
+                <Badge variant="outline">RATE</Badge>
               </div>
             </CardContent>
           </Card>
 
-          <Card>
+          <Card className="border-l-4 border-l-muted">
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm font-medium text-muted-foreground">Total Revenue</p>
-                  <p className="text-2xl font-bold text-primary">{formatCurrency(overview.totalRevenue)}</p>
+                  <div className="flex items-center gap-2 mt-1">
+                    <DollarSign className="w-5 h-5 text-primary" />
+                    <p className="text-2xl font-bold">{formatCurrency(overview.totalRevenue)}</p>
+                  </div>
                 </div>
-                <DollarSign className="w-8 h-8 text-primary" />
+                <Badge variant="default">REVENUE</Badge>
               </div>
             </CardContent>
           </Card>
@@ -179,6 +209,7 @@ export default function Dashboard() {
           </Alert>
         )}
 
+        {/* Detailed Analytics */}
         <Tabs defaultValue="performance" className="space-y-6">
           <TabsList className="grid w-full grid-cols-3">
             <TabsTrigger value="performance">Performance Analytics</TabsTrigger>
@@ -191,7 +222,7 @@ export default function Dashboard() {
               <Card>
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
-                    <TrendingUp className="h-5 w-5 text-green-500" />
+                    <TrendingUp className="h-5 w-5 text-primary" />
                     Revenue Performance
                   </CardTitle>
                   <CardDescription>
@@ -210,7 +241,7 @@ export default function Dashboard() {
                     </div>
                     <div className="flex justify-between items-center">
                       <span className="text-sm text-muted-foreground">Success Rate</span>
-                      <span className="font-semibold text-green-600">{overview.conversionRate.toFixed(1)}%</span>
+                      <span className="font-semibold text-primary">{overview.conversionRate.toFixed(1)}%</span>
                     </div>
                   </div>
                 </CardContent>
@@ -219,7 +250,7 @@ export default function Dashboard() {
               <Card>
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
-                    <Activity className="h-5 w-5 text-blue-500" />
+                    <Activity className="h-5 w-5 text-secondary" />
                     Pipeline Health
                   </CardTitle>
                   <CardDescription>
@@ -238,7 +269,7 @@ export default function Dashboard() {
                     </div>
                     <div className="flex justify-between items-center">
                       <span className="text-sm text-muted-foreground">Pipeline Value</span>
-                      <span className="font-semibold text-blue-600">{formatCurrency(overview.totalRevenue * 0.3)}</span>
+                      <span className="font-semibold text-secondary">{formatCurrency(overview.totalRevenue * 0.3)}</span>
                     </div>
                   </div>
                 </CardContent>
@@ -251,7 +282,7 @@ export default function Dashboard() {
               <Card>
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
-                    <Phone className="h-5 w-5 text-purple-500" />
+                    <Phone className="h-5 w-5 text-primary" />
                     Call Activity
                   </CardTitle>
                 </CardHeader>
@@ -264,7 +295,7 @@ export default function Dashboard() {
               <Card>
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
-                    <Mail className="h-5 w-5 text-orange-500" />
+                    <Mail className="h-5 w-5 text-secondary" />
                     Email Outreach
                   </CardTitle>
                 </CardHeader>
@@ -277,7 +308,7 @@ export default function Dashboard() {
               <Card>
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
-                    <Building className="h-5 w-5 text-teal-500" />
+                    <Building className="h-5 w-5 text-accent" />
                     Business Growth
                   </CardTitle>
                 </CardHeader>
@@ -293,7 +324,7 @@ export default function Dashboard() {
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
-                  <Users className="h-5 w-5 text-indigo-500" />
+                  <Users className="h-5 w-5 text-primary" />
                   Team Performance
                 </CardTitle>
                 <CardDescription>
@@ -304,11 +335,11 @@ export default function Dashboard() {
                 <div className="grid gap-4 md:grid-cols-2">
                   <div className="flex justify-between items-center p-4 border rounded-lg">
                     <span className="text-sm font-medium">Active Team Members</span>
-                    <span className="font-bold text-indigo-600">{overview.activeUsers}</span>
+                    <span className="font-bold text-primary">{overview.activeUsers}</span>
                   </div>
                   <div className="flex justify-between items-center p-4 border rounded-lg">
                     <span className="text-sm font-medium">Collaboration Score</span>
-                    <span className="font-bold text-green-600">94%</span>
+                    <span className="font-bold text-secondary">94%</span>
                   </div>
                 </div>
               </CardContent>
@@ -316,6 +347,6 @@ export default function Dashboard() {
           </TabsContent>
         </Tabs>
       </div>
-    </Layout>
+    </div>
   );
 }
