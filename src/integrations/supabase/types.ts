@@ -3654,7 +3654,9 @@ export type Database = {
         Returns: Database["public"]["Enums"]["user_role"]
       }
       get_verified_blockchain_records_secure: {
-        Args: Record<PropertyKey, never>
+        Args:
+          | Record<PropertyKey, never>
+          | { p_record_type?: string; p_record_id?: string }
         Returns: {
           id: string
           record_type: string
