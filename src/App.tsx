@@ -11,6 +11,7 @@ import { SecurityManager } from "@/components/security/SecurityManager";
 import { GeoSecurityCheck } from "@/components/GeoSecurityCheck";
 import { AsyncErrorBoundary } from "@/components/AsyncErrorBoundary";
 import { CSPHeaders } from "@/components/security/CSPHeaders";
+import { ProductionSecurityHeaders } from "@/components/security/ProductionSecurityHeaders";
 import { SecurityEnhancementProvider } from "@/components/security/SecurityEnhancementProvider";
 import { SecurityProvider as EnhancedSecurityProvider } from "@/components/security/SecurityProvider";
 import { RouteErrorBoundary } from "@/components/RouteErrorBoundary";
@@ -126,6 +127,7 @@ const App = () => {
       <QueryClientProvider client={queryClient}>
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
           <CSPHeaders />
+          <ProductionSecurityHeaders />
           <AuthProvider>
             <SecurityEnhancementProvider>
               <EnhancedSecurityProvider>

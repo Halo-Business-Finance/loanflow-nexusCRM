@@ -1,6 +1,7 @@
 import React from 'react';
 import { SessionTimeoutManager } from '@/components/security/SessionTimeoutManager';
 import { AdvancedSecurityMonitor } from '@/components/security/AdvancedSecurityMonitor';
+import { RealTimeSecurityMonitor } from '@/components/security/RealTimeSecurityMonitor';
 import { DataProtectionManager } from '@/components/security/DataProtectionManager';
 import { ComplianceManager } from '@/components/security/ComplianceManager';
 import { CSPHeaders } from '@/components/security/CSPHeaders';
@@ -40,6 +41,7 @@ export const EnhancedSecurityDashboard: React.FC = () => {
         </TabsList>
 
         <TabsContent value="monitoring" className="space-y-6">
+          <RealTimeSecurityMonitor />
           <AdvancedSecurityMonitor />
         </TabsContent>
 
