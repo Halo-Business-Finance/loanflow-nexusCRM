@@ -1,12 +1,11 @@
 import { useState, useEffect } from "react"
 import { useNavigate } from "react-router-dom"
-import Layout from "@/components/Layout"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { Search, Users, Eye, Phone, Mail, DollarSign, Calendar, Filter, User, Building, TrendingUp } from "lucide-react"
+import { Search, Users, Eye, Phone, Mail, DollarSign, Calendar, Filter, User, Building, TrendingUp, Shield } from "lucide-react"
 import { supabase } from "@/integrations/supabase/client"
 import { useAuth } from "@/components/auth/AuthProvider"
 import { useToast } from "@/hooks/use-toast"
@@ -185,38 +184,50 @@ export default function UsersLeads() {
 
   if (loading) {
     return (
-      <Layout>
+      <div className="min-h-screen bg-background">
         <div className="flex items-center justify-center h-64">
           <div className="text-center">
             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
             <p>Loading users and leads...</p>
           </div>
         </div>
-      </Layout>
+      </div>
     )
   }
 
   return (
-    <Layout>
-      <div className="space-y-6">
-        {/* Header */}
-        <div className="flex justify-between items-center">
-          <div>
-            <h1 className="text-3xl font-bold text-foreground dark:text-white">Users & Their Leads</h1>
-            <p className="text-muted-foreground">View all users and their associated leads distribution</p>
+    <div className="min-h-screen bg-background">
+      {/* Header */}
+      <div className="border-b bg-card">
+        <div className="container mx-auto px-6 py-4">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div className="flex items-center justify-center w-10 h-10 rounded-lg bg-primary/10">
+                <Shield className="h-5 w-5 text-primary" />
+              </div>
+              <div>
+                <h1 className="text-xl font-semibold">Users & Leads Analytics</h1>
+                <p className="text-sm text-muted-foreground">
+                  View user performance and lead distribution analytics
+                </p>
+              </div>
+            </div>
+            <Button 
+              variant="outline" 
+              onClick={fetchUsersWithLeads}
+              size="sm"
+            >
+              <TrendingUp className="h-4 w-4 mr-2" />
+              Refresh Data
+            </Button>
           </div>
-          <Button 
-            variant="outline" 
-            onClick={fetchUsersWithLeads}
-            className="gap-2"
-          >
-            <TrendingUp className="h-4 w-4" />
-            Refresh Data
-          </Button>
         </div>
+      </div>
 
+      {/* Main Content */}
+      <div className="container mx-auto p-6 space-y-6">
         {/* Search */}
-        <Card className="shadow-soft">
+        <Card>
           <CardContent className="p-6">
             <div className="flex gap-4">
               <div className="relative flex-1">
@@ -228,8 +239,8 @@ export default function UsersLeads() {
                   className="pl-10"
                 />
               </div>
-              <Button variant="outline" className="gap-2">
-                <Filter className="h-4 w-4" />
+              <Button variant="outline">
+                <Filter className="h-4 w-4 mr-2" />
                 Filter
               </Button>
             </div>
@@ -238,7 +249,7 @@ export default function UsersLeads() {
 
         {/* Overview Stats */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-          <Card className="shadow-soft">
+          <Card className="border-l-4 border-l-primary">
             <CardHeader className="pb-2">
               <CardTitle className="text-sm font-medium">Total Users</CardTitle>
             </CardHeader>
@@ -246,7 +257,7 @@ export default function UsersLeads() {
               <div className="text-2xl font-bold">{totalStats.totalUsers}</div>
             </CardContent>
           </Card>
-          <Card className="shadow-soft">
+          <Card className="border-l-4 border-l-secondary">
             <CardHeader className="pb-2">
               <CardTitle className="text-sm font-medium">Total Leads</CardTitle>
             </CardHeader>
@@ -254,15 +265,15 @@ export default function UsersLeads() {
               <div className="text-2xl font-bold">{totalStats.totalLeads}</div>
             </CardContent>
           </Card>
-          <Card className="shadow-soft">
+          <Card className="border-l-4 border-l-accent">
             <CardHeader className="pb-2">
               <CardTitle className="text-sm font-medium">Total Lead Value</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold text-green-600">{formatCurrency(totalStats.totalValue)}</div>
+              <div className="text-2xl font-bold text-primary">{formatCurrency(totalStats.totalValue)}</div>
             </CardContent>
           </Card>
-          <Card className="shadow-soft">
+          <Card className="border-l-4 border-l-muted">
             <CardHeader className="pb-2">
               <CardTitle className="text-sm font-medium">Avg Leads/User</CardTitle>
             </CardHeader>
@@ -275,7 +286,7 @@ export default function UsersLeads() {
         {/* Users and Leads List */}
         <div className="space-y-6">
           {filteredUsers.map((userWithLeads) => (
-            <Card key={userWithLeads.id} className="shadow-soft">
+            <Card key={userWithLeads.id}>
               <CardHeader className="pb-4">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-4">
@@ -296,15 +307,15 @@ export default function UsersLeads() {
                   <div className="text-right">
                     <div className="grid grid-cols-3 gap-4 text-center">
                       <div>
-                        <div className="text-2xl font-bold text-blue-600">{userWithLeads.activeLeads}</div>
+                        <div className="text-2xl font-bold text-secondary">{userWithLeads.activeLeads}</div>
                         <div className="text-xs text-muted-foreground">Active</div>
                       </div>
                       <div>
-                        <div className="text-2xl font-bold text-green-600">{userWithLeads.convertedLeads}</div>
+                        <div className="text-2xl font-bold text-accent">{userWithLeads.convertedLeads}</div>
                         <div className="text-xs text-muted-foreground">Converted</div>
                       </div>
                       <div>
-                        <div className="text-lg font-bold text-purple-600">{formatCurrency(userWithLeads.totalLeadValue)}</div>
+                        <div className="text-lg font-bold text-primary">{formatCurrency(userWithLeads.totalLeadValue)}</div>
                         <div className="text-xs text-muted-foreground">Total Value</div>
                       </div>
                     </div>
@@ -327,7 +338,7 @@ export default function UsersLeads() {
                               <h4 className="font-medium">{lead.name}</h4>
                               <p className="text-sm text-muted-foreground">{lead.business_name || 'No business'}</p>
                             </div>
-                            <Badge className={getStageColor(lead.stage)}>
+                            <Badge variant={lead.stage === 'Loan Funded' ? 'default' : 'secondary'}>
                               {lead.stage}
                             </Badge>
                           </div>
@@ -354,14 +365,13 @@ export default function UsersLeads() {
                           </div>
 
                           <div className="flex items-center justify-between">
-                            <Badge variant={getPriorityColor(lead.priority)}>
+                            <Badge variant={lead.priority === 'high' ? 'destructive' : lead.priority === 'medium' ? 'secondary' : 'outline'}>
                               {lead.priority} priority
                             </Badge>
                             <Button
                               size="sm"
                               variant="outline"
                               onClick={() => navigate(`/leads/${lead.id}`)}
-                              className="h-7 px-2"
                             >
                               <Eye className="h-3 w-3 mr-1" />
                               View
@@ -378,7 +388,7 @@ export default function UsersLeads() {
         </div>
 
         {filteredUsers.length === 0 && (
-          <Card className="shadow-soft">
+          <Card>
             <CardContent className="text-center py-12">
               <Search className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
               <h3 className="text-lg font-medium mb-2">No users found</h3>
@@ -387,6 +397,6 @@ export default function UsersLeads() {
           </Card>
         )}
       </div>
-    </Layout>
+    </div>
   )
 }

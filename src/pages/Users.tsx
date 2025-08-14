@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react"
 import { useNavigate } from "react-router-dom"
-import Layout from "@/components/Layout"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Badge } from "@/components/ui/badge"
@@ -66,6 +65,7 @@ interface UserProfile {
   created_at: string
   updated_at: string
 }
+
 
 export default function Users() {
   // User Management State
@@ -393,111 +393,120 @@ export default function Users() {
 
   return (
     <TooltipProvider delayDuration={300}>
-      <Layout>
-        <div className="space-y-6">
-          {/* Header */}
-          <div className="mb-6">
-            <h1 className="text-3xl font-bold tracking-tight">User Management Center</h1>
-            <p className="text-muted-foreground">
-              Manage team members, analyze user performance, and control access permissions
-            </p>
-          </div>
-          
-          <div className="flex justify-between items-center">
-            <div></div>
-            <div className="flex gap-2">
-              <Button 
-                variant="outline" 
-                onClick={refreshUserData}
-                disabled={loading}
-                className="gap-2"
-              >
-                <RotateCcw className={`h-4 w-4 ${loading ? 'animate-spin' : ''}`} />
-                Refresh
-              </Button>
+      <div className="min-h-screen bg-background">
+        {/* Header */}
+        <div className="border-b bg-card">
+          <div className="container mx-auto px-6 py-4">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div className="flex items-center justify-center w-10 h-10 rounded-lg bg-primary/10">
+                  <Shield className="h-5 w-5 text-primary" />
+                </div>
+                <div>
+                  <h1 className="text-xl font-semibold">User Management Center</h1>
+                  <p className="text-sm text-muted-foreground">
+                    Manage team members, analyze performance, and control access permissions
+                  </p>
+                </div>
+              </div>
               
-              <Dialog open={showNewUserDialog} onOpenChange={setShowNewUserDialog}>
-                <DialogTrigger asChild>
-                  <Button className="gap-2">
-                    <UserPlus className="h-4 w-4" />
-                    Add User
-                  </Button>
-                </DialogTrigger>
-                <DialogContent className="sm:max-w-[425px]">
-                  <DialogHeader>
-                    <DialogTitle>Add New User</DialogTitle>
-                    <DialogDescription>
-                      Create a new user account for your team.
-                    </DialogDescription>
-                  </DialogHeader>
-                  <div className="grid gap-4 py-4">
-                    <div className="grid grid-cols-2 gap-4">
+              <div className="flex gap-2">
+                <Button 
+                  variant="outline" 
+                  onClick={refreshUserData}
+                  disabled={loading}
+                  size="sm"
+                >
+                  <RotateCcw className={`h-4 w-4 mr-2 ${loading ? 'animate-spin' : ''}`} />
+                  Refresh
+                </Button>
+                
+                <Dialog open={showNewUserDialog} onOpenChange={setShowNewUserDialog}>
+                  <DialogTrigger asChild>
+                    <Button size="sm">
+                      <UserPlus className="h-4 w-4 mr-2" />
+                      Add User
+                    </Button>
+                  </DialogTrigger>
+                  <DialogContent className="sm:max-w-[425px]">
+                    <DialogHeader>
+                      <DialogTitle>Add New User</DialogTitle>
+                      <DialogDescription>
+                        Create a new user account for your team.
+                      </DialogDescription>
+                    </DialogHeader>
+                    <div className="grid gap-4 py-4">
+                      <div className="grid grid-cols-2 gap-4">
+                        <div className="space-y-2">
+                          <Label htmlFor="firstName">First Name</Label>
+                          <Input
+                            id="firstName"
+                            value={newUserData.firstName}
+                            onChange={(e) => setNewUserData(prev => ({ ...prev, firstName: e.target.value }))}
+                          />
+                        </div>
+                        <div className="space-y-2">
+                          <Label htmlFor="lastName">Last Name</Label>
+                          <Input
+                            id="lastName"
+                            value={newUserData.lastName}
+                            onChange={(e) => setNewUserData(prev => ({ ...prev, lastName: e.target.value }))}
+                          />
+                        </div>
+                      </div>
                       <div className="space-y-2">
-                        <Label htmlFor="firstName">First Name</Label>
+                        <Label htmlFor="email">Email</Label>
                         <Input
-                          id="firstName"
-                          value={newUserData.firstName}
-                          onChange={(e) => setNewUserData(prev => ({ ...prev, firstName: e.target.value }))}
+                          id="email"
+                          type="email"
+                          value={newUserData.email}
+                          onChange={(e) => setNewUserData(prev => ({ ...prev, email: e.target.value }))}
                         />
                       </div>
                       <div className="space-y-2">
-                        <Label htmlFor="lastName">Last Name</Label>
+                        <Label htmlFor="phone">Phone</Label>
                         <Input
-                          id="lastName"
-                          value={newUserData.lastName}
-                          onChange={(e) => setNewUserData(prev => ({ ...prev, lastName: e.target.value }))}
+                          id="phone"
+                          value={newUserData.phone}
+                          onChange={(e) => setNewUserData(prev => ({ ...prev, phone: e.target.value }))}
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <Label htmlFor="role">Role</Label>
+                        <Select value={newUserData.role} onValueChange={(value: any) => setNewUserData(prev => ({ ...prev, role: value }))}>
+                          <SelectTrigger>
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="agent">Agent</SelectItem>
+                            <SelectItem value="manager">Manager</SelectItem>
+                            <SelectItem value="admin">Admin</SelectItem>
+                            {hasRole('super_admin') && <SelectItem value="super_admin">Super Admin</SelectItem>}
+                          </SelectContent>
+                        </Select>
+                      </div>
+                      <div className="space-y-2">
+                        <Label htmlFor="password">Password</Label>
+                        <Input
+                          id="password"
+                          type="password"
+                          value={newUserData.password}
+                          onChange={(e) => setNewUserData(prev => ({ ...prev, password: e.target.value }))}
                         />
                       </div>
                     </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="email">Email</Label>
-                      <Input
-                        id="email"
-                        type="email"
-                        value={newUserData.email}
-                        onChange={(e) => setNewUserData(prev => ({ ...prev, email: e.target.value }))}
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="phone">Phone</Label>
-                      <Input
-                        id="phone"
-                        value={newUserData.phone}
-                        onChange={(e) => setNewUserData(prev => ({ ...prev, phone: e.target.value }))}
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="role">Role</Label>
-                      <Select value={newUserData.role} onValueChange={(value: any) => setNewUserData(prev => ({ ...prev, role: value }))}>
-                        <SelectTrigger>
-                          <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="agent">Agent</SelectItem>
-                          <SelectItem value="manager">Manager</SelectItem>
-                          <SelectItem value="admin">Admin</SelectItem>
-                          {hasRole('super_admin') && <SelectItem value="super_admin">Super Admin</SelectItem>}
-                        </SelectContent>
-                      </Select>
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="password">Password</Label>
-                      <Input
-                        id="password"
-                        type="password"
-                        value={newUserData.password}
-                        onChange={(e) => setNewUserData(prev => ({ ...prev, password: e.target.value }))}
-                      />
-                    </div>
-                  </div>
-                  <DialogFooter>
-                    <Button type="submit" onClick={createNewUser}>Create User</Button>
-                  </DialogFooter>
-                </DialogContent>
-              </Dialog>
+                    <DialogFooter>
+                      <Button type="submit" onClick={createNewUser}>Create User</Button>
+                    </DialogFooter>
+                  </DialogContent>
+                </Dialog>
+              </div>
             </div>
           </div>
+        </div>
 
+        {/* Main Content */}
+        <div className="container mx-auto p-6 space-y-6">
           {/* Search */}
           <div className="flex items-center gap-4">
             <div className="relative flex-1 max-w-md">
@@ -673,28 +682,28 @@ export default function Users() {
                             <p className="text-2xl font-bold">{userWithLeads.leads.length}</p>
                           </div>
                           
-                          <div className="text-center p-3 bg-green-50 rounded-lg">
+                          <div className="text-center p-3 bg-secondary/10 rounded-lg">
                             <div className="flex items-center justify-center gap-2 mb-1">
-                              <Activity className="h-4 w-4 text-green-600" />
-                              <span className="text-sm font-medium text-green-600">Active</span>
+                              <Activity className="h-4 w-4 text-secondary" />
+                              <span className="text-sm font-medium text-secondary">Active</span>
                             </div>
-                            <p className="text-2xl font-bold text-green-600">{userWithLeads.activeLeads}</p>
+                            <p className="text-2xl font-bold text-secondary">{userWithLeads.activeLeads}</p>
                           </div>
                           
-                          <div className="text-center p-3 bg-blue-50 rounded-lg">
+                          <div className="text-center p-3 bg-accent/10 rounded-lg">
                             <div className="flex items-center justify-center gap-2 mb-1">
-                              <Building className="h-4 w-4 text-blue-600" />
-                              <span className="text-sm font-medium text-blue-600">Converted</span>
+                              <Building className="h-4 w-4 text-accent" />
+                              <span className="text-sm font-medium text-accent">Converted</span>
                             </div>
-                            <p className="text-2xl font-bold text-blue-600">{userWithLeads.convertedLeads}</p>
+                            <p className="text-2xl font-bold text-accent">{userWithLeads.convertedLeads}</p>
                           </div>
                           
-                          <div className="text-center p-3 bg-purple-50 rounded-lg">
+                          <div className="text-center p-3 bg-muted/30 rounded-lg">
                             <div className="flex items-center justify-center gap-2 mb-1">
-                              <DollarSign className="h-4 w-4 text-purple-600" />
-                              <span className="text-sm font-medium text-purple-600">Total Value</span>
+                              <DollarSign className="h-4 w-4 text-primary" />
+                              <span className="text-sm font-medium text-primary">Total Value</span>
                             </div>
-                            <p className="text-2xl font-bold text-purple-600">
+                            <p className="text-2xl font-bold text-primary">
                               {formatCurrency(userWithLeads.totalLeadValue)}
                             </p>
                           </div>
@@ -739,7 +748,7 @@ export default function Users() {
             </TabsContent>
           </Tabs>
         </div>
-      </Layout>
+      </div>
     </TooltipProvider>
   )
 }
