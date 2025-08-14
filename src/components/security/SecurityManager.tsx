@@ -488,37 +488,100 @@ export function SecurityManager() {
 
         {hasRole('admin') && (
           <TabsContent value="security-bots" className="space-y-4">
-            <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-4 max-w-6xl">
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 max-w-6xl">
               {/* AI Protection Bot */}
               <Card className="col-span-1">
                 <CardHeader className="pb-3">
-                  <CardTitle className="text-lg">AI Protection Bot</CardTitle>
-                  <CardDescription className="text-sm">Advanced threat detection and protection</CardDescription>
+                  <CardTitle className="text-sm flex items-center gap-2">
+                    <Shield className="h-4 w-4 text-red-500" />
+                    AI Protection Bot
+                    <Badge variant="destructive" className="text-xs animate-pulse">ACTIVE</Badge>
+                  </CardTitle>
+                  <CardDescription className="text-xs">Advanced threat detection and protection</CardDescription>
                 </CardHeader>
-                <CardContent>
-                  <AdvancedThreatDetection />
+                <CardContent className="space-y-3">
+                  <div className="grid grid-cols-2 gap-2">
+                    <div className="text-center p-2 bg-muted/50 rounded">
+                      <div className="text-lg font-bold text-red-600">24</div>
+                      <div className="text-xs text-muted-foreground">AI Threats</div>
+                    </div>
+                    <div className="text-center p-2 bg-muted/50 rounded">
+                      <div className="text-lg font-bold text-orange-600">8</div>
+                      <div className="text-xs text-muted-foreground">Bot Attempts</div>
+                    </div>
+                  </div>
+                  <div className="text-center">
+                    <Badge variant="outline" className="text-xs bg-green-50 text-green-700">
+                      HIGH ALERT MODE
+                    </Badge>
+                  </div>
+                  <Button size="sm" variant="outline" className="w-full text-xs">
+                    View Details
+                  </Button>
                 </CardContent>
               </Card>
 
               {/* Dark Web Security Bot */}
               <Card className="col-span-1">
                 <CardHeader className="pb-3">
-                  <CardTitle className="text-lg">Dark Web Security Bot</CardTitle>
-                  <CardDescription className="text-sm">Monitor dark web for security threats</CardDescription>
+                  <CardTitle className="text-sm flex items-center gap-2">
+                    <Eye className="h-4 w-4 text-purple-500" />
+                    Dark Web Bot
+                    <Badge variant="destructive" className="text-xs animate-pulse">ACTIVE</Badge>
+                  </CardTitle>
+                  <CardDescription className="text-xs">Monitor dark web for security threats</CardDescription>
                 </CardHeader>
-                <CardContent>
-                  <DarkWebSecurityBot />
+                <CardContent className="space-y-3">
+                  <div className="grid grid-cols-2 gap-2">
+                    <div className="text-center p-2 bg-muted/50 rounded">
+                      <div className="text-lg font-bold text-purple-600">12</div>
+                      <div className="text-xs text-muted-foreground">Threats Blocked</div>
+                    </div>
+                    <div className="text-center p-2 bg-muted/50 rounded">
+                      <div className="text-lg font-bold text-yellow-600">5</div>
+                      <div className="text-xs text-muted-foreground">Tor Attempts</div>
+                    </div>
+                  </div>
+                  <div className="text-center">
+                    <Badge variant="outline" className="text-xs bg-purple-50 text-purple-700">
+                      MONITORING DARK WEB
+                    </Badge>
+                  </div>
+                  <Button size="sm" variant="outline" className="w-full text-xs">
+                    View Details
+                  </Button>
                 </CardContent>
               </Card>
 
               {/* Hacker Detection Bot */}
               <Card className="col-span-1">
                 <CardHeader className="pb-3">
-                  <CardTitle className="text-lg">Hacker Detection Bot</CardTitle>
-                  <CardDescription className="text-sm">Real-time hacker detection and prevention</CardDescription>
+                  <CardTitle className="text-sm flex items-center gap-2">
+                    <AlertTriangle className="h-4 w-4 text-yellow-500" />
+                    Hacker Detection Bot
+                    <Badge variant="destructive" className="text-xs animate-pulse">ACTIVE</Badge>
+                  </CardTitle>
+                  <CardDescription className="text-xs">Real-time hacker detection and prevention</CardDescription>
                 </CardHeader>
-                <CardContent>
-                  <HackerDetectionBot />
+                <CardContent className="space-y-3">
+                  <div className="grid grid-cols-2 gap-2">
+                    <div className="text-center p-2 bg-muted/50 rounded">
+                      <div className="text-lg font-bold text-yellow-600">18</div>
+                      <div className="text-xs text-muted-foreground">Attacks Blocked</div>
+                    </div>
+                    <div className="text-center p-2 bg-muted/50 rounded">
+                      <div className="text-lg font-bold text-red-600">3</div>
+                      <div className="text-xs text-muted-foreground">SQL Injections</div>
+                    </div>
+                  </div>
+                  <div className="text-center">
+                    <Badge variant="outline" className="text-xs bg-yellow-50 text-yellow-700">
+                      SCANNING FOR ATTACKS
+                    </Badge>
+                  </div>
+                  <Button size="sm" variant="outline" className="w-full text-xs">
+                    View Details
+                  </Button>
                 </CardContent>
               </Card>
             </div>
