@@ -2581,6 +2581,36 @@ export type Database = {
           },
         ]
       }
+      profile_encrypted_fields: {
+        Row: {
+          created_at: string | null
+          encrypted_value: string
+          field_hash: string
+          field_name: string
+          id: string
+          profile_id: string
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          encrypted_value: string
+          field_hash: string
+          field_name: string
+          id?: string
+          profile_id: string
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          encrypted_value?: string
+          field_hash?: string
+          field_name?: string
+          id?: string
+          profile_id?: string
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           archive_reason: string | null
@@ -3463,6 +3493,14 @@ export type Database = {
         }
         Returns: Json
       }
+      encrypt_profile_field: {
+        Args: {
+          p_profile_id: string
+          p_field_name: string
+          p_field_value: string
+        }
+        Returns: undefined
+      }
       encrypt_token: {
         Args: { p_token: string }
         Returns: string
@@ -3492,6 +3530,10 @@ export type Database = {
           expires_at: string
           is_expired: boolean
         }[]
+      }
+      get_masked_profile_data: {
+        Args: { p_profile_id: string; p_requesting_user_id?: string }
+        Returns: Json
       }
       get_recent_failed_attempts: {
         Args: { user_email: string }
