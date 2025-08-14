@@ -77,8 +77,8 @@ export class DataFieldValidator {
       }
     }
 
-    // Validate phone format
-    if (contactEntity?.phone && !this.isValidPhoneNumber(contactEntity.phone)) {
+    // Validate phone format - skip if encrypted/secured
+    if (contactEntity?.phone && contactEntity.phone !== '[SECURED]' && !this.isValidPhoneNumber(contactEntity.phone)) {
       result.warnings.push('Phone number format may be invalid')
     }
 
