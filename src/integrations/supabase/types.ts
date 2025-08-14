@@ -2780,6 +2780,44 @@ export type Database = {
         }
         Relationships: []
       }
+      ringcentral_encrypted_fields: {
+        Row: {
+          account_id: string
+          created_at: string | null
+          encrypted_value: string
+          field_hash: string
+          field_name: string
+          id: string
+          updated_at: string | null
+        }
+        Insert: {
+          account_id: string
+          created_at?: string | null
+          encrypted_value: string
+          field_hash: string
+          field_name: string
+          id?: string
+          updated_at?: string | null
+        }
+        Update: {
+          account_id?: string
+          created_at?: string | null
+          encrypted_value?: string
+          field_hash?: string
+          field_name?: string
+          id?: string
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ringcentral_encrypted_fields_account_id_fkey"
+            columns: ["account_id"]
+            isOneToOne: false
+            referencedRelation: "ringcentral_accounts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       role_change_mfa_verifications: {
         Row: {
           created_at: string
@@ -3585,6 +3623,14 @@ export type Database = {
         }
         Returns: undefined
       }
+      encrypt_ringcentral_credential: {
+        Args: {
+          p_account_id: string
+          p_field_name: string
+          p_field_value: string
+        }
+        Returns: undefined
+      }
       encrypt_token: {
         Args: { p_token: string }
         Returns: string
@@ -3629,6 +3675,10 @@ export type Database = {
       }
       get_masked_profile_data: {
         Args: { p_profile_id: string; p_requesting_user_id?: string }
+        Returns: Json
+      }
+      get_masked_ringcentral_credentials: {
+        Args: { p_account_id: string; p_requesting_user_id?: string }
         Returns: Json
       }
       get_recent_failed_attempts: {
