@@ -3502,6 +3502,14 @@ export type Database = {
         }
         Returns: Json
       }
+      can_access_approval_request: {
+        Args: { request_id: string }
+        Returns: boolean
+      }
+      can_access_approval_step: {
+        Args: { step_id: string }
+        Returns: boolean
+      }
       check_rate_limit: {
         Args: {
           p_identifier: string
@@ -3791,6 +3799,10 @@ export type Database = {
         }
         Returns: Json
       }
+      validate_blockchain_access: {
+        Args: { record_id_param?: string; operation_param?: string }
+        Returns: boolean
+      }
       validate_credential_access: {
         Args: {
           p_table_name: string
@@ -3809,14 +3821,6 @@ export type Database = {
       }
       validate_secure_session_token: {
         Args: { p_user_id: string; p_session_token: string }
-        Returns: boolean
-      }
-      validate_sensitive_table_access: {
-        Args: {
-          p_table_name: string
-          p_operation: string
-          p_record_id?: string
-        }
         Returns: boolean
       }
       validate_session_security: {
