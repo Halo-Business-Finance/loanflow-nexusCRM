@@ -318,12 +318,10 @@ export function SecurityManager() {
           <TabsList>
             <TabsTrigger value="overview">Overview</TabsTrigger>
             <TabsTrigger value="data-integrity">Data Integrity</TabsTrigger>
-            <TabsTrigger value="monitor">Security Monitor</TabsTrigger>
             {hasRole('admin') && <TabsTrigger value="threats">AI Protection Bot</TabsTrigger>}
             {hasRole('admin') && <TabsTrigger value="darkweb">Dark Web Bot</TabsTrigger>}
             {hasRole('admin') && <TabsTrigger value="hacker">Hacker Detection Bot</TabsTrigger>}
             <TabsTrigger value="mfa">Multi-Factor Auth</TabsTrigger>
-            <TabsTrigger value="notifications">Security Alerts</TabsTrigger>
             {hasRole('admin') && <TabsTrigger value="policies">Password Policy</TabsTrigger>}
             {hasRole('admin') && <TabsTrigger value="audit">Audit Logs</TabsTrigger>}
             {hasRole('admin') && <TabsTrigger value="users">User Roles</TabsTrigger>}
@@ -392,6 +390,20 @@ export function SecurityManager() {
             )}
           </div>
 
+          {/* Security Monitor Section */}
+          <Card className="max-w-4xl">
+            <CardHeader className="pb-3">
+              <CardTitle className="text-lg">Security Monitor</CardTitle>
+              <CardDescription className="text-sm">
+                Real-time security monitoring and threat detection
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <SecurityMonitor />
+            </CardContent>
+          </Card>
+
+          {/* Recent Security Activity */}
           <Card className="max-w-4xl">
             <CardHeader className="pb-3">
               <CardTitle className="text-lg">Recent Security Activity</CardTitle>
@@ -422,17 +434,59 @@ export function SecurityManager() {
               )}
             </CardContent>
           </Card>
+
+          {/* Security Notifications */}
+          <Card className="max-w-4xl">
+            <CardHeader className="pb-3">
+              <CardTitle className="text-lg">Security Notifications</CardTitle>
+              <CardDescription className="text-sm">
+                Important security alerts and events
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              {securityNotifications.length === 0 ? (
+                <p className="text-muted-foreground">No security notifications</p>
+              ) : (
+                <div className="space-y-2 max-h-96 overflow-y-auto">
+                  {securityNotifications.map((notification) => (
+                    <div
+                      key={notification.id}
+                      className={`p-2 border rounded-md cursor-pointer transition-colors ${
+                        notification.is_read ? 'bg-muted/50' : 'bg-card/50'
+                      }`}
+                      onClick={() => markNotificationAsRead(notification.id)}
+                    >
+                      <div className="flex items-start justify-between">
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center space-x-1">
+                            <h4 className="font-medium text-sm truncate">{notification.title}</h4>
+                            <Badge variant={getSeverityColor(notification.severity)} className="text-xs">
+                              {notification.severity}
+                            </Badge>
+                            {!notification.is_read && (
+                              <Badge variant="outline" className="text-xs">New</Badge>
+                            )}
+                          </div>
+                          <p className="text-xs text-muted-foreground mt-1 truncate">
+                            {notification.message}
+                          </p>
+                          <p className="text-xs text-muted-foreground mt-1">
+                            {new Date(notification.created_at).toLocaleString()}
+                          </p>
+                        </div>
+                        <Eye className="h-4 w-4 text-muted-foreground flex-shrink-0" />
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </CardContent>
+          </Card>
         </TabsContent>
 
         <TabsContent value="data-integrity" className="space-y-4">
           <div className="max-w-4xl">
             <DataIntegrityDashboard />
-          </div>
-        </TabsContent>
-
-        <TabsContent value="monitor" className="space-y-4">
-          <div className="max-w-4xl">
-            <SecurityMonitor />
           </div>
         </TabsContent>
 
@@ -532,55 +586,6 @@ export function SecurityManager() {
                       Make sure you have access to your chosen authentication method before enabling MFA.
                     </AlertDescription>
                   </Alert>
-                </div>
-              )}
-            </CardContent>
-          </Card>
-        </TabsContent>
-
-        <TabsContent value="notifications" className="space-y-4">
-          <Card className="max-w-4xl">
-            <CardHeader className="pb-3">
-              <CardTitle className="text-lg">Security Notifications</CardTitle>
-              <CardDescription className="text-sm">
-                Important security alerts and events
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              {securityNotifications.length === 0 ? (
-                <p className="text-muted-foreground">No security notifications</p>
-              ) : (
-                <div className="space-y-2 max-h-96 overflow-y-auto">
-                  {securityNotifications.map((notification) => (
-                    <div
-                      key={notification.id}
-                      className={`p-2 border rounded-md cursor-pointer transition-colors ${
-                        notification.is_read ? 'bg-muted/50' : 'bg-card/50'
-                      }`}
-                      onClick={() => markNotificationAsRead(notification.id)}
-                    >
-                      <div className="flex items-start justify-between">
-                        <div className="flex-1 min-w-0">
-                          <div className="flex items-center space-x-1">
-                            <h4 className="font-medium text-sm truncate">{notification.title}</h4>
-                            <Badge variant={getSeverityColor(notification.severity)} className="text-xs">
-                              {notification.severity}
-                            </Badge>
-                            {!notification.is_read && (
-                              <Badge variant="outline" className="text-xs">New</Badge>
-                            )}
-                          </div>
-                          <p className="text-xs text-muted-foreground mt-1 truncate">
-                            {notification.message}
-                          </p>
-                          <p className="text-xs text-muted-foreground mt-1">
-                            {new Date(notification.created_at).toLocaleString()}
-                          </p>
-                        </div>
-                        <Eye className="h-4 w-4 text-muted-foreground flex-shrink-0" />
-                      </div>
-                    </div>
-                  ))}
                 </div>
               )}
             </CardContent>
