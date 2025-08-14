@@ -386,12 +386,12 @@ export function SecurityManager() {
             )}
           </div>
 
-          {/* Security Monitor Section */}
+          {/* Real-time Security Monitoring */}
           <Card className="max-w-4xl">
             <CardHeader className="pb-3">
-              <CardTitle className="text-lg">Security Monitor</CardTitle>
+              <CardTitle className="text-lg">Real-time Security Monitoring</CardTitle>
               <CardDescription className="text-sm">
-                Real-time security monitoring and threat detection
+                Live threat detection and system security status
               </CardDescription>
             </CardHeader>
             <CardContent>
