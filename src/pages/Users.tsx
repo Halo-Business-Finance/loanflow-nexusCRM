@@ -118,7 +118,39 @@ export default function Users() {
       // Debug authentication status
       console.log('Auth user:', user?.id, user?.email)
       
-      // Use a more direct query that works with the current auth state
+      // For admin users, use the edge function to bypass RLS issues
+      if (hasRole('admin') || hasRole('super_admin')) {
+        console.log('Using admin edge function to fetch users...')
+        
+        const { data: edgeResponse, error: edgeError } = await supabase.functions.invoke('admin-get-users', {
+          headers: {
+            'Authorization': `Bearer ${(await supabase.auth.getSession()).data.session?.access_token}`
+          }
+        })
+
+        if (edgeError) {
+          console.error('Edge function error:', edgeError)
+          throw new Error('Failed to fetch users via admin function')
+        }
+
+        if (edgeResponse?.users) {
+          console.log('Successfully fetched users via edge function:', edgeResponse.users.length)
+          
+          // Transform the data to match expected format
+          const transformedUsers = edgeResponse.users.map((profile: any) => ({
+            ...profile,
+            user_id: profile.id,
+            phone: profile.phone_number || '',
+            role: profile.role || 'agent'
+          }))
+          
+          setUsers(transformedUsers)
+          return
+        }
+      }
+
+      // Fallback to direct query for non-admin users
+      console.log('Using direct query as fallback...')
       const { data: profiles, error: profilesError } = await supabase
         .from('profiles')
         .select('*')
@@ -169,7 +201,7 @@ export default function Users() {
       console.error('Error fetching users:', error)
       toast({
         title: "Error",
-        description: "Failed to fetch users",
+        description: "Failed to fetch users: " + (error as Error).message,
         variant: "destructive"
       })
     } finally {

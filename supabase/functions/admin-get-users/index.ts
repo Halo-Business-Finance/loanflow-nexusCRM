@@ -1,0 +1,163 @@
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.52.1'
+
+const corsHeaders = {
+  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+}
+
+interface UserProfile {
+  id: string
+  first_name: string | null
+  last_name: string | null
+  email: string
+  phone_number: string | null
+  is_active: boolean
+  created_at: string
+  updated_at: string
+  role?: string
+}
+
+Deno.serve(async (req) => {
+  // Handle CORS preflight requests
+  if (req.method === 'OPTIONS') {
+    return new Response(null, { headers: corsHeaders })
+  }
+
+  try {
+    // Get the authorization header
+    const authHeader = req.headers.get('authorization')
+    if (!authHeader) {
+      console.error('No authorization header provided')
+      return new Response(
+        JSON.stringify({ error: 'Unauthorized' }),
+        { 
+          status: 401, 
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
+        }
+      )
+    }
+
+    // Create Supabase client with service role key for admin operations
+    const supabaseAdmin = createClient(
+      Deno.env.get('SUPABASE_URL') ?? '',
+      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
+    )
+
+    // Create client with user token to verify their permissions
+    const supabaseUser = createClient(
+      Deno.env.get('SUPABASE_URL') ?? '',
+      Deno.env.get('SUPABASE_ANON_KEY') ?? ''
+    )
+
+    // Set the authorization header for the user client
+    supabaseUser.auth.setSession({ 
+      access_token: authHeader.replace('Bearer ', ''), 
+      refresh_token: '' 
+    })
+
+    // Verify the user has admin privileges
+    const { data: { user }, error: userError } = await supabaseUser.auth.getUser()
+    if (userError || !user) {
+      console.error('Failed to get user:', userError)
+      return new Response(
+        JSON.stringify({ error: 'Invalid token' }),
+        { 
+          status: 401, 
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
+        }
+      )
+    }
+
+    console.log('User authenticated:', user.id, user.email)
+
+    // Check user role using admin client
+    const { data: userRoles, error: roleError } = await supabaseAdmin
+      .from('user_roles')
+      .select('role')
+      .eq('user_id', user.id)
+      .eq('is_active', true)
+
+    console.log('User roles:', userRoles, roleError)
+
+    const hasAdminRole = userRoles?.some(r => r.role === 'admin' || r.role === 'super_admin')
+    if (!hasAdminRole) {
+      console.error('User does not have admin role:', user.email)
+      return new Response(
+        JSON.stringify({ error: 'Insufficient privileges' }),
+        { 
+          status: 403, 
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
+        }
+      )
+    }
+
+    console.log('Admin access verified, fetching users...')
+
+    // Fetch all profiles using admin client (bypasses RLS)
+    const { data: profiles, error: profilesError } = await supabaseAdmin
+      .from('profiles')
+      .select('*')
+      .order('created_at', { ascending: false })
+
+    if (profilesError) {
+      console.error('Error fetching profiles:', profilesError)
+      throw profilesError
+    }
+
+    console.log(`Fetched ${profiles?.length || 0} profiles`)
+
+    // Fetch all user roles using admin client
+    const { data: allUserRoles, error: allRolesError } = await supabaseAdmin
+      .from('user_roles')
+      .select('user_id, role, is_active')
+
+    if (allRolesError) {
+      console.error('Error fetching user roles:', allRolesError)
+    }
+
+    // Create a map of user roles for easy lookup
+    const rolesMap = new Map()
+    if (allUserRoles) {
+      allUserRoles.forEach((ur: any) => {
+        if (!rolesMap.has(ur.user_id) || ur.is_active) {
+          rolesMap.set(ur.user_id, ur.role)
+        }
+      })
+    }
+
+    // Transform the data to include role information
+    const transformedUsers: UserProfile[] = profiles?.map((profile: any) => ({
+      id: profile.id,
+      first_name: profile.first_name,
+      last_name: profile.last_name,
+      email: profile.email,
+      phone_number: profile.phone_number,
+      is_active: profile.is_active,
+      created_at: profile.created_at,
+      updated_at: profile.updated_at,
+      role: rolesMap.get(profile.id) || 'agent'
+    })) || []
+
+    console.log(`Returning ${transformedUsers.length} transformed users`)
+
+    return new Response(
+      JSON.stringify({ users: transformedUsers }),
+      { 
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
+      }
+    )
+
+  } catch (error) {
+    console.error('Edge function error:', error)
+    return new Response(
+      JSON.stringify({ 
+        error: 'Internal server error',
+        details: error.message 
+      }),
+      { 
+        status: 500, 
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
+      }
+    )
+  }
+})
