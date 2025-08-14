@@ -3693,6 +3693,10 @@ export type Database = {
           expires_at: string
         }[]
       }
+      get_secure_ringcentral_credentials: {
+        Args: { p_account_id: string }
+        Returns: Json
+      }
       get_secure_session_data: {
         Args: { p_key: string }
         Returns: string
