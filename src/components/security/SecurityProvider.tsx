@@ -32,20 +32,18 @@ export const SecurityProvider: React.FC<SecurityProviderProps> = ({ children }) 
   const [isSecurityMonitoring, setIsSecurityMonitoring] = useState(true);
   const [securityLevel, setSecurityLevel] = useState<'low' | 'medium' | 'high' | 'critical'>('medium');
 
-  // Monitor for security events
+  // Monitor for security events (disabled aggressive session checking)
   useEffect(() => {
     if (!user || !isSecurityMonitoring) return;
 
-    const interval = setInterval(async () => {
-      const isValid = await validateSession();
-      if (!isValid) {
-        setSecurityLevel('high');
-        toast.error('Session security validation failed');
-      }
-    }, 30000); // Check every 30 seconds
-
-    return () => clearInterval(interval);
-  }, [user, isSecurityMonitoring, validateSession]);
+    // Removed the aggressive 30-second session validation that was causing popup spam
+    // Session validation is already handled in useSessionSecurity hook every 5 minutes
+    // This was causing false positives and user experience issues
+    
+    return () => {
+      // No interval to clear
+    };
+  }, [user, isSecurityMonitoring]);
 
   // Monitor for suspicious activities
   useEffect(() => {
