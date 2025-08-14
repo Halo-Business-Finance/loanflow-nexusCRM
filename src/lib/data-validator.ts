@@ -165,7 +165,7 @@ export class DataFieldValidator {
 
     try {
       // Audit leads with contact entity data
-      const { data: leads } = await supabase
+      const { data: leads, error: leadsError } = await supabase
         .from('leads')
         .select(`
           id,
@@ -176,7 +176,7 @@ export class DataFieldValidator {
           updated_at,
           is_converted_to_client,
           converted_at,
-          contact_entities!inner (
+          contact_entities (
             name,
             email,
             phone,
@@ -194,6 +194,11 @@ export class DataFieldValidator {
             call_notes
           )
         `)
+      
+      if (leadsError) {
+        console.error('Error fetching leads:', leadsError)
+        throw new Error(`Failed to fetch leads: ${leadsError.message}`)
+      }
       
       if (leads) {
         for (const lead of leads) {
@@ -211,7 +216,7 @@ export class DataFieldValidator {
       }
 
       // Audit clients with contact entity data
-      const { data: clients } = await supabase
+      const { data: clients, error: clientsError } = await supabase
         .from('clients')
         .select(`
           id,
@@ -225,7 +230,7 @@ export class DataFieldValidator {
           created_at,
           updated_at,
           lead_id,
-          contact_entities!inner (
+          contact_entities (
             name,
             email,
             phone,
@@ -244,6 +249,11 @@ export class DataFieldValidator {
           )
         `)
       
+      if (clientsError) {
+        console.error('Error fetching clients:', clientsError)
+        throw new Error(`Failed to fetch clients: ${clientsError.message}`)
+      }
+      
       if (clients) {
         for (const client of clients) {
           const validation = await this.validateLeadData(client) // Using same validation for shared fields
@@ -258,7 +268,12 @@ export class DataFieldValidator {
       }
 
       // Audit pipeline entries
-      const { data: pipelineEntries } = await supabase.from('pipeline_entries').select('*')
+      const { data: pipelineEntries, error: pipelineError } = await supabase.from('pipeline_entries').select('*')
+      
+      if (pipelineError) {
+        console.error('Error fetching pipeline entries:', pipelineError)
+        throw new Error(`Failed to fetch pipeline entries: ${pipelineError.message}`)
+      }
       if (pipelineEntries) {
         for (const entry of pipelineEntries) {
           const validation = await this.validatePipelineEntry(entry)

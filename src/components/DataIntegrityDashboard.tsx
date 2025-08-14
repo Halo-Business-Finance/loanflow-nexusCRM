@@ -122,9 +122,10 @@ export function DataIntegrityDashboard() {
       });
     } catch (error) {
       console.error('Data audit error:', error);
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
       toast({
         title: "Audit Failed",
-        description: "Failed to complete data audit. Check console for details.",
+        description: `Failed to complete data audit: ${errorMessage}`,
         variant: "destructive"
       });
     } finally {
