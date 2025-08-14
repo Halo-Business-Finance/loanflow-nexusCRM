@@ -32,31 +32,29 @@ export const useSessionSecurity = () => {
     await signOut();
   }, [cleanupSession, signOut]);
 
-  // Generate session token on login (using server-side session management)
+  // Generate session token on login (simplified approach)
   useEffect(() => {
     if (user && !sessionToken) {
       const token = crypto.randomUUID();
       setSessionToken(token);
       
-      // Create session record with enhanced security using existing table
-       supabase
-          .rpc('store_secure_session_token', {
-            p_user_id: user.id,
-            p_session_token: token,
-            p_device_fingerprint: generateDeviceFingerprint(),
-            p_user_agent: navigator.userAgent
-          })
-         .then(({ error }) => {
-           if (error) {
-             console.error('Secure session creation error:', error);
-             // Log security event for failed session creation
-             supabase.rpc('log_security_event', {
-               p_event_type: 'session_creation_failed',
-               p_severity: 'medium',
-               p_details: { error: error.message }
-             });
-           }
-         });
+      // Create session record in our custom table only
+      supabase
+        .from('active_sessions')
+        .insert({
+          user_id: user.id,
+          session_token: token,
+          device_fingerprint: generateDeviceFingerprint(),
+          user_agent: navigator.userAgent,
+          expires_at: new Date(Date.now() + 8 * 60 * 60 * 1000).toISOString(), // 8 hours
+          ip_address: null // Will be updated on first validation
+        })
+        .then(({ error }) => {
+          if (error) {
+            console.error('Session creation error:', error);
+            // Don't show toast for creation errors, just log them
+          }
+        });
     }
   }, [user, sessionToken]);
 
@@ -107,67 +105,43 @@ export const useSessionSecurity = () => {
         console.warn('IP address lookup failed, continuing with session validation:', ipError);
       }
       
-      const { data, error } = await supabase.rpc('validate_session_with_security_checks', {
-        p_user_id: user.id,
-        p_session_token: sessionToken,
-        p_ip_address: userIpAddress,
-        p_user_agent: navigator.userAgent
-      });
+      // Use simplified validation approach
+      const { data, error } = await supabase
+        .from('active_sessions')
+        .select('*')
+        .eq('user_id', user.id)
+        .eq('session_token', sessionToken)
+        .eq('is_active', true)
+        .gt('expires_at', new Date().toISOString())
+        .single();
 
       if (error) {
         console.error('Session validation error:', error);
-        await supabase.rpc('log_enhanced_security_event', {
-          p_user_id: user.id,
-          p_event_type: 'session_validation_failed',
-          p_severity: 'medium',
-          p_details: { error: error.message },
-          p_ip_address: userIpAddress,
-          p_user_agent: navigator.userAgent
-        });
         
         // Show user-friendly message instead of cryptic error
-        toast.error('Session security check failed', {
-          description: 'Please refresh the page if this continues.'
+        toast.error('Session expired', {
+          description: 'Please refresh the page to continue.'
         });
         return false;
       }
 
-      const result = data as unknown as SessionValidationResult & {
-        risk_score: number;
-        security_flags: string[];
-      };
-      
-      if (!result.valid) {
-        toast.error(`Session invalid: ${result.reason}`, {
-          description: result.risk_score > 30 ? 'Suspicious activity detected' : undefined
+      if (!data) {
+        toast.error('Session not found', {
+          description: 'Please log in again.'
         });
-        
-        if (result.requires_reauth || result.risk_score > 70) {
-          await secureSignOut();
-          return false;
-        }
+        await secureSignOut();
         return false;
       }
 
-      // Enhanced monitoring for high-risk sessions
-      if (result.risk_score > 30) {
-        toast.warning('Security notice: Unusual session activity detected', {
-          description: 'Your session is being monitored for security.'
-        });
-        
-        // Log high-risk session activity
-        await supabase.rpc('log_enhanced_security_event', {
-          p_user_id: user.id,
-          p_event_type: 'high_risk_session_activity',
-          p_severity: 'high',
-          p_details: { 
-            risk_score: result.risk_score,
-            security_flags: result.security_flags 
-          },
-          p_ip_address: userIpAddress,
-          p_user_agent: navigator.userAgent
-        });
-      }
+      // Update last activity
+      await supabase
+        .from('active_sessions')
+        .update({ 
+          last_activity: new Date().toISOString(),
+          ip_address: userIpAddress,
+          user_agent: navigator.userAgent
+        })
+        .eq('id', data.id);
 
       return true;
     } catch (error) {
@@ -181,18 +155,6 @@ export const useSessionSecurity = () => {
         });
       }
       
-      if (user) {
-        await supabase.rpc('log_enhanced_security_event', {
-          p_user_id: user.id,
-          p_event_type: 'session_validation_error',
-          p_severity: isNetworkError ? 'low' : 'medium',
-          p_details: { 
-            error: String(error),
-            error_type: isNetworkError ? 'network_timeout' : 'validation_error'
-          },
-          p_user_agent: navigator.userAgent
-        });
-      }
       return false;
     }
   }, [user, sessionToken, secureSignOut]);
