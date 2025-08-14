@@ -3565,6 +3565,18 @@ export type Database = {
         }
         Returns: undefined
       }
+      encrypt_contact_field_enhanced: {
+        Args: {
+          p_contact_id: string
+          p_field_name: string
+          p_field_value: string
+        }
+        Returns: undefined
+      }
+      encrypt_existing_contact_data: {
+        Args: Record<PropertyKey, never>
+        Returns: Json
+      }
       encrypt_profile_field: {
         Args: {
           p_profile_id: string
@@ -3608,6 +3620,10 @@ export type Database = {
         }[]
       }
       get_masked_contact_data: {
+        Args: { p_contact_id: string; p_requesting_user_id?: string }
+        Returns: Json
+      }
+      get_masked_contact_data_enhanced: {
         Args: { p_contact_id: string; p_requesting_user_id?: string }
         Returns: Json
       }

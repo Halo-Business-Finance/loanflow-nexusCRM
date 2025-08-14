@@ -51,7 +51,7 @@ export const useSecureContacts = () => {
       const secureContacts: SecureContactData[] = [];
       
       for (const { id } of contactIds) {
-        const { data, error } = await supabase.rpc('get_masked_contact_data', {
+        const { data, error } = await supabase.rpc('get_masked_contact_data_enhanced', {
           p_contact_id: id,
           p_requesting_user_id: user.id
         });
@@ -114,10 +114,10 @@ export const useSecureContacts = () => {
 
       if (createError) throw createError;
 
-      // Encrypt sensitive fields
+      // Encrypt sensitive fields using enhanced function
       for (const [fieldName, fieldValue] of Object.entries(sensitiveFields)) {
         if (fieldValue && fieldValue.trim()) {
-          const { error: encryptError } = await supabase.rpc('encrypt_contact_field', {
+          const { error: encryptError } = await supabase.rpc('encrypt_contact_field_enhanced', {
             p_contact_id: newContact.id,
             p_field_name: fieldName,
             p_field_value: fieldValue.trim()
@@ -182,10 +182,10 @@ export const useSecureContacts = () => {
 
       if (updateError) throw updateError;
 
-      // Update encrypted sensitive fields
+      // Update encrypted sensitive fields using enhanced function
       for (const [fieldName, fieldValue] of Object.entries(sensitiveFields)) {
         if (fieldValue && fieldValue.trim()) {
-          const { error: encryptError } = await supabase.rpc('encrypt_contact_field', {
+          const { error: encryptError } = await supabase.rpc('encrypt_contact_field_enhanced', {
             p_contact_id: contactId,
             p_field_name: fieldName,
             p_field_value: fieldValue.trim()
