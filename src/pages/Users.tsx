@@ -114,7 +114,7 @@ export default function Users() {
         .from('profiles')
         .select(`
           *,
-          user_roles!inner(role, is_active)
+          user_roles(role, is_active)
         `)
         .order('created_at', { ascending: false })
 
@@ -152,7 +152,7 @@ export default function Users() {
           email,
           first_name,
           last_name,
-          user_roles!inner(role)
+          user_roles(role)
         `)
 
       if (profilesError) throw profilesError

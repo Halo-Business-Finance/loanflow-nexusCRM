@@ -13,7 +13,8 @@ export const EnhancedSecurityDashboard: React.FC = () => {
   return (
     <div className="container mx-auto p-6 space-y-6">
       <CSPHeaders />
-      <SessionTimeoutManager />
+      {/* Temporarily disabled SessionTimeoutManager to prevent auto-refresh issues */}
+      {/* <SessionTimeoutManager /> */}
       
       <div className="flex items-center gap-2 mb-6">
         <Shield className="h-6 w-6" />
