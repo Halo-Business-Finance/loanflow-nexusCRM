@@ -83,12 +83,70 @@ export default function Enterprise() {
 
   return (
     <Layout>
-      <div className="space-y-6">
-        <div>
-          <h1 className="text-3xl font-bold tracking-tight">Enterprise Features</h1>
-          <p className="text-primary-foreground">
-            Advanced CRM capabilities for enterprise-level sales management.
+      <div className="container mx-auto p-6 space-y-6">
+        {/* Header Section */}
+        <div className="flex items-center gap-2 mb-6">
+          <Shield className="h-6 w-6" />
+          <h1 className="text-3xl font-bold">Enterprise Command Center</h1>
+          <p className="text-muted-foreground ml-4">
+            Advanced CRM capabilities for enterprise-level sales management
           </p>
+        </div>
+
+        {/* Enterprise Features Metrics */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <Card className="border-l-4 border-l-primary">
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-medium text-muted-foreground">Available Features</p>
+                  <div className="flex items-center gap-2 mt-1">
+                    <Database className="w-5 h-5" />
+                    <p className="text-lg font-bold">{features.length}</p>
+                  </div>
+                </div>
+                <Badge variant="default">
+                  ENTERPRISE
+                </Badge>
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-medium text-muted-foreground">Active Workflows</p>
+                  <p className="text-2xl font-bold text-primary">12</p>
+                </div>
+                <Workflow className="w-8 h-8 text-primary" />
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-medium text-muted-foreground">Custom Objects</p>
+                  <p className="text-2xl font-bold text-primary">8</p>
+                </div>
+                <Database className="w-8 h-8 text-primary" />
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-medium text-muted-foreground">Approval Processes</p>
+                  <p className="text-2xl font-bold text-primary">5</p>
+                </div>
+                <CheckCircle className="w-8 h-8 text-primary" />
+              </div>
+            </CardContent>
+          </Card>
         </div>
 
         <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">

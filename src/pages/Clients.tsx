@@ -16,7 +16,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, Dialog
 import { Calendar as CalendarComponent } from "@/components/ui/calendar"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { Search, Phone, Mail, MapPin, Calendar, DollarSign, Filter, ChevronDown, ChevronUp, Trash2, Bell, MessageSquare, ShoppingCart, FileText, Eye, Plus, Loader2 } from "lucide-react"
+import { Search, Phone, Mail, MapPin, Calendar, DollarSign, Filter, ChevronDown, ChevronUp, Trash2, Bell, MessageSquare, ShoppingCart, FileText, Eye, Plus, Loader2, Users, CheckCircle2 } from "lucide-react"
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog"
 import { useToast } from "@/hooks/use-toast"
 import { ActionReminder } from "@/components/ActionReminder"
@@ -458,16 +458,76 @@ export default function Clients() {
 
   return (
     <Layout>
-      <div className="space-y-6">
-        {/* Header */}
-        <div className="flex justify-between items-center">
-          <div>
-            <h1 className="text-3xl font-bold text-foreground dark:text-white">Clients</h1>
-            <p className="text-muted-foreground dark:text-white">Manage your client relationships</p>
-          </div>
+      <div className="container mx-auto p-6 space-y-6">
+        {/* Header Section */}
+        <div className="flex items-center gap-2 mb-6">
+          <Users className="h-6 w-6" />
+          <h1 className="text-3xl font-bold">Client Management Hub</h1>
+          <p className="text-muted-foreground ml-4">
+            Comprehensive client relationship management and tracking
+          </p>
+        </div>
+        {/* Client Metrics Overview */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <Card className="border-l-4 border-l-primary">
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-medium text-muted-foreground">Total Clients</p>
+                  <div className="flex items-center gap-2 mt-1">
+                    <Users className="w-5 h-5" />
+                    <p className="text-lg font-bold">{clients.length}</p>
+                  </div>
+                </div>
+                <Badge variant="default">
+                  ACTIVE
+                </Badge>
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-medium text-muted-foreground">Active Clients</p>
+                  <p className="text-2xl font-bold text-primary">{activeClients}</p>
+                </div>
+                <CheckCircle2 className="w-8 h-8 text-primary" />
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-medium text-muted-foreground">Total Loan Value</p>
+                  <p className="text-2xl font-bold text-primary">{formatCurrency(totalLoanValue)}</p>
+                </div>
+                <DollarSign className="w-8 h-8 text-primary" />
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-medium text-muted-foreground">Avg Loan Size</p>
+                  <p className="text-2xl font-bold text-primary">{formatCurrency(avgLoanSize)}</p>
+                </div>
+                <DollarSign className="w-8 h-8 text-primary" />
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Action Controls */}
+        <div className="flex justify-end">
           <Dialog open={showAddDialog} onOpenChange={setShowAddDialog}>
             <DialogTrigger asChild>
-              <Button className="bg-gradient-primary">
+              <Button className="gap-2">
                 <Plus className="mr-2 h-4 w-4" />
                 Add Client
               </Button>

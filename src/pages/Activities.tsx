@@ -361,84 +361,144 @@ export default function Activities() {
 
   return (
     <Layout>
-      <div className="space-y-6">
-        {/* Header */}
-        <div className="flex justify-between items-center">
-          <div>
-            <h1 className="text-3xl font-bold text-foreground dark:text-white">Activities & Notifications</h1>
-            <p className="text-foreground">Track all notifications, reminders, and system activities</p>
-          </div>
-          <div className="flex gap-4">
-            <Button onClick={fetchNotifications} variant="outline" className="gap-2">
-              <Clock className="h-4 w-4 text-white" />
-              Refresh
-            </Button>
-            <Dialog open={newActivityOpen} onOpenChange={setNewActivityOpen}>
-              <DialogTrigger asChild>
-                <Button className="gap-2">
-                  <Plus className="h-4 w-4 text-white" />
-                  New Activity
-                </Button>
-              </DialogTrigger>
-              <DialogContent>
-                <DialogHeader>
-                  <DialogTitle>Create New Activity</DialogTitle>
-                </DialogHeader>
-                <form onSubmit={(e) => {
-                  e.preventDefault();
-                  const formData = new FormData(e.target as HTMLFormElement);
-                  createActivity({
-                    title: formData.get('title') as string,
-                    description: formData.get('description') as string,
-                    type: formData.get('type') as string,
-                  });
-                }} className="space-y-4">
-                  <div>
-                    <Label htmlFor="title">Title</Label>
-                    <Input name="title" placeholder="Activity title" required />
-                  </div>
-                  <div>
-                    <Label htmlFor="description">Description</Label>
-                    <Textarea name="description" placeholder="Activity description" required />
-                  </div>
-                  <div>
-                    <Label htmlFor="type">Type</Label>
-                    <Select name="type" defaultValue="notification">
-                      <SelectTrigger>
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="call">Call</SelectItem>
-                        <SelectItem value="email">Email</SelectItem>
-                        <SelectItem value="meeting">Meeting</SelectItem>
-                        <SelectItem value="document">Document</SelectItem>
-                        <SelectItem value="notification">Notification</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                  <div className="flex gap-2">
-                    <Button type="submit" className="flex-1">Create Activity</Button>
-                    <Button type="button" variant="outline" onClick={() => setNewActivityOpen(false)}>
-                      Cancel
-                    </Button>
-                  </div>
-                </form>
-              </DialogContent>
-            </Dialog>
-            {activityStats.unread > 0 && (
-              <Button onClick={markAllAsRead} variant="outline" className="gap-2">
-                <CheckCircle2 className="h-4 w-4 text-white" />
-                Mark All Read
-              </Button>
-            )}
-          </div>
+      <div className="container mx-auto p-6 space-y-6">
+        {/* Header Section */}
+        <div className="flex items-center gap-2 mb-6">
+          <Bell className="h-6 w-6" />
+          <h1 className="text-3xl font-bold">Activity Command Center</h1>
+          <p className="text-muted-foreground ml-4">
+            Real-time notification management and activity tracking
+          </p>
         </div>
 
-        <Card className="shadow-soft">
+        {/* Metrics Overview */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <Card className="border-l-4 border-l-primary">
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-medium text-muted-foreground">Today's Activities</p>
+                  <div className="flex items-center gap-2 mt-1">
+                    <Clock className="w-5 h-5" />
+                    <p className="text-lg font-bold">{activityStats.today}</p>
+                  </div>
+                </div>
+                <Badge variant="default">
+                  ACTIVE
+                </Badge>
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-medium text-muted-foreground">This Week</p>
+                  <p className="text-2xl font-bold text-primary">{activityStats.thisWeek}</p>
+                </div>
+                <Calendar className="w-8 h-8 text-primary" />
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-medium text-muted-foreground">Total Notifications</p>
+                  <p className="text-2xl font-bold text-primary">{activityStats.notifications}</p>
+                </div>
+                <Bell className="w-8 h-8 text-primary" />
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-medium text-muted-foreground">Unread Items</p>
+                  <p className="text-2xl font-bold text-primary">{activityStats.unread}</p>
+                </div>
+                <AlertCircle className="w-8 h-8 text-primary" />
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Action Controls */}
+        <div className="flex justify-end gap-4">
+          <Button onClick={fetchNotifications} variant="outline" className="gap-2">
+            <Clock className="h-4 w-4" />
+            Refresh
+          </Button>
+          <Dialog open={newActivityOpen} onOpenChange={setNewActivityOpen}>
+            <DialogTrigger asChild>
+              <Button className="gap-2">
+                <Plus className="h-4 w-4" />
+                New Activity
+              </Button>
+            </DialogTrigger>
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle>Create New Activity</DialogTitle>
+              </DialogHeader>
+              <form onSubmit={(e) => {
+                e.preventDefault();
+                const formData = new FormData(e.target as HTMLFormElement);
+                createActivity({
+                  title: formData.get('title') as string,
+                  description: formData.get('description') as string,
+                  type: formData.get('type') as string,
+                });
+              }} className="space-y-4">
+                <div>
+                  <Label htmlFor="title">Title</Label>
+                  <Input name="title" placeholder="Activity title" required />
+                </div>
+                <div>
+                  <Label htmlFor="description">Description</Label>
+                  <Textarea name="description" placeholder="Activity description" required />
+                </div>
+                <div>
+                  <Label htmlFor="type">Type</Label>
+                  <Select name="type" defaultValue="notification">
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="call">Call</SelectItem>
+                      <SelectItem value="email">Email</SelectItem>
+                      <SelectItem value="meeting">Meeting</SelectItem>
+                      <SelectItem value="document">Document</SelectItem>
+                      <SelectItem value="notification">Notification</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="flex gap-2">
+                  <Button type="submit" className="flex-1">Create Activity</Button>
+                  <Button type="button" variant="outline" onClick={() => setNewActivityOpen(false)}>
+                    Cancel
+                  </Button>
+                </div>
+              </form>
+            </DialogContent>
+          </Dialog>
+          {activityStats.unread > 0 && (
+            <Button onClick={markAllAsRead} variant="outline" className="gap-2">
+              <CheckCircle2 className="h-4 w-4" />
+              Mark All Read
+            </Button>
+          )}
+        </div>
+
+        {/* Search and Filters */}
+        <Card>
           <CardContent className="p-6">
             <div className="flex gap-4">
               <div className="relative flex-1">
-                <Search className="absolute left-3 top-3 h-4 w-4 text-white" />
+                <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
                 <Input
                   placeholder="Search activities..."
                   className="pl-10"
@@ -474,57 +534,21 @@ export default function Activities() {
           </CardContent>
         </Card>
 
-        {/* Activity Stats */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-          <Card className="shadow-soft">
-            <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium">Today's Activities</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">{activityStats.today}</div>
-            </CardContent>
-          </Card>
-          <Card className="shadow-soft">
-            <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium">This Week</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">{activityStats.thisWeek}</div>
-            </CardContent>
-          </Card>
-          <Card className="shadow-soft">
-            <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium">Total Notifications</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">{filteredActivities.length}</div>
-            </CardContent>
-          </Card>
-          <Card className="shadow-soft">
-            <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium">Unread</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold text-destructive">{activityStats.unread}</div>
-            </CardContent>
-          </Card>
-        </div>
-
         {/* Activities Timeline */}
-        <Card className="shadow-soft">
+        <Card>
           <CardHeader>
             <CardTitle>Recent Notifications & Activities</CardTitle>
           </CardHeader>
           <CardContent className="p-6">
             {loading ? (
               <div className="flex items-center justify-center py-8">
-                <Clock className="h-6 w-6 animate-spin text-white" />
+                <Clock className="h-6 w-6 animate-spin" />
                 <span className="ml-2">Loading activities...</span>
               </div>
             ) : filteredActivities.length === 0 ? (
               <div className="text-center py-8">
-                <Bell className="h-12 w-12 text-white mx-auto mb-4" />
-                <p className="text-foreground">
+                <Bell className="h-12 w-12 mx-auto mb-4 text-muted-foreground" />
+                <p className="text-muted-foreground">
                   {searchTerm || filterType !== "all" || filterStatus !== "all" 
                     ? "No activities match your filters" 
                     : "No notifications or activities yet"
@@ -557,7 +581,7 @@ export default function Activities() {
                             <div className={`flex h-10 w-10 items-center justify-center rounded-full ${
                               activity.status === 'Pending' ? 'bg-blue-500/20' : 'bg-primary/10'
                             }`}>
-                              <IconComponent className="h-4 w-4 text-white" />
+                              <IconComponent className="h-4 w-4 text-primary" />
                             </div>
                           </div>
                           
@@ -603,86 +627,38 @@ export default function Activities() {
                                      }}
                                      className="h-8 px-3"
                                    >
-                                     <CheckCircle2 className="h-3 w-3 mr-1 text-white" />
+                                     <CheckCircle2 className="h-3 w-3 mr-1" />
                                      Mark Read
                                    </Button>
                                 )}
-                                {activity.notification_type && ['lead_created', 'lead_status_change', 'follow_up_reminder'].includes(activity.notification_type) && (
-                                   <Button
-                                     size="sm"
-                                     variant="outline"
-                                     onClick={(e) => {
-                                       e.stopPropagation();
-                                        const notification = notifications.find(n => n.id === activity.id);
-                                        if (notification?.related_type === 'lead' && notification?.related_id) {
-                                          navigate(`/leads/${notification.related_id}`);
-                                        } else {
-                                          navigate('/leads');
-                                        }
-                                     }}
-                                     className="h-8 px-3"
-                                   >
-                                     <User className="h-3 w-3 mr-1 text-white" />
-                                     View Lead
-                                   </Button>
-                                )}
-                                 {activity.notification_type === 'client_created' && (
-                                   <Button
-                                     size="sm"
-                                     variant="outline"
-                                     onClick={(e) => {
-                                       e.stopPropagation();
-                                        navigate('/clients');
-                                     }}
-                                     className="h-8 px-3"
-                                   >
-                                     <Users className="h-3 w-3 mr-1 text-white" />
-                                     View Client
-                                   </Button>
-                                 )}
-                                 {activity.notification_type === 'loan_created' && (
-                                   <Button
-                                     size="sm"
-                                     variant="outline"
-                                     onClick={(e) => {
-                                       e.stopPropagation();
-                                       navigate('/clients');
-                                     }}
-                                     className="h-8 px-3"
-                                   >
-                                     <DollarSign className="h-3 w-3 mr-1 text-white" />
-                                     View Loan
-                                   </Button>
-                                  )}
-                                 
-                                 {/* Edit and Delete buttons */}
-                                  <Button
-                                    size="sm"
-                                    variant="outline"
-                                    onClick={(e) => {
-                                      e.stopPropagation();
-                                      openEditDialog(activity);
-                                    }}
-                                    className="h-8 px-3"
-                                  >
-                                    <Edit className="h-3 w-3 mr-1 text-white" />
-                                    Edit
-                                  </Button>
-                                 
-                                  <Button
-                                    size="sm"
-                                    variant="outline"
-                                    onClick={(e) => {
-                                      e.stopPropagation();
-                                      if (window.confirm('Are you sure you want to delete this activity?')) {
-                                        deleteActivity(activity.id);
-                                      }
-                                    }}
-                                    className="h-8 px-3 text-red-600 hover:text-red-700"
-                                  >
-                                    <Trash2 className="h-3 w-3 mr-1 text-white" />
-                                    Delete
-                                  </Button>
+                                
+                                <Button
+                                  size="sm"
+                                  variant="outline"
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    openEditDialog(activity);
+                                  }}
+                                  className="h-8 px-3"
+                                >
+                                  <Edit className="h-3 w-3 mr-1" />
+                                  Edit
+                                </Button>
+                               
+                                <Button
+                                  size="sm"
+                                  variant="outline"
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    if (window.confirm('Are you sure you want to delete this activity?')) {
+                                      deleteActivity(activity.id);
+                                    }
+                                  }}
+                                  className="h-8 px-3 text-red-600 hover:text-red-700"
+                                >
+                                  <Trash2 className="h-3 w-3 mr-1" />
+                                  Delete
+                                </Button>
                               </div>
                             </div>
                           </div>
@@ -700,7 +676,7 @@ export default function Activities() {
         <Dialog open={editActivityOpen} onOpenChange={setEditActivityOpen}>
           <DialogContent>
             <DialogHeader>
-              <DialogTitle className="dark:text-white">Edit Activity</DialogTitle>
+              <DialogTitle>Edit Activity</DialogTitle>
             </DialogHeader>
             {editingActivity && (
               <form onSubmit={(e) => {
