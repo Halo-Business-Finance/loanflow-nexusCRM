@@ -3501,11 +3501,19 @@ export type Database = {
         Returns: string
       }
       create_secure_session: {
-        Args: {
-          p_session_token: string
-          p_device_fingerprint: string
-          p_user_agent: string
-        }
+        Args:
+          | {
+              p_session_token: string
+              p_device_fingerprint: string
+              p_user_agent: string
+            }
+          | {
+              p_user_id: string
+              p_session_token: string
+              p_device_fingerprint: string
+              p_ip_address: unknown
+              p_user_agent: string
+            }
         Returns: undefined
       }
       decrypt_token: {
@@ -3752,7 +3760,14 @@ export type Database = {
         Returns: boolean
       }
       validate_session_security: {
-        Args: { p_user_id: string; p_session_token: string }
+        Args:
+          | { p_user_id: string; p_session_token: string }
+          | {
+              p_user_id: string
+              p_session_token: string
+              p_ip_address: unknown
+              p_user_agent: string
+            }
         Returns: Json
       }
       validate_session_with_security_checks: {
