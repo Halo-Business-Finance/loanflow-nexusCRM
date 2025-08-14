@@ -528,10 +528,10 @@ export function SecurityManager() {
         </TabsContent>
 
         <TabsContent value="notifications" className="space-y-4">
-          <Card>
-            <CardHeader>
-              <CardTitle>Security Notifications</CardTitle>
-              <CardDescription>
+          <Card className="max-w-4xl">
+            <CardHeader className="pb-3">
+              <CardTitle className="text-lg">Security Notifications</CardTitle>
+              <CardDescription className="text-sm">
                 Important security alerts and events
               </CardDescription>
             </CardHeader>
@@ -539,34 +539,34 @@ export function SecurityManager() {
               {securityNotifications.length === 0 ? (
                 <p className="text-muted-foreground">No security notifications</p>
               ) : (
-                <div className="space-y-4">
+                <div className="space-y-2 max-h-96 overflow-y-auto">
                   {securityNotifications.map((notification) => (
                     <div
                       key={notification.id}
-                      className={`p-4 border rounded cursor-pointer transition-colors ${
-                        notification.is_read ? 'bg-muted/50' : 'bg-background'
+                      className={`p-2 border rounded-md cursor-pointer transition-colors ${
+                        notification.is_read ? 'bg-muted/50' : 'bg-card/50'
                       }`}
                       onClick={() => markNotificationAsRead(notification.id)}
                     >
                       <div className="flex items-start justify-between">
-                        <div className="flex-1">
-                          <div className="flex items-center space-x-2">
-                            <h4 className="font-semibold">{notification.title}</h4>
-                            <Badge variant={getSeverityColor(notification.severity)}>
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center space-x-1">
+                            <h4 className="font-medium text-sm truncate">{notification.title}</h4>
+                            <Badge variant={getSeverityColor(notification.severity)} className="text-xs">
                               {notification.severity}
                             </Badge>
                             {!notification.is_read && (
-                              <Badge variant="outline">New</Badge>
+                              <Badge variant="outline" className="text-xs">New</Badge>
                             )}
                           </div>
-                          <p className="text-sm text-muted-foreground mt-1">
+                          <p className="text-xs text-muted-foreground mt-1 truncate">
                             {notification.message}
                           </p>
-                          <p className="text-xs text-muted-foreground mt-2">
+                          <p className="text-xs text-muted-foreground mt-1">
                             {new Date(notification.created_at).toLocaleString()}
                           </p>
                         </div>
-                        <Eye className="h-4 w-4 text-muted-foreground" />
+                        <Eye className="h-4 w-4 text-muted-foreground flex-shrink-0" />
                       </div>
                     </div>
                   ))}
