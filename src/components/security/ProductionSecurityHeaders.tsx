@@ -13,16 +13,21 @@ interface SecurityHeadersConfig {
 const defaultSecurityHeaders: SecurityHeadersConfig = {
   contentSecurityPolicy: [
     "default-src 'self'",
-    "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://gshxxsniwytjgcnthyfq.supabase.co",
+    "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://gshxxsniwytjgcnthyfq.supabase.co https://maps.googleapis.com",
     "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
     "font-src 'self' https://fonts.gstatic.com",
-    "img-src 'self' data: blob: https: http:",
-    "connect-src 'self' https://gshxxsniwytjgcnthyfq.supabase.co wss://gshxxsniwytjgcnthyfq.supabase.co",
-    "frame-src 'self' https://gshxxsniwytjgcnthyfq.supabase.co",
+    "img-src 'self' data: blob: https:",
+    "connect-src 'self' https://gshxxsniwytjgcnthyfq.supabase.co wss://gshxxsniwytjgcnthyfq.supabase.co https://maps.googleapis.com https://ipapi.co",
+    "frame-src 'none'",
     "object-src 'none'",
     "base-uri 'self'",
     "form-action 'self'",
     "frame-ancestors 'none'",
+    "manifest-src 'self'",
+    "media-src 'self'",
+    "worker-src 'self'",
+    "child-src 'none'",
+    "report-uri /csp-violation-report-endpoint",
     "upgrade-insecure-requests"
   ].join("; "),
   referrerPolicy: "strict-origin-when-cross-origin",
@@ -33,13 +38,14 @@ const defaultSecurityHeaders: SecurityHeadersConfig = {
   permissionsPolicy: [
     "camera=()",
     "microphone=()",
-    "geolocation=(self)",
+    "geolocation=()",
     "payment=()",
     "usb=()",
     "magnetometer=()",
     "accelerometer=()",
     "gyroscope=()",
-    "fullscreen=(self)"
+    "fullscreen=(self)",
+    "interest-cohort=()"
   ].join(", ")
 };
 
@@ -65,11 +71,47 @@ export function ProductionSecurityHeaders() {
       noSniffMeta.content = defaultSecurityHeaders.xContentTypeOptions;
       document.head.appendChild(noSniffMeta);
 
+      // X-Frame-Options
+      const frameMeta = document.createElement('meta');
+      frameMeta.httpEquiv = 'X-Frame-Options';
+      frameMeta.content = defaultSecurityHeaders.xFrameOptions;
+      document.head.appendChild(frameMeta);
+
+      // X-XSS-Protection
+      const xssMeta = document.createElement('meta');
+      xssMeta.httpEquiv = 'X-XSS-Protection';
+      xssMeta.content = defaultSecurityHeaders.xXSSProtection;
+      document.head.appendChild(xssMeta);
+
+      // Strict-Transport-Security
+      const hstsMeta = document.createElement('meta');
+      hstsMeta.httpEquiv = 'Strict-Transport-Security';
+      hstsMeta.content = defaultSecurityHeaders.strictTransportSecurity;
+      document.head.appendChild(hstsMeta);
+
       // Permissions Policy
       const permissionsMeta = document.createElement('meta');
       permissionsMeta.httpEquiv = 'Permissions-Policy';
       permissionsMeta.content = defaultSecurityHeaders.permissionsPolicy;
       document.head.appendChild(permissionsMeta);
+
+      // Additional security headers
+      const additionalHeaders = [
+        { name: 'X-Permitted-Cross-Domain-Policies', value: 'none' },
+        { name: 'X-Download-Options', value: 'noopen' },
+        { name: 'X-DNS-Prefetch-Control', value: 'off' },
+        { name: 'Expect-CT', value: 'max-age=86400, enforce' },
+        { name: 'Cache-Control', value: 'no-store, no-cache, must-revalidate, private' },
+        { name: 'Pragma', value: 'no-cache' },
+        { name: 'Expires', value: '0' }
+      ];
+
+      additionalHeaders.forEach(header => {
+        const meta = document.createElement('meta');
+        meta.httpEquiv = header.name;
+        meta.content = header.value;
+        document.head.appendChild(meta);
+      });
 
       // Set security-related viewport meta tag
       const existingViewport = document.querySelector('meta[name="viewport"]');
@@ -255,7 +297,12 @@ export function useSecurityCompliance() {
       referrer: !!document.querySelector('meta[name="referrer"]'),
       permissions: !!document.querySelector('meta[http-equiv="Permissions-Policy"]'),
       https: location.protocol === 'https:',
-      noSniff: !!document.querySelector('meta[http-equiv="X-Content-Type-Options"]')
+      noSniff: !!document.querySelector('meta[http-equiv="X-Content-Type-Options"]'),
+      xFrameOptions: !!document.querySelector('meta[http-equiv="X-Frame-Options"]'),
+      xssProtection: !!document.querySelector('meta[http-equiv="X-XSS-Protection"]'),
+      hsts: !!document.querySelector('meta[http-equiv="Strict-Transport-Security"]'),
+      cacheControl: !!document.querySelector('meta[http-equiv="Cache-Control"]'),
+      expectCT: !!document.querySelector('meta[http-equiv="Expect-CT"]')
     };
 
     const score = Object.values(compliance).filter(Boolean).length / 
@@ -264,7 +311,8 @@ export function useSecurityCompliance() {
     return {
       compliance,
       score: Math.round(score),
-      isCompliant: score >= 80
+      isCompliant: score >= 90,
+      details: compliance
     };
   };
 
