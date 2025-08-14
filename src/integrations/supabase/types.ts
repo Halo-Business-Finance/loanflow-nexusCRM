@@ -1839,13 +1839,6 @@ export type Database = {
             referencedRelation: "blockchain_records"
             referencedColumns: ["id"]
           },
-          {
-            foreignKeyName: "fk_blockchain_record"
-            columns: ["blockchain_record_id"]
-            isOneToOne: false
-            referencedRelation: "verified_blockchain_records"
-            referencedColumns: ["id"]
-          },
         ]
       }
       ip_restrictions: {
@@ -3467,46 +3460,7 @@ export type Database = {
       }
     }
     Views: {
-      verified_blockchain_records: {
-        Row: {
-          action: string | null
-          audit_verified: boolean | null
-          block_number: number | null
-          blockchain_hash: string | null
-          created_at: string | null
-          data_hash: string | null
-          id: string | null
-          metadata: Json | null
-          record_id: string | null
-          record_type: string | null
-          transaction_hash: string | null
-          updated_at: string | null
-          user_id: string | null
-          verification_status: string | null
-          verified_at: string | null
-        }
-        Relationships: []
-      }
-      verified_blockchain_records_secure: {
-        Row: {
-          action: string | null
-          audit_verified: boolean | null
-          block_number: number | null
-          blockchain_hash: string | null
-          created_at: string | null
-          data_hash: string | null
-          id: string | null
-          metadata: Json | null
-          record_id: string | null
-          record_type: string | null
-          transaction_hash: string | null
-          updated_at: string | null
-          user_id: string | null
-          verification_status: string | null
-          verified_at: string | null
-        }
-        Relationships: []
-      }
+      [_ in never]: never
     }
     Functions: {
       archive_user: {
@@ -3680,6 +3634,27 @@ export type Database = {
       get_user_role: {
         Args: { p_user_id?: string }
         Returns: Database["public"]["Enums"]["user_role"]
+      }
+      get_verified_blockchain_records_final: {
+        Args: { p_record_type?: string; p_record_id?: string }
+        Returns: {
+          blockchain_id: string
+          record_type: string
+          record_id: string
+          data_hash: string
+          blockchain_hash: string
+          transaction_hash: string
+          verification_status: string
+          verified_at: string
+          audit_id: string
+          user_id: string
+          action: string
+          table_name: string
+          old_values_hash: string
+          new_values_hash: string
+          timestamp_hash: string
+          audit_created_at: string
+        }[]
       }
       get_verified_blockchain_records_masked: {
         Args: { p_record_type?: string; p_record_id?: string }
