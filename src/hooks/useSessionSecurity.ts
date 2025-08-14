@@ -40,11 +40,12 @@ export const useSessionSecurity = () => {
       
       // Create session record with enhanced security using existing table
        supabase
-         .rpc('create_secure_session', {
-           p_session_token: token,
-           p_device_fingerprint: generateDeviceFingerprint(),
-           p_user_agent: navigator.userAgent
-         })
+          .rpc('store_secure_session_token', {
+            p_user_id: user.id,
+            p_session_token: token,
+            p_device_fingerprint: generateDeviceFingerprint(),
+            p_user_agent: navigator.userAgent
+          })
          .then(({ error }) => {
            if (error) {
              console.error('Secure session creation error:', error);
