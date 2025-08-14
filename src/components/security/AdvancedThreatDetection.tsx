@@ -46,17 +46,19 @@ export function AdvancedThreatDetection() {
   const { hasRole } = useAuth();
   const isAdmin = hasRole('admin');
 
-  // Load monitoring state from secure storage
+  // Auto-activate high alert monitoring on component mount
   useEffect(() => {
-    const loadMonitoringState = async () => {
+    const initializeHighAlert = async () => {
       try {
-        const storedState = await secureStorage.getItem('ai-threat-monitoring');
-        setMonitoring(storedState === 'true');
+        // Always activate monitoring for continuous protection
+        setMonitoring(true);
+        await secureStorage.setItem('ai-threat-monitoring', 'true');
+        console.log('🤖 Real-time AI Threat Monitoring: HIGH ALERT MODE ACTIVATED');
       } catch (error) {
-        console.error("Error loading monitoring state:", error);
+        console.error("Error initializing high alert mode:", error);
       }
     };
-    loadMonitoringState();
+    initializeHighAlert();
   }, []);
 
   // AI Behavior Detection Hook
@@ -158,38 +160,42 @@ export function AdvancedThreatDetection() {
     }
   }, [detectAIBehavior]);
 
-  // Real-time Monitoring
+  // Continuous Real-time Monitoring - High Alert Mode
   useEffect(() => {
-    if (monitoring && isAdmin) {
-      const interval = setInterval(async () => {
-        await trackUserBehavior();
+    let interval: NodeJS.Timeout;
+    
+    // Always monitor when component is mounted for continuous protection
+    interval = setInterval(async () => {
+      if (!monitoring || !isAdmin) return;
+      
+      await trackUserBehavior();
+      
+      // Check for new threats more frequently in high alert mode
+      const { data: newThreats } = await supabase
+        .from('threat_incidents')
+        .select('*')
+        .order('created_at', { ascending: false })
+        .limit(10);
+
+      if (newThreats) {
+        setThreats(newThreats as ThreatIncident[]);
         
-        // Check for new threats
-        const { data: newThreats } = await supabase
-          .from('threat_incidents')
-          .select('*')
-          .order('created_at', { ascending: false })
-          .limit(10);
+        // Update metrics
+        const criticalThreats = newThreats.filter(t => t.severity === 'critical').length;
+        const aiThreats = newThreats.filter(t => t.ai_generated).length;
+        
+        setMetrics(prev => ({
+          ...prev,
+          ai_threats_blocked: aiThreats,
+          threat_level: criticalThreats > 0 ? 'critical' : 'low'
+        }));
+      }
+    }, 10000); // High alert: scan every 10 seconds
 
-
-        if (newThreats) {
-          setThreats(newThreats as ThreatIncident[]);
-          
-          // Update metrics
-          const criticalThreats = newThreats.filter(t => t.severity === 'critical').length;
-          const aiThreats = newThreats.filter(t => t.ai_generated).length;
-          
-          setMetrics(prev => ({
-            ...prev,
-            ai_threats_blocked: aiThreats,
-            threat_level: criticalThreats > 0 ? 'critical' : 'low'
-          }));
-        }
-      }, 30000); // Check every 30 seconds
-
-      return () => clearInterval(interval);
-    }
-  }, [monitoring, trackUserBehavior]);
+    return () => {
+      if (interval) clearInterval(interval);
+    };
+  }, [monitoring, isAdmin, trackUserBehavior]);
 
   const fetchSecurityData = async () => {
     setLoading(true);
@@ -354,39 +360,36 @@ export function AdvancedThreatDetection() {
       {/* Real-time Monitoring Control */}
       <Card>
         <CardHeader>
-          <CardTitle>
+          <CardTitle className="flex items-center gap-2">
+            <Bot className="h-5 w-5 text-red-500" />
             <span>Real-time AI Threat Monitoring</span>
+            <Badge variant="destructive" className="animate-pulse">
+              HIGH ALERT - ALWAYS ACTIVE
+            </Badge>
           </CardTitle>
           <CardDescription>
-            Advanced behavioral analysis and AI bot detection
+            🚨 CONTINUOUS: Advanced behavioral analysis and AI bot detection - Auto-activated for maximum security
           </CardDescription>
         </CardHeader>
         <CardContent>
           <div className="flex items-center justify-between">
             <div>
-              <p className="font-medium">
-                Status: {monitoring ? 'Active' : 'Inactive'}
+              <p className="font-medium text-green-600">
+                Status: ACTIVE - Continuous High Alert Monitoring
               </p>
               <p className="text-sm text-muted-foreground">
-                Monitors for AI/bot behavior patterns, device fingerprinting, and anomalous activity
+                🔍 Monitors for AI/bot behavior patterns, device fingerprinting, and anomalous activity every 10 seconds
+              </p>
+              <p className="text-xs text-orange-600 font-medium mt-1">
+                ⚡ Auto-activated for maximum security - cannot be disabled
               </p>
             </div>
-            <Button
-              onClick={async () => {
-                const newState = !monitoring;
-                setMonitoring(newState);
-                await secureStorage.setItem('ai-threat-monitoring', newState.toString());
-                toast({
-                  title: newState ? "AI Threat Monitoring Activated" : "AI Threat Monitoring Deactivated",
-                  description: newState 
-                    ? "Real-time monitoring is now active and will persist across sessions."
-                    : "Monitoring has been stopped."
-                });
-              }}
-              variant={monitoring ? "destructive" : "default"}
-            >
-              {monitoring ? 'Stop Monitoring' : 'Start Monitoring'}
-            </Button>
+            <div className="flex items-center gap-2">
+              <Shield className="h-5 w-5 text-green-500" />
+              <Badge variant="default" className="bg-green-100 text-green-800 border-green-300">
+                PROTECTED
+              </Badge>
+            </div>
           </div>
         </CardContent>
       </Card>
