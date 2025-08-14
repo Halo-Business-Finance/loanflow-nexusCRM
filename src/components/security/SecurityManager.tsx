@@ -323,9 +323,7 @@ export function SecurityManager() {
             {hasRole('admin') && <TabsTrigger value="hacker">Hacker Detection Bot</TabsTrigger>}
             <TabsTrigger value="mfa">Multi-Factor Auth</TabsTrigger>
             {hasRole('admin') && <TabsTrigger value="policies">Password Policy</TabsTrigger>}
-            {hasRole('admin') && <TabsTrigger value="audit">Audit Logs</TabsTrigger>}
-            {hasRole('admin') && <TabsTrigger value="users">User Roles</TabsTrigger>}
-            {hasRole('admin') && <TabsTrigger value="sessions">Active Sessions</TabsTrigger>}
+            {hasRole('admin') && <TabsTrigger value="admin-panel">Admin Panel</TabsTrigger>}
           </TabsList>
 
         <TabsContent value="overview" className="space-y-4">
@@ -696,98 +694,95 @@ export function SecurityManager() {
         )}
 
         {hasRole('admin') && (
-          <TabsContent value="audit" className="space-y-4">
-            <Card className="max-w-4xl">
-              <CardHeader className="pb-3">
-                <CardTitle className="text-lg">Recent Audit Logs</CardTitle>
-                <CardDescription className="text-sm">System activity and security events</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-2 max-h-96 overflow-y-auto">
-                  {auditLogs.map((log) => (
-                    <div key={log.id} className="flex items-center justify-between p-2 border rounded-md bg-card/50">
-                      <div className="min-w-0 flex-1">
-                        <p className="font-medium text-sm truncate">{log.action}</p>
-                        <p className="text-xs text-muted-foreground">
-                          {log.table_name} • {new Date(log.created_at).toLocaleString()}
-                        </p>
+          <TabsContent value="admin-panel" className="space-y-4">
+            <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-4 max-w-6xl">
+              {/* Audit Logs */}
+              <Card className="col-span-1">
+                <CardHeader className="pb-3">
+                  <CardTitle className="text-lg">Recent Audit Logs</CardTitle>
+                  <CardDescription className="text-sm">System activity and security events</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-2 max-h-80 overflow-y-auto">
+                    {auditLogs.map((log) => (
+                      <div key={log.id} className="flex items-center justify-between p-2 border rounded-md bg-card/50">
+                        <div className="min-w-0 flex-1">
+                          <p className="font-medium text-sm truncate">{log.action}</p>
+                          <p className="text-xs text-muted-foreground">
+                            {log.table_name} • {new Date(log.created_at).toLocaleString()}
+                          </p>
+                        </div>
+                        <Badge variant="outline" className="text-xs">{log.action.split('_')[0]}</Badge>
                       </div>
-                      <Badge variant="outline" className="text-xs">{log.action.split('_')[0]}</Badge>
-                    </div>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
-          </TabsContent>
-        )}
+                    ))}
+                  </div>
+                </CardContent>
+              </Card>
 
-        {hasRole('admin') && (
-          <TabsContent value="users" className="space-y-4">
-            <Card className="max-w-4xl">
-              <CardHeader className="pb-3">
-                <CardTitle className="text-lg">User Roles</CardTitle>
-                <CardDescription className="text-sm">Manage user permissions and access levels</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-2 max-h-96 overflow-y-auto">
-                  {userRoles.map((role) => (
-                    <div key={role.id} className="flex items-center justify-between p-2 border rounded-md bg-card/50">
-                      <div className="min-w-0 flex-1">
-                        <p className="font-medium text-sm truncate">User ID: {role.user_id}</p>
-                        <p className="text-xs text-muted-foreground">
-                          Assigned: {new Date(role.assigned_at).toLocaleString()}
-                        </p>
+              {/* User Roles */}
+              <Card className="col-span-1">
+                <CardHeader className="pb-3">
+                  <CardTitle className="text-lg">User Roles</CardTitle>
+                  <CardDescription className="text-sm">Manage user permissions and access levels</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-2 max-h-80 overflow-y-auto">
+                    {userRoles.map((role) => (
+                      <div key={role.id} className="flex items-center justify-between p-2 border rounded-md bg-card/50">
+                        <div className="min-w-0 flex-1">
+                          <p className="font-medium text-sm truncate">User ID: {role.user_id}</p>
+                          <p className="text-xs text-muted-foreground">
+                            Assigned: {new Date(role.assigned_at).toLocaleString()}
+                          </p>
+                        </div>
+                        <div className="flex items-center gap-1">
+                          <Badge 
+                            variant={role.role === 'admin' ? 'default' : 'secondary'}
+                            className="text-xs"
+                          >
+                            {role.role}
+                          </Badge>
+                          {role.is_active ? (
+                            <Badge variant="outline" className="text-xs bg-green-50 text-green-700">Active</Badge>
+                          ) : (
+                            <Badge variant="outline" className="text-xs bg-gray-50 text-gray-700">Inactive</Badge>
+                          )}
+                        </div>
                       </div>
-                      <div className="flex items-center gap-1">
-                        <Badge 
-                          variant={role.role === 'admin' ? 'default' : 'secondary'}
-                          className="text-xs"
-                        >
-                          {role.role}
-                        </Badge>
-                        {role.is_active ? (
-                          <Badge variant="outline" className="text-xs bg-green-50 text-green-700">Active</Badge>
-                        ) : (
-                          <Badge variant="outline" className="text-xs bg-gray-50 text-gray-700">Inactive</Badge>
-                        )}
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
-          </TabsContent>
-        )}
+                    ))}
+                  </div>
+                </CardContent>
+              </Card>
 
-        {hasRole('admin') && (
-          <TabsContent value="sessions" className="space-y-4">
-            <Card className="max-w-4xl">
-              <CardHeader className="flex flex-row items-center justify-between pb-3">
-                <div>
-                  <CardTitle className="text-lg">Active Sessions</CardTitle>
-                  <CardDescription className="text-sm">Monitor user sessions and activity</CardDescription>
-                </div>
-                <Button onClick={cleanupExpiredSessions} variant="outline" size="sm">
-                  <Trash2 className="w-4 h-4 mr-2" />
-                  Clean Expired
-                </Button>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-2 max-h-96 overflow-y-auto">
-                  {userSessions.filter(s => s.is_active).map((session) => (
-                    <div key={session.id} className="flex items-center justify-between p-2 border rounded-md bg-card/50">
-                      <div className="min-w-0 flex-1">
-                        <p className="font-medium text-sm truncate">User ID: {session.user_id}</p>
-                        <p className="text-xs text-muted-foreground">
-                          IP: {session.ip_address} • Last activity: {new Date(session.last_activity).toLocaleString()}
-                        </p>
+              {/* Active Sessions */}
+              <Card className="col-span-1">
+                <CardHeader className="flex flex-row items-center justify-between pb-3">
+                  <div>
+                    <CardTitle className="text-lg">Active Sessions</CardTitle>
+                    <CardDescription className="text-sm">Monitor user sessions and activity</CardDescription>
+                  </div>
+                  <Button onClick={cleanupExpiredSessions} variant="outline" size="sm">
+                    <Trash2 className="w-4 h-4 mr-2" />
+                    Clean Expired
+                  </Button>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-2 max-h-80 overflow-y-auto">
+                    {userSessions.filter(s => s.is_active).map((session) => (
+                      <div key={session.id} className="flex items-center justify-between p-2 border rounded-md bg-card/50">
+                        <div className="min-w-0 flex-1">
+                          <p className="font-medium text-sm truncate">User ID: {session.user_id}</p>
+                          <p className="text-xs text-muted-foreground">
+                            IP: {session.ip_address} • Last activity: {new Date(session.last_activity).toLocaleString()}
+                          </p>
+                        </div>
+                        <Badge variant="outline" className="text-xs bg-green-50 text-green-700">Active</Badge>
                       </div>
-                      <Badge variant="outline" className="text-xs bg-green-50 text-green-700">Active</Badge>
-                    </div>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
+                    ))}
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
           </TabsContent>
         )}
 
