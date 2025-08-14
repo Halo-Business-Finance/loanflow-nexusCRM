@@ -99,20 +99,76 @@ export default function Documents() {
 
   return (
     <Layout>
-      {/* Add Document Test Component */}
       <DocumentTest />
       
-      <div className="space-y-6">
-        {/* Header */}
-        <div className="mb-6">
-          <h1 className="text-3xl font-bold tracking-tight">Document Management Center</h1>
-          <p className="text-muted-foreground">
-            Manage and track lead financial documents with secure upload and verification
+      <div className="container mx-auto p-6 space-y-6">
+        {/* Header Section */}
+        <div className="flex items-center gap-2 mb-6">
+          <FileText className="h-6 w-6" />
+          <h1 className="text-3xl font-bold">Document Command Center</h1>
+          <p className="text-muted-foreground ml-4">
+            Secure document management with advanced upload and verification
           </p>
         </div>
-        
-        <div className="flex justify-between items-center">
-          <div></div>
+
+        {/* Document Metrics Overview */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <Card className="border-l-4 border-l-primary">
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-medium text-muted-foreground">Total Documents</p>
+                  <div className="flex items-center gap-2 mt-1">
+                    <FileText className="w-5 h-5" />
+                    <p className="text-lg font-bold">{statusCounts.total}</p>
+                  </div>
+                </div>
+                <Badge variant="default">
+                  ACTIVE
+                </Badge>
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-medium text-muted-foreground">Verified</p>
+                  <p className="text-2xl font-bold text-primary">{statusCounts.verified}</p>
+                </div>
+                <CheckCircle className="w-8 h-8 text-primary" />
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-medium text-muted-foreground">Pending Review</p>
+                  <p className="text-2xl font-bold text-primary">{statusCounts.pending}</p>
+                </div>
+                <Calendar className="w-8 h-8 text-primary" />
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-medium text-muted-foreground">Rejected</p>
+                  <p className="text-2xl font-bold text-primary">{statusCounts.rejected}</p>
+                </div>
+                <Trash2 className="w-8 h-8 text-primary" />
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Action Controls */}
+        <div className="flex justify-end">
           <Button onClick={() => setShowUploadModal(true)} className="gap-2">
             <Upload className="h-4 w-4" />
             Upload Document
@@ -120,7 +176,7 @@ export default function Documents() {
         </div>
 
         {/* Search and Filters */}
-        <Card className="shadow-soft">
+        <Card>
           <CardContent className="p-6">
             <div className="flex gap-4">
               <div className="relative flex-1">
@@ -145,42 +201,6 @@ export default function Documents() {
             </div>
           </CardContent>
         </Card>
-
-        {/* Document Stats */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-          <Card className="shadow-soft">
-            <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium">Total Documents</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">{statusCounts.total}</div>
-            </CardContent>
-          </Card>
-          <Card className="shadow-soft">
-            <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium">Verified</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold text-green-600">{statusCounts.verified}</div>
-            </CardContent>
-          </Card>
-          <Card className="shadow-soft">
-            <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium">Pending Review</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold text-yellow-600">{statusCounts.pending}</div>
-            </CardContent>
-          </Card>
-          <Card className="shadow-soft">
-            <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium">Rejected</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold text-red-600">{statusCounts.rejected}</div>
-            </CardContent>
-          </Card>
-        </div>
 
         {/* Documents List */}
         <div className="grid gap-6">

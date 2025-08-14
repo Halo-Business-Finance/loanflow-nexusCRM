@@ -312,34 +312,71 @@ export default function Integrations() {
 
   return (
     <Layout>
-      <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted/20">
-        <div className="container mx-auto p-6 space-y-8">
-          {/* Header Section */}
-          <div className="mb-6">
-            <h1 className="text-3xl font-bold tracking-tight">Integrations & AI Center</h1>
-            <p className="text-muted-foreground">
-              Connect with external services and configure AI-powered automation tools
-            </p>
-          </div>
-          
-          <div className="text-center space-y-4 py-4">
-            <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-primary rounded-2xl mb-4 animate-fade-in">
-              <Sparkles className="w-8 h-8 text-white" />
-            </div>
-            <p className="text-lg text-foreground/70 max-w-2xl mx-auto">
-              Supercharge your CRM with powerful integrations and AI-powered automation tools
-            </p>
-            <div className="flex items-center justify-center gap-4 mt-6">
-              <Button onClick={handleBrowseMarketplace} className="group">
-                <ExternalLink className="w-4 h-4 mr-2 group-hover:rotate-12 transition-transform" />
-                Explore Marketplace
-              </Button>
-              <Badge variant="secondary" className="px-3 py-1 text-sm">
-                <Shield className="w-3 h-3 mr-1" />
-                Secure & Verified
-              </Badge>
-            </div>
-          </div>
+      <div className="container mx-auto p-6 space-y-6">
+        {/* Header Section */}
+        <div className="flex items-center gap-2 mb-6">
+          <Workflow className="h-6 w-6" />
+          <h1 className="text-3xl font-bold">Integration Command Center</h1>
+          <p className="text-muted-foreground ml-4">
+            Connect external services and configure AI-powered automation tools
+          </p>
+        </div>
+
+        {/* Integration Metrics Overview */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <Card className="border-l-4 border-l-primary">
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-medium text-muted-foreground">Connected</p>
+                  <div className="flex items-center gap-2 mt-1">
+                    <CheckCircle className="w-5 h-5" />
+                    <p className="text-lg font-bold">{integrations.filter(i => i.status === "connected").length}</p>
+                  </div>
+                </div>
+                <Badge variant="default">
+                  ACTIVE
+                </Badge>
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-medium text-muted-foreground">Available</p>
+                  <p className="text-2xl font-bold text-primary">{integrations.filter(i => i.status === "available").length}</p>
+                </div>
+                <Clock className="w-8 h-8 text-primary" />
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-medium text-muted-foreground">Categories</p>
+                  <p className="text-2xl font-bold text-primary">{categoryFilters.length - 1}</p>
+                </div>
+                <Filter className="w-8 h-8 text-primary" />
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-medium text-muted-foreground">AI Tools</p>
+                  <p className="text-2xl font-bold text-primary">{aiTools.filter(t => t.status === 'active').length}</p>
+                </div>
+                <Sparkles className="w-8 h-8 text-primary" />
+              </div>
+            </CardContent>
+          </Card>
+        </div>
 
           {/* Search and Filter Bar */}
           <div className="bg-card/50 backdrop-blur-sm border rounded-2xl p-4 space-y-4">
@@ -693,155 +730,154 @@ export default function Integrations() {
               </div>
             </TabsContent>
           </Tabs>
-        </div>
-      </div>
 
-      {/* Adobe Configuration Dialog */}
-      <Dialog open={showAdobeConfig} onOpenChange={setShowAdobeConfig}>
-        <DialogContent className="max-w-md">
-          <DialogHeader>
-            <DialogTitle className="flex items-center gap-2 text-lg">
-              <FileImage className="w-5 h-5 text-red-600" />
-              Adobe PDF Configuration
-            </DialogTitle>
-            <DialogDescription className="text-sm">
-              Configure your Adobe PDF Embed API credentials
-            </DialogDescription>
-          </DialogHeader>
-          
-          <div className="space-y-4 py-2">
-            {/* Current Status */}
-            <div className="bg-muted/30 rounded-lg p-3 space-y-2">
-              <div className="flex items-center justify-between">
-                <span className="text-sm font-medium">Status</span>
-                <Badge className={adobeConfig.isDemo ? "bg-orange-50 text-orange-700 border-orange-200" : "bg-green-50 text-green-700 border-green-200"} variant="outline">
-                  {adobeConfig.isDemo ? 'Demo Mode' : 'Licensed'}
-                </Badge>
-              </div>
-              <div className="flex items-center justify-between">
-                <span className="text-sm text-muted-foreground">Client ID</span>
-                <Badge variant="outline" className="text-xs">
-                  {adobeConfig.isDemo ? 'Demo' : 'Configured'}
-                </Badge>
-              </div>
-              <div className="flex items-center justify-between">
-                <span className="text-sm text-muted-foreground">API Key</span>
-                <Badge variant={adobeConfig.hasApiKey ? "default" : "secondary"} className="text-xs">
-                  {adobeConfig.hasApiKey ? 'Configured' : 'Not Set'}
-                </Badge>
-              </div>
-              {!adobeConfig.isDemo && (
-                <div className="flex items-center justify-between">
-                  <span className="text-sm text-muted-foreground">Advanced Features</span>
-                  <Badge className="bg-blue-50 text-blue-700 border-blue-200 text-xs">
-                    {adobeConfig.hasApiKey ? 'Available' : 'Limited'}
-                  </Badge>
-                </div>
-              )}
-            </div>
-
-            {/* Configuration Section */}
-            <div className="space-y-3 p-3 border rounded-lg">
-              <div className="flex items-center justify-between">
-                <span className="text-sm font-medium">API Configuration</span>
-                <Badge variant="outline" className="text-xs">
-                  {adobeConfig.isDemo ? 'Demo Mode' : 'Production'}
-                </Badge>
-              </div>
+          {/* Adobe Configuration Dialog */}
+          <Dialog open={showAdobeConfig} onOpenChange={setShowAdobeConfig}>
+            <DialogContent className="max-w-md">
+              <DialogHeader>
+                <DialogTitle className="flex items-center gap-2 text-lg">
+                  <FileImage className="w-5 h-5 text-red-600" />
+                  Adobe PDF Configuration
+                </DialogTitle>
+                <DialogDescription className="text-sm">
+                  Configure your Adobe PDF Embed API credentials
+                </DialogDescription>
+              </DialogHeader>
               
-              <div className="space-y-2">
-                <Label className="text-xs text-muted-foreground">
-                  Configure your Adobe credentials for full access:
-                </Label>
-                <div className="grid grid-cols-2 gap-2">
+              <div className="space-y-4 py-2">
+                {/* Current Status */}
+                <div className="bg-muted/30 rounded-lg p-3 space-y-2">
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm font-medium">Status</span>
+                    <Badge className={adobeConfig.isDemo ? "bg-orange-50 text-orange-700 border-orange-200" : "bg-green-50 text-green-700 border-green-200"} variant="outline">
+                      {adobeConfig.isDemo ? 'Demo Mode' : 'Licensed'}
+                    </Badge>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm text-muted-foreground">Client ID</span>
+                    <Badge variant="outline" className="text-xs">
+                      {adobeConfig.isDemo ? 'Demo' : 'Configured'}
+                    </Badge>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm text-muted-foreground">API Key</span>
+                    <Badge variant={adobeConfig.hasApiKey ? "default" : "secondary"} className="text-xs">
+                      {adobeConfig.hasApiKey ? 'Configured' : 'Not Set'}
+                    </Badge>
+                  </div>
+                  {!adobeConfig.isDemo && (
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm text-muted-foreground">Advanced Features</span>
+                      <Badge className="bg-blue-50 text-blue-700 border-blue-200 text-xs">
+                        {adobeConfig.hasApiKey ? 'Available' : 'Limited'}
+                      </Badge>
+                    </div>
+                  )}
+                </div>
+
+                {/* Configuration Section */}
+                <div className="space-y-3 p-3 border rounded-lg">
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm font-medium">API Configuration</span>
+                    <Badge variant="outline" className="text-xs">
+                      {adobeConfig.isDemo ? 'Demo Mode' : 'Production'}
+                    </Badge>
+                  </div>
+                  
+                  <div className="space-y-2">
+                    <Label className="text-xs text-muted-foreground">
+                      Configure your Adobe credentials for full access:
+                    </Label>
+                    <div className="grid grid-cols-2 gap-2">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => {
+                          setShowAdobeConfig(false)
+                          toast({
+                            title: "Adobe Client ID",
+                            description: "Please enter your Adobe Client ID to upgrade from demo to licensed version.",
+                          })
+                        }}
+                        className="text-xs"
+                      >
+                        <Settings className="w-3 h-3 mr-1" />
+                        Client ID
+                      </Button>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => {
+                          setShowAdobeConfig(false)
+                          toast({
+                            title: "Adobe API Key",
+                            description: "Please enter your Adobe API Key for enhanced functionality.",
+                          })
+                        }}
+                        className="text-xs"
+                      >
+                        <Shield className="w-3 h-3 mr-1" />
+                        API Key
+                      </Button>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Quick Features */}
+                <div className="space-y-2">
+                  <span className="text-sm font-medium">Features Enabled</span>
+                  <div className="grid grid-cols-2 gap-1 text-xs">
+                    <div className="flex items-center gap-1">
+                      <div className="w-1 h-1 bg-green-500 rounded-full" />
+                      <span>PDF Viewer</span>
+                    </div>
+                    <div className="flex items-center gap-1">
+                      <div className="w-1 h-1 bg-green-500 rounded-full" />
+                      <span>Document Embed</span>
+                    </div>
+                    <div className="flex items-center gap-1">
+                      <div className="w-1 h-1 bg-green-500 rounded-full" />
+                      <span>Zoom Controls</span>
+                    </div>
+                    <div className="flex items-center gap-1">
+                      <div className="w-1 h-1 bg-green-500 rounded-full" />
+                      <span>Mobile Ready</span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Actions */}
+                <div className="flex gap-2 pt-2">
                   <Button
                     variant="outline"
                     size="sm"
-                    onClick={() => {
-                      setShowAdobeConfig(false)
-                      toast({
-                        title: "Adobe Client ID",
-                        description: "Please enter your Adobe Client ID to upgrade from demo to licensed version.",
-                      })
-                    }}
-                    className="text-xs"
+                    onClick={() => window.open('https://developer.adobe.com/document-services/docs/overview/pdf-embed-api/', '_blank')}
+                    className="flex-1 text-xs"
                   >
-                    <Settings className="w-3 h-3 mr-1" />
-                    Client ID
+                    <ExternalLink className="w-3 h-3 mr-1" />
+                    Docs
                   </Button>
                   <Button
-                    variant="outline"
                     size="sm"
-                    onClick={() => {
-                      setShowAdobeConfig(false)
+                    onClick={async () => {
+                      // Refresh the Adobe configuration to get latest status
+                      await fetchAdobeConfig()
                       toast({
-                        title: "Adobe API Key",
-                        description: "Please enter your Adobe API Key for enhanced functionality.",
+                        title: "Adobe Integration Updated",
+                        description: "Configuration refreshed with latest credentials.",
                       })
+                      setShowAdobeConfig(false)
                     }}
-                    className="text-xs"
+                    className="flex-1 text-xs"
                   >
-                    <Shield className="w-3 h-3 mr-1" />
-                    API Key
+                    <CheckCircle className="w-3 h-3 mr-1" />
+                    Refresh & Close
                   </Button>
                 </div>
               </div>
-            </div>
-
-            {/* Quick Features */}
-            <div className="space-y-2">
-              <span className="text-sm font-medium">Features Enabled</span>
-              <div className="grid grid-cols-2 gap-1 text-xs">
-                <div className="flex items-center gap-1">
-                  <div className="w-1 h-1 bg-green-500 rounded-full" />
-                  <span>PDF Viewer</span>
-                </div>
-                <div className="flex items-center gap-1">
-                  <div className="w-1 h-1 bg-green-500 rounded-full" />
-                  <span>Document Embed</span>
-                </div>
-                <div className="flex items-center gap-1">
-                  <div className="w-1 h-1 bg-green-500 rounded-full" />
-                  <span>Zoom Controls</span>
-                </div>
-                <div className="flex items-center gap-1">
-                  <div className="w-1 h-1 bg-green-500 rounded-full" />
-                  <span>Mobile Ready</span>
-                </div>
-              </div>
-            </div>
-
-            {/* Actions */}
-            <div className="flex gap-2 pt-2">
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => window.open('https://developer.adobe.com/document-services/docs/overview/pdf-embed-api/', '_blank')}
-                className="flex-1 text-xs"
-              >
-                <ExternalLink className="w-3 h-3 mr-1" />
-                Docs
-              </Button>
-              <Button
-                size="sm"
-                onClick={async () => {
-                  // Refresh the Adobe configuration to get latest status
-                  await fetchAdobeConfig()
-                  toast({
-                    title: "Adobe Integration Updated",
-                    description: "Configuration refreshed with latest credentials.",
-                  })
-                  setShowAdobeConfig(false)
-                }}
-                className="flex-1 text-xs"
-              >
-                <CheckCircle className="w-3 h-3 mr-1" />
-                Refresh & Close
-              </Button>
-            </div>
-          </div>
-        </DialogContent>
-      </Dialog>
+            </DialogContent>
+          </Dialog>
+      </div>
     </Layout>
   )
 }

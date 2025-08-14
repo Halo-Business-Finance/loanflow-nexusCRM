@@ -1,5 +1,6 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import { Camera, Download, ExternalLink } from "lucide-react";
 import Layout from "@/components/Layout";
 
@@ -59,13 +60,71 @@ const Screenshots = () => {
 
   return (
     <Layout>
-    <div className="container mx-auto p-6">
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold mb-2">CRM Screenshots</h1>
-        <p className="text-muted-foreground">
-          Capture screenshots of your LoanFlow CRM system for presentations and documentation
-        </p>
-      </div>
+      <div className="container mx-auto p-6 space-y-6">
+        {/* Header Section */}
+        <div className="flex items-center gap-2 mb-6">
+          <Camera className="h-6 w-6" />
+          <h1 className="text-3xl font-bold">Screenshot Command Center</h1>
+          <p className="text-muted-foreground ml-4">
+            Capture and manage CRM system screenshots for presentations
+          </p>
+        </div>
+
+        {/* Screenshot Metrics Overview */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <Card className="border-l-4 border-l-primary">
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-medium text-muted-foreground">Available Pages</p>
+                  <div className="flex items-center gap-2 mt-1">
+                    <Camera className="w-5 h-5" />
+                    <p className="text-lg font-bold">{pages.length}</p>
+                  </div>
+                </div>
+                <Badge variant="default">
+                  READY
+                </Badge>
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-medium text-muted-foreground">Screenshot Tools</p>
+                  <p className="text-2xl font-bold text-primary">3</p>
+                </div>
+                <ExternalLink className="w-8 h-8 text-primary" />
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-medium text-muted-foreground">Browser Support</p>
+                  <p className="text-2xl font-bold text-primary">All</p>
+                </div>
+                <Download className="w-8 h-8 text-primary" />
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-medium text-muted-foreground">Export Formats</p>
+                  <p className="text-2xl font-bold text-primary">PNG</p>
+                </div>
+                <Camera className="w-8 h-8 text-primary" />
+              </div>
+            </CardContent>
+          </Card>
+        </div>
 
       <div className="mb-6 p-4 bg-blue-50 dark:bg-blue-950 rounded-lg border border-blue-200 dark:border-blue-800">
         <h2 className="font-semibold text-blue-900 dark:text-blue-100 mb-2">How to Take Screenshots</h2>

@@ -136,33 +136,86 @@ export default function APIDocs() {
 
   return (
     <Layout>
-      <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted/20">
-        <div className="container mx-auto p-6 space-y-8">
-          {/* Header */}
-          <div className="text-center space-y-4 py-8">
-            <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-primary rounded-2xl mb-4">
-              <Code className="w-8 h-8 text-white" />
-            </div>
-            <h1 className="text-4xl font-bold bg-gradient-to-r from-foreground to-foreground/80 bg-clip-text text-transparent">
-              API Documentation
-            </h1>
-            <p className="text-lg text-foreground dark:text-white max-w-2xl mx-auto">
-              Complete API reference for integrating with LoanFlow CRM
-            </p>
-          </div>
+      <div className="container mx-auto p-6 space-y-6">
+        {/* Header Section */}
+        <div className="flex items-center gap-2 mb-6">
+          <Code className="h-6 w-6" />
+          <h1 className="text-3xl font-bold">API Command Center</h1>
+          <p className="text-muted-foreground ml-4">
+            Complete API reference and integration documentation
+          </p>
+        </div>
 
-          {/* Search */}
-          <div className="bg-card/50 backdrop-blur-sm border rounded-2xl p-4">
+        {/* API Metrics Overview */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <Card className="border-l-4 border-l-primary">
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-medium text-muted-foreground">Total Endpoints</p>
+                  <div className="flex items-center gap-2 mt-1">
+                    <Zap className="w-5 h-5" />
+                    <p className="text-lg font-bold">{apiEndpoints.length}</p>
+                  </div>
+                </div>
+                <Badge variant="default">
+                  ACTIVE
+                </Badge>
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-medium text-muted-foreground">Categories</p>
+                  <p className="text-2xl font-bold text-primary">{categories.length}</p>
+                </div>
+                <Database className="w-8 h-8 text-primary" />
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-medium text-muted-foreground">Authentication</p>
+                  <p className="text-2xl font-bold text-primary">Secure</p>
+                </div>
+                <Lock className="w-8 h-8 text-primary" />
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-medium text-muted-foreground">Examples</p>
+                  <p className="text-2xl font-bold text-primary">Available</p>
+                </div>
+                <Code className="w-8 h-8 text-primary" />
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Search */}
+        <Card>
+          <CardContent className="p-6">
             <div className="relative max-w-md mx-auto">
               <Search className="absolute left-3 top-3 w-4 h-4 text-muted-foreground" />
               <Input
                 placeholder="Search endpoints..."
-                className="pl-10 h-12 border-0 bg-background/80 rounded-xl"
+                className="pl-10"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
               />
             </div>
-          </div>
+          </CardContent>
+        </Card>
 
           <Tabs defaultValue="overview" className="space-y-8">
             <TabsList className="grid w-full grid-cols-4 bg-card/50 backdrop-blur-sm rounded-2xl p-1">
@@ -533,7 +586,6 @@ leads = api.get_leads(stage='New', limit=10)`)}
               </Card>
             </TabsContent>
           </Tabs>
-        </div>
       </div>
     </Layout>
   )

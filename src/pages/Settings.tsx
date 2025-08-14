@@ -179,12 +179,70 @@ export default function Settings() {
 
   return (
     <Layout>
-      <div className="space-y-6">
-        <div className="mb-6">
-          <h1 className="text-3xl font-bold tracking-tight">Settings Center</h1>
-          <p className="text-muted-foreground">
-            Configure your profile, preferences, and account settings
+      <div className="container mx-auto p-6 space-y-6">
+        {/* Header Section */}
+        <div className="flex items-center gap-2 mb-6">
+          <SettingsIcon className="h-6 w-6" />
+          <h1 className="text-3xl font-bold">Configuration Command Center</h1>
+          <p className="text-muted-foreground ml-4">
+            System configuration, user preferences, and account management
           </p>
+        </div>
+
+        {/* Settings Metrics Overview */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <Card className="border-l-4 border-l-primary">
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-medium text-muted-foreground">Profile Settings</p>
+                  <div className="flex items-center gap-2 mt-1">
+                    <User className="w-5 h-5" />
+                    <p className="text-lg font-bold">Active</p>
+                  </div>
+                </div>
+                <Badge variant="default">
+                  CONFIGURED
+                </Badge>
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-medium text-muted-foreground">Notifications</p>
+                  <p className="text-2xl font-bold text-primary">3</p>
+                </div>
+                <Bell className="w-8 h-8 text-primary" />
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-medium text-muted-foreground">Security Level</p>
+                  <p className="text-2xl font-bold text-primary">High</p>
+                </div>
+                <Shield className="w-8 h-8 text-primary" />
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-medium text-muted-foreground">Integrations</p>
+                  <p className="text-2xl font-bold text-primary">4</p>
+                </div>
+                <Lock className="w-8 h-8 text-primary" />
+              </div>
+            </CardContent>
+          </Card>
         </div>
 
         <Tabs defaultValue="profile" className="space-y-6">
