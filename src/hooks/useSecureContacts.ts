@@ -80,7 +80,12 @@ export const useSecureContacts = () => {
   };
 
   const createSecureContact = async (contactData: Partial<ContactEntity>) => {
-    if (!user) return null;
+    if (!user) {
+      console.error('No user found for contact creation');
+      return null;
+    }
+
+    console.log('Creating contact with data:', contactData);
 
     try {
       // Separate sensitive fields
@@ -92,10 +97,10 @@ export const useSecureContacts = () => {
         loan_amount: contactData.loan_amount?.toString()
       };
 
-      // Non-sensitive fields for main table
+      // Non-sensitive fields for main table - include email directly for now
       const mainFields = {
         name: contactData.name || '',
-        email: '', // Will be encrypted separately
+        email: contactData.email || '', // Include email directly for now
         business_name: contactData.business_name,
         location: contactData.location,
         stage: contactData.stage,
@@ -105,6 +110,8 @@ export const useSecureContacts = () => {
         user_id: user.id
       };
 
+      console.log('Inserting main contact fields:', mainFields);
+
       // Create contact in main table first
       const { data: newContact, error: createError } = await supabase
         .from('contact_entities')
@@ -112,19 +119,34 @@ export const useSecureContacts = () => {
         .select()
         .single();
 
-      if (createError) throw createError;
+      if (createError) {
+        console.error('Error creating contact:', createError);
+        throw createError;
+      }
 
-      // Encrypt sensitive fields using enhanced function
+      console.log('Contact created successfully:', newContact);
+
+      // Try to encrypt sensitive fields but don't fail the whole operation if it fails
+      let encryptionErrors = [];
       for (const [fieldName, fieldValue] of Object.entries(sensitiveFields)) {
         if (fieldValue && fieldValue.trim()) {
-          const { error: encryptError } = await supabase.rpc('encrypt_contact_field_enhanced', {
-            p_contact_id: newContact.id,
-            p_field_name: fieldName,
-            p_field_value: fieldValue.trim()
-          });
+          try {
+            console.log(`Encrypting field ${fieldName}...`);
+            const { error: encryptError } = await supabase.rpc('encrypt_contact_field_enhanced', {
+              p_contact_id: newContact.id,
+              p_field_name: fieldName,
+              p_field_value: fieldValue.trim()
+            });
 
-          if (encryptError) {
-            console.error(`Error encrypting ${fieldName}:`, encryptError);
+            if (encryptError) {
+              console.error(`Error encrypting ${fieldName}:`, encryptError);
+              encryptionErrors.push(`${fieldName}: ${encryptError.message}`);
+            } else {
+              console.log(`Successfully encrypted ${fieldName}`);
+            }
+          } catch (encryptError) {
+            console.error(`Exception encrypting ${fieldName}:`, encryptError);
+            encryptionErrors.push(`${fieldName}: ${encryptError.message}`);
           }
         }
       }
@@ -133,7 +155,9 @@ export const useSecureContacts = () => {
       
       toast({
         title: "Success",
-        description: "Contact created securely"
+        description: encryptionErrors.length > 0 
+          ? `Contact created (some encryption issues: ${encryptionErrors.length})`
+          : "Contact created securely"
       });
 
       return newContact;
@@ -141,7 +165,7 @@ export const useSecureContacts = () => {
       console.error('Error creating secure contact:', error);
       toast({
         title: "Error",
-        description: "Failed to create contact",
+        description: `Failed to create contact: ${error.message}`,
         variant: "destructive"
       });
       return null;
