@@ -681,22 +681,22 @@ export function SecurityManager() {
 
         {hasRole('admin') && (
           <TabsContent value="audit" className="space-y-4">
-            <Card>
-              <CardHeader>
-                <CardTitle>Recent Audit Logs</CardTitle>
-                <CardDescription>System activity and security events</CardDescription>
+            <Card className="max-w-4xl">
+              <CardHeader className="pb-3">
+                <CardTitle className="text-lg">Recent Audit Logs</CardTitle>
+                <CardDescription className="text-sm">System activity and security events</CardDescription>
               </CardHeader>
               <CardContent>
-                <div className="space-y-2">
+                <div className="space-y-2 max-h-96 overflow-y-auto">
                   {auditLogs.map((log) => (
-                    <div key={log.id} className="flex items-center justify-between p-3 border rounded-lg">
-                      <div>
-                        <p className="font-medium">{log.action}</p>
-                        <p className="text-sm text-muted-foreground">
+                    <div key={log.id} className="flex items-center justify-between p-2 border rounded-md bg-card/50">
+                      <div className="min-w-0 flex-1">
+                        <p className="font-medium text-sm truncate">{log.action}</p>
+                        <p className="text-xs text-muted-foreground">
                           {log.table_name} • {new Date(log.created_at).toLocaleString()}
                         </p>
                       </div>
-                      <Badge variant="outline">{log.action.split('_')[0]}</Badge>
+                      <Badge variant="outline" className="text-xs">{log.action.split('_')[0]}</Badge>
                     </div>
                   ))}
                 </div>
@@ -707,29 +707,32 @@ export function SecurityManager() {
 
         {hasRole('admin') && (
           <TabsContent value="users" className="space-y-4">
-            <Card>
-              <CardHeader>
-                <CardTitle>User Roles</CardTitle>
-                <CardDescription>Manage user permissions and access levels</CardDescription>
+            <Card className="max-w-4xl">
+              <CardHeader className="pb-3">
+                <CardTitle className="text-lg">User Roles</CardTitle>
+                <CardDescription className="text-sm">Manage user permissions and access levels</CardDescription>
               </CardHeader>
               <CardContent>
-                <div className="space-y-2">
+                <div className="space-y-2 max-h-96 overflow-y-auto">
                   {userRoles.map((role) => (
-                    <div key={role.id} className="flex items-center justify-between p-3 border rounded-lg">
-                      <div>
-                        <p className="font-medium">User ID: {role.user_id}</p>
-                        <p className="text-sm text-muted-foreground">
+                    <div key={role.id} className="flex items-center justify-between p-2 border rounded-md bg-card/50">
+                      <div className="min-w-0 flex-1">
+                        <p className="font-medium text-sm truncate">User ID: {role.user_id}</p>
+                        <p className="text-xs text-muted-foreground">
                           Assigned: {new Date(role.assigned_at).toLocaleString()}
                         </p>
                       </div>
-                      <div className="flex items-center gap-2">
-                        <Badge variant={role.role === 'admin' ? 'default' : 'secondary'}>
+                      <div className="flex items-center gap-1">
+                        <Badge 
+                          variant={role.role === 'admin' ? 'default' : 'secondary'}
+                          className="text-xs"
+                        >
                           {role.role}
                         </Badge>
                         {role.is_active ? (
-                          <Badge variant="outline" className="bg-green-50 text-green-700">Active</Badge>
+                          <Badge variant="outline" className="text-xs bg-green-50 text-green-700">Active</Badge>
                         ) : (
-                          <Badge variant="outline" className="bg-gray-50 text-gray-700">Inactive</Badge>
+                          <Badge variant="outline" className="text-xs bg-gray-50 text-gray-700">Inactive</Badge>
                         )}
                       </div>
                     </div>
@@ -742,11 +745,11 @@ export function SecurityManager() {
 
         {hasRole('admin') && (
           <TabsContent value="sessions" className="space-y-4">
-            <Card>
-              <CardHeader className="flex flex-row items-center justify-between">
+            <Card className="max-w-4xl">
+              <CardHeader className="flex flex-row items-center justify-between pb-3">
                 <div>
-                  <CardTitle>Active Sessions</CardTitle>
-                  <CardDescription>Monitor user sessions and activity</CardDescription>
+                  <CardTitle className="text-lg">Active Sessions</CardTitle>
+                  <CardDescription className="text-sm">Monitor user sessions and activity</CardDescription>
                 </div>
                 <Button onClick={cleanupExpiredSessions} variant="outline" size="sm">
                   <Trash2 className="w-4 h-4 mr-2" />
@@ -754,16 +757,16 @@ export function SecurityManager() {
                 </Button>
               </CardHeader>
               <CardContent>
-                <div className="space-y-2">
+                <div className="space-y-2 max-h-96 overflow-y-auto">
                   {userSessions.filter(s => s.is_active).map((session) => (
-                    <div key={session.id} className="flex items-center justify-between p-3 border rounded-lg">
-                      <div>
-                        <p className="font-medium">User ID: {session.user_id}</p>
-                        <p className="text-sm text-muted-foreground">
+                    <div key={session.id} className="flex items-center justify-between p-2 border rounded-md bg-card/50">
+                      <div className="min-w-0 flex-1">
+                        <p className="font-medium text-sm truncate">User ID: {session.user_id}</p>
+                        <p className="text-xs text-muted-foreground">
                           IP: {session.ip_address} • Last activity: {new Date(session.last_activity).toLocaleString()}
                         </p>
                       </div>
-                      <Badge variant="outline" className="bg-green-50 text-green-700">Active</Badge>
+                      <Badge variant="outline" className="text-xs bg-green-50 text-green-700">Active</Badge>
                     </div>
                   ))}
                 </div>
