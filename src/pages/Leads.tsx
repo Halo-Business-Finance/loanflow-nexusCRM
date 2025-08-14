@@ -265,6 +265,7 @@ export default function Leads() {
       }
 
       setIsFormOpen(false);
+      setShowNewLeadForm(false);
       setEditingLead(null);
       fetchLeadsOverview();
     } catch (error: any) {
