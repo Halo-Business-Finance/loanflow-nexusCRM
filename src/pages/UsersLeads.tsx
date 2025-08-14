@@ -5,11 +5,14 @@ import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { Search, Users, Eye, Phone, Mail, DollarSign, Calendar, Filter, User, Building, TrendingUp, Shield } from "lucide-react"
+import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar"
+import { AppSidebar } from "@/components/AppSidebar"
+import { Search, Users, Eye, Phone, Mail, DollarSign, Calendar, Filter, TrendingUp, Shield } from "lucide-react"
 import { supabase } from "@/integrations/supabase/client"
 import { useAuth } from "@/components/auth/AuthProvider"
 import { useToast } from "@/hooks/use-toast"
 import { formatCurrency } from "@/lib/utils"
+import { Lead } from "@/types/lead"
 
 interface UserWithLeads {
   id: string
@@ -21,8 +24,6 @@ interface UserWithLeads {
   activeLeads: number
   convertedLeads: number
 }
-
-import { Lead } from "@/types/lead"
 
 export default function UsersLeads() {
   const [usersWithLeads, setUsersWithLeads] = useState<UserWithLeads[]>([])
@@ -155,26 +156,6 @@ export default function UsersLeads() {
     )
   )
 
-  const getStageColor = (stage: string) => {
-    switch (stage.toLowerCase()) {
-      case 'new': return 'bg-blue-100 text-blue-800'
-      case 'qualified': return 'bg-green-100 text-green-800'
-      case 'application': return 'bg-yellow-100 text-yellow-800'
-      case 'pre-approval': return 'bg-purple-100 text-purple-800'
-      case 'closing': return 'bg-orange-100 text-orange-800'
-      default: return 'bg-gray-100 text-gray-800'
-    }
-  }
-
-  const getPriorityColor = (priority: string) => {
-    switch (priority.toLowerCase()) {
-      case 'high': return 'destructive'
-      case 'medium': return 'secondary'
-      case 'low': return 'outline'
-      default: return 'secondary'
-    }
-  }
-
   const totalStats = {
     totalUsers: usersWithLeads.length,
     totalLeads: usersWithLeads.reduce((sum, user) => sum + user.leads.length, 0),
@@ -184,219 +165,232 @@ export default function UsersLeads() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-background">
-        <div className="flex items-center justify-center h-64">
-          <div className="text-center">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
-            <p>Loading users and leads...</p>
+      <SidebarProvider>
+        <div className="min-h-screen flex w-full">
+          <AppSidebar />
+          <div className="flex-1">
+            <div className="flex items-center justify-center h-64">
+              <div className="text-center">
+                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
+                <p>Loading users and leads...</p>
+              </div>
+            </div>
           </div>
         </div>
-      </div>
+      </SidebarProvider>
     )
   }
 
   return (
-    <div className="min-h-screen bg-background">
-      {/* Header */}
-      <div className="border-b bg-card">
-        <div className="container mx-auto px-6 py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <div className="flex items-center justify-center w-10 h-10 rounded-lg bg-primary/10">
-                <Shield className="h-5 w-5 text-primary" />
-              </div>
-              <div>
-                <h1 className="text-xl font-semibold">Users & Leads Analytics</h1>
-                <p className="text-sm text-muted-foreground">
-                  View user performance and lead distribution analytics
-                </p>
+    <SidebarProvider>
+      <div className="min-h-screen flex w-full">
+        <AppSidebar />
+        <div className="flex-1">
+          <div className="min-h-screen bg-background">
+            {/* Header */}
+            <div className="border-b bg-card">
+              <div className="container mx-auto px-6 py-4">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <SidebarTrigger />
+                    <div className="flex items-center justify-center w-10 h-10 rounded-lg bg-primary/10">
+                      <Shield className="h-5 w-5 text-primary" />
+                    </div>
+                    <div>
+                      <h1 className="text-xl font-semibold">Users & Leads Analytics</h1>
+                      <p className="text-sm text-muted-foreground">
+                        View user performance and lead distribution analytics
+                      </p>
+                    </div>
+                  </div>
+                  <Button 
+                    variant="outline" 
+                    onClick={fetchUsersWithLeads}
+                    size="sm"
+                  >
+                    <TrendingUp className="h-4 w-4 mr-2" />
+                    Refresh Data
+                  </Button>
+                </div>
               </div>
             </div>
-            <Button 
-              variant="outline" 
-              onClick={fetchUsersWithLeads}
-              size="sm"
-            >
-              <TrendingUp className="h-4 w-4 mr-2" />
-              Refresh Data
-            </Button>
+
+            {/* Main Content */}
+            <div className="container mx-auto p-6 space-y-6">
+              {/* Search */}
+              <Card>
+                <CardContent className="p-6">
+                  <div className="flex gap-4">
+                    <div className="relative flex-1">
+                      <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                      <Input
+                        placeholder="Search users, leads, or businesses..."
+                        value={searchTerm}
+                        onChange={(e) => setSearchTerm(e.target.value)}
+                        className="pl-10"
+                      />
+                    </div>
+                    <Button variant="outline">
+                      <Filter className="h-4 w-4 mr-2" />
+                      Filter
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Overview Stats */}
+              <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+                <Card className="border-l-4 border-l-primary">
+                  <CardHeader className="pb-2">
+                    <CardTitle className="text-sm font-medium">Total Users</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="text-2xl font-bold">{totalStats.totalUsers}</div>
+                  </CardContent>
+                </Card>
+                <Card className="border-l-4 border-l-secondary">
+                  <CardHeader className="pb-2">
+                    <CardTitle className="text-sm font-medium">Total Leads</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="text-2xl font-bold">{totalStats.totalLeads}</div>
+                  </CardContent>
+                </Card>
+                <Card className="border-l-4 border-l-accent">
+                  <CardHeader className="pb-2">
+                    <CardTitle className="text-sm font-medium">Total Lead Value</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="text-2xl font-bold text-primary">{formatCurrency(totalStats.totalValue)}</div>
+                  </CardContent>
+                </Card>
+                <Card className="border-l-4 border-l-muted">
+                  <CardHeader className="pb-2">
+                    <CardTitle className="text-sm font-medium">Avg Leads/User</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="text-2xl font-bold">{totalStats.avgLeadsPerUser}</div>
+                  </CardContent>
+                </Card>
+              </div>
+
+              {/* Users and Leads List */}
+              <div className="space-y-6">
+                {filteredUsers.map((userWithLeads) => (
+                  <Card key={userWithLeads.id}>
+                    <CardHeader className="pb-4">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-4">
+                          <Avatar className="h-12 w-12">
+                            <AvatarImage src={`https://api.dicebear.com/6/initials/svg?seed=${userWithLeads.name}`} />
+                            <AvatarFallback>
+                              {userWithLeads.name.split(' ').map(n => n[0]).join('').slice(0, 2)}
+                            </AvatarFallback>
+                          </Avatar>
+                          <div>
+                            <h3 className="text-lg font-semibold">{userWithLeads.name}</h3>
+                            <p className="text-sm text-muted-foreground">{userWithLeads.email}</p>
+                            <Badge variant={userWithLeads.role === 'super_admin' ? 'destructive' : userWithLeads.role === 'admin' ? 'default' : 'secondary'}>
+                              {userWithLeads.role}
+                            </Badge>
+                          </div>
+                        </div>
+                        <div className="text-right">
+                          <div className="grid grid-cols-3 gap-4 text-center">
+                            <div>
+                              <div className="text-2xl font-bold text-secondary">{userWithLeads.activeLeads}</div>
+                              <div className="text-xs text-muted-foreground">Active</div>
+                            </div>
+                            <div>
+                              <div className="text-2xl font-bold text-accent">{userWithLeads.convertedLeads}</div>
+                              <div className="text-xs text-muted-foreground">Converted</div>
+                            </div>
+                            <div>
+                              <div className="text-lg font-bold text-primary">{formatCurrency(userWithLeads.totalLeadValue)}</div>
+                              <div className="text-xs text-muted-foreground">Total Value</div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </CardHeader>
+                    <CardContent>
+                      {userWithLeads.leads.length === 0 ? (
+                        <div className="text-center py-8 text-muted-foreground">
+                          <Users className="h-12 w-12 mx-auto mb-2 opacity-50" />
+                          <p>No leads assigned to this user</p>
+                        </div>
+                      ) : (
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                          {userWithLeads.leads.map((lead) => (
+                            <Card key={lead.id} className="p-4 hover:shadow-md transition-shadow">
+                              <div className="space-y-3">
+                                <div className="flex items-start justify-between">
+                                  <div>
+                                    <h4 className="font-medium">{lead.name}</h4>
+                                    <p className="text-sm text-muted-foreground">{lead.business_name || 'No business'}</p>
+                                  </div>
+                                  <Badge variant={lead.stage === 'Loan Funded' ? 'default' : 'secondary'}>
+                                    {lead.stage}
+                                  </Badge>
+                                </div>
+                                
+                                <div className="space-y-2 text-sm">
+                                  <div className="flex items-center gap-2">
+                                    <Mail className="h-3 w-3" />
+                                    <span className="truncate">{lead.email}</span>
+                                  </div>
+                                  {lead.phone && (
+                                    <div className="flex items-center gap-2">
+                                      <Phone className="h-3 w-3" />
+                                      <span>{lead.phone}</span>
+                                    </div>
+                                  )}
+                                  <div className="flex items-center gap-2">
+                                    <DollarSign className="h-3 w-3" />
+                                    <span className="font-medium">{formatCurrency(lead.loan_amount)}</span>
+                                  </div>
+                                  <div className="flex items-center gap-2">
+                                    <Calendar className="h-3 w-3" />
+                                    <span>{new Date(lead.created_at).toLocaleDateString()}</span>
+                                  </div>
+                                </div>
+
+                                <div className="flex items-center justify-between">
+                                  <Badge variant={lead.priority === 'high' ? 'destructive' : lead.priority === 'medium' ? 'secondary' : 'outline'}>
+                                    {lead.priority} priority
+                                  </Badge>
+                                  <Button
+                                    size="sm"
+                                    variant="outline"
+                                    onClick={() => navigate(`/leads/${lead.id}`)}
+                                  >
+                                    <Eye className="h-3 w-3 mr-1" />
+                                    View
+                                  </Button>
+                                </div>
+                              </div>
+                            </Card>
+                          ))}
+                        </div>
+                      )}
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+
+              {filteredUsers.length === 0 && (
+                <Card>
+                  <CardContent className="text-center py-12">
+                    <Search className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+                    <h3 className="text-lg font-medium mb-2">No users found</h3>
+                    <p className="text-muted-foreground">Try adjusting your search terms</p>
+                  </CardContent>
+                </Card>
+              )}
+            </div>
           </div>
         </div>
       </div>
-
-      {/* Main Content */}
-      <div className="container mx-auto p-6 space-y-6">
-        {/* Search */}
-        <Card>
-          <CardContent className="p-6">
-            <div className="flex gap-4">
-              <div className="relative flex-1">
-                <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                <Input
-                  placeholder="Search users, leads, or businesses..."
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  className="pl-10"
-                />
-              </div>
-              <Button variant="outline">
-                <Filter className="h-4 w-4 mr-2" />
-                Filter
-              </Button>
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Overview Stats */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-          <Card className="border-l-4 border-l-primary">
-            <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium">Total Users</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">{totalStats.totalUsers}</div>
-            </CardContent>
-          </Card>
-          <Card className="border-l-4 border-l-secondary">
-            <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium">Total Leads</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">{totalStats.totalLeads}</div>
-            </CardContent>
-          </Card>
-          <Card className="border-l-4 border-l-accent">
-            <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium">Total Lead Value</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold text-primary">{formatCurrency(totalStats.totalValue)}</div>
-            </CardContent>
-          </Card>
-          <Card className="border-l-4 border-l-muted">
-            <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium">Avg Leads/User</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">{totalStats.avgLeadsPerUser}</div>
-            </CardContent>
-          </Card>
-        </div>
-
-        {/* Users and Leads List */}
-        <div className="space-y-6">
-          {filteredUsers.map((userWithLeads) => (
-            <Card key={userWithLeads.id}>
-              <CardHeader className="pb-4">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-4">
-                    <Avatar className="h-12 w-12">
-                      <AvatarImage src={`https://api.dicebear.com/6/initials/svg?seed=${userWithLeads.name}`} />
-                      <AvatarFallback>
-                        {userWithLeads.name.split(' ').map(n => n[0]).join('').slice(0, 2)}
-                      </AvatarFallback>
-                    </Avatar>
-                    <div>
-                      <h3 className="text-lg font-semibold">{userWithLeads.name}</h3>
-                      <p className="text-sm text-muted-foreground">{userWithLeads.email}</p>
-                      <Badge variant={userWithLeads.role === 'super_admin' ? 'destructive' : userWithLeads.role === 'admin' ? 'default' : 'secondary'}>
-                        {userWithLeads.role}
-                      </Badge>
-                    </div>
-                  </div>
-                  <div className="text-right">
-                    <div className="grid grid-cols-3 gap-4 text-center">
-                      <div>
-                        <div className="text-2xl font-bold text-secondary">{userWithLeads.activeLeads}</div>
-                        <div className="text-xs text-muted-foreground">Active</div>
-                      </div>
-                      <div>
-                        <div className="text-2xl font-bold text-accent">{userWithLeads.convertedLeads}</div>
-                        <div className="text-xs text-muted-foreground">Converted</div>
-                      </div>
-                      <div>
-                        <div className="text-lg font-bold text-primary">{formatCurrency(userWithLeads.totalLeadValue)}</div>
-                        <div className="text-xs text-muted-foreground">Total Value</div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </CardHeader>
-              <CardContent>
-                {userWithLeads.leads.length === 0 ? (
-                  <div className="text-center py-8 text-muted-foreground">
-                    <Users className="h-12 w-12 mx-auto mb-2 opacity-50" />
-                    <p>No leads assigned to this user</p>
-                  </div>
-                ) : (
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                    {userWithLeads.leads.map((lead) => (
-                      <Card key={lead.id} className="p-4 hover:shadow-md transition-shadow">
-                        <div className="space-y-3">
-                          <div className="flex items-start justify-between">
-                            <div>
-                              <h4 className="font-medium">{lead.name}</h4>
-                              <p className="text-sm text-muted-foreground">{lead.business_name || 'No business'}</p>
-                            </div>
-                            <Badge variant={lead.stage === 'Loan Funded' ? 'default' : 'secondary'}>
-                              {lead.stage}
-                            </Badge>
-                          </div>
-                          
-                          <div className="space-y-2 text-sm">
-                            <div className="flex items-center gap-2">
-                              <Mail className="h-3 w-3" />
-                              <span className="truncate">{lead.email}</span>
-                            </div>
-                            {lead.phone && (
-                              <div className="flex items-center gap-2">
-                                <Phone className="h-3 w-3" />
-                                <span>{lead.phone}</span>
-                              </div>
-                            )}
-                            <div className="flex items-center gap-2">
-                              <DollarSign className="h-3 w-3" />
-                              <span className="font-medium">{formatCurrency(lead.loan_amount)}</span>
-                            </div>
-                            <div className="flex items-center gap-2">
-                              <Calendar className="h-3 w-3" />
-                              <span>{new Date(lead.created_at).toLocaleDateString()}</span>
-                            </div>
-                          </div>
-
-                          <div className="flex items-center justify-between">
-                            <Badge variant={lead.priority === 'high' ? 'destructive' : lead.priority === 'medium' ? 'secondary' : 'outline'}>
-                              {lead.priority} priority
-                            </Badge>
-                            <Button
-                              size="sm"
-                              variant="outline"
-                              onClick={() => navigate(`/leads/${lead.id}`)}
-                            >
-                              <Eye className="h-3 w-3 mr-1" />
-                              View
-                            </Button>
-                          </div>
-                        </div>
-                      </Card>
-                    ))}
-                  </div>
-                )}
-              </CardContent>
-            </Card>
-          ))}
-        </div>
-
-        {filteredUsers.length === 0 && (
-          <Card>
-            <CardContent className="text-center py-12">
-              <Search className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-              <h3 className="text-lg font-medium mb-2">No users found</h3>
-              <p className="text-muted-foreground">Try adjusting your search terms</p>
-            </CardContent>
-          </Card>
-        )}
-      </div>
-    </div>
+    </SidebarProvider>
   )
 }
