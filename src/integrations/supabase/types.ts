@@ -3563,6 +3563,10 @@ export type Database = {
         Args: Record<PropertyKey, never>
         Returns: number
       }
+      cleanup_expired_sessions_optimized: {
+        Args: Record<PropertyKey, never>
+        Returns: Json
+      }
       clear_secure_session_data: {
         Args: Record<PropertyKey, never>
         Returns: undefined
@@ -3621,6 +3625,10 @@ export type Database = {
           p_user_agent: string
           p_geo_data: Json
         }
+        Returns: Json
+      }
+      detect_security_threats: {
+        Args: Record<PropertyKey, never>
         Returns: Json
       }
       encrypt_contact_field: {
@@ -3890,6 +3898,10 @@ export type Database = {
       log_verified_blockchain_view_access: {
         Args: Record<PropertyKey, never>
         Returns: undefined
+      }
+      monitor_system_performance: {
+        Args: Record<PropertyKey, never>
+        Returns: Json
       }
       remove_secure_session_data: {
         Args: { p_key: string }
