@@ -3791,6 +3791,14 @@ export type Database = {
         }
         Returns: Json
       }
+      validate_credential_access: {
+        Args: {
+          p_table_name: string
+          p_record_id: string
+          p_access_type: string
+        }
+        Returns: boolean
+      }
       validate_document_access: {
         Args: { p_document_id: string; p_action?: string }
         Returns: boolean
