@@ -7,6 +7,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Check, AlertTriangle, X, RefreshCw, Database, FileText } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { DataFieldValidator } from "@/lib/data-validator";
+import { DataIntegrityFixer } from "@/lib/data-integrity-fixer";
 
 interface FieldIssue {
   fieldName: string;
@@ -134,13 +135,14 @@ export function DataIntegrityDashboard() {
   };
 
   const runAutoFix = async () => {
-    console.log('Auto-fix button clicked, starting process...');
+    console.log('🔧 Auto-fix button clicked, starting process...');
     setLoading(true);
     try {
-      const validator = new DataFieldValidator();
-      console.log('Created validator, calling autoFixDataIssues...');
-      const results = await validator.autoFixDataIssues();
-      console.log('Auto-fix results:', results);
+      // Use the new DataIntegrityFixer that respects RLS
+      const fixer = new DataIntegrityFixer();
+      console.log('Created fixer, calling fixCurrentUserContactIssues...');
+      const results = await fixer.fixCurrentUserContactIssues();
+      console.log('✅ Auto-fix results:', results);
       setAutoFixResults(results);
       
       toast({
@@ -152,10 +154,11 @@ export function DataIntegrityDashboard() {
       // Re-run audit to show updated results
       await runDataAudit();
     } catch (error) {
-      console.error('Auto-fix error:', error);
+      console.error('❌ Auto-fix error:', error);
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
       toast({
         title: "Auto-Fix Failed",
-        description: "Failed to auto-fix data issues. Check console for details.",
+        description: `Failed to auto-fix data issues: ${errorMessage}`,
         variant: "destructive"
       });
     } finally {

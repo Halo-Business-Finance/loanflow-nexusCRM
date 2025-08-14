@@ -485,13 +485,14 @@ export class DataFieldValidator {
         }
       }
 
-      // 5. Fix contact entities with null loan amounts (set reasonable defaults)
+      // 5. Fix contact entities with null loan amounts (only for current user due to RLS)
       const { data: nullLoanAmounts } = await supabase
         .from('contact_entities')
         .select('id, loan_amount, business_name, user_id')
         .is('loan_amount', null)
+        // Only get records for current user due to RLS policies
         
-      console.log('Found null loan amounts:', nullLoanAmounts?.length || 0)
+      console.log('Found null loan amounts for current user:', nullLoanAmounts?.length || 0)
       console.log('Null loan amount records:', nullLoanAmounts)
 
       if (nullLoanAmounts && nullLoanAmounts.length > 0) {
@@ -504,7 +505,10 @@ export class DataFieldValidator {
             
             const { error, data } = await supabase
               .from('contact_entities')
-              .update({ loan_amount: defaultLoanAmount })
+              .update({ 
+                loan_amount: defaultLoanAmount,
+                updated_at: new Date().toISOString()
+              })
               .eq('id', contact.id)
               .select()
             
@@ -512,8 +516,8 @@ export class DataFieldValidator {
               result.fixed++
               console.log(`✅ Fixed contact ${contact.id} loan amount: ${defaultLoanAmount}`)
             } else {
-              console.error(`❌ Failed to fix contact ${contact.id}:`, error)
-              result.errors.push(`Failed to fix contact loan amount ${contact.id}: ${error.message}`)
+              console.error(`❌ RLS Error fixing contact ${contact.id}:`, error)
+              result.errors.push(`RLS policy prevented fixing contact ${contact.id}: ${error.message}`)
             }
           } catch (contactError) {
             console.error(`❌ Exception fixing contact ${contact.id}:`, contactError)
