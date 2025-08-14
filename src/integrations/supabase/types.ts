@@ -3661,6 +3661,24 @@ export type Database = {
         Args: { p_user_id?: string }
         Returns: Database["public"]["Enums"]["user_role"]
       }
+      get_verified_blockchain_records_masked: {
+        Args: { p_record_type?: string; p_record_id?: string }
+        Returns: {
+          id: string
+          record_type: string
+          record_id: string
+          data_hash_masked: string
+          blockchain_hash_masked: string
+          block_number: number
+          transaction_hash_masked: string
+          verified_at: string
+          verification_status: string
+          created_at: string
+          user_id: string
+          action: string
+          audit_verified: boolean
+        }[]
+      }
       get_verified_blockchain_records_secure: {
         Args:
           | Record<PropertyKey, never>
@@ -3731,6 +3749,10 @@ export type Database = {
           p_user_agent?: string
         }
         Returns: string
+      }
+      log_verified_blockchain_view_access: {
+        Args: Record<PropertyKey, never>
+        Returns: undefined
       }
       remove_secure_session_data: {
         Args: { p_key: string }
