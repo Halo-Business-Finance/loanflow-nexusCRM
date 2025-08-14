@@ -115,32 +115,49 @@ export default function Users() {
     try {
       setLoading(true)
       
+      // Debug authentication status
+      console.log('Auth user:', user?.id, user?.email)
+      
+      // Use a more direct query that works with the current auth state
       const { data: profiles, error: profilesError } = await supabase
         .from('profiles')
-        .select(`
-          *,
-          user_roles(role, is_active)
-        `)
+        .select('*')
         .order('created_at', { ascending: false })
 
-      if (profilesError) throw profilesError
+      console.log('Direct profiles query result:', profiles, profilesError)
+
+      if (profilesError) {
+        console.error('Profiles query error:', profilesError)
+        throw profilesError
+      }
+
+      // Get user roles separately
+      const { data: userRoles, error: rolesError } = await supabase
+        .from('user_roles')
+        .select('user_id, role, is_active')
+
+      console.log('User roles query:', userRoles, rolesError)
+
+      // Create a map of user roles for easy lookup
+      const rolesMap = new Map()
+      if (userRoles && !rolesError) {
+        userRoles.forEach((ur: any) => {
+          if (!rolesMap.has(ur.user_id) || ur.is_active) {
+            rolesMap.set(ur.user_id, ur.role)
+          }
+        })
+      }
 
       // Transform the data to include role information
       const transformedUsers = profiles?.map((profile: any) => {
-        console.log('Processing profile:', profile.id, profile.email, 'user_roles:', profile.user_roles)
+        console.log('Processing profile:', profile.id, profile.email)
         
-        // Handle user_roles array properly
-        let userRole = 'agent'
-        if (profile.user_roles && Array.isArray(profile.user_roles) && profile.user_roles.length > 0) {
-          // Find active role or use first role
-          const activeRole = profile.user_roles.find((ur: any) => ur.is_active !== false)
-          userRole = activeRole?.role || profile.user_roles[0]?.role || 'agent'
-        }
+        const userRole = rolesMap.get(profile.id) || 'agent'
         
         return {
           ...profile,
           user_id: profile.id,
-          phone: profile.phone || '',
+          phone: profile.phone_number || '',
           role: userRole
         }
       }) || []
