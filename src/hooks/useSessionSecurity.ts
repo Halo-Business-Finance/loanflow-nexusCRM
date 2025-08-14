@@ -68,8 +68,14 @@ export const useSessionSecurity = () => {
     if (!user || !sessionToken) return false;
 
     try {
-      // Get real IP address for security validation
-      const response = await fetch('https://api.ipify.org?format=json');
+      // Get real IP address for security validation with timeout
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 3000);
+      
+      const response = await fetch('https://api.ipify.org?format=json', {
+        signal: controller.signal
+      });
+      clearTimeout(timeoutId);
       const ipData = await response.json();
       
       const { data, error } = await supabase.rpc('validate_session_with_security_checks', {
@@ -81,11 +87,13 @@ export const useSessionSecurity = () => {
 
       if (error) {
         console.error('Session validation error:', error);
-        // Log security event for failed validation
-        await supabase.rpc('log_security_event', {
+        await supabase.rpc('log_enhanced_security_event', {
+          p_user_id: user.id,
           p_event_type: 'session_validation_failed',
           p_severity: 'medium',
-          p_details: { error: error.message }
+          p_details: { error: error.message },
+          p_ip_address: ipData.ip,
+          p_user_agent: navigator.userAgent
         });
         return false;
       }
@@ -100,27 +108,45 @@ export const useSessionSecurity = () => {
           description: result.risk_score > 30 ? 'Suspicious activity detected' : undefined
         });
         
-        if (result.requires_reauth) {
-          await signOut();
+        if (result.requires_reauth || result.risk_score > 70) {
+          await secureSignOut();
+          return false;
         }
         return false;
       }
 
-      // Show warning for high-risk sessions
+      // Enhanced monitoring for high-risk sessions
       if (result.risk_score > 30) {
         toast.warning('Security notice: Unusual session activity detected', {
           description: 'Your session is being monitored for security.'
+        });
+        
+        // Log high-risk session activity
+        await supabase.rpc('log_enhanced_security_event', {
+          p_user_id: user.id,
+          p_event_type: 'high_risk_session_activity',
+          p_severity: 'high',
+          p_details: { 
+            risk_score: result.risk_score,
+            security_flags: result.security_flags 
+          },
+          p_ip_address: ipData.ip,
+          p_user_agent: navigator.userAgent
         });
       }
 
       return true;
     } catch (error) {
       console.error('Session validation error:', error);
-      await supabase.rpc('log_security_event', {
-        p_event_type: 'session_validation_error',
-        p_severity: 'medium',
-        p_details: { error: String(error) }
-      });
+      if (user) {
+        await supabase.rpc('log_enhanced_security_event', {
+          p_user_id: user.id,
+          p_event_type: 'session_validation_error',
+          p_severity: 'medium',
+          p_details: { error: String(error) },
+          p_user_agent: navigator.userAgent
+        });
+      }
       return false;
     }
   }, [user, sessionToken, signOut]);
