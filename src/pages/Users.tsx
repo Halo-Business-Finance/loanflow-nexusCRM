@@ -98,7 +98,6 @@ export default function Users() {
     if (hasRole('admin') || hasRole('super_admin')) {
       console.log('User has admin access, fetching users...')
       fetchUsers()
-      fetchUsersWithLeads()
     } else {
       console.log('User does not have admin access')
       toast({
@@ -109,6 +108,13 @@ export default function Users() {
       navigate('/leads')
     }
   }, [user, hasRole, navigate])
+
+  // Fetch leads data after users are loaded
+  useEffect(() => {
+    if (users.length > 0) {
+      fetchUsersWithLeads()
+    }
+  }, [users])
 
   const fetchUsers = async () => {
     console.log('fetchUsers called')
@@ -221,28 +227,23 @@ export default function Users() {
     try {
       setLoading(true)
       
-      const { data: profiles, error: profilesError } = await supabase
-        .from('profiles')
-        .select(`
-          id,
-          email,
-          first_name,
-          last_name,
-          user_roles(role)
-        `)
-
-      if (profilesError) throw profilesError
+      // Use the existing users data instead of re-querying profiles
+      if (users.length === 0) {
+        console.log('No users data available yet, will wait for users to be fetched first')
+        setLoading(false)
+        return
+      }
 
       const usersData: UserWithLeads[] = []
 
-      for (const profile of profiles || []) {
+      for (const profile of users) {
         const { data: leads, error: leadsError } = await supabase
           .from('leads')
           .select(`
             *,
             contact_entities(*)
           `)
-          .eq('user_id', profile.id)
+          .eq('user_id', profile.user_id || profile.id)
 
         if (leadsError) {
           console.error('Error fetching leads for user:', profile.id, leadsError)
@@ -267,14 +268,12 @@ export default function Users() {
         ).length
 
         usersData.push({
-          id: profile.id,
+          id: profile.user_id || profile.id,
           email: profile.email,
           name: profile.first_name && profile.last_name 
             ? `${profile.first_name} ${profile.last_name}` 
             : profile.first_name || profile.email,
-          role: profile.user_roles && Array.isArray(profile.user_roles) && profile.user_roles.length > 0 
-            ? profile.user_roles[0]?.role || 'agent' 
-            : 'agent',
+          role: profile.role || 'agent',
           leads: transformedLeads,
           totalLeadValue,
           activeLeads,
@@ -286,8 +285,8 @@ export default function Users() {
     } catch (error) {
       console.error('Error fetching users with leads:', error)
       toast({
-        title: "Error",
-        description: "Failed to fetch user lead data",
+        title: "Error", 
+        description: "Failed to fetch user data",
         variant: "destructive"
       })
     } finally {
