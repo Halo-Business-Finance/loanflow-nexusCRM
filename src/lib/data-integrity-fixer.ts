@@ -1,11 +1,52 @@
 import { supabase } from "@/integrations/supabase/client"
 
 export class DataIntegrityFixer {
+  async checkAuthAndPermissions(): Promise<{ authenticated: boolean; userId: string | null; contactCount: number }> {
+    try {
+      // Check if user is authenticated
+      const { data: { user } } = await supabase.auth.getUser()
+      
+      if (!user) {
+        return { authenticated: false, userId: null, contactCount: 0 }
+      }
+      
+      // Check how many contacts the user can access
+      const { data: contacts, error } = await supabase
+        .from('contact_entities')
+        .select('id')
+        
+      return { 
+        authenticated: true, 
+        userId: user.id, 
+        contactCount: contacts?.length || 0 
+      }
+    } catch (error) {
+      console.error('Auth check failed:', error)
+      return { authenticated: false, userId: null, contactCount: 0 }
+    }
+  }
+
   async fixCurrentUserContactIssues(): Promise<{ fixed: number; errors: string[] }> {
     const result = { fixed: 0, errors: [] }
 
     try {
       console.log('🔧 Starting auto-fix for current user data...')
+      
+      // First check if user is authenticated
+      const authCheck = await this.checkAuthAndPermissions()
+      console.log('🔐 Auth check:', authCheck)
+      
+      if (!authCheck.authenticated) {
+        result.errors.push('❌ User not authenticated. Please log in to fix data issues.')
+        return result
+      }
+      
+      if (authCheck.contactCount === 0) {
+        result.errors.push('ℹ️ No contact entities found for current user.')
+        return result
+      }
+      
+      console.log(`👤 Authenticated as user ${authCheck.userId} with ${authCheck.contactCount} contacts`)
       
       // Fix null loan amounts for current user's contact entities
       const { data: userContacts, error: fetchError } = await supabase

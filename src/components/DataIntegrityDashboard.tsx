@@ -140,7 +140,22 @@ export function DataIntegrityDashboard() {
     try {
       // Use the new DataIntegrityFixer that respects RLS
       const fixer = new DataIntegrityFixer();
-      console.log('Created fixer, calling fixCurrentUserContactIssues...');
+      
+      // First check authentication
+      const authCheck = await fixer.checkAuthAndPermissions();
+      console.log('🔐 Authentication status:', authCheck);
+      
+      if (!authCheck.authenticated) {
+        toast({
+          title: "Authentication Required",
+          description: "Please log in to use the auto-fix feature.",
+          variant: "destructive"
+        });
+        setAutoFixResults({ fixed: 0, errors: ['User not authenticated'] });
+        return;
+      }
+      
+      console.log('✅ User authenticated, proceeding with auto-fix...');
       const results = await fixer.fixCurrentUserContactIssues();
       console.log('✅ Auto-fix results:', results);
       setAutoFixResults(results);
