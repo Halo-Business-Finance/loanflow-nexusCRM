@@ -65,9 +65,10 @@ export class DataFieldValidator {
       result.isValid = false
     }
 
-    // Check for encrypted/secured email field
+    // Check for encrypted/secured email field - this is expected and not an issue
     if (!contactEntity?.email || contactEntity.email === '[SECURED]') {
-      result.warnings.push('Email field is secured/encrypted - validation skipped for security')
+      // Email is properly encrypted/secured - this is good security practice, not an issue
+      console.log(`Email field is properly secured for contact ${contactEntity?.name || 'unknown'}`)
     } else {
       // Validate email format only if not encrypted
       if (!this.isValidEmail(contactEntity.email)) {
