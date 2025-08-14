@@ -578,17 +578,17 @@ export function SecurityManager() {
 
         {hasRole('admin') && (
           <TabsContent value="policies" className="space-y-4">
-            <Card>
-              <CardHeader>
-                <CardTitle>Password Policy</CardTitle>
-                <CardDescription>
+            <Card className="max-w-2xl">
+              <CardHeader className="pb-4">
+                <CardTitle className="text-lg">Password Policy</CardTitle>
+                <CardDescription className="text-sm">
                   Configure password requirements for all users
                 </CardDescription>
               </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="min-length">Minimum Length</Label>
+              <CardContent className="space-y-3">
+                <div className="grid grid-cols-2 gap-3">
+                  <div className="space-y-1">
+                    <Label htmlFor="min-length" className="text-sm">Minimum Length</Label>
                     <Input
                       id="min-length"
                       type="number"
@@ -599,11 +599,12 @@ export function SecurityManager() {
                         ...prev,
                         min_length: parseInt(e.target.value)
                       }))}
+                      className="h-8"
                     />
                   </div>
 
-                  <div className="space-y-2">
-                    <Label htmlFor="max-age">Password Age (days)</Label>
+                  <div className="space-y-1">
+                    <Label htmlFor="max-age" className="text-sm">Password Age (days)</Label>
                     <Input
                       id="max-age"
                       type="number"
@@ -614,13 +615,14 @@ export function SecurityManager() {
                         ...prev,
                         max_age_days: parseInt(e.target.value)
                       }))}
+                      className="h-8"
                     />
                   </div>
                 </div>
 
-                <div className="space-y-4">
-                  <div className="flex items-center justify-between">
-                    <Label htmlFor="require-uppercase">Require Uppercase Letters</Label>
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between py-1">
+                    <Label htmlFor="require-uppercase" className="text-sm">Require Uppercase</Label>
                     <Switch
                       id="require-uppercase"
                       checked={passwordPolicy.require_uppercase}
@@ -631,8 +633,8 @@ export function SecurityManager() {
                     />
                   </div>
 
-                  <div className="flex items-center justify-between">
-                    <Label htmlFor="require-lowercase">Require Lowercase Letters</Label>
+                  <div className="flex items-center justify-between py-1">
+                    <Label htmlFor="require-lowercase" className="text-sm">Require Lowercase</Label>
                     <Switch
                       id="require-lowercase"
                       checked={passwordPolicy.require_lowercase}
@@ -643,8 +645,8 @@ export function SecurityManager() {
                     />
                   </div>
 
-                  <div className="flex items-center justify-between">
-                    <Label htmlFor="require-numbers">Require Numbers</Label>
+                  <div className="flex items-center justify-between py-1">
+                    <Label htmlFor="require-numbers" className="text-sm">Require Numbers</Label>
                     <Switch
                       id="require-numbers"
                       checked={passwordPolicy.require_numbers}
@@ -655,8 +657,8 @@ export function SecurityManager() {
                     />
                   </div>
 
-                  <div className="flex items-center justify-between">
-                    <Label htmlFor="require-special">Require Special Characters</Label>
+                  <div className="flex items-center justify-between py-1">
+                    <Label htmlFor="require-special" className="text-sm">Require Special Chars</Label>
                     <Switch
                       id="require-special"
                       checked={passwordPolicy.require_special_chars}
@@ -668,7 +670,7 @@ export function SecurityManager() {
                   </div>
                 </div>
 
-                <Button onClick={updatePasswordPolicy} className="w-full">
+                <Button onClick={updatePasswordPolicy} className="w-full mt-4" size="sm">
                   <Key className="h-4 w-4 mr-2" />
                   Update Password Policy
                 </Button>
