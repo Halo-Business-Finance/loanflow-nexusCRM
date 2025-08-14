@@ -197,7 +197,12 @@ export function DataIntegrityDashboard() {
             </Button>
             
             <Button 
-              onClick={runAutoFix} 
+              onClick={() => {
+                console.log('Auto-fix button clicked!');
+                console.log('Loading state:', loading);
+                console.log('Audit results exist:', !!auditResults);
+                runAutoFix();
+              }} 
               disabled={loading || !auditResults}
               variant="outline"
               className="flex items-center gap-2"
