@@ -146,7 +146,7 @@ export default function APIDocs() {
             <h1 className="text-4xl font-bold bg-gradient-to-r from-foreground to-foreground/80 bg-clip-text text-transparent">
               API Documentation
             </h1>
-            <p className="text-lg text-foreground/70 max-w-2xl mx-auto">
+            <p className="text-lg text-foreground dark:text-white max-w-2xl mx-auto">
               Complete API reference for integrating with LoanFlow CRM
             </p>
           </div>
