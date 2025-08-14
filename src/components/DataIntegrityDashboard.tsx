@@ -26,100 +26,125 @@ export function DataIntegrityDashboard() {
   const [autoFixResults, setAutoFixResults] = useState<any>(null);
 
   const runDataAudit = async () => {
-    console.log('Run Data Audit button clicked!');
-    console.log('Current loading state:', loading);
+    console.log('🔍 RUN DATA AUDIT BUTTON CLICKED!');
     setLoading(true);
     try {
-      console.log('Creating DataFieldValidator...');
+      console.log('📊 Creating DataFieldValidator...');
       const validator = new DataFieldValidator();
-      console.log('Calling performDataAudit...');
+      console.log('📊 Calling performDataAudit...');
       const results = await validator.performDataAudit();
-      console.log('Audit results received:', results);
+      console.log('📊 Audit results received:', results);
+      
+      // Safety check for results
+      if (!results) {
+        throw new Error('No results returned from audit');
+      }
+      
       setAuditResults(results);
       
-      // Convert audit results to field issues format
+      // Convert audit results to field issues format with null safety
       const issues: FieldIssue[] = [];
       
-      // Process lead issues
-      results.leadIssues.forEach((issue: any) => {
-        issue.validation.errors.forEach((error: string) => {
-          issues.push({
-            fieldName: extractFieldName(error),
-            issueType: getIssueType(error),
-            description: error,
-            severity: "high",
-            recordId: issue.id,
-            recordType: "lead"
-          });
+      // Process lead issues with null safety
+      if (results.leadIssues && Array.isArray(results.leadIssues)) {
+        results.leadIssues.forEach((issue: any) => {
+          if (issue && issue.validation && issue.validation.errors && Array.isArray(issue.validation.errors)) {
+            issue.validation.errors.forEach((error: string) => {
+              issues.push({
+                fieldName: extractFieldName(error),
+                issueType: getIssueType(error),
+                description: error,
+                severity: "high",
+                recordId: issue.id || 'unknown',
+                recordType: "lead"
+              });
+            });
+          }
+          
+          if (issue && issue.validation && issue.validation.warnings && Array.isArray(issue.validation.warnings)) {
+            issue.validation.warnings.forEach((warning: string) => {
+              issues.push({
+                fieldName: extractFieldName(warning),
+                issueType: getIssueType(warning),
+                description: warning,
+                severity: "medium",
+                recordId: issue.id || 'unknown',
+                recordType: "lead"
+              });
+            });
+          }
         });
-        
-        issue.validation.warnings.forEach((warning: string) => {
-          issues.push({
-            fieldName: extractFieldName(warning),
-            issueType: getIssueType(warning),
-            description: warning,
-            severity: "medium",
-            recordId: issue.id,
-            recordType: "lead"
-          });
-        });
-      });
+      }
       
-      // Process client issues
-      results.clientIssues.forEach((issue: any) => {
-        issue.validation.errors.forEach((error: string) => {
-          issues.push({
-            fieldName: extractFieldName(error),
-            issueType: getIssueType(error),
-            description: error,
-            severity: "high",
-            recordId: issue.id,
-            recordType: "client"
-          });
+      // Process client issues with null safety
+      if (results.clientIssues && Array.isArray(results.clientIssues)) {
+        results.clientIssues.forEach((issue: any) => {
+          if (issue && issue.validation && issue.validation.errors && Array.isArray(issue.validation.errors)) {
+            issue.validation.errors.forEach((error: string) => {
+              issues.push({
+                fieldName: extractFieldName(error),
+                issueType: getIssueType(error),
+                description: error,
+                severity: "high",
+                recordId: issue.id || 'unknown',
+                recordType: "client"
+              });
+            });
+          }
+          
+          if (issue && issue.validation && issue.validation.warnings && Array.isArray(issue.validation.warnings)) {
+            issue.validation.warnings.forEach((warning: string) => {
+              issues.push({
+                fieldName: extractFieldName(warning),
+                issueType: getIssueType(warning),
+                description: warning,
+                severity: "medium",
+                recordId: issue.id || 'unknown',
+                recordType: "client"
+              });
+            });
+          }
         });
-        
-        issue.validation.warnings.forEach((warning: string) => {
-          issues.push({
-            fieldName: extractFieldName(warning),
-            issueType: getIssueType(warning),
-            description: warning,
-            severity: "medium",
-            recordId: issue.id,
-            recordType: "client"
-          });
-        });
-      });
+      }
       
-      // Process pipeline issues
-      results.pipelineIssues.forEach((issue: any) => {
-        issue.validation.errors.forEach((error: string) => {
-          issues.push({
-            fieldName: extractFieldName(error),
-            issueType: getIssueType(error),
-            description: error,
-            severity: "high",
-            recordId: issue.id,
-            recordType: "pipeline"
-          });
+      // Process pipeline issues with null safety
+      if (results.pipelineIssues && Array.isArray(results.pipelineIssues)) {
+        results.pipelineIssues.forEach((issue: any) => {
+          if (issue && issue.validation && issue.validation.errors && Array.isArray(issue.validation.errors)) {
+            issue.validation.errors.forEach((error: string) => {
+              issues.push({
+                fieldName: extractFieldName(error),
+                issueType: getIssueType(error),
+                description: error,
+                severity: "high",
+                recordId: issue.id || 'unknown',
+                recordType: "pipeline"
+              });
+            });
+          }
+          
+          if (issue && issue.validation && issue.validation.warnings && Array.isArray(issue.validation.warnings)) {
+            issue.validation.warnings.forEach((warning: string) => {
+              issues.push({
+                fieldName: extractFieldName(warning),
+                issueType: getIssueType(warning),
+                description: warning,
+                severity: "medium",
+                recordId: issue.id || 'unknown',
+                recordType: "pipeline"
+              });
+            });
+          }
         });
-        
-        issue.validation.warnings.forEach((warning: string) => {
-          issues.push({
-            fieldName: extractFieldName(warning),
-            issueType: getIssueType(warning),
-            description: warning,
-            severity: "medium",
-            recordId: issue.id,
-            recordType: "pipeline"
-          });
-        });
-      });
+      }
       
       setFieldIssues(issues);
       
+      const totalIssues = results.summary?.totalIssues || 0;
+      
       toast({
         title: "Data Audit Complete",
-        description: `Found ${issues.length} field issues across ${auditResults.summary.totalIssues} records.`
+        description: `Found ${issues.length} field issues across ${totalIssues} records.`
       });
     } catch (error) {
       console.error('Data audit error:', error);
@@ -255,10 +280,10 @@ export function DataIntegrityDashboard() {
                     <span className="font-medium">Field Issues:</span> {fieldIssues.length}
                   </div>
                   <div>
-                    <span className="font-medium">Critical:</span> {auditResults.summary.criticalIssues}
+                    <span className="font-medium">Critical:</span> {auditResults.summary?.criticalIssues || 0}
                   </div>
                   <div>
-                    <span className="font-medium">Warnings:</span> {auditResults.summary.warningIssues}
+                    <span className="font-medium">Warnings:</span> {auditResults.summary?.warningIssues || 0}
                   </div>
                 </div>
               </AlertDescription>
@@ -321,7 +346,7 @@ export function DataIntegrityDashboard() {
                   <CardTitle className="text-sm">Lead Issues</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <div className="text-2xl font-bold">{auditResults.leadIssues.length}</div>
+                  <div className="text-2xl font-bold">{auditResults.leadIssues?.length || 0}</div>
                   <p className="text-sm text-muted-foreground">Records with issues</p>
                 </CardContent>
               </Card>
@@ -331,7 +356,7 @@ export function DataIntegrityDashboard() {
                   <CardTitle className="text-sm">Client Issues</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <div className="text-2xl font-bold">{auditResults.clientIssues.length}</div>
+                  <div className="text-2xl font-bold">{auditResults.clientIssues?.length || 0}</div>
                   <p className="text-sm text-muted-foreground">Records with issues</p>
                 </CardContent>
               </Card>
@@ -341,7 +366,7 @@ export function DataIntegrityDashboard() {
                   <CardTitle className="text-sm">Pipeline Issues</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <div className="text-2xl font-bold">{auditResults.pipelineIssues.length}</div>
+                  <div className="text-2xl font-bold">{auditResults.pipelineIssues?.length || 0}</div>
                   <p className="text-sm text-muted-foreground">Records with issues</p>
                 </CardContent>
               </Card>
@@ -357,14 +382,14 @@ export function DataIntegrityDashboard() {
                 <CardContent className="space-y-4">
                   <div className="grid grid-cols-2 gap-4">
                     <div>
-                      <span className="font-medium">Issues Fixed:</span> {autoFixResults.fixed}
+                      <span className="font-medium">Issues Fixed:</span> {autoFixResults.fixed || 0}
                     </div>
                     <div>
-                      <span className="font-medium">Errors:</span> {autoFixResults.errors.length}
+                      <span className="font-medium">Errors:</span> {autoFixResults.errors?.length || 0}
                     </div>
                   </div>
                   
-                  {autoFixResults.errors.length > 0 && (
+                  {autoFixResults.errors && autoFixResults.errors.length > 0 && (
                     <div className="space-y-2">
                       <h4 className="font-medium">Errors:</h4>
                       {autoFixResults.errors.map((error: string) => (
