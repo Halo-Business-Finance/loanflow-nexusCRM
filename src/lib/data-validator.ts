@@ -209,14 +209,27 @@ export class DataFieldValidator {
       
       if (leads) {
         for (const lead of leads) {
-          console.log('Lead data structure:', lead);
-          console.log('Contact entities:', lead.contact_entities);
-          const validation = await this.validateLeadData(lead)
-          if (!validation.isValid || validation.warnings.length > 0) {
+          try {
+            console.log('Lead data structure:', lead);
+            console.log('Contact entities:', lead.contact_entities);
+            const validation = await this.validateLeadData(lead)
+            if (!validation.isValid || validation.warnings.length > 0) {
+              leadIssues.push({
+                id: lead.id,
+                name: lead.contact_entities?.name || 'Unknown',
+                validation
+              })
+            }
+          } catch (error) {
+            console.error('Error validating lead:', lead.id, error)
             leadIssues.push({
               id: lead.id,
-              name: lead.contact_entities?.name || 'Unknown',
-              validation
+              name: 'Error in validation',
+              validation: {
+                isValid: false,
+                errors: [`Validation error: ${error}`],
+                warnings: []
+              }
             })
           }
         }
@@ -263,12 +276,25 @@ export class DataFieldValidator {
       
       if (clients) {
         for (const client of clients) {
-          const validation = await this.validateLeadData(client) // Using same validation for shared fields
-          if (!validation.isValid || validation.warnings.length > 0) {
+          try {
+            const validation = await this.validateLeadData(client) // Using same validation for shared fields
+            if (!validation.isValid || validation.warnings.length > 0) {
+              clientIssues.push({
+                id: client.id,
+                name: client.contact_entities?.name || 'Unknown',
+                validation
+              })
+            }
+          } catch (error) {
+            console.error('Error validating client:', client.id, error)
             clientIssues.push({
               id: client.id,
-              name: client.contact_entities?.name || 'Unknown',
-              validation
+              name: 'Error in validation',
+              validation: {
+                isValid: false,
+                errors: [`Validation error: ${error}`],
+                warnings: []
+              }
             })
           }
         }
@@ -283,12 +309,25 @@ export class DataFieldValidator {
       }
       if (pipelineEntries) {
         for (const entry of pipelineEntries) {
-          const validation = await this.validatePipelineEntry(entry)
-          if (!validation.isValid || validation.warnings.length > 0) {
+          try {
+            const validation = await this.validatePipelineEntry(entry)
+            if (!validation.isValid || validation.warnings.length > 0) {
+              pipelineIssues.push({
+                id: entry.id,
+                stage: entry.stage || 'Unknown',
+                validation
+              })
+            }
+          } catch (error) {
+            console.error('Error validating pipeline entry:', entry.id, error)
             pipelineIssues.push({
               id: entry.id,
-              stage: entry.stage,
-              validation
+              stage: 'Error in validation',
+              validation: {
+                isValid: false,
+                errors: [`Validation error: ${error}`],
+                warnings: []
+              }
             })
           }
         }
