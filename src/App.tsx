@@ -87,8 +87,8 @@ function AuthenticatedApp() {
             <Route path="/leads" element={<Leads />} errorElement={<RouteErrorBoundary />} />
             <Route path="/leads/:id" element={<LeadDetail />} errorElement={<RouteErrorBoundary />} />
             <Route path="/leads/:leadId/documents" element={<LeadDocuments />} errorElement={<RouteErrorBoundary />} />
-            <Route path="/clients" element={<Clients />} errorElement={<RouteErrorBoundary />} />
-            <Route path="/clients/:id" element={<ClientDetail />} errorElement={<RouteErrorBoundary />} />
+            <Route path="/borrowers" element={<Clients />} errorElement={<RouteErrorBoundary />} />
+            <Route path="/borrowers/:id" element={<ClientDetail />} errorElement={<RouteErrorBoundary />} />
             <Route path="/pipeline" element={<Pipeline />} errorElement={<RouteErrorBoundary />} />
             <Route path="/documents" element={<Documents />} errorElement={<RouteErrorBoundary />} />
             <Route path="/activities" element={<Activities />} errorElement={<RouteErrorBoundary />} />
