@@ -154,15 +154,15 @@ export default function Reports() {
                   <div className="space-y-4">
                     <div className="flex justify-between items-center">
                       <span className="text-sm text-muted-foreground">Total Revenue</span>
-                      <span className="font-semibold">{formatCurrency(reportData?.totalRevenue || 0)}</span>
+                      <span className="font-semibold">{reportData?.loanVolume?.thisMonth || '$0'}</span>
                     </div>
                     <div className="flex justify-between items-center">
                       <span className="text-sm text-muted-foreground">Monthly Growth</span>
-                      <span className="font-semibold">{reportData?.revenueGrowth || 0}%</span>
+                      <span className="font-semibold">{reportData?.loanVolume?.growth || '0%'}</span>
                     </div>
                     <div className="flex justify-between items-center">
                       <span className="text-sm text-muted-foreground">Avg Deal Size</span>
-                      <span className="font-semibold text-green-600">{formatCurrency(reportData?.avgDealSize || 0)}</span>
+                      <span className="font-semibold text-green-600">{reportData?.loanVolume?.target || '$0'}</span>
                     </div>
                   </div>
                 </CardContent>
@@ -182,11 +182,11 @@ export default function Reports() {
                   <div className="space-y-4">
                     <div className="flex justify-between items-center">
                       <span className="text-sm text-muted-foreground">Total Leads</span>
-                      <span className="font-semibold">{reportData?.totalLeads || 0}</span>
+                      <span className="font-semibold">{reportData?.applications?.total || 0}</span>
                     </div>
                     <div className="flex justify-between items-center">
                       <span className="text-sm text-muted-foreground">Conversion Rate</span>
-                      <span className="font-semibold">{reportData?.conversionRate || 0}%</span>
+                      <span className="font-semibold">{reportData?.applications?.approvalRate || 0}%</span>
                     </div>
                     <div className="flex justify-between items-center">
                       <span className="text-sm text-muted-foreground">Quality Score</span>

@@ -25,6 +25,9 @@ import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { LeadsList } from '@/components/leads/LeadsList';
 import { LeadForm } from '@/components/leads/LeadForm';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Lead, ContactEntity } from '@/types/lead';
+import { useRoleBasedAccess } from '@/hooks/useRoleBasedAccess';
 
 interface LeadsOverview {
   totalLeads: number;
@@ -53,6 +56,12 @@ export default function Leads() {
   const [searchTerm, setSearchTerm] = useState('');
   const [showNewLeadForm, setShowNewLeadForm] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [leads, setLeads] = useState<Lead[]>([]);
+  const [viewMode, setViewMode] = useState<'grid' | 'table'>('grid');
+  const [editingLead, setEditingLead] = useState<Lead | null>(null);
+  const [isFormOpen, setIsFormOpen] = useState(false);
+  const { hasRole } = useRoleBasedAccess();
+  const hasAdminRole = hasRole('admin');
 
   useEffect(() => {
     fetchLeadsOverview();
@@ -62,30 +71,56 @@ export default function Leads() {
     try {
       setLoading(true);
       
-      const { data: leads, error: leadsError } = await supabase
+      const { data: leadsData, error: leadsError } = await supabase
         .from('leads')
         .select(`
           *,
-          contact_entities(loan_amount, stage, priority)
+          contact_entities(*)
         `)
         .eq('user_id', user?.id);
 
-      if (!leadsError && leads) {
-        const totalLeads = leads.length;
-        const newLeads = leads.filter(lead => 
-          lead.contact_entities?.stage === 'New Lead'
+      if (!leadsError && leadsData) {
+        // Transform the data to match Lead interface
+        const transformedLeads: Lead[] = leadsData.map(lead => ({
+          id: lead.id,
+          name: lead.contact_entities?.name || '',
+          email: lead.contact_entities?.email || '',
+          phone: lead.contact_entities?.phone || '',
+          business_name: lead.contact_entities?.business_name || '',
+          location: lead.contact_entities?.location || '',
+          loan_amount: lead.contact_entities?.loan_amount || 0,
+          loan_type: lead.contact_entities?.loan_type || '',
+          credit_score: lead.contact_entities?.credit_score || 0,
+          stage: lead.contact_entities?.stage || 'New Lead',
+          priority: lead.contact_entities?.priority || 'medium',
+          net_operating_income: lead.contact_entities?.net_operating_income || 0,
+          naics_code: lead.contact_entities?.naics_code || '',
+          ownership_structure: lead.contact_entities?.ownership_structure || '',
+          created_at: lead.created_at,
+          updated_at: lead.updated_at,
+          user_id: lead.user_id,
+          contact_entity_id: lead.contact_entity_id,
+          last_contact: lead.updated_at, // Use updated_at as last contact
+          is_converted_to_client: false // Default to false
+        }));
+
+        setLeads(transformedLeads);
+
+        const totalLeads = transformedLeads.length;
+        const newLeads = transformedLeads.filter(lead => 
+          lead.stage === 'New Lead'
         ).length;
-        const qualifiedLeads = leads.filter(lead => 
-          lead.contact_entities?.stage === 'Qualified'
+        const qualifiedLeads = transformedLeads.filter(lead => 
+          lead.stage === 'Qualified'
         ).length;
-        const hotLeads = leads.filter(lead => 
-          lead.contact_entities?.priority === 'high'
+        const hotLeads = transformedLeads.filter(lead => 
+          lead.priority === 'high'
         ).length;
-        const totalValue = leads.reduce((sum, lead) => 
-          sum + (lead.contact_entities?.loan_amount || 0), 0
+        const totalValue = transformedLeads.reduce((sum, lead) => 
+          sum + (lead.loan_amount || 0), 0
         );
-        const convertedLeads = leads.filter(lead => 
-          lead.contact_entities?.stage === 'Loan Funded'
+        const convertedLeads = transformedLeads.filter(lead => 
+          lead.stage === 'Loan Funded'
         ).length;
         const conversionRate = totalLeads > 0 ? (convertedLeads / totalLeads) * 100 : 0;
 
@@ -111,6 +146,125 @@ export default function Leads() {
       setLoading(false);
     }
   };
+
+  const handleEdit = (lead: Lead) => {
+    setEditingLead(lead);
+    setIsFormOpen(true);
+  };
+
+  const handleDelete = async (leadId: string, leadName: string) => {
+    try {
+      const { error } = await supabase
+        .from('leads')
+        .delete()
+        .eq('id', leadId);
+
+      if (error) throw error;
+
+      toast({
+        title: "Success",
+        description: `Lead ${leadName} has been deleted`,
+      });
+
+      fetchLeadsOverview();
+    } catch (error) {
+      console.error('Error deleting lead:', error);
+      toast({
+        title: "Error",
+        description: "Failed to delete lead",
+        variant: "destructive"
+      });
+    }
+  };
+
+  const handleConvert = async (lead: Lead) => {
+    try {
+      const { error } = await supabase
+        .from('contact_entities')
+        .update({ stage: 'Loan Funded' })
+        .eq('id', lead.contact_entity_id);
+
+      if (error) throw error;
+
+      toast({
+        title: "Success",
+        description: `Lead ${lead.name} has been converted`,
+      });
+
+      fetchLeadsOverview();
+    } catch (error) {
+      console.error('Error converting lead:', error);
+      toast({
+        title: "Error",
+        description: "Failed to convert lead",
+        variant: "destructive"
+      });
+    }
+  };
+
+  const handleFormSubmit = async (data: ContactEntity) => {
+    try {
+      if (editingLead) {
+        // Update existing lead
+        const { error } = await supabase
+          .from('contact_entities')
+          .update(data)
+          .eq('id', editingLead.contact_entity_id);
+
+        if (error) throw error;
+
+        toast({
+          title: "Success",
+          description: "Lead updated successfully",
+        });
+      } else {
+        // Create new lead - first create contact entity, then lead
+        const { data: contactEntity, error: contactError } = await supabase
+          .from('contact_entities')
+          .insert({
+            ...data,
+            user_id: user?.id
+          })
+          .select()
+          .single();
+
+        if (contactError) throw contactError;
+
+        const { error: leadError } = await supabase
+          .from('leads')
+          .insert({
+            user_id: user?.id,
+            contact_entity_id: contactEntity.id
+          });
+
+        if (leadError) throw leadError;
+
+        toast({
+          title: "Success",
+          description: "Lead created successfully",
+        });
+      }
+
+      setIsFormOpen(false);
+      setEditingLead(null);
+      fetchLeadsOverview();
+    } catch (error) {
+      console.error('Error saving lead:', error);
+      toast({
+        title: "Error",
+        description: "Failed to save lead",
+        variant: "destructive"
+      });
+    }
+  };
+
+  const filteredLeads = leads.filter(lead =>
+    lead.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    lead.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    (lead.business_name && lead.business_name.toLowerCase().includes(searchTerm.toLowerCase()))
+  );
+
+  const refetch = fetchLeadsOverview;
 
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat('en-US', {
@@ -226,7 +380,16 @@ export default function Leads() {
               </Button>
             </div>
             
-            <LeadsList />
+            <LeadsList 
+              leads={filteredLeads}
+              viewMode={viewMode}
+              onEdit={handleEdit}
+              onDelete={handleDelete}
+              onConvert={handleConvert}
+              onRefresh={refetch}
+              hasAdminRole={hasAdminRole}
+              currentUserId={user?.id}
+            />
           </TabsContent>
 
           <TabsContent value="qualified" className="space-y-6">
@@ -363,15 +526,34 @@ export default function Leads() {
           </TabsContent>
         </Tabs>
 
-        {showNewLeadForm && (
-          <LeadForm 
-            onClose={() => setShowNewLeadForm(false)} 
-            onSuccess={() => {
-              setShowNewLeadForm(false);
-              fetchLeadsOverview();
-            }}
-          />
-        )}
+        <Dialog open={isFormOpen} onOpenChange={setIsFormOpen}>
+          <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+            <DialogHeader>
+              <DialogTitle>
+                {editingLead ? 'Edit Lead' : 'Create New Lead'}
+              </DialogTitle>
+            </DialogHeader>
+            <LeadForm
+              lead={editingLead}
+              onSubmit={handleFormSubmit}
+              onCancel={() => setIsFormOpen(false)}
+              isSubmitting={false}
+            />
+          </DialogContent>
+        </Dialog>
+
+        <Dialog open={showNewLeadForm} onOpenChange={setShowNewLeadForm}>
+          <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+            <DialogHeader>
+              <DialogTitle>Create New Lead</DialogTitle>
+            </DialogHeader>
+            <LeadForm
+              onSubmit={handleFormSubmit}
+              onCancel={() => setShowNewLeadForm(false)}
+              isSubmitting={false}
+            />
+          </DialogContent>
+        </Dialog>
       </div>
     </Layout>
   );
