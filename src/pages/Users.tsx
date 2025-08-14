@@ -637,11 +637,11 @@ export default function Users() {
                         </div>
                       ) : (
                         filteredUsers.map((user) => (
-                          <Card key={user.id} className="hover:shadow-md transition-shadow">
-                            <CardContent className="p-6">
+                           <Card key={user.id} className="hover:shadow-md transition-shadow">
+                             <CardContent className="p-4">
                               <div className="flex items-center justify-between">
                                 <div className="flex items-center space-x-4">
-                                  <Avatar className="h-12 w-12">
+                                   <Avatar className="h-10 w-10">
                                     <AvatarImage src="" />
                                     <AvatarFallback className="bg-primary text-primary-foreground">
                                       {user.first_name?.charAt(0)}{user.last_name?.charAt(0)}
@@ -730,11 +730,11 @@ export default function Users() {
                         </div>
                       ) : (
                         filteredUsersWithLeads.map((userWithLeads) => (
-                          <Card key={userWithLeads.id} className="hover:shadow-md transition-shadow">
-                            <CardContent className="p-6">
+                           <Card key={userWithLeads.id} className="hover:shadow-md transition-shadow">
+                             <CardContent className="p-4">
                               <div className="flex items-start justify-between mb-4">
                                 <div className="flex items-center space-x-4">
-                                  <Avatar className="h-12 w-12">
+                                  <Avatar className="h-10 w-10">
                                     <AvatarFallback className="bg-primary text-primary-foreground">
                                       {userWithLeads.name?.charAt(0) || userWithLeads.email.charAt(0)}
                                     </AvatarFallback>
@@ -761,39 +761,39 @@ export default function Users() {
                               </div>
                               
                               {/* Performance Metrics */}
-                              <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4">
-                                <div className="text-center p-3 bg-primary/5 rounded-lg">
-                                  <div className="flex items-center justify-center gap-2 mb-1">
-                                    <UsersIcon className="h-4 w-4 text-primary" />
-                                    <span className="text-sm font-medium text-primary">Total Leads</span>
-                                  </div>
-                                  <p className="text-2xl font-bold">{userWithLeads.leads.length}</p>
+                               <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-3">
+                                 <div className="text-center p-2 bg-primary/5 rounded-lg">
+                                   <div className="flex items-center justify-center gap-1 mb-1">
+                                     <UsersIcon className="h-3 w-3 text-primary" />
+                                     <span className="text-xs font-medium text-primary">Total</span>
+                                   </div>
+                                   <p className="text-xl font-bold">{userWithLeads.leads.length}</p>
                                 </div>
                                 
-                                <div className="text-center p-3 bg-secondary/10 rounded-lg">
-                                  <div className="flex items-center justify-center gap-2 mb-1">
-                                    <Activity className="h-4 w-4 text-secondary" />
-                                    <span className="text-sm font-medium text-secondary">Active</span>
-                                  </div>
-                                  <p className="text-2xl font-bold text-secondary">{userWithLeads.activeLeads}</p>
+                                 <div className="text-center p-2 bg-secondary/10 rounded-lg">
+                                   <div className="flex items-center justify-center gap-1 mb-1">
+                                     <Activity className="h-3 w-3 text-secondary" />
+                                     <span className="text-xs font-medium text-secondary">Active</span>
+                                   </div>
+                                   <p className="text-xl font-bold text-secondary">{userWithLeads.activeLeads}</p>
                                 </div>
                                 
-                                <div className="text-center p-3 bg-accent/10 rounded-lg">
-                                  <div className="flex items-center justify-center gap-2 mb-1">
-                                    <Building className="h-4 w-4 text-accent" />
-                                    <span className="text-sm font-medium text-accent">Converted</span>
-                                  </div>
-                                  <p className="text-2xl font-bold text-accent">{userWithLeads.convertedLeads}</p>
+                                 <div className="text-center p-2 bg-accent/10 rounded-lg">
+                                   <div className="flex items-center justify-center gap-1 mb-1">
+                                     <Building className="h-3 w-3 text-accent" />
+                                     <span className="text-xs font-medium text-accent">Converted</span>
+                                   </div>
+                                   <p className="text-xl font-bold text-accent">{userWithLeads.convertedLeads}</p>
                                 </div>
                                 
-                                <div className="text-center p-3 bg-muted/30 rounded-lg">
-                                  <div className="flex items-center justify-center gap-2 mb-1">
-                                    <DollarSign className="h-4 w-4 text-primary" />
-                                    <span className="text-sm font-medium text-primary">Total Value</span>
-                                  </div>
-                                  <p className="text-2xl font-bold text-primary">
-                                    {formatCurrency(userWithLeads.totalLeadValue)}
-                                  </p>
+                                 <div className="text-center p-2 bg-muted/30 rounded-lg">
+                                   <div className="flex items-center justify-center gap-1 mb-1">
+                                     <DollarSign className="h-3 w-3 text-primary" />
+                                     <span className="text-xs font-medium text-primary">Value</span>
+                                   </div>
+                                   <p className="text-lg font-bold text-primary">
+                                     {formatCurrency(userWithLeads.totalLeadValue)}
+                                   </p>
                                 </div>
                               </div>
                               
