@@ -154,6 +154,9 @@ export class DataFieldValidator {
       clientsWithIssues: number
       totalPipelineEntries: number
       pipelineEntriesWithIssues: number
+      totalIssues: number
+      criticalIssues: number
+      warningIssues: number
     }
   }> {
     const leadIssues: Array<{ id: string; name: string; validation: DataValidationResult }> = []
@@ -279,7 +282,14 @@ export class DataFieldValidator {
           totalClients: clients?.length || 0,
           clientsWithIssues: clientIssues.length,
           totalPipelineEntries: pipelineEntries?.length || 0,
-          pipelineEntriesWithIssues: pipelineIssues.length
+          pipelineEntriesWithIssues: pipelineIssues.length,
+          totalIssues: leadIssues.length + clientIssues.length + pipelineIssues.length,
+          criticalIssues: [...leadIssues, ...clientIssues, ...pipelineIssues].filter(issue => 
+            issue.validation.errors.length > 0
+          ).length,
+          warningIssues: [...leadIssues, ...clientIssues, ...pipelineIssues].filter(issue => 
+            issue.validation.warnings.length > 0 && issue.validation.errors.length === 0
+          ).length
         }
       }
     } catch (error) {
@@ -292,73 +302,116 @@ export class DataFieldValidator {
     const result = { fixed: 0, errors: [] }
 
     try {
-      // Fix phone number formats in contact_entities
-      const { data: contactsWithPhones } = await supabase
-        .from('contact_entities')
-        .select('id, phone')
-        .not('phone', 'is', null)
+      console.log('Starting Auto-Fix Data Issues...')
+      
+      // Note: Contact entities now have fortress-level security with encrypted fields
+      // Auto-fix will focus on non-sensitive data integrity issues
+      
+      // Fix pipeline entries with missing or invalid amounts
+      const { data: pipelineIssues } = await supabase
+        .from('pipeline_entries')
+        .select('id, amount, lead_id')
+        .or('amount.is.null,amount.eq.0')
+        
+      console.log('Found pipeline issues:', pipelineIssues?.length || 0)
 
-      if (contactsWithPhones) {
-        for (const contact of contactsWithPhones) {
-          const formattedPhone = this.formatPhoneNumber(contact.phone)
-          if (formattedPhone !== contact.phone) {
+      if (pipelineIssues) {
+        for (const pipeline of pipelineIssues) {
+          // Try to get amount from related lead's contact entity
+          if (pipeline.lead_id) {
+            const { data: leadData } = await supabase
+              .from('leads')
+              .select(`
+                contact_entities!inner (
+                  loan_amount
+                )
+              `)
+              .eq('id', pipeline.lead_id)
+              .single()
+              
+            if (leadData && leadData.contact_entities?.loan_amount && leadData.contact_entities.loan_amount > 0) {
+              const { error } = await supabase
+                .from('pipeline_entries')
+                .update({ amount: leadData.contact_entities.loan_amount })
+                .eq('id', pipeline.id)
+              
+              if (!error) {
+                result.fixed++
+                console.log(`Fixed pipeline ${pipeline.id} amount from contact entity data`)
+              } else {
+                result.errors.push(`Failed to fix pipeline ${pipeline.id}: ${error.message}`)
+              }
+            }
+          } else {
+            // Set default amount for pipeline entries without lead association
             const { error } = await supabase
-              .from('contact_entities')
-              .update({ phone: formattedPhone })
-              .eq('id', contact.id)
+              .from('pipeline_entries')
+              .update({ amount: 1000 })
+              .eq('id', pipeline.id)
             
             if (!error) {
               result.fixed++
+              console.log(`Fixed pipeline ${pipeline.id} with default amount`)
             } else {
-              result.errors.push(`Failed to fix phone for contact ${contact.id}: ${error.message}`)
+              result.errors.push(`Failed to fix pipeline ${pipeline.id}: ${error.message}`)
             }
           }
         }
       }
 
-      // Fix email casing in contact_entities 
-      const { data: contactsWithEmails } = await supabase
-        .from('contact_entities')
-        .select('id, email')
-        .not('email', 'is', null)
-
-      if (contactsWithEmails) {
-        for (const contact of contactsWithEmails) {
-          const lowercaseEmail = contact.email.toLowerCase()
-          if (lowercaseEmail !== contact.email) {
-            const { error } = await supabase
-              .from('contact_entities')
-              .update({ email: lowercaseEmail })
-              .eq('id', contact.id)
-            
-            if (!error) {
-              result.fixed++
-            } else {
-              result.errors.push(`Failed to fix email for contact ${contact.id}: ${error.message}`)
-            }
-          }
-        }
-      }
-
-      // Fix null loan amounts to 0 in contact_entities
-      const { data: contactsWithNullAmounts } = await supabase
-        .from('contact_entities')
+      // Fix clients with missing status
+      const { data: clientsWithoutStatus } = await supabase
+        .from('clients')
         .select('id')
-        .is('loan_amount', null)
+        .is('status', null)
+        
+      console.log('Found clients without status:', clientsWithoutStatus?.length || 0)
 
-      if (contactsWithNullAmounts) {
-        for (const contact of contactsWithNullAmounts) {
+      if (clientsWithoutStatus) {
+        for (const client of clientsWithoutStatus) {
           const { error } = await supabase
-            .from('contact_entities')
-            .update({ loan_amount: 0 })
-            .eq('id', contact.id)
+            .from('clients')
+            .update({ status: 'Active' })
+            .eq('id', client.id)
           
           if (!error) {
             result.fixed++
+            console.log(`Fixed client ${client.id} status`)
           } else {
-            result.errors.push(`Failed to fix loan amount for contact ${contact.id}: ${error.message}`)
+            result.errors.push(`Failed to fix client status ${client.id}: ${error.message}`)
           }
         }
+      }
+
+      // Fix loan requests with invalid or missing statuses
+      const { data: invalidLoanRequests } = await supabase
+        .from('loan_requests')
+        .select('id, status')
+        .or('status.is.null,status.eq.""')
+        
+      console.log('Found invalid loan requests:', invalidLoanRequests?.length || 0)
+
+      if (invalidLoanRequests) {
+        for (const loanRequest of invalidLoanRequests) {
+          const { error } = await supabase
+            .from('loan_requests')
+            .update({ status: 'pending' })
+            .eq('id', loanRequest.id)
+          
+          if (!error) {
+            result.fixed++
+            console.log(`Fixed loan request ${loanRequest.id} status`)
+          } else {
+            result.errors.push(`Failed to fix loan request status ${loanRequest.id}: ${error.message}`)
+          }
+        }
+      }
+
+      console.log(`Auto-fix completed. Fixed: ${result.fixed}, Errors: ${result.errors.length}`)
+      
+      // Add info about contact entities security
+      if (result.fixed === 0 && result.errors.length === 0) {
+        result.errors.push('Note: Contact entities are now secured with fortress-level encryption. Sensitive data auto-fixes are handled by security triggers.')
       }
 
       return result
