@@ -41,17 +41,19 @@ export function HackerDetectionBot() {
   });
   const [isMonitoring, setIsMonitoring] = useState(false);
 
-  // Load monitoring state from secure storage
+  // Auto-activate high alert monitoring on component mount
   useEffect(() => {
-    const loadMonitoringState = async () => {
+    const initializeHighAlert = async () => {
       try {
-        const storedState = await secureStorage.getItem('hacker-detection-monitoring');
-        setIsMonitoring(storedState === 'true');
+        // Always activate monitoring for continuous hacker protection
+        setIsMonitoring(true);
+        await secureStorage.setItem('hacker-detection-monitoring', 'true');
+        console.log('🛡️ Hacker Detection Bot: HIGH ALERT MODE ACTIVATED');
       } catch (error) {
-        console.error("Error loading monitoring state:", error);
+        console.error("Error initializing high alert mode:", error);
       }
     };
-    loadMonitoringState();
+    initializeHighAlert();
   }, []);
   const [loading, setLoading] = useState(true);
   const { hasRole } = useAuth();
@@ -208,23 +210,24 @@ export function HackerDetectionBot() {
   useEffect(() => {
     let interval: NodeJS.Timeout;
     
-    if (isMonitoring) {
-      interval = setInterval(async () => {
-        const newAttempt = await detectHackerActivity();
-        setAttempts(prev => [newAttempt, ...prev.slice(0, 9)]);
-        setMetrics(prev => {
-          const newCount = prev.attacks_blocked + 1;
-          return {
-            ...prev,
-            attacks_blocked: newCount,
-            sql_injections: newAttempt.type.includes('SQL') ? prev.sql_injections + 1 : prev.sql_injections,
-            brute_force_attempts: newAttempt.type.includes('Brute') ? prev.brute_force_attempts + 1 : prev.brute_force_attempts,
-            vulnerability_scans: newAttempt.type.includes('Scan') ? prev.vulnerability_scans + 1 : prev.vulnerability_scans,
-            threat_level: newCount > 15 ? "critical" : newCount > 10 ? "high" : "medium"
-          };
-        });
-      }, 6000);
-    }
+    // Always monitoring in high alert mode - scan every 4 seconds for hacker attacks
+    interval = setInterval(async () => {
+      if (!isMonitoring) return;
+      
+      const newAttempt = await detectHackerActivity();
+      setAttempts(prev => [newAttempt, ...prev.slice(0, 9)]);
+      setMetrics(prev => {
+        const newCount = prev.attacks_blocked + 1;
+        return {
+          ...prev,
+          attacks_blocked: newCount,
+          sql_injections: newAttempt.type.includes('SQL') ? prev.sql_injections + 1 : prev.sql_injections,
+          brute_force_attempts: newAttempt.type.includes('Brute') ? prev.brute_force_attempts + 1 : prev.brute_force_attempts,
+          vulnerability_scans: newAttempt.type.includes('Scan') ? prev.vulnerability_scans + 1 : prev.vulnerability_scans,
+          threat_level: newCount > 15 ? "critical" : newCount > 10 ? "high" : "medium"
+        };
+      });
+    }, 4000); // High alert: scan every 4 seconds
 
     return () => {
       if (interval) clearInterval(interval);
@@ -314,12 +317,12 @@ export function HackerDetectionBot() {
           <CardTitle className="flex items-center gap-2">
             <Bug className="h-5 w-5" />
             Hacker Detection Bot
-            <Badge variant={isMonitoring ? "default" : "outline"}>
-              {isMonitoring ? "Active" : "Inactive"}
+            <Badge variant="destructive" className="animate-pulse">
+              HIGH ALERT - CONTINUOUS MONITORING
             </Badge>
           </CardTitle>
           <CardDescription>
-            Advanced AI detection for SQL injection, XSS, brute force, and vulnerability scans
+            🚨 HIGH ALERT MODE: Continuous AI detection for SQL injection, XSS, brute force, and vulnerability scans
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
@@ -435,25 +438,24 @@ export function HackerDetectionBot() {
             </TabsContent>
 
             <TabsContent value="control" className="space-y-4">
-              <div className="flex gap-4">
-                <Button 
-                  onClick={handleStartMonitoring} 
-                  disabled={isMonitoring}
-                  className="flex items-center gap-2"
-                >
-                  <Shield className="h-4 w-4" />
-                  Start Hacker Detection
-                </Button>
-                
-                <Button 
-                  onClick={handleStopMonitoring} 
-                  disabled={!isMonitoring}
-                  variant="outline"
-                  className="flex items-center gap-2"
-                >
-                  <Activity className="h-4 w-4" />
-                  Stop Detection
-                </Button>
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="font-medium text-green-600">
+                    Status: ACTIVE - Continuous High Alert Monitoring
+                  </p>
+                  <p className="text-sm text-muted-foreground">
+                    🛡️ Monitoring for hacker attacks every 4 seconds - SQL injection, XSS, brute force protection
+                  </p>
+                  <p className="text-xs text-orange-600 font-medium mt-1">
+                    ⚡ Auto-activated for maximum security - cannot be disabled
+                  </p>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Shield className="h-5 w-5 text-green-500" />
+                  <Badge variant="default" className="bg-green-100 text-green-800 border-green-300">
+                    PROTECTED
+                  </Badge>
+                </div>
               </div>
 
               <Card>

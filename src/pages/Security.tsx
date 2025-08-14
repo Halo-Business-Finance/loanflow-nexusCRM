@@ -3,6 +3,7 @@ import { EnhancedSecurityDashboard } from '@/components/security/EnhancedSecurit
 import { PersistentAISecurityMonitor } from '@/components/security/PersistentAISecurityMonitor';
 import { DarkWebSecurityBot } from '@/components/security/DarkWebSecurityBot';
 import { AdvancedThreatDetection } from '@/components/security/AdvancedThreatDetection';
+import { HackerDetectionBot } from '@/components/security/HackerDetectionBot';
 import { SecurityWrapper } from '@/components/SecurityWrapper';
 
 const SecurityPage: React.FC = () => {
@@ -15,8 +16,11 @@ const SecurityPage: React.FC = () => {
           <DarkWebSecurityBot />
         </div>
         
-        {/* Real-time AI Threat Monitoring - Always Active */}
-        <AdvancedThreatDetection />
+        {/* Real-time AI Threat Monitoring & Hacker Detection - Always Active */}
+        <div className="grid gap-6 lg:grid-cols-2">
+          <AdvancedThreatDetection />
+          <HackerDetectionBot />
+        </div>
         
         <EnhancedSecurityDashboard />
       </div>
