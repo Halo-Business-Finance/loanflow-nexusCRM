@@ -19,6 +19,7 @@ import { useToast } from "@/hooks/use-toast"
 import { ActionReminder } from "@/components/ActionReminder"
 import { PhoneDialer } from "@/components/PhoneDialer"
 import { EmailComposer } from "@/components/EmailComposer"
+import { ClickablePhone } from "@/components/ui/clickable-phone"
 
 import { formatNumber, formatCurrency, formatPhoneNumber } from "@/lib/utils"
 import { useNotifications } from "@/hooks/useNotifications"
@@ -981,16 +982,13 @@ export default function LeadDetail() {
                           value={editableFields.mobile_phone}
                           onChange={(e) => setEditableFields({...editableFields, mobile_phone: e.target.value})}
                           placeholder="Enter mobile phone number"
+                          type="tel"
                         />
                       ) : (
                         (lead as any).mobile_phone ? (
-                          <PhoneDialer 
-                            phoneNumber={(lead as any).mobile_phone} // Pre-fill with this number
-                            trigger={
-                              <button className="font-medium hover:text-primary transition-colors text-left text-foreground">
-                                {formatPhoneNumber((lead as any).mobile_phone)}
-                              </button>
-                            }
+                          <ClickablePhone 
+                            phoneNumber={(lead as any).mobile_phone}
+                            className="font-medium"
                           />
                         ) : (
                           <p className="font-medium text-foreground">N/A</p>
@@ -1067,13 +1065,9 @@ export default function LeadDetail() {
                         />
                       ) : (
                         lead.phone ? (
-                          <PhoneDialer 
-                            phoneNumber={lead.phone} // Pre-fill with this number
-                            trigger={
-                              <button className="font-medium hover:text-primary transition-colors text-left text-foreground">
-                                {formatPhoneNumber(lead.phone)}
-                              </button>
-                            }
+                          <ClickablePhone 
+                            phoneNumber={lead.phone}
+                            className="font-medium"
                           />
                         ) : (
                           <p className="font-medium text-foreground">N/A</p>

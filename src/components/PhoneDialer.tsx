@@ -6,21 +6,7 @@ import { Label } from "@/components/ui/label"
 import { useToast } from "@/hooks/use-toast"
 import { supabase } from "@/integrations/supabase/client"
 import { Phone, PhoneCall } from "lucide-react"
-
-// Phone number formatting function
-const formatPhoneNumber = (value: string) => {
-  // Remove all non-digits
-  const phoneNumber = value.replace(/\D/g, '')
-  
-  // Format based on length
-  if (phoneNumber.length < 4) {
-    return phoneNumber
-  } else if (phoneNumber.length < 7) {
-    return `(${phoneNumber.slice(0, 3)}) ${phoneNumber.slice(3)}`
-  } else {
-    return `(${phoneNumber.slice(0, 3)}) ${phoneNumber.slice(3, 6)}-${phoneNumber.slice(6, 10)}`
-  }
-}
+import { formatPhoneNumber } from "@/lib/utils"
 
 interface PhoneDialerProps {
   trigger?: React.ReactNode
