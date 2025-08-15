@@ -93,8 +93,47 @@ serve(async (req) => {
         }
       }
 
-      // Simulate encryption (in production, use actual encryption)
-      const mockEncryptedValue = btoa(data + '_encrypted_' + Date.now())
+      // Get active encryption key from database
+      const { data: keyData } = await supabase
+        .from('encryption_keys')
+        .select('key_material')
+        .eq('id', encryptionKeyId)
+        .single()
+
+      if (!keyData || !keyData.key_material) {
+        throw new Error('Encryption key not found')
+      }
+
+      // Derive encryption key using PBKDF2
+      const keyMaterial = await crypto.subtle.importKey(
+        'raw',
+        encoder.encode(keyData.key_material),
+        'PBKDF2',
+        false,
+        ['deriveBits', 'deriveKey']
+      )
+
+      const cryptoKey = await crypto.subtle.deriveKey(
+        {
+          name: 'PBKDF2',
+          salt: salt,
+          iterations: 100000,
+          hash: 'SHA-256'
+        },
+        keyMaterial,
+        { name: 'AES-GCM', length: 256 },
+        false,
+        ['encrypt']
+      )
+
+      // Perform real AES-256-GCM encryption
+      const encryptedBuffer = await crypto.subtle.encrypt(
+        { name: 'AES-GCM', iv: iv },
+        cryptoKey,
+        encoder.encode(data)
+      )
+
+      const encryptedValue = btoa(String.fromCharCode(...new Uint8Array(encryptedBuffer)))
 
       // Store encrypted field
       const { error: insertError } = await supabase
@@ -104,7 +143,7 @@ serve(async (req) => {
           field_name: fieldName,
           record_id: recordId,
           encryption_key_id: encryptionKeyId,
-          encrypted_value: mockEncryptedValue,
+          encrypted_value: encryptedValue,
           encryption_algorithm: 'AES-256-GCM',
           salt: btoa(String.fromCharCode(...salt)),
           iv: btoa(String.fromCharCode(...iv))
@@ -138,7 +177,7 @@ serve(async (req) => {
       return new Response(
         JSON.stringify({
           success: true,
-          encryptedValue: mockEncryptedValue,
+          encryptedValue: encryptedValue,
           keyId: encryptionKeyId,
           algorithm: 'AES-256-GCM'
         }),
@@ -168,9 +207,54 @@ serve(async (req) => {
         )
       }
 
-      // Simulate decryption (in production, use actual decryption)
-      const encryptedValue = encryptedField.encrypted_value
-      const mockDecryptedValue = atob(encryptedValue).replace(/_encrypted_\d+$/, '')
+      // Get encryption key
+      const { data: keyData } = await supabase
+        .from('encryption_keys')
+        .select('key_material')
+        .eq('id', encryptedField.encryption_key_id)
+        .single()
+
+      if (!keyData || !keyData.key_material) {
+        throw new Error('Encryption key not found')
+      }
+
+      // Convert stored values from base64
+      const salt = new Uint8Array(atob(encryptedField.salt).split('').map(char => char.charCodeAt(0)))
+      const iv = new Uint8Array(atob(encryptedField.iv).split('').map(char => char.charCodeAt(0)))
+      const encryptedBuffer = new Uint8Array(atob(encryptedField.encrypted_value).split('').map(char => char.charCodeAt(0)))
+
+      // Derive decryption key using PBKDF2
+      const encoder = new TextEncoder()
+      const keyMaterial = await crypto.subtle.importKey(
+        'raw',
+        encoder.encode(keyData.key_material),
+        'PBKDF2',
+        false,
+        ['deriveBits', 'deriveKey']
+      )
+
+      const cryptoKey = await crypto.subtle.deriveKey(
+        {
+          name: 'PBKDF2',
+          salt: salt,
+          iterations: 100000,
+          hash: 'SHA-256'
+        },
+        keyMaterial,
+        { name: 'AES-GCM', length: 256 },
+        false,
+        ['decrypt']
+      )
+
+      // Perform real AES-256-GCM decryption
+      const decryptedBuffer = await crypto.subtle.decrypt(
+        { name: 'AES-GCM', iv: iv },
+        cryptoKey,
+        encryptedBuffer
+      )
+
+      const decoder = new TextDecoder()
+      const decryptedValue = decoder.decode(decryptedBuffer)
 
       // Log security event
       await supabase
@@ -189,7 +273,7 @@ serve(async (req) => {
       return new Response(
         JSON.stringify({
           success: true,
-          decryptedValue: mockDecryptedValue,
+          decryptedValue: decryptedValue,
           keyId: encryptedField.encryption_key_id
         }),
         { 
