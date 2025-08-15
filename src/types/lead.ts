@@ -20,6 +20,9 @@ export interface Lead {
   location?: string
   business_name?: string
   business_address?: string
+  business_city?: string
+  business_state?: string
+  business_zip_code?: string
   naics_code?: string
   ownership_structure?: string
   owns_property?: boolean
@@ -63,6 +66,10 @@ export interface Client {
   phone?: string
   location?: string
   business_name?: string
+  business_address?: string
+  business_city?: string
+  business_state?: string
+  business_zip_code?: string
   stage?: string
 }
 
@@ -74,6 +81,9 @@ export interface ContactEntity {
   phone?: string
   business_name?: string
   business_address?: string
+  business_city?: string
+  business_state?: string
+  business_zip_code?: string
   annual_revenue?: number
   location?: string
   loan_amount?: number

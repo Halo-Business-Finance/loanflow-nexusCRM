@@ -122,6 +122,9 @@ export default function ClientDetail() {
     
     business_name: "",
     business_address: "",
+    business_city: "",
+    business_state: "",
+    business_zip_code: "",
     naics_code: "",
     ownership_structure: "",
     owns_property: false,
@@ -205,6 +208,9 @@ export default function ClientDetail() {
         
         business_name: mergedClient.business_name || "",
         business_address: mergedClient.business_address || "",
+        business_city: mergedClient.business_city || "",
+        business_state: mergedClient.business_state || "",
+        business_zip_code: mergedClient.business_zip_code || "",
         naics_code: mergedClient.naics_code || "",
         ownership_structure: mergedClient.ownership_structure || "",
         owns_property: mergedClient.owns_property || false,
@@ -360,6 +366,9 @@ export default function ClientDetail() {
         
         business_name: editableFields.business_name || null,
         business_address: editableFields.business_address || null,
+        business_city: editableFields.business_city || null,
+        business_state: editableFields.business_state || null,
+        business_zip_code: editableFields.business_zip_code || null,
         naics_code: editableFields.naics_code || null,
         ownership_structure: editableFields.ownership_structure || null,
         owns_property: editableFields.owns_property,
@@ -756,14 +765,43 @@ export default function ClientDetail() {
                     <div className="flex-1">
                       <p className="text-sm text-muted-foreground">Business Address</p>
                       {isEditing ? (
-                        <Textarea
-                          value={editableFields.business_address}
-                          onChange={(e) => setEditableFields({...editableFields, business_address: e.target.value})}
-                          placeholder="Enter business address"
-                          rows={2}
-                        />
+                        <div className="space-y-2">
+                          <Textarea
+                            value={editableFields.business_address}
+                            onChange={(e) => setEditableFields({...editableFields, business_address: e.target.value})}
+                            placeholder="Enter street address"
+                            rows={2}
+                          />
+                          <div className="grid grid-cols-2 gap-2">
+                            <Input
+                              value={editableFields.business_city}
+                              onChange={(e) => setEditableFields({...editableFields, business_city: e.target.value})}
+                              placeholder="City"
+                            />
+                            <Input
+                              value={editableFields.business_state}
+                              onChange={(e) => setEditableFields({...editableFields, business_state: e.target.value})}
+                              placeholder="State"
+                            />
+                          </div>
+                          <Input
+                            value={editableFields.business_zip_code}
+                            onChange={(e) => setEditableFields({...editableFields, business_zip_code: e.target.value})}
+                            placeholder="ZIP Code"
+                          />
+                        </div>
                       ) : (
-                        <p className="font-medium">{client.business_address || 'N/A'}</p>
+                        <div className="space-y-1">
+                          {(client as any).business_address && <p className="font-medium">{(client as any).business_address}</p>}
+                          {((client as any).business_city || (client as any).business_state || (client as any).business_zip_code) && (
+                            <p className="font-medium">
+                              {[(client as any).business_city, (client as any).business_state, (client as any).business_zip_code].filter(Boolean).join(', ')}
+                            </p>
+                          )}
+                          {!(client as any).business_address && !(client as any).business_city && !(client as any).business_state && !(client as any).business_zip_code && (
+                            <p className="font-medium">N/A</p>
+                          )}
+                        </div>
                       )}
                     </div>
                   </div>

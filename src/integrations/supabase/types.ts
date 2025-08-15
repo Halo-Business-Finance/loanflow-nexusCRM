@@ -920,7 +920,10 @@ export type Database = {
           bdo_name: string | null
           bdo_telephone: string | null
           business_address: string | null
+          business_city: string | null
           business_name: string | null
+          business_state: string | null
+          business_zip_code: string | null
           call_notes: string | null
           created_at: string
           credit_score: number | null
@@ -964,7 +967,10 @@ export type Database = {
           bdo_name?: string | null
           bdo_telephone?: string | null
           business_address?: string | null
+          business_city?: string | null
           business_name?: string | null
+          business_state?: string | null
+          business_zip_code?: string | null
           call_notes?: string | null
           created_at?: string
           credit_score?: number | null
@@ -1008,7 +1014,10 @@ export type Database = {
           bdo_name?: string | null
           bdo_telephone?: string | null
           business_address?: string | null
+          business_city?: string | null
           business_name?: string | null
+          business_state?: string | null
+          business_zip_code?: string | null
           call_notes?: string | null
           created_at?: string
           credit_score?: number | null

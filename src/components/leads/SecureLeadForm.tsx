@@ -28,6 +28,9 @@ export function SecureLeadForm({ lead, onSubmit, onCancel, isSubmitting = false 
     phone: lead?.phone || "",
     business_name: lead?.business_name || "",
     business_address: "",
+    business_city: "",
+    business_state: "",
+    business_zip_code: "",
     annual_revenue: undefined,
     loan_amount: lead?.loan_amount || undefined,
     loan_type: lead?.loan_type || "SBA 7(a) Loan",
@@ -183,11 +186,31 @@ export function SecureLeadForm({ lead, onSubmit, onCancel, isSubmitting = false 
         
         <div className="space-y-2">
           <Label htmlFor="business_address">Business Address</Label>
-          <Input
-            id="business_address"
-            value={formData.business_address || ""}
-            onChange={(e) => handleInputChange("business_address", e.target.value)}
-          />
+          <div className="space-y-2">
+            <Input
+              id="business_address"
+              value={formData.business_address || ""}
+              onChange={(e) => handleInputChange("business_address", e.target.value)}
+              placeholder="Street Address"
+            />
+            <div className="grid grid-cols-2 gap-2">
+              <Input
+                value={formData.business_city || ""}
+                onChange={(e) => handleInputChange("business_city", e.target.value)}
+                placeholder="City"
+              />
+              <Input
+                value={formData.business_state || ""}
+                onChange={(e) => handleInputChange("business_state", e.target.value)}
+                placeholder="State"
+              />
+            </div>
+            <Input
+              value={formData.business_zip_code || ""}
+              onChange={(e) => handleInputChange("business_zip_code", e.target.value)}
+              placeholder="ZIP Code"
+            />
+          </div>
         </div>
         
         <div className="space-y-2">

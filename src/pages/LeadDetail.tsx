@@ -86,6 +86,9 @@ export default function LeadDetail() {
     
     business_name: "",
     business_address: "",
+    business_city: "",
+    business_state: "",
+    business_zip_code: "",
     naics_code: "",
     ownership_structure: "",
     owns_property: false,
@@ -166,6 +169,9 @@ export default function LeadDetail() {
         
         business_name: mergedLead.business_name || "",
         business_address: mergedLead.business_address || "",
+        business_city: mergedLead.business_city || "",
+        business_state: mergedLead.business_state || "",
+        business_zip_code: mergedLead.business_zip_code || "",
         naics_code: mergedLead.naics_code || "",
         ownership_structure: mergedLead.ownership_structure || "",
         owns_property: mergedLead.owns_property || false,
@@ -477,6 +483,9 @@ export default function LeadDetail() {
         phone: editableFields.phone || null,
         business_name: editableFields.business_name || null,
         business_address: editableFields.business_address || null,
+        business_city: editableFields.business_city || null,
+        business_state: editableFields.business_state || null,
+        business_zip_code: editableFields.business_zip_code || null,
         naics_code: editableFields.naics_code || null,
         ownership_structure: editableFields.ownership_structure || null,
         owns_property: editableFields.owns_property,
@@ -589,6 +598,9 @@ export default function LeadDetail() {
         // Transfer all business and financial information from lead
         business_name: editableFields.business_name || null,
         business_address: editableFields.business_address || null,
+        business_city: editableFields.business_city || null,
+        business_state: editableFields.business_state || null,
+        business_zip_code: editableFields.business_zip_code || null,
         owns_property: editableFields.owns_property || false,
         property_payment_amount: editableFields.property_payment_amount ? parseFloat(editableFields.property_payment_amount) : null,
         year_established: editableFields.year_established ? parseInt(editableFields.year_established) : null,
@@ -1136,14 +1148,43 @@ export default function LeadDetail() {
                     <div className="flex-1">
                       <p className="text-sm text-muted-foreground">Business Address</p>
                       {isEditing ? (
-                        <Textarea
-                          value={editableFields.business_address}
-                          onChange={(e) => setEditableFields({...editableFields, business_address: e.target.value})}
-                          placeholder="Enter business address"
-                          rows={2}
-                        />
+                        <div className="space-y-2">
+                          <Textarea
+                            value={editableFields.business_address}
+                            onChange={(e) => setEditableFields({...editableFields, business_address: e.target.value})}
+                            placeholder="Enter street address"
+                            rows={2}
+                          />
+                          <div className="grid grid-cols-2 gap-2">
+                            <Input
+                              value={editableFields.business_city}
+                              onChange={(e) => setEditableFields({...editableFields, business_city: e.target.value})}
+                              placeholder="City"
+                            />
+                            <Input
+                              value={editableFields.business_state}
+                              onChange={(e) => setEditableFields({...editableFields, business_state: e.target.value})}
+                              placeholder="State"
+                            />
+                          </div>
+                          <Input
+                            value={editableFields.business_zip_code}
+                            onChange={(e) => setEditableFields({...editableFields, business_zip_code: e.target.value})}
+                            placeholder="ZIP Code"
+                          />
+                        </div>
                       ) : (
-                        <p className="font-medium text-foreground">{lead.business_address || 'N/A'}</p>
+                        <div className="space-y-1">
+                          {lead.business_address && <p className="font-medium text-foreground">{lead.business_address}</p>}
+                          {(lead.business_city || lead.business_state || lead.business_zip_code) && (
+                            <p className="font-medium text-foreground">
+                              {[lead.business_city, lead.business_state, lead.business_zip_code].filter(Boolean).join(', ')}
+                            </p>
+                          )}
+                          {!lead.business_address && !lead.business_city && !lead.business_state && !lead.business_zip_code && (
+                            <p className="font-medium text-foreground">N/A</p>
+                          )}
+                        </div>
                       )}
                     </div>
                   </div>
