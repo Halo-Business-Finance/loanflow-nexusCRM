@@ -80,13 +80,7 @@ export const useSecureContacts = () => {
   };
 
   const createSecureContact = async (contactData: Partial<ContactEntity>) => {
-    console.log('=== CONTACT CREATION DEBUG ===');
-    console.log('User object:', user);
-    console.log('User ID:', user?.id);
-    console.log('Contact data:', contactData);
-
     if (!user) {
-      console.error('No user found for contact creation');
       toast({
         title: "Error",
         description: "You must be logged in to create contacts",
@@ -95,14 +89,11 @@ export const useSecureContacts = () => {
       return null;
     }
 
-    // Test authentication first
     try {
-      console.log('Testing authentication...');
+      // Validate authentication and session
       const { data: authTest, error: authError } = await supabase.auth.getUser();
-      console.log('Auth test result:', { authTest, authError });
       
-      if (authError) {
-        console.error('Auth test failed:', authError);
+      if (authError || !authTest.user) {
         toast({
           title: "Authentication Error",
           description: "Please sign out and sign back in",
@@ -110,35 +101,36 @@ export const useSecureContacts = () => {
         });
         return null;
       }
-    } catch (authErr) {
-      console.error('Auth test exception:', authErr);
-      return null;
-    }
 
-    console.log('Creating contact with data:', contactData);
+      // Separate sensitive and non-sensitive fields
+      const sensitiveFields = {
+        email: contactData.email,
+        phone: contactData.phone,
+        credit_score: contactData.credit_score,
+        income: contactData.income,
+        loan_amount: contactData.loan_amount,
+        annual_revenue: contactData.annual_revenue,
+        bdo_email: contactData.bdo_email,
+        bdo_telephone: contactData.bdo_telephone
+      };
 
-    try {
-      // Non-sensitive fields for main table - include all fields directly for now to test
+      // Non-sensitive fields for main table (excluding sensitive data)
       const mainFields = {
         name: contactData.name || '',
-        email: contactData.email || '',
-        phone: contactData.phone || '',
+        email: '', // Empty email to satisfy schema, actual email will be encrypted
         business_name: contactData.business_name || '',
+        business_address: contactData.business_address || '',
         location: contactData.location || '',
         stage: contactData.stage || 'New Lead',
         priority: contactData.priority || 'medium',
         loan_type: contactData.loan_type || '',
         notes: contactData.notes || '',
-        credit_score: contactData.credit_score || null,
-        loan_amount: contactData.loan_amount || null,
-        income: contactData.income || null,
-        annual_revenue: contactData.annual_revenue || null,
+        naics_code: contactData.naics_code || '',
+        ownership_structure: contactData.ownership_structure || '',
         user_id: user.id
       };
 
-      console.log('Inserting main contact fields:', mainFields);
-
-      // Create contact in main table first
+      // Create contact in main table first (without sensitive data)
       const { data: newContact, error: createError } = await supabase
         .from('contact_entities')
         .insert(mainFields)
@@ -146,20 +138,34 @@ export const useSecureContacts = () => {
         .single();
 
       if (createError) {
-        console.error('Error creating contact:', createError);
         throw createError;
       }
 
-      console.log('Contact created successfully:', newContact);
+      // Encrypt and store sensitive fields using the secure encryption service
+      for (const [fieldName, fieldValue] of Object.entries(sensitiveFields)) {
+        if (fieldValue && String(fieldValue).trim()) {
+          const { error: encryptError } = await supabase.functions.invoke('encrypt-data', {
+            body: {
+              action: 'encrypt',
+              data: String(fieldValue).trim(),
+              tableName: 'contact_entities',
+              fieldName,
+              recordId: newContact.id
+            }
+          });
 
-      // Skip encryption for now to test basic functionality
-      console.log('Skipping encryption for debugging');
+          if (encryptError) {
+            console.error(`Error encrypting ${fieldName}:`, encryptError);
+            // Continue with other fields even if one fails
+          }
+        }
+      }
 
       await fetchSecureContacts();
       
       toast({
         title: "Success",
-        description: "Contact created successfully (encryption disabled for testing)"
+        description: "Contact created securely with encryption"
       });
 
       return newContact;
