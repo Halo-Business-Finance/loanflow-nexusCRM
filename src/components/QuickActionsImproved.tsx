@@ -141,44 +141,39 @@ export function QuickActionsImproved() {
     console.log('Quick action clicked:', action.id)
     
     if (action.id === 'emergency-lockdown') {
-      console.log('Emergency lockdown action triggered')
+      console.log('Emergency lockdown triggered')
       
-      // Show confirmation before lockdown
-      const confirmed = window.confirm(
-        'WARNING: This will immediately terminate your session and clear all data. Are you sure you want to initiate emergency lockdown?'
-      )
-      
-      if (confirmed) {
-        console.log('Emergency lockdown confirmed, executing...')
-        try {
-          // Clear localStorage immediately
-          localStorage.clear();
-          
-          // Sign out from Supabase
-          await supabase.auth.signOut();
-          
-          // Show toast notification
-          toast({
-            title: "Emergency Lockdown",
-            description: "Emergency lockdown initiated - redirecting...",
-            variant: "destructive",
-          })
-          
-          // Force redirect to login page
-          setTimeout(() => {
-            window.location.href = '/';
-          }, 1000);
-          
-        } catch (error) {
-          console.error('Emergency lockdown failed:', error)
-          toast({
-            title: "Emergency Lockdown Failed",
-            description: "Failed to initiate emergency lockdown",
-            variant: "destructive",
-          })
-        }
-      } else {
-        console.log('Emergency lockdown cancelled by user')
+      // Immediate lockdown without confirmation for emergency situations
+      try {
+        // Step 1: Clear all local storage immediately
+        console.log('Clearing localStorage...')
+        localStorage.clear()
+        sessionStorage.clear()
+        
+        // Step 2: Clear any cookies
+        document.cookie.split(";").forEach(function(c) { 
+          document.cookie = c.replace(/^ +/, "").replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/"); 
+        })
+        
+        // Step 3: Force sign out
+        console.log('Signing out...')
+        await supabase.auth.signOut({ scope: 'global' })
+        
+        // Step 4: Show immediate notification
+        toast({
+          title: "🚨 EMERGENCY LOCKDOWN ACTIVATED",
+          description: "All sessions terminated. Redirecting to secure page...",
+          variant: "destructive",
+        })
+        
+        // Step 5: Force immediate redirect
+        console.log('Redirecting...')
+        window.location.replace('/')
+        
+      } catch (error) {
+        console.error('Emergency lockdown error:', error)
+        // Force redirect even if error occurs
+        window.location.replace('/')
       }
     } else {
       navigate(action.route)
