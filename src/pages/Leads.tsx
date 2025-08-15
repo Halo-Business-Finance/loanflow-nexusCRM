@@ -208,12 +208,14 @@ export default function Leads() {
     try {
       if (!user) {
         toast({
-          title: "Error",
-          description: "You must be logged in to create leads",
+          title: "Authentication Error",
+          description: "You must be logged in to create leads. Please refresh the page and try again.",
           variant: "destructive"
         });
         return;
       }
+
+      console.log('Creating lead with user:', user.id);
 
       if (editingLead) {
         // Update existing lead
@@ -299,7 +301,7 @@ export default function Leads() {
   };
 
   return (
-    <SecurityWrapper requireRole="agent">
+    <SecurityWrapper>
       <SecureFormProvider>
         <Layout>
       <div className="container mx-auto p-6 space-y-6">

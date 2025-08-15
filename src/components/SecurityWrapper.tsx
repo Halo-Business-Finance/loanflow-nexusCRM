@@ -15,7 +15,7 @@ export const SecurityWrapper: React.FC<SecurityWrapperProps> = ({
   requireRole,
   fallback 
 }) => {
-  const { user, hasRole } = useAuth();
+  const { user, hasRole, loading } = useAuth();
   const { validateSession, trackActivity } = useSessionSecurity();
 
   useEffect(() => {
@@ -23,6 +23,16 @@ export const SecurityWrapper: React.FC<SecurityWrapperProps> = ({
       validateSession();
     }
   }, [user, validateSession]);
+
+  // Show loading state while auth is being determined
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+        <p className="ml-3">Checking authentication...</p>
+      </div>
+    );
+  }
 
   if (!user) {
     return (
