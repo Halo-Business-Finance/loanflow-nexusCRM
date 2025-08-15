@@ -150,12 +150,14 @@ All colors MUST be HSL.
     @apply underline decoration-1 underline-offset-2 font-thin;
   }
 
-  /* Card titles - no underline for widget titles */
+  /* Card titles - no underline for widget titles with higher specificity */
+  .card h3:not([class*="border-b"]),
   [data-testid="card-title"]:not([class*="border-b"]),
   .card-title:not([class*="border-b"]),
   [class*="CardTitle"]:not([class*="border-b"]),
   [class*="card-title"]:not([class*="border-b"]) {
-    @apply font-thin;
+    @apply font-thin !important;
+    text-decoration: none !important;
   }
 
   /* Dialog titles */
