@@ -1121,24 +1121,6 @@ export default function LeadDetail() {
                     </div>
                   </div>
 
-                  <div className="flex items-center gap-3">
-                    <FileText className="w-4 h-4 text-muted-foreground" />
-                    <div className="flex-1">
-                      <p className="text-sm text-muted-foreground">NAICS Code</p>
-                      {isEditing ? (
-                        <Input
-                          value={editableFields.naics_code}
-                          onChange={(e) => setEditableFields({...editableFields, naics_code: e.target.value})}
-                          placeholder="Enter NAICS code (e.g., 541110)"
-                          maxLength={6}
-                        />
-                      ) : (
-                        <p className="font-medium text-foreground">
-                          {(lead as any).naics_code || 'N/A'}
-                        </p>
-                      )}
-                    </div>
-                  </div>
 
                   <div className="flex items-center gap-3">
                     <Building className="w-4 h-4 text-muted-foreground" />
@@ -1249,6 +1231,25 @@ export default function LeadDetail() {
                       ) : (
                         <p className="font-medium text-foreground">
                           {formatCurrency((lead as any).net_operating_income)}
+                        </p>
+                      )}
+                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-3">
+                    <FileText className="w-4 h-4 text-muted-foreground" />
+                    <div className="flex-1">
+                      <p className="text-sm text-muted-foreground">NAICS Code</p>
+                      {isEditing ? (
+                        <Input
+                          value={editableFields.naics_code}
+                          onChange={(e) => setEditableFields({...editableFields, naics_code: e.target.value})}
+                          placeholder="Enter NAICS code (e.g., 541110)"
+                          maxLength={6}
+                        />
+                      ) : (
+                        <p className="font-medium text-foreground">
+                          {(lead as any).naics_code || 'N/A'}
                         </p>
                       )}
                     </div>
