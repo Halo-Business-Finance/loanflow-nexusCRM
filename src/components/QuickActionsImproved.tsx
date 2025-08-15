@@ -1,6 +1,6 @@
 import { useState } from "react"
 import { Plus, Phone, Mail, Calendar, User, Users, FileText, BarChart3, Bell, Settings, Zap, AlertTriangle } from "lucide-react"
-import { fortress } from "@/lib/fortress-security"
+import { supabase } from "@/integrations/supabase/client"
 import { useToast } from "@/hooks/use-toast"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
@@ -138,20 +138,37 @@ export function QuickActionsImproved() {
     : quickActions.filter(action => action.category === selectedCategory)
 
   const handleAction = async (action: QuickAction) => {
+    console.log('Quick action clicked:', action.id)
+    
     if (action.id === 'emergency-lockdown') {
+      console.log('Emergency lockdown action triggered')
+      
       // Show confirmation before lockdown
       const confirmed = window.confirm(
         'WARNING: This will immediately terminate your session and clear all data. Are you sure you want to initiate emergency lockdown?'
       )
       
       if (confirmed) {
+        console.log('Emergency lockdown confirmed, executing...')
         try {
-          await fortress.emergencyLockdown('Manual emergency lockdown triggered from quick actions')
+          // Clear localStorage immediately
+          localStorage.clear();
+          
+          // Sign out from Supabase
+          await supabase.auth.signOut();
+          
+          // Show toast notification
           toast({
             title: "Emergency Lockdown",
-            description: "Emergency lockdown initiated successfully",
+            description: "Emergency lockdown initiated - redirecting...",
             variant: "destructive",
           })
+          
+          // Force redirect to login page
+          setTimeout(() => {
+            window.location.href = '/';
+          }, 1000);
+          
         } catch (error) {
           console.error('Emergency lockdown failed:', error)
           toast({
@@ -160,6 +177,8 @@ export function QuickActionsImproved() {
             variant: "destructive",
           })
         }
+      } else {
+        console.log('Emergency lockdown cancelled by user')
       }
     } else {
       navigate(action.route)
