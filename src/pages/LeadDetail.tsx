@@ -269,16 +269,27 @@ export default function LeadDetail() {
       console.log('Current callNotes:', callNotes)
       console.log('New call note:', newCallNote)
       
-      // Get user's profile for display name
-      const { data: profile } = await supabase
-        .from('profiles')
-        .select('first_name, last_name')
-        .eq('id', user.id)
-        .single()
+      // Get user's profile for display name - handle missing profile gracefully
+      let userName = user.email?.split('@')[0] || 'Unknown User'
+      
+      try {
+        const { data: profile, error: profileError } = await supabase
+          .from('profiles')
+          .select('first_name, last_name')
+          .eq('id', user.id)
+          .maybeSingle()
 
-      const userName = profile 
-        ? `${profile.first_name} ${profile.last_name}`.trim() 
-        : user.email?.split('@')[0] || 'Unknown User'
+        console.log('Profile lookup result:', { profile, profileError })
+
+        if (profile && !profileError) {
+          const fullName = `${profile.first_name || ''} ${profile.last_name || ''}`.trim()
+          if (fullName) {
+            userName = fullName
+          }
+        }
+      } catch (profileError) {
+        console.log('Profile lookup failed, using email:', profileError)
+      }
 
       const updatedNotes = callNotes + (newCallNote ? `\n\n${userName} [${new Date().toLocaleString()}]: ${newCallNote}` : "")
       

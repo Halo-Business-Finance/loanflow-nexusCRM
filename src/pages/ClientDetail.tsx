@@ -293,10 +293,19 @@ export default function ClientDetail() {
       console.log('Current callNotes:', callNotes)
       console.log('New call note:', newCallNote)
       
-      const userName = userProfile ? `${userProfile.first_name || ''} ${userProfile.last_name || ''}`.trim() : 'Unknown User'
+      let userName = 'Unknown User'
+      if (userProfile) {
+        const fullName = `${userProfile.first_name || ''} ${userProfile.last_name || ''}`.trim()
+        userName = fullName || 'Unknown User'
+      }
+      
       const updatedNotes = callNotes + (newCallNote ? `\n\n${userName} [${new Date().toLocaleString()}]: ${newCallNote}` : "")
       
       console.log('Updated notes to save:', updatedNotes)
+      
+      if (!client.contact_entity_id) {
+        throw new Error('No contact entity ID found for client')
+      }
       
       // Update the contact_entities table, not the clients table
       const { error, data } = await supabase
