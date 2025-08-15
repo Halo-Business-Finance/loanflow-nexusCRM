@@ -934,6 +934,7 @@ export type Database = {
           loan_type: string | null
           location: string | null
           maturity_date: string | null
+          mobile_phone: string | null
           monthly_processing_volume: number | null
           naics_code: string | null
           name: string
@@ -974,6 +975,7 @@ export type Database = {
           loan_type?: string | null
           location?: string | null
           maturity_date?: string | null
+          mobile_phone?: string | null
           monthly_processing_volume?: number | null
           naics_code?: string | null
           name: string
@@ -1014,6 +1016,7 @@ export type Database = {
           loan_type?: string | null
           location?: string | null
           maturity_date?: string | null
+          mobile_phone?: string | null
           monthly_processing_volume?: number | null
           naics_code?: string | null
           name?: string

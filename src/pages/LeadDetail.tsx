@@ -110,7 +110,8 @@ export default function LeadDetail() {
     average_transaction_size: "",
     processor_name: "",
     current_processing_rate: "",
-    ownership_percentage: ""
+    ownership_percentage: "",
+    mobile_phone: ""
   })
 
   useEffect(() => {
@@ -186,7 +187,8 @@ export default function LeadDetail() {
         average_transaction_size: mergedLead.average_transaction_size?.toString() || "",
         processor_name: mergedLead.processor_name || "",
         current_processing_rate: mergedLead.current_processing_rate?.toString() || "",
-        ownership_percentage: mergedLead.ownership_percentage?.toString() || ""
+        ownership_percentage: mergedLead.ownership_percentage?.toString() || "",
+        mobile_phone: mergedLead.mobile_phone || ""
       })
       
       // If lead is converted, fetch client data
@@ -492,7 +494,8 @@ export default function LeadDetail() {
         average_transaction_size: editableFields.average_transaction_size ? parseFloat(editableFields.average_transaction_size) : null,
         processor_name: editableFields.processor_name || null,
         current_processing_rate: editableFields.current_processing_rate ? parseFloat(editableFields.current_processing_rate) : null,
-        ownership_percentage: editableFields.ownership_percentage ? parseFloat(editableFields.ownership_percentage) : null
+        ownership_percentage: editableFields.ownership_percentage ? parseFloat(editableFields.ownership_percentage) : null,
+        mobile_phone: editableFields.mobile_phone || null
       }
 
       // Check if stage is being changed to "Loan Funded" and lead isn't already converted
@@ -956,12 +959,12 @@ export default function LeadDetail() {
                   <div className="flex items-center gap-3">
                     <Phone className="w-4 h-4 text-muted-foreground" />
                     <div className="flex-1">
-                      <p className="text-sm text-muted-foreground">Phone</p>
+                      <p className="text-sm text-muted-foreground">Company Phone</p>
                       {isEditing ? (
                         <Input
                           value={editableFields.phone}
                           onChange={(e) => setEditableFields({...editableFields, phone: e.target.value})}
-                          placeholder="Enter phone number"
+                          placeholder="Enter company phone number"
                         />
                       ) : (
                         lead.phone ? (
@@ -970,6 +973,33 @@ export default function LeadDetail() {
                             trigger={
                               <button className="font-medium hover:text-primary transition-colors text-left text-foreground">
                                 {lead.phone}
+                              </button>
+                            }
+                          />
+                        ) : (
+                          <p className="font-medium text-foreground">N/A</p>
+                        )
+                      )}
+                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-3">
+                    <Phone className="w-4 h-4 text-muted-foreground" />
+                    <div className="flex-1">
+                      <p className="text-sm text-muted-foreground">Mobile Phone</p>
+                      {isEditing ? (
+                        <Input
+                          value={editableFields.mobile_phone}
+                          onChange={(e) => setEditableFields({...editableFields, mobile_phone: e.target.value})}
+                          placeholder="Enter mobile phone number"
+                        />
+                      ) : (
+                        (lead as any).mobile_phone ? (
+                          <PhoneDialer 
+                            phoneNumber={(lead as any).mobile_phone} // Pre-fill with this number
+                            trigger={
+                              <button className="font-medium hover:text-primary transition-colors text-left text-foreground">
+                                {(lead as any).mobile_phone}
                               </button>
                             }
                           />
