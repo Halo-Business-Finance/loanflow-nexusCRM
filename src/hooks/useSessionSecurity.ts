@@ -2,6 +2,7 @@ import { useEffect, useCallback, useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/components/auth/AuthProvider';
 import { toast } from 'sonner';
+import { useZeroLocalStorage } from '@/lib/zero-localStorage-security';
 
 interface SessionValidationResult {
   valid: boolean;
@@ -11,6 +12,7 @@ interface SessionValidationResult {
 
 export const useSessionSecurity = () => {
   const { user, signOut } = useAuth();
+  const { auditLocalStorage } = useZeroLocalStorage();
   const [sessionToken, setSessionToken] = useState<string | null>(null);
   const [lastActivity, setLastActivity] = useState<Date>(new Date());
 
@@ -50,13 +52,16 @@ export const useSessionSecurity = () => {
     }
   }, [cleanupSession, signOut]);
 
-  // Generate session token on login (simplified approach)
+  // Generate session token on login with localStorage audit
   useEffect(() => {
     if (user && !sessionToken) {
+      // Audit and clean localStorage on session start
+      auditLocalStorage();
+      
       const token = crypto.randomUUID();
       setSessionToken(token);
       
-      // Create session record in our custom table only
+      // Create session record with enhanced security
       supabase
         .from('active_sessions')
         .insert({
@@ -65,16 +70,31 @@ export const useSessionSecurity = () => {
           device_fingerprint: generateDeviceFingerprint(),
           user_agent: navigator.userAgent,
           expires_at: new Date(Date.now() + 8 * 60 * 60 * 1000).toISOString(), // 8 hours
-          ip_address: null // Will be updated on first validation
+          ip_address: null, // Will be updated on first validation
+          browser_fingerprint: JSON.parse(generateDeviceFingerprint()),
+          screen_resolution: `${screen.width}x${screen.height}`,
+          timezone: Intl.DateTimeFormat().resolvedOptions().timeZone
         })
         .then(({ error }) => {
           if (error) {
             console.error('Session creation error:', error);
-            // Don't show toast for creation errors, just log them
+          } else {
+            // Log session start with security audit
+            supabase
+              .from('security_events')
+              .insert({
+                event_type: 'secure_session_started',
+                severity: 'low',
+                details: {
+                  localStorage_cleaned: true,
+                  enhanced_tracking: true,
+                  timestamp: new Date().toISOString()
+                }
+              });
           }
         });
     }
-  }, [user, sessionToken]);
+  }, [user, sessionToken, auditLocalStorage]);
 
   // Generate device fingerprint
   const generateDeviceFingerprint = useCallback((): string => {
@@ -125,16 +145,22 @@ export const useSessionSecurity = () => {
         return false;
       }
 
-      // Update last activity with enhanced monitoring
+      // Update last activity with comprehensive monitoring
       await supabase
         .from('active_sessions')
         .update({ 
           last_activity: new Date().toISOString(),
           user_agent: navigator.userAgent,
           page_url: window.location.pathname,
-          referrer: document.referrer || null
+          referrer: document.referrer || null,
+          last_security_check: new Date().toISOString()
         })
         .eq('id', data.id);
+
+      // Periodic localStorage audit during session
+      if (Math.random() < 0.1) { // 10% chance to audit
+        auditLocalStorage();
+      }
 
       return true;
     } catch (error) {

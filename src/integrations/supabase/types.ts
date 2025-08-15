@@ -52,38 +52,83 @@ export type Database = {
       }
       active_sessions: {
         Row: {
+          browser_fingerprint: Json | null
+          click_count: number | null
           created_at: string
           device_fingerprint: string | null
           expires_at: string
           id: string
+          idle_time_seconds: number | null
           ip_address: unknown | null
           is_active: boolean
+          keyboard_activity_count: number | null
           last_activity: string
+          last_security_check: string | null
+          mouse_activity_count: number | null
+          page_url: string | null
+          page_views: number | null
+          referrer: string | null
+          risk_factors: Json | null
+          screen_resolution: string | null
+          scroll_activity_count: number | null
+          security_alerts_count: number | null
+          session_duration_seconds: number | null
           session_token: string
+          timezone: string | null
           user_agent: string | null
           user_id: string
         }
         Insert: {
+          browser_fingerprint?: Json | null
+          click_count?: number | null
           created_at?: string
           device_fingerprint?: string | null
           expires_at: string
           id?: string
+          idle_time_seconds?: number | null
           ip_address?: unknown | null
           is_active?: boolean
+          keyboard_activity_count?: number | null
           last_activity?: string
+          last_security_check?: string | null
+          mouse_activity_count?: number | null
+          page_url?: string | null
+          page_views?: number | null
+          referrer?: string | null
+          risk_factors?: Json | null
+          screen_resolution?: string | null
+          scroll_activity_count?: number | null
+          security_alerts_count?: number | null
+          session_duration_seconds?: number | null
           session_token: string
+          timezone?: string | null
           user_agent?: string | null
           user_id: string
         }
         Update: {
+          browser_fingerprint?: Json | null
+          click_count?: number | null
           created_at?: string
           device_fingerprint?: string | null
           expires_at?: string
           id?: string
+          idle_time_seconds?: number | null
           ip_address?: unknown | null
           is_active?: boolean
+          keyboard_activity_count?: number | null
           last_activity?: string
+          last_security_check?: string | null
+          mouse_activity_count?: number | null
+          page_url?: string | null
+          page_views?: number | null
+          referrer?: string | null
+          risk_factors?: Json | null
+          screen_resolution?: string | null
+          scroll_activity_count?: number | null
+          security_alerts_count?: number | null
+          session_duration_seconds?: number | null
           session_token?: string
+          timezone?: string | null
           user_agent?: string | null
           user_id?: string
         }
@@ -3265,6 +3310,57 @@ export type Database = {
           notification_type?: string
           severity?: string
           title?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      session_activity_log: {
+        Row: {
+          action_type: string | null
+          activity_type: string
+          device_fingerprint: string | null
+          element_id: string | null
+          geolocation: Json | null
+          id: string
+          ip_address: unknown | null
+          page_url: string | null
+          performance_metrics: Json | null
+          risk_indicators: Json | null
+          session_id: string | null
+          timestamp: string
+          user_agent: string | null
+          user_id: string
+        }
+        Insert: {
+          action_type?: string | null
+          activity_type: string
+          device_fingerprint?: string | null
+          element_id?: string | null
+          geolocation?: Json | null
+          id?: string
+          ip_address?: unknown | null
+          page_url?: string | null
+          performance_metrics?: Json | null
+          risk_indicators?: Json | null
+          session_id?: string | null
+          timestamp?: string
+          user_agent?: string | null
+          user_id: string
+        }
+        Update: {
+          action_type?: string | null
+          activity_type?: string
+          device_fingerprint?: string | null
+          element_id?: string | null
+          geolocation?: Json | null
+          id?: string
+          ip_address?: unknown | null
+          page_url?: string | null
+          performance_metrics?: Json | null
+          risk_indicators?: Json | null
+          session_id?: string | null
+          timestamp?: string
+          user_agent?: string | null
           user_id?: string
         }
         Relationships: []
