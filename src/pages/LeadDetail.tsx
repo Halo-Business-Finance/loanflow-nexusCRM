@@ -19,7 +19,7 @@ import { useToast } from "@/hooks/use-toast"
 import { ActionReminder } from "@/components/ActionReminder"
 import { PhoneDialer } from "@/components/PhoneDialer"
 import { EmailComposer } from "@/components/EmailComposer"
-import { QuickEmail } from "@/components/QuickEmail"
+
 import { formatNumber, formatCurrency } from "@/lib/utils"
 import { useNotifications } from "@/hooks/useNotifications"
 import { format } from "date-fns"
@@ -825,20 +825,6 @@ export default function LeadDetail() {
                   >
                     <Mail className="w-4 h-4 mr-2" />
                     Email
-                  </Button>
-                }
-              />
-              <QuickEmail 
-                recipientEmail={lead.email}
-                recipientName={lead.name}
-                trigger={
-                  <Button
-                    size="sm"
-                    variant="gradient-orange"
-                    className="h-10 px-4 rounded-lg font-medium shadow-md"
-                  >
-                    <Send className="w-4 h-4 mr-2" />
-                    Quick Email
                   </Button>
                 }
               />
