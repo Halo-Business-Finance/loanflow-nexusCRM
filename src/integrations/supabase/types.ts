@@ -4110,6 +4110,47 @@ export type Database = {
         Args: { p_config_key: string }
         Returns: Json
       }
+      get_unmasked_contact_entity: {
+        Args: { contact_id: string }
+        Returns: {
+          annual_revenue: number
+          average_transaction_size: number
+          bank_lender_name: string
+          bdo_email: string
+          bdo_name: string
+          bdo_telephone: string
+          business_address: string
+          business_name: string
+          call_notes: string
+          created_at: string
+          credit_score: number
+          current_processing_rate: number
+          email: string
+          existing_loan_amount: number
+          id: string
+          income: number
+          interest_rate: number
+          loan_amount: number
+          loan_type: string
+          maturity_date: string
+          monthly_processing_volume: number
+          naics_code: string
+          name: string
+          net_operating_income: number
+          notes: string
+          ownership_structure: string
+          owns_property: boolean
+          phone: string
+          pos_system: string
+          priority: string
+          processor_name: string
+          property_payment_amount: number
+          stage: string
+          updated_at: string
+          user_id: string
+          year_established: number
+        }[]
+      }
       get_user_role: {
         Args: { p_user_id?: string }
         Returns: Database["public"]["Enums"]["user_role"]
