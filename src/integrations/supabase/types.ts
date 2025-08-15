@@ -4460,6 +4460,10 @@ export type Database = {
         Args: { p_session_token: string; p_user_id: string }
         Returns: boolean
       }
+      validate_sensitive_table_access: {
+        Args: { requesting_user_id?: string; table_name?: string }
+        Returns: boolean
+      }
       validate_session_security: {
         Args:
           | {
