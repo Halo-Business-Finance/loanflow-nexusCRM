@@ -16,13 +16,9 @@ export const SecurityWrapper: React.FC<SecurityWrapperProps> = ({
   fallback 
 }) => {
   const { user, hasRole, loading } = useAuth();
-  const { validateSession, trackActivity } = useSessionSecurity();
+  const { trackActivity } = useSessionSecurity();
 
-  useEffect(() => {
-    if (user) {
-      validateSession();
-    }
-  }, [user, validateSession]);
+  // Remove automatic session validation to prevent JSON parsing errors
 
   // Show loading state while auth is being determined
   if (loading) {
