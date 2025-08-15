@@ -943,6 +943,7 @@ export type Database = {
           ownership_percentage: number | null
           ownership_structure: string | null
           owns_property: boolean | null
+          personal_email: string | null
           phone: string | null
           pos_system: string | null
           priority: string | null
@@ -984,6 +985,7 @@ export type Database = {
           ownership_percentage?: number | null
           ownership_structure?: string | null
           owns_property?: boolean | null
+          personal_email?: string | null
           phone?: string | null
           pos_system?: string | null
           priority?: string | null
@@ -1025,6 +1027,7 @@ export type Database = {
           ownership_percentage?: number | null
           ownership_structure?: string | null
           owns_property?: boolean | null
+          personal_email?: string | null
           phone?: string | null
           pos_system?: string | null
           priority?: string | null

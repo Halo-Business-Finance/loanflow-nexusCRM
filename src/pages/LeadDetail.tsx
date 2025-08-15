@@ -111,7 +111,8 @@ export default function LeadDetail() {
     processor_name: "",
     current_processing_rate: "",
     ownership_percentage: "",
-    mobile_phone: ""
+    mobile_phone: "",
+    personal_email: ""
   })
 
   useEffect(() => {
@@ -188,7 +189,8 @@ export default function LeadDetail() {
         processor_name: mergedLead.processor_name || "",
         current_processing_rate: mergedLead.current_processing_rate?.toString() || "",
         ownership_percentage: mergedLead.ownership_percentage?.toString() || "",
-        mobile_phone: mergedLead.mobile_phone || ""
+        mobile_phone: mergedLead.mobile_phone || "",
+        personal_email: mergedLead.personal_email || ""
       })
       
       // If lead is converted, fetch client data
@@ -495,7 +497,8 @@ export default function LeadDetail() {
         processor_name: editableFields.processor_name || null,
         current_processing_rate: editableFields.current_processing_rate ? parseFloat(editableFields.current_processing_rate) : null,
         ownership_percentage: editableFields.ownership_percentage ? parseFloat(editableFields.ownership_percentage) : null,
-        mobile_phone: editableFields.mobile_phone || null
+        mobile_phone: editableFields.mobile_phone || null,
+        personal_email: editableFields.personal_email || null
       }
 
       // Check if stage is being changed to "Loan Funded" and lead isn't already converted
@@ -936,13 +939,13 @@ export default function LeadDetail() {
                   <div className="flex items-center gap-3">
                     <Mail className="w-4 h-4 text-muted-foreground" />
                     <div className="flex-1">
-                      <p className="text-sm text-muted-foreground">Email</p>
+                      <p className="text-sm text-muted-foreground">Company Email</p>
                       {isEditing ? (
                         <Input
                           type="email"
                           value={editableFields.email}
                           onChange={(e) => setEditableFields({...editableFields, email: e.target.value})}
-                          placeholder="Enter email"
+                          placeholder="Enter company email"
                         />
                       ) : (
                         <EmailComposer 
@@ -952,6 +955,33 @@ export default function LeadDetail() {
                             </button>
                           }
                         />
+                      )}
+                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-3">
+                    <Mail className="w-4 h-4 text-muted-foreground" />
+                    <div className="flex-1">
+                      <p className="text-sm text-muted-foreground">Personal Email</p>
+                      {isEditing ? (
+                        <Input
+                          type="email"
+                          value={editableFields.personal_email}
+                          onChange={(e) => setEditableFields({...editableFields, personal_email: e.target.value})}
+                          placeholder="Enter personal email"
+                        />
+                      ) : (
+                        (lead as any).personal_email ? (
+                          <EmailComposer 
+                            trigger={
+                              <button className="font-medium hover:text-primary transition-colors text-left text-foreground">
+                                {(lead as any).personal_email}
+                              </button>
+                            }
+                          />
+                        ) : (
+                          <p className="font-medium text-foreground">N/A</p>
+                        )
                       )}
                     </div>
                   </div>
