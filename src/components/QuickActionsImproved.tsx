@@ -203,7 +203,7 @@ export function QuickActionsImproved() {
               </div>
             </Button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" className="w-72 p-2">
+          <DropdownMenuContent align="end" className="w-72 p-2 bg-background border shadow-lg z-50">
             <DropdownMenuLabel className="text-lg font-semibold">Quick Actions</DropdownMenuLabel>
             <DropdownMenuSeparator />
             
@@ -214,7 +214,12 @@ export function QuickActionsImproved() {
                 return (
                   <DropdownMenuItem
                     key={action.id}
-                    onClick={() => handleAction(action)}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      console.log('Dropdown item clicked:', action.id);
+                      handleAction(action);
+                    }}
                     className="p-3 cursor-pointer hover:bg-accent/50 rounded-md"
                   >
                     <div className="flex items-center gap-3 w-full">
@@ -232,7 +237,12 @@ export function QuickActionsImproved() {
             </div>
             
             <DropdownMenuSeparator />
-            <DropdownMenuItem onClick={() => setIsOpen(true)} className="p-3">
+            <DropdownMenuItem onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              console.log('View all actions clicked');
+              setIsOpen(true);
+            }} className="p-3">
               <div className="flex items-center gap-2 w-full">
                 <Calendar className="h-4 w-4" />
                 <span className="font-medium">View All Actions</span>
@@ -294,7 +304,12 @@ export function QuickActionsImproved() {
                 <Card
                   key={action.id}
                   className="cursor-pointer hover:bg-accent/50 transition-all duration-200 hover:scale-105 hover:shadow-md"
-                  onClick={() => handleAction(action)}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    console.log('Card clicked:', action.id);
+                    handleAction(action);
+                  }}
                 >
                   <CardContent className="p-4">
                     <div className="flex items-start gap-3">
