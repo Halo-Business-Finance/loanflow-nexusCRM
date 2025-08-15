@@ -226,15 +226,17 @@ export function SecureLeadForm({ lead, onSubmit, onCancel, isSubmitting = false 
             type="number"
             min="450"
             max="850"
+            maxLength={3}
             value={formData.credit_score || ""}
             onChange={(e) => {
               const value = e.target.value ? Number(e.target.value) : undefined;
               console.log('Credit score input change:', e.target.value, 'parsed:', value, typeof value);
-              if (value === undefined || (value >= 450 && value <= 850)) {
+              // Ensure only 3 digits and within range
+              if (value === undefined || (value >= 450 && value <= 850 && e.target.value.length <= 3)) {
                 console.log('Credit score validation passed, calling handleInputChange');
                 handleInputChange("credit_score", value);
               } else {
-                console.log('Credit score validation failed, value outside range:', value);
+                console.log('Credit score validation failed, value outside range or too many digits:', value, 'length:', e.target.value.length);
               }
             }}
             className={validationErrors.credit_score ? "border-destructive" : ""}

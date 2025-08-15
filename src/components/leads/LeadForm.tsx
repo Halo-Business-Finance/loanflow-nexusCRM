@@ -143,10 +143,12 @@ export function LeadForm({ lead, onSubmit, onCancel, isSubmitting = false }: Lea
             type="number"
             min="450"
             max="850"
+            maxLength={3}
             value={formData.credit_score || ""}
             onChange={(e) => {
               const value = e.target.value ? Number(e.target.value) : undefined;
-              if (value === undefined || (value >= 450 && value <= 850)) {
+              // Ensure only 3 digits and within range
+              if (value === undefined || (value >= 450 && value <= 850 && e.target.value.length <= 3)) {
                 handleInputChange("credit_score", value);
               }
             }}
