@@ -35,16 +35,23 @@ export function LoginForm({ onToggleMode }: LoginFormProps) {
   const handleMicrosoftSignIn = async () => {
     setIsMicrosoftLoading(true)
     try {
-      const { error } = await supabase.auth.signInWithOAuth({
+      console.log('Attempting Microsoft OAuth...')
+      const { data, error } = await supabase.auth.signInWithOAuth({
         provider: 'azure',
         options: {
           scopes: 'email openid profile',
           redirectTo: `${window.location.origin}/`
         }
       })
-      if (error) throw error
+      console.log('OAuth response:', { data, error })
+      if (error) {
+        console.error('OAuth error details:', error)
+        alert(`Microsoft login failed: ${error.message}`)
+        throw error
+      }
     } catch (error) {
       console.error('Microsoft sign in error:', error)
+      alert(`Error: ${error instanceof Error ? error.message : 'Unknown error'}`)
     } finally {
       setIsMicrosoftLoading(false)
     }
