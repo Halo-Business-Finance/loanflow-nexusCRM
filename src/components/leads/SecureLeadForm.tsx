@@ -185,7 +185,7 @@ export function SecureLeadForm({ lead, onSubmit, onCancel, isSubmitting = false 
         
         
         <div className="space-y-2">
-          <Label htmlFor="business_address">Business Address</Label>
+          <Label htmlFor="business_address">Company Address</Label>
           <div className="space-y-2">
             <Input
               id="business_address"

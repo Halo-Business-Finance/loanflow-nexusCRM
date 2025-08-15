@@ -598,7 +598,7 @@ export default function Clients() {
                 </div>
                 
                 <div className="space-y-2">
-                  <Label htmlFor="business_address">Business Address</Label>
+                  <Label htmlFor="business_address">Company Address</Label>
                   <Textarea
                     id="business_address"
                     value={newClient.business_address}

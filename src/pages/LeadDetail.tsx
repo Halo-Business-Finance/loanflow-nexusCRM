@@ -1146,7 +1146,7 @@ export default function LeadDetail() {
                   <div className="flex items-center gap-3">
                     <Home className="w-4 h-4 text-muted-foreground" />
                     <div className="flex-1">
-                      <p className="text-sm text-muted-foreground">Business Address</p>
+                      <p className="text-sm text-muted-foreground">Company Address</p>
                       {isEditing ? (
                         <div className="space-y-2">
                           <Textarea
