@@ -214,13 +214,26 @@ export function SecureLeadForm({ lead, onSubmit, onCancel, isSubmitting = false 
         </div>
         
         <div className="space-y-2">
-          <Label htmlFor="credit_score">Credit Score</Label>
+          <Label htmlFor="credit_score">Credit Score (450-850)</Label>
           <Input
             id="credit_score"
             type="number"
+            min="450"
+            max="850"
             value={formData.credit_score || ""}
-            onChange={(e) => handleInputChange("credit_score", e.target.value ? Number(e.target.value) : undefined)}
+            onChange={(e) => {
+              const value = e.target.value ? Number(e.target.value) : undefined;
+              if (value === undefined || (value >= 450 && value <= 850)) {
+                handleInputChange("credit_score", value);
+              }
+            }}
+            className={validationErrors.credit_score ? "border-destructive" : ""}
           />
+          {validationErrors.credit_score && (
+            <div className="text-sm text-destructive">
+              {validationErrors.credit_score.join(", ")}
+            </div>
+          )}
         </div>
         
         <div className="space-y-2">
