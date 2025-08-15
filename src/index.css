@@ -191,15 +191,10 @@ All colors MUST be HSL.
   }
 
   /* Field titles - thin light blue underline matching text width */
-  p.text-sm.text-muted-foreground:not([class*="border-b"]):not(.flex-1 *) {
-    @apply border-b border-b-field-accent/30 pb-1 inline-block;
-    border-bottom-width: 1px;
-  }
-  
-  /* Field titles in flex containers - keep block display for proper layout */
-  .flex-1 p.text-sm.text-muted-foreground:not([class*="border-b"]) {
+  p.text-sm.text-muted-foreground:not([class*="border-b"]) {
     @apply border-b border-b-field-accent/30 pb-1;
     border-bottom-width: 1px;
-    display: block;
+    display: inline-block;
+    width: fit-content;
   }
 }
