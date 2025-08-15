@@ -1,7 +1,7 @@
 import { useState } from "react"
 import { Plus, Phone, Mail, Calendar, User, Users, FileText, BarChart3, Bell, Settings, Zap, AlertTriangle } from "lucide-react"
 import { fortress } from "@/lib/fortress-security"
-import { toast } from "sonner"
+import { useToast } from "@/hooks/use-toast"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
@@ -36,6 +36,7 @@ export function QuickActionsImproved() {
   const [isOpen, setIsOpen] = useState(false)
   const [selectedCategory, setSelectedCategory] = useState<'all' | 'create' | 'view' | 'manage'>('all')
   const navigate = useNavigate()
+  const { toast } = useToast()
 
   const quickActions: QuickAction[] = [
     // Create Actions
@@ -138,12 +139,27 @@ export function QuickActionsImproved() {
 
   const handleAction = async (action: QuickAction) => {
     if (action.id === 'emergency-lockdown') {
-      try {
-        await fortress.emergencyLockdown('Manual emergency lockdown triggered from quick actions')
-        toast.error('Emergency lockdown initiated')
-      } catch (error) {
-        console.error('Emergency lockdown failed:', error)
-        toast.error('Emergency lockdown failed')
+      // Show confirmation before lockdown
+      const confirmed = window.confirm(
+        'WARNING: This will immediately terminate your session and clear all data. Are you sure you want to initiate emergency lockdown?'
+      )
+      
+      if (confirmed) {
+        try {
+          await fortress.emergencyLockdown('Manual emergency lockdown triggered from quick actions')
+          toast({
+            title: "Emergency Lockdown",
+            description: "Emergency lockdown initiated successfully",
+            variant: "destructive",
+          })
+        } catch (error) {
+          console.error('Emergency lockdown failed:', error)
+          toast({
+            title: "Emergency Lockdown Failed",
+            description: "Failed to initiate emergency lockdown",
+            variant: "destructive",
+          })
+        }
       }
     } else {
       navigate(action.route)
