@@ -949,29 +949,6 @@ export default function LeadDetail() {
                   <div className="flex items-center gap-3">
                     <Mail className="w-4 h-4 text-muted-foreground" />
                     <div className="flex-1">
-                      <p className="text-sm text-muted-foreground">Company Email</p>
-                      {isEditing ? (
-                        <Input
-                          type="email"
-                          value={editableFields.email}
-                          onChange={(e) => setEditableFields({...editableFields, email: e.target.value})}
-                          placeholder="Enter company email"
-                        />
-                      ) : (
-                        <EmailComposer 
-                          trigger={
-                            <button className="font-medium hover:text-primary transition-colors text-left text-foreground">
-                              {lead.email}
-                            </button>
-                          }
-                        />
-                      )}
-                    </div>
-                  </div>
-
-                  <div className="flex items-center gap-3">
-                    <Mail className="w-4 h-4 text-muted-foreground" />
-                    <div className="flex-1">
                       <p className="text-sm text-muted-foreground">Personal Email</p>
                       {isEditing ? (
                         <Input
@@ -986,33 +963,6 @@ export default function LeadDetail() {
                             trigger={
                               <button className="font-medium hover:text-primary transition-colors text-left text-foreground">
                                 {(lead as any).personal_email}
-                              </button>
-                            }
-                          />
-                        ) : (
-                          <p className="font-medium text-foreground">N/A</p>
-                        )
-                      )}
-                    </div>
-                  </div>
-
-                  <div className="flex items-center gap-3">
-                    <Phone className="w-4 h-4 text-muted-foreground" />
-                    <div className="flex-1">
-                      <p className="text-sm text-muted-foreground">Company Phone</p>
-                      {isEditing ? (
-                        <Input
-                          value={editableFields.phone}
-                          onChange={(e) => setEditableFields({...editableFields, phone: e.target.value})}
-                          placeholder="Enter company phone number"
-                        />
-                      ) : (
-                        lead.phone ? (
-                          <PhoneDialer 
-                            phoneNumber={lead.phone} // Pre-fill with this number
-                            trigger={
-                              <button className="font-medium hover:text-primary transition-colors text-left text-foreground">
-                                {lead.phone}
                               </button>
                             }
                           />
@@ -1050,28 +1000,6 @@ export default function LeadDetail() {
                     </div>
                   </div>
 
-                  <div className="flex items-center gap-3">
-                    <Percent className="w-4 h-4 text-muted-foreground" />
-                    <div className="flex-1">
-                      <p className="text-sm text-muted-foreground">Ownership Percentage</p>
-                      {isEditing ? (
-                        <Input
-                          type="number"
-                          min="0"
-                          max="100"
-                          step="0.01"
-                          value={editableFields.ownership_percentage}
-                          onChange={(e) => setEditableFields({...editableFields, ownership_percentage: e.target.value})}
-                          placeholder="Enter ownership percentage"
-                        />
-                      ) : (
-                        <p className="font-medium text-foreground">
-                          {(lead as any).ownership_percentage ? `${(lead as any).ownership_percentage}%` : 'N/A'}
-                        </p>
-                      )}
-                    </div>
-                  </div>
-
                 </div>
 
                 {/* Right Column */}
@@ -1091,6 +1019,78 @@ export default function LeadDetail() {
                         />
                       ) : (
                         <p className="font-medium text-foreground">{formatNumber(lead.credit_score)}</p>
+                      )}
+                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-3">
+                    <Mail className="w-4 h-4 text-muted-foreground" />
+                    <div className="flex-1">
+                      <p className="text-sm text-muted-foreground">Company Email</p>
+                      {isEditing ? (
+                        <Input
+                          type="email"
+                          value={editableFields.email}
+                          onChange={(e) => setEditableFields({...editableFields, email: e.target.value})}
+                          placeholder="Enter company email"
+                        />
+                      ) : (
+                        <EmailComposer 
+                          trigger={
+                            <button className="font-medium hover:text-primary transition-colors text-left text-foreground">
+                              {lead.email}
+                            </button>
+                          }
+                        />
+                      )}
+                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-3">
+                    <Phone className="w-4 h-4 text-muted-foreground" />
+                    <div className="flex-1">
+                      <p className="text-sm text-muted-foreground">Company Phone</p>
+                      {isEditing ? (
+                        <Input
+                          value={editableFields.phone}
+                          onChange={(e) => setEditableFields({...editableFields, phone: e.target.value})}
+                          placeholder="Enter company phone number"
+                        />
+                      ) : (
+                        lead.phone ? (
+                          <PhoneDialer 
+                            phoneNumber={lead.phone} // Pre-fill with this number
+                            trigger={
+                              <button className="font-medium hover:text-primary transition-colors text-left text-foreground">
+                                {lead.phone}
+                              </button>
+                            }
+                          />
+                        ) : (
+                          <p className="font-medium text-foreground">N/A</p>
+                        )
+                      )}
+                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-3">
+                    <Percent className="w-4 h-4 text-muted-foreground" />
+                    <div className="flex-1">
+                      <p className="text-sm text-muted-foreground">Ownership Percentage</p>
+                      {isEditing ? (
+                        <Input
+                          type="number"
+                          min="0"
+                          max="100"
+                          step="0.01"
+                          value={editableFields.ownership_percentage}
+                          onChange={(e) => setEditableFields({...editableFields, ownership_percentage: e.target.value})}
+                          placeholder="Enter ownership percentage"
+                        />
+                      ) : (
+                        <p className="font-medium text-foreground">
+                          {(lead as any).ownership_percentage ? `${(lead as any).ownership_percentage}%` : 'N/A'}
+                        </p>
                       )}
                     </div>
                   </div>
