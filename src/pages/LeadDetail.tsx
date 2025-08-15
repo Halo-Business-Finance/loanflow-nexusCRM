@@ -47,7 +47,8 @@ import {
   Bell,
   Trash2,
   ChevronDown,
-  ShoppingCart
+  ShoppingCart,
+  Percent
 } from "lucide-react"
 
 import { Lead, Client as ClientType } from "@/types/lead"
@@ -108,7 +109,8 @@ export default function LeadDetail() {
     monthly_processing_volume: "",
     average_transaction_size: "",
     processor_name: "",
-    current_processing_rate: ""
+    current_processing_rate: "",
+    ownership_percentage: ""
   })
 
   useEffect(() => {
@@ -183,7 +185,8 @@ export default function LeadDetail() {
         monthly_processing_volume: mergedLead.monthly_processing_volume?.toString() || "",
         average_transaction_size: mergedLead.average_transaction_size?.toString() || "",
         processor_name: mergedLead.processor_name || "",
-        current_processing_rate: mergedLead.current_processing_rate?.toString() || ""
+        current_processing_rate: mergedLead.current_processing_rate?.toString() || "",
+        ownership_percentage: mergedLead.ownership_percentage?.toString() || ""
       })
       
       // If lead is converted, fetch client data
@@ -488,7 +491,8 @@ export default function LeadDetail() {
         monthly_processing_volume: editableFields.monthly_processing_volume ? parseFloat(editableFields.monthly_processing_volume) : null,
         average_transaction_size: editableFields.average_transaction_size ? parseFloat(editableFields.average_transaction_size) : null,
         processor_name: editableFields.processor_name || null,
-        current_processing_rate: editableFields.current_processing_rate ? parseFloat(editableFields.current_processing_rate) : null
+        current_processing_rate: editableFields.current_processing_rate ? parseFloat(editableFields.current_processing_rate) : null,
+        ownership_percentage: editableFields.ownership_percentage ? parseFloat(editableFields.ownership_percentage) : null
       }
 
       // Check if stage is being changed to "Loan Funded" and lead isn't already converted
@@ -971,6 +975,28 @@ export default function LeadDetail() {
                       ) : (
                         <p className="font-medium text-foreground">N/A</p>
                       )
+                    )}
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-3">
+                  <Percent className="w-4 h-4 text-muted-foreground" />
+                  <div className="flex-1">
+                    <p className="text-sm text-muted-foreground">Ownership Percentage</p>
+                    {isEditing ? (
+                      <Input
+                        type="number"
+                        min="0"
+                        max="100"
+                        step="0.01"
+                        value={editableFields.ownership_percentage}
+                        onChange={(e) => setEditableFields({...editableFields, ownership_percentage: e.target.value})}
+                        placeholder="Enter ownership percentage"
+                      />
+                    ) : (
+                      <p className="font-medium text-foreground">
+                        {(lead as any).ownership_percentage ? `${(lead as any).ownership_percentage}%` : 'N/A'}
+                      </p>
                     )}
                   </div>
                 </div>
