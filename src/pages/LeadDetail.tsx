@@ -265,6 +265,10 @@ export default function LeadDetail() {
     if (!lead || !user) return
 
     try {
+      console.log('Saving call notes for lead:', lead.id)
+      console.log('Current callNotes:', callNotes)
+      console.log('New call note:', newCallNote)
+      
       // Get user's profile for display name
       const { data: profile } = await supabase
         .from('profiles')
@@ -278,13 +282,18 @@ export default function LeadDetail() {
 
       const updatedNotes = callNotes + (newCallNote ? `\n\n${userName} [${new Date().toLocaleString()}]: ${newCallNote}` : "")
       
-      const { error } = await supabase
+      console.log('Updated notes to save:', updatedNotes)
+      
+      const { error, data } = await supabase
         .from('leads')
         .update({ 
           call_notes: updatedNotes,
           last_contact: new Date().toISOString()
         })
         .eq('id', lead.id)
+        .select()
+
+      console.log('Update result:', { error, data })
 
       if (error) throw error
 
@@ -301,7 +310,7 @@ export default function LeadDetail() {
       console.error('Error saving call notes:', error)
       toast({
         title: "Error",
-        description: "Failed to save call notes",
+        description: `Failed to save call notes: ${error.message}`,
         variant: "destructive",
       })
     }

@@ -288,25 +288,37 @@ export default function ClientDetail() {
     if (!client) return
 
     try {
+      console.log('Saving call notes for client:', client.id)
+      console.log('Contact entity ID:', client.contact_entity_id)
+      console.log('Current callNotes:', callNotes)
+      console.log('New call note:', newCallNote)
+      
       const userName = userProfile ? `${userProfile.first_name || ''} ${userProfile.last_name || ''}`.trim() : 'Unknown User'
       const updatedNotes = callNotes + (newCallNote ? `\n\n${userName} [${new Date().toLocaleString()}]: ${newCallNote}` : "")
       
+      console.log('Updated notes to save:', updatedNotes)
+      
       // Update the contact_entities table, not the clients table
-      const { error } = await supabase
+      const { error, data } = await supabase
         .from('contact_entities')
         .update({ 
           call_notes: updatedNotes,
           updated_at: new Date().toISOString()
         })
         .eq('id', client.contact_entity_id)
+        .select()
+
+      console.log('Contact entities update result:', { error, data })
 
       if (error) throw error
 
       // Also update the client's last_activity
-      await supabase
+      const { error: clientError } = await supabase
         .from('clients')
         .update({ last_activity: new Date().toISOString() })
         .eq('id', client.id)
+
+      console.log('Client update result:', { clientError })
 
       setCallNotes(updatedNotes)
       setNewCallNote("")
@@ -321,7 +333,7 @@ export default function ClientDetail() {
       console.error('Error saving call notes:', error)
       toast({
         title: "Error",
-        description: "Failed to save call notes",
+        description: `Failed to save call notes: ${error.message}`,
         variant: "destructive",
       })
     }
