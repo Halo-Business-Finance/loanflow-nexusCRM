@@ -1017,7 +1017,7 @@ export default function LeadDetail() {
                   <div className="flex items-center gap-3">
                     <CreditCard className="w-4 h-4 text-muted-foreground" />
                     <div className="flex-1">
-                      <p className="text-sm text-muted-foreground">Credit Score</p>
+                      <p className="text-sm text-muted-foreground">Experian Credit Score</p>
                       {isEditing ? (
                         <Input
                           type="number"
