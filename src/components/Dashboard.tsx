@@ -39,6 +39,7 @@ import { LoanProcessorDashboard } from "@/components/dashboards/LoanProcessorDas
 import { FunderDashboard } from "@/components/dashboards/FunderDashboard"
 import { UnderwriterDashboard } from "@/components/dashboards/UnderwriterDashboard"
 import { CloserDashboard } from "@/components/dashboards/CloserDashboard"
+import { SimpleQuickActions } from "@/components/SimpleQuickActions"
 
 // Initial metrics structure - will be updated with real data
 const initialMetrics = [
@@ -853,6 +854,9 @@ export default function Dashboard() {
           )}
         </DialogContent>
       </Dialog>
+
+      {/* Quick Actions */}
+      <SimpleQuickActions />
     </div>
   </TooltipProvider>
   )
