@@ -71,7 +71,7 @@ export const useSessionSecurity = () => {
           user_agent: navigator.userAgent,
           expires_at: new Date(Date.now() + 8 * 60 * 60 * 1000).toISOString(), // 8 hours
           ip_address: null, // Will be updated on first validation
-          browser_fingerprint: JSON.parse(generateDeviceFingerprint()),
+          browser_fingerprint: generateDeviceFingerprint(),
           screen_resolution: `${screen.width}x${screen.height}`,
           timezone: Intl.DateTimeFormat().resolvedOptions().timeZone
         })
