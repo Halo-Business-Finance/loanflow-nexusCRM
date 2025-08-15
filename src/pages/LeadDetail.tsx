@@ -1114,7 +1114,7 @@ export default function LeadDetail() {
           <Card>
             <CardHeader>
               <CardTitle className="text-foreground">
-                Business Information
+                Company Information
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
@@ -1124,12 +1124,12 @@ export default function LeadDetail() {
                   <div className="flex items-center gap-3">
                     <Building className="w-4 h-4 text-muted-foreground" />
                     <div className="flex-1">
-                      <p className="text-sm text-muted-foreground">Business Name</p>
+                      <p className="text-sm text-muted-foreground">Company Name</p>
                       {isEditing ? (
                         <Input
                           value={editableFields.business_name}
                           onChange={(e) => setEditableFields({...editableFields, business_name: e.target.value})}
-                          placeholder="Enter business name"
+                          placeholder="Enter company name"
                         />
                       ) : (
                         <p className="font-medium text-foreground">{lead.business_name || 'N/A'}</p>
