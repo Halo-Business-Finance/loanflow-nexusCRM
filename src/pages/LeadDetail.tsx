@@ -1116,6 +1116,25 @@ export default function LeadDetail() {
                 {/* Right Column */}
                 <div className="space-y-4">
                   <div className="flex items-center gap-3">
+                    <CreditCard className="w-4 h-4 text-muted-foreground" />
+                    <div className="flex-1">
+                      <p className="text-sm text-muted-foreground">Credit Score</p>
+                      {isEditing ? (
+                        <Input
+                          type="number"
+                          value={editableFields.credit_score}
+                          onChange={(e) => setEditableFields({...editableFields, credit_score: e.target.value})}
+                          placeholder="Enter credit score"
+                          min="300"
+                          max="850"
+                        />
+                      ) : (
+                        <p className="font-medium text-foreground">{formatNumber(lead.credit_score)}</p>
+                      )}
+                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-3">
                     <div className="flex-1">
                       <p className="text-sm text-muted-foreground">Priority</p>
                       {isEditing ? (
@@ -1131,25 +1150,6 @@ export default function LeadDetail() {
                         </Select>
                       ) : (
                         <Badge variant={getPriorityColor(lead.priority)}>{lead.priority} Priority</Badge>
-                      )}
-                    </div>
-                  </div>
-
-                  <div className="flex items-center gap-3">
-                    <CreditCard className="w-4 h-4 text-muted-foreground" />
-                    <div className="flex-1">
-                      <p className="text-sm text-muted-foreground">Credit Score</p>
-                      {isEditing ? (
-                        <Input
-                          type="number"
-                          value={editableFields.credit_score}
-                          onChange={(e) => setEditableFields({...editableFields, credit_score: e.target.value})}
-                          placeholder="Enter credit score"
-                          min="300"
-                          max="850"
-                        />
-                      ) : (
-                        <p className="font-medium text-foreground">{formatNumber(lead.credit_score)}</p>
                       )}
                     </div>
                   </div>
