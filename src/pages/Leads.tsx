@@ -215,19 +215,41 @@ export default function Leads() {
         return;
       }
 
-      console.log('Creating lead with user:', user.id);
+      console.log('Creating/updating lead with data:', data);
+      console.log('Credit score in form data:', data.credit_score);
 
       if (editingLead) {
         // Update existing lead
+        const updateData = {
+          name: data.name,
+          email: data.email,
+          phone: data.phone,
+          business_name: data.business_name,
+          business_address: data.business_address,
+          annual_revenue: data.annual_revenue,
+          loan_amount: data.loan_amount,
+          loan_type: data.loan_type,
+          credit_score: data.credit_score,
+          net_operating_income: data.net_operating_income,
+          priority: data.priority,
+          stage: data.stage,
+          notes: data.notes,
+          naics_code: data.naics_code,
+          ownership_structure: data.ownership_structure,
+          updated_at: new Date().toISOString()
+        };
+
+        console.log('Updating contact entity with data:', updateData);
+
         const { error } = await supabase
           .from('contact_entities')
-          .update({
-            ...data,
-            updated_at: new Date().toISOString()
-          })
+          .update(updateData)
           .eq('id', editingLead.contact_entity_id);
 
-        if (error) throw error;
+        if (error) {
+          console.error('Update error:', error);
+          throw error;
+        }
 
         toast({
           title: "Success",
@@ -235,12 +257,30 @@ export default function Leads() {
         });
       } else {
         // Create new lead - first create contact entity, then lead
+        const contactData = {
+          name: data.name,
+          email: data.email,
+          phone: data.phone,
+          business_name: data.business_name,
+          business_address: data.business_address,
+          annual_revenue: data.annual_revenue,
+          loan_amount: data.loan_amount,
+          loan_type: data.loan_type,
+          credit_score: data.credit_score,
+          net_operating_income: data.net_operating_income,
+          priority: data.priority,
+          stage: data.stage,
+          notes: data.notes,
+          naics_code: data.naics_code,
+          ownership_structure: data.ownership_structure,
+          user_id: user.id
+        };
+
+        console.log('Creating contact entity with data:', contactData);
+
         const { data: contactEntity, error: contactError } = await supabase
           .from('contact_entities')
-          .insert({
-            ...data,
-            user_id: user.id
-          })
+          .insert(contactData)
           .select()
           .maybeSingle();
 
@@ -253,6 +293,8 @@ export default function Leads() {
           throw new Error('Contact entity was not created successfully');
         }
 
+        console.log('Created contact entity:', contactEntity);
+
         const { error: leadError } = await supabase
           .from('leads')
           .insert({
@@ -260,7 +302,10 @@ export default function Leads() {
             contact_entity_id: contactEntity.id
           });
 
-        if (leadError) throw leadError;
+        if (leadError) {
+          console.error('Lead creation error:', leadError);
+          throw leadError;
+        }
 
         toast({
           title: "Success",
