@@ -1188,33 +1188,6 @@ export default function LeadDetail() {
                     </div>
                   </div>
 
-                  <div className="flex items-center gap-3">
-                    <div className="flex-1">
-                      <p className="text-sm text-muted-foreground">Property Ownership</p>
-                      {isEditing ? (
-                        <div className="flex items-center gap-2 mt-2">
-                          <Switch
-                            checked={editableFields.owns_property}
-                            onCheckedChange={(checked) => setEditableFields({...editableFields, owns_property: checked})}
-                          />
-                          <span className="text-sm text-foreground">
-                            {editableFields.owns_property ? 'Owns Property' : 'Does not own property'}
-                          </span>
-                        </div>
-                      ) : (
-                        <div className="flex items-center gap-2">
-                          {lead.owns_property ? (
-                            <CheckCircle className="w-4 h-4 text-green-500" />
-                          ) : (
-                            <XCircle className="w-4 h-4 text-red-500" />
-                          )}
-                          <p className="font-medium text-foreground">
-                            {lead.owns_property ? 'Owns Property' : 'Does not own property'}
-                          </p>
-                        </div>
-                      )}
-                    </div>
-                  </div>
 
 
                   <div className="flex items-center gap-3">
@@ -1251,6 +1224,34 @@ export default function LeadDetail() {
                         <p className="font-medium text-foreground">
                           {(lead as any).naics_code || 'N/A'}
                         </p>
+                      )}
+                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-3">
+                    <div className="flex-1">
+                      <p className="text-sm text-muted-foreground">Property Ownership</p>
+                      {isEditing ? (
+                        <div className="flex items-center gap-2 mt-2">
+                          <Switch
+                            checked={editableFields.owns_property}
+                            onCheckedChange={(checked) => setEditableFields({...editableFields, owns_property: checked})}
+                          />
+                          <span className="text-sm text-foreground">
+                            {editableFields.owns_property ? 'Owns Property' : 'Does not own property'}
+                          </span>
+                        </div>
+                      ) : (
+                        <div className="flex items-center gap-2">
+                          {lead.owns_property ? (
+                            <CheckCircle className="w-4 h-4 text-green-500" />
+                          ) : (
+                            <XCircle className="w-4 h-4 text-red-500" />
+                          )}
+                          <p className="font-medium text-foreground">
+                            {lead.owns_property ? 'Owns Property' : 'Does not own property'}
+                          </p>
+                        </div>
                       )}
                     </div>
                   </div>
