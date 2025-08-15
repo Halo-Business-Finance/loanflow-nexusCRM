@@ -190,12 +190,12 @@ All colors MUST be HSL.
     @apply underline decoration-2 underline-offset-4 font-thin;
   }
 
-  /* Field titles - thin light blue underline */
+  /* Field titles - thin light blue underline matching text width */
   p:has(+ input):not([class*="border-b"]),
   p:has(+ textarea):not([class*="border-b"]),
   p:has(+ select):not([class*="border-b"]),
   .text-sm.text-muted-foreground:not([class*="border-b"]) {
-    @apply border-b border-b-field-accent/30 pb-1;
+    @apply border-b border-b-field-accent/30 pb-1 inline-block;
     border-bottom-width: 1px;
   }
 }
