@@ -927,9 +927,11 @@ export type Database = {
           current_processing_rate: number | null
           email: string
           existing_loan_amount: number | null
+          first_name: string | null
           id: string
           income: number | null
           interest_rate: number | null
+          last_name: string | null
           loan_amount: number | null
           loan_type: string | null
           location: string | null
@@ -969,9 +971,11 @@ export type Database = {
           current_processing_rate?: number | null
           email: string
           existing_loan_amount?: number | null
+          first_name?: string | null
           id?: string
           income?: number | null
           interest_rate?: number | null
+          last_name?: string | null
           loan_amount?: number | null
           loan_type?: string | null
           location?: string | null
@@ -1011,9 +1015,11 @@ export type Database = {
           current_processing_rate?: number | null
           email?: string
           existing_loan_amount?: number | null
+          first_name?: string | null
           id?: string
           income?: number | null
           interest_rate?: number | null
+          last_name?: string | null
           loan_amount?: number | null
           loan_type?: string | null
           location?: string | null

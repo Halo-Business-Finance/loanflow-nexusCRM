@@ -112,7 +112,9 @@ export default function LeadDetail() {
     current_processing_rate: "",
     ownership_percentage: "",
     mobile_phone: "",
-    personal_email: ""
+    personal_email: "",
+    first_name: "",
+    last_name: ""
   })
 
   useEffect(() => {
@@ -190,7 +192,9 @@ export default function LeadDetail() {
         current_processing_rate: mergedLead.current_processing_rate?.toString() || "",
         ownership_percentage: mergedLead.ownership_percentage?.toString() || "",
         mobile_phone: mergedLead.mobile_phone || "",
-        personal_email: mergedLead.personal_email || ""
+        personal_email: mergedLead.personal_email || "",
+        first_name: mergedLead.first_name || "",
+        last_name: mergedLead.last_name || ""
       })
       
       // If lead is converted, fetch client data
@@ -498,7 +502,9 @@ export default function LeadDetail() {
         current_processing_rate: editableFields.current_processing_rate ? parseFloat(editableFields.current_processing_rate) : null,
         ownership_percentage: editableFields.ownership_percentage ? parseFloat(editableFields.ownership_percentage) : null,
         mobile_phone: editableFields.mobile_phone || null,
-        personal_email: editableFields.personal_email || null
+        personal_email: editableFields.personal_email || null,
+        first_name: editableFields.first_name || null,
+        last_name: editableFields.last_name || null
       }
 
       // Check if stage is being changed to "Loan Funded" and lead isn't already converted
@@ -920,19 +926,37 @@ export default function LeadDetail() {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {/* Left Column */}
                 <div className="space-y-4">
-                  <div className="flex items-center gap-3">
-                    <User className="w-4 h-4 text-muted-foreground" />
-                    <div className="flex-1">
-                      <p className="text-sm text-muted-foreground">Full Name</p>
-                      {isEditing ? (
-                        <Input
-                          value={editableFields.name}
-                          onChange={(e) => setEditableFields({...editableFields, name: e.target.value})}
-                          placeholder="Enter full name"
-                        />
-                      ) : (
-                        <p className="font-medium text-foreground">{lead.name}</p>
-                      )}
+                  <div className="grid grid-cols-2 gap-3">
+                    <div className="flex items-center gap-3">
+                      <User className="w-4 h-4 text-muted-foreground" />
+                      <div className="flex-1">
+                        <p className="text-sm text-muted-foreground">First Name</p>
+                        {isEditing ? (
+                          <Input
+                            value={editableFields.first_name}
+                            onChange={(e) => setEditableFields({...editableFields, first_name: e.target.value})}
+                            placeholder="Enter first name"
+                          />
+                        ) : (
+                          <p className="font-medium text-foreground">{(lead as any).first_name || 'N/A'}</p>
+                        )}
+                      </div>
+                    </div>
+                    
+                    <div className="flex items-center gap-3">
+                      <User className="w-4 h-4 text-muted-foreground" />
+                      <div className="flex-1">
+                        <p className="text-sm text-muted-foreground">Last Name</p>
+                        {isEditing ? (
+                          <Input
+                            value={editableFields.last_name}
+                            onChange={(e) => setEditableFields({...editableFields, last_name: e.target.value})}
+                            placeholder="Enter last name"
+                          />
+                        ) : (
+                          <p className="font-medium text-foreground">{(lead as any).last_name || 'N/A'}</p>
+                        )}
+                      </div>
                     </div>
                   </div>
 
