@@ -1189,27 +1189,6 @@ export default function LeadDetail() {
                     </div>
                   </div>
 
-                  <div className="flex items-center gap-3">
-                    <Calendar className="w-4 h-4 text-muted-foreground" />
-                    <div className="flex-1">
-                      <p className="text-sm text-muted-foreground">Year Established</p>
-                      {isEditing ? (
-                        <Input
-                          type="number"
-                          value={editableFields.year_established}
-                          onChange={(e) => setEditableFields({...editableFields, year_established: e.target.value})}
-                          placeholder="Enter year established (e.g., 2010)"
-                          min="1800"
-                          max={new Date().getFullYear()}
-                        />
-                      ) : (
-                        <p className="font-medium text-foreground">
-                          {(lead as any).year_established || 'N/A'}
-                        </p>
-                      )}
-                    </div>
-                  </div>
-
 
                   <div className="flex items-center gap-3">
                     <Building className="w-4 h-4 text-muted-foreground" />
@@ -1259,6 +1238,27 @@ export default function LeadDetail() {
                 {/* Right Column */}
                 <div className="space-y-4">
                   <div className="flex items-center gap-3">
+                    <Calendar className="w-4 h-4 text-muted-foreground" />
+                    <div className="flex-1">
+                      <p className="text-sm text-muted-foreground">Year Established</p>
+                      {isEditing ? (
+                        <Input
+                          type="number"
+                          value={editableFields.year_established}
+                          onChange={(e) => setEditableFields({...editableFields, year_established: e.target.value})}
+                          placeholder="Enter year established (e.g., 2010)"
+                          min="1800"
+                          max={new Date().getFullYear()}
+                        />
+                      ) : (
+                        <p className="font-medium text-foreground">
+                          {(lead as any).year_established || 'N/A'}
+                        </p>
+                      )}
+                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-3">
                     <DollarSign className="w-4 h-4 text-muted-foreground" />
                     <div className="flex-1">
                       <p className="text-sm text-muted-foreground">Annual Revenue</p>
@@ -1276,9 +1276,6 @@ export default function LeadDetail() {
                       )}
                     </div>
                   </div>
-
-
-
                   <div className="flex items-center gap-3">
                     <DollarSign className="w-4 h-4 text-muted-foreground" />
                     <div className="flex-1">
