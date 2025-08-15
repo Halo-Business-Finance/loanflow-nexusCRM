@@ -20,7 +20,7 @@ import { ActionReminder } from "@/components/ActionReminder"
 import { PhoneDialer } from "@/components/PhoneDialer"
 import { EmailComposer } from "@/components/EmailComposer"
 
-import { formatNumber, formatCurrency } from "@/lib/utils"
+import { formatNumber, formatCurrency, formatPhoneNumber } from "@/lib/utils"
 import { useNotifications } from "@/hooks/useNotifications"
 import { format } from "date-fns"
 import LoanRequestManager from "@/components/LoanRequestManager"
@@ -988,7 +988,7 @@ export default function LeadDetail() {
                             phoneNumber={(lead as any).mobile_phone} // Pre-fill with this number
                             trigger={
                               <button className="font-medium hover:text-primary transition-colors text-left text-foreground">
-                                {(lead as any).mobile_phone}
+                                {formatPhoneNumber((lead as any).mobile_phone)}
                               </button>
                             }
                           />
@@ -1071,7 +1071,7 @@ export default function LeadDetail() {
                             phoneNumber={lead.phone} // Pre-fill with this number
                             trigger={
                               <button className="font-medium hover:text-primary transition-colors text-left text-foreground">
-                                {lead.phone}
+                                {formatPhoneNumber(lead.phone)}
                               </button>
                             }
                           />
