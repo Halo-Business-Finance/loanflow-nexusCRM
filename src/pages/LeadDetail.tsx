@@ -81,7 +81,7 @@ export default function LeadDetail() {
     name: "",
     email: "",
     phone: "",
-    location: "",
+    
     business_name: "",
     business_address: "",
     naics_code: "",
@@ -156,7 +156,7 @@ export default function LeadDetail() {
         name: mergedLead.name || "",
         email: mergedLead.email || "",
         phone: mergedLead.phone || "",
-        location: mergedLead.location || "",
+        
         business_name: mergedLead.business_name || "",
         business_address: mergedLead.business_address || "",
         naics_code: mergedLead.naics_code || "",
@@ -463,7 +463,6 @@ export default function LeadDetail() {
         name: editableFields.name,
         email: editableFields.email,
         phone: editableFields.phone || null,
-        location: editableFields.location || null,
         business_name: editableFields.business_name || null,
         business_address: editableFields.business_address || null,
         naics_code: editableFields.naics_code || null,
@@ -564,7 +563,7 @@ export default function LeadDetail() {
         name: editableFields.name,
         email: editableFields.email,
         phone: editableFields.phone || null,
-        location: editableFields.location || null,
+        
         status: 'Active',
         user_id: user.id,
         lead_id: lead.id,
@@ -976,21 +975,6 @@ export default function LeadDetail() {
                   </div>
                 </div>
 
-                  <div className="flex items-center gap-3">
-                    <MapPin className="w-4 h-4 text-muted-foreground" />
-                    <div className="flex-1">
-                      <p className="text-sm text-muted-foreground">Address</p>
-                    {isEditing ? (
-                      <Input
-                        value={editableFields.location}
-                        onChange={(e) => setEditableFields({...editableFields, location: e.target.value})}
-                           placeholder="Enter address"
-                      />
-                    ) : (
-                      <p className="font-medium text-foreground">{lead.location || 'N/A'}</p>
-                    )}
-                  </div>
-                </div>
 
                 <div className="grid grid-cols-2 gap-4">
                   <div className="flex items-center gap-3">

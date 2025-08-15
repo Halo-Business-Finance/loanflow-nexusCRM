@@ -26,7 +26,6 @@ export function SecureLeadForm({ lead, onSubmit, onCancel, isSubmitting = false 
     name: lead?.name || "",
     email: lead?.email || "",
     phone: lead?.phone || "",
-    location: lead?.location || "",
     business_name: lead?.business_name || "",
     business_address: "",
     annual_revenue: undefined,
@@ -175,14 +174,6 @@ export function SecureLeadForm({ lead, onSubmit, onCancel, isSubmitting = false 
           )}
         </div>
         
-        <div className="space-y-2">
-          <Label htmlFor="location">Location</Label>
-          <Input
-            id="location"
-            value={formData.location || ""}
-            onChange={(e) => handleInputChange("location", e.target.value)}
-          />
-        </div>
         
         <div className="space-y-2">
           <Label htmlFor="business_address">Business Address</Label>

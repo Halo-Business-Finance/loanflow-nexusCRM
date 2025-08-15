@@ -119,7 +119,7 @@ export default function ClientDetail() {
     name: "",
     email: "",
     phone: "",
-    location: "",
+    
     business_name: "",
     business_address: "",
     naics_code: "",
@@ -202,7 +202,7 @@ export default function ClientDetail() {
         name: mergedClient.name || "",
         email: mergedClient.email || "",
         phone: mergedClient.phone || "",
-        location: mergedClient.location || "",
+        
         business_name: mergedClient.business_name || "",
         business_address: mergedClient.business_address || "",
         naics_code: mergedClient.naics_code || "",
@@ -357,7 +357,7 @@ export default function ClientDetail() {
         name: editableFields.name,
         email: editableFields.email,
         phone: editableFields.phone || null,
-        location: editableFields.location || null,
+        
         business_name: editableFields.business_name || null,
         business_address: editableFields.business_address || null,
         naics_code: editableFields.naics_code || null,
@@ -680,21 +680,6 @@ export default function ClientDetail() {
                 </div>
 
                 <div className="space-y-4">
-                  <div className="flex items-center gap-3">
-                    <MapPin className="w-4 h-4" />
-                     <div className="flex-1">
-                       <p className="text-sm text-muted-foreground">Address</p>
-                      {isEditing ? (
-                         <Input
-                           value={editableFields.location}
-                           onChange={(e) => setEditableFields({...editableFields, location: e.target.value})}
-                           placeholder="Enter address"
-                         />
-                      ) : (
-                       <p className="font-medium">{client.location || 'N/A'}</p>
-                      )}
-                    </div>
-                  </div>
 
                   <div className="flex items-center gap-3">
                     <div className="flex-1">

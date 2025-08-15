@@ -69,7 +69,6 @@ export default function Clients() {
     name: "",
     email: "",
     phone: "",
-    location: "",
     business_name: "",
     business_address: "",
     status: "Active"
@@ -394,7 +393,6 @@ export default function Clients() {
           name: newClient.name.trim(),
           email: newClient.email.trim().toLowerCase(),
           phone: newClient.phone?.trim() || null,
-          location: newClient.location?.trim() || null,
           business_name: newClient.business_name?.trim() || null,
           business_address: newClient.business_address?.trim() || null,
           stage: 'Loan Funded' // Clients are already funded
@@ -427,7 +425,6 @@ export default function Clients() {
         name: "",
         email: "",
         phone: "",
-        location: "",
         business_name: "",
         business_address: "",
         status: "Active"
@@ -571,15 +568,6 @@ export default function Clients() {
                     />
                   </div>
                   
-                  <div className="space-y-2">
-                    <Label htmlFor="location">Location</Label>
-                    <Input
-                      id="location"
-                      value={newClient.location}
-                      onChange={(e) => setNewClient(prev => ({ ...prev, location: e.target.value }))}
-                      placeholder="Enter location"
-                    />
-                  </div>
                   
                   <div className="space-y-2">
                     <Label htmlFor="business_name">Business Name</Label>
