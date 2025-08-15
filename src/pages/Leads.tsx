@@ -76,35 +76,59 @@ export default function Leads() {
       const { data: leadsData, error: leadsError } = await supabase
         .from('leads')
         .select(`
-          *,
-          contact_entities(*)
+          id,
+          user_id,
+          contact_entity_id,
+          created_at,
+          updated_at,
+          is_converted_to_client
         `)
         .eq('user_id', user?.id);
 
       if (!leadsError && leadsData) {
-        // Transform the data to match Lead interface
-        const transformedLeads: Lead[] = leadsData.map(lead => ({
-          id: lead.id,
-          name: lead.contact_entities?.name || '',
-          email: lead.contact_entities?.email || '',
-          phone: lead.contact_entities?.phone || '',
-          business_name: lead.contact_entities?.business_name || '',
-          location: lead.contact_entities?.location || '',
-          loan_amount: lead.contact_entities?.loan_amount || 0,
-          loan_type: lead.contact_entities?.loan_type || '',
-          credit_score: lead.contact_entities?.credit_score || 0,
-          stage: lead.contact_entities?.stage || 'New Lead',
-          priority: lead.contact_entities?.priority || 'medium',
-          net_operating_income: lead.contact_entities?.net_operating_income || 0,
-          naics_code: lead.contact_entities?.naics_code || '',
-          ownership_structure: lead.contact_entities?.ownership_structure || '',
-          created_at: lead.created_at,
-          updated_at: lead.updated_at,
-          user_id: lead.user_id,
-          contact_entity_id: lead.contact_entity_id,
-          last_contact: lead.updated_at, // Use updated_at as last contact
-          is_converted_to_client: false // Default to false
-        }));
+        // Fetch unmasked contact data for each lead
+        const transformedLeads: Lead[] = [];
+        
+        for (const lead of leadsData) {
+          try {
+            // Use the unmasked contact function to get real data
+            const { data: contactData, error: contactError } = await supabase
+              .rpc('get_unmasked_contact_entity', { contact_id: lead.contact_entity_id });
+            
+            if (contactError) {
+              console.error('Error fetching unmasked contact data:', contactError);
+              continue;
+            }
+            
+            const contact = contactData?.[0];
+            if (contact) {
+              transformedLeads.push({
+                id: lead.id,
+                name: contact.name || '',
+                email: contact.email || '',
+                phone: contact.phone || '',
+                business_name: contact.business_name || '',
+                location: '', // Not in the contact data
+                loan_amount: contact.loan_amount || 0,
+                loan_type: contact.loan_type || '',
+                credit_score: contact.credit_score || 0,
+                stage: contact.stage || 'New Lead',
+                priority: contact.priority || 'medium',
+                net_operating_income: contact.net_operating_income || 0,
+                naics_code: contact.naics_code || '',
+                ownership_structure: contact.ownership_structure || '',
+                created_at: lead.created_at,
+                updated_at: lead.updated_at,
+                user_id: lead.user_id,
+                contact_entity_id: lead.contact_entity_id,
+                last_contact: lead.updated_at,
+                is_converted_to_client: lead.is_converted_to_client || false
+              });
+            }
+          } catch (error) {
+            console.error('Error processing lead:', lead.id, error);
+          }
+        }
 
         setLeads(transformedLeads);
 
