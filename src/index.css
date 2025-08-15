@@ -142,12 +142,12 @@ All colors MUST be HSL.
   h4:not([class*="border-b"]):not([class*="no-underline"]), 
   h5:not([class*="border-b"]):not([class*="no-underline"]), 
   h6:not([class*="border-b"]):not([class*="no-underline"]) {
-    @apply underline decoration-2 underline-offset-4;
+    @apply underline decoration-2 underline-offset-4 font-thin;
   }
 
   /* Table headers */
   th {
-    @apply underline decoration-1 underline-offset-2;
+    @apply underline decoration-1 underline-offset-2 font-thin;
   }
 
   /* Card titles - only if they don't have border-b */
@@ -155,7 +155,7 @@ All colors MUST be HSL.
   .card-title:not([class*="border-b"]),
   [class*="CardTitle"]:not([class*="border-b"]),
   [class*="card-title"]:not([class*="border-b"]) {
-    @apply underline decoration-2 underline-offset-4;
+    @apply underline decoration-2 underline-offset-4 font-thin;
   }
 
   /* Dialog titles */
@@ -163,7 +163,7 @@ All colors MUST be HSL.
   .dialog-title,
   [class*="DialogTitle"],
   [class*="dialog-title"] {
-    @apply underline decoration-2 underline-offset-4;
+    @apply underline decoration-2 underline-offset-4 font-thin;
   }
 
   /* Sheet titles */
@@ -171,7 +171,7 @@ All colors MUST be HSL.
   .sheet-title,
   [class*="SheetTitle"],
   [class*="sheet-title"] {
-    @apply underline decoration-2 underline-offset-4;
+    @apply underline decoration-2 underline-offset-4 font-thin;
   }
 
   /* Alert dialog titles */
@@ -179,6 +179,6 @@ All colors MUST be HSL.
   .alertdialog-title,
   [class*="AlertDialogTitle"],
   [class*="alertdialog-title"] {
-    @apply underline decoration-2 underline-offset-4;
+    @apply underline decoration-2 underline-offset-4 font-thin;
   }
 }
