@@ -4249,6 +4249,10 @@ export type Database = {
         }
         Returns: boolean
       }
+      validate_critical_operation_access: {
+        Args: Record<PropertyKey, never>
+        Returns: boolean
+      }
       validate_document_access: {
         Args: { p_action?: string; p_document_id: string }
         Returns: boolean
