@@ -1351,7 +1351,7 @@ export default function LeadDetail() {
                       <Home className="w-5 h-5" />
                       Property Details
                     </h3>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-4 border-t border-gray-200/10">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-4">
                       {/* Property Fields Left Column */}
                       <div className="space-y-4">
                         <div className="flex items-center gap-3">
