@@ -1086,31 +1086,6 @@ export default function LeadDetail() {
                     </div>
                   </div>
 
-                  <div className="flex items-center gap-3">
-                    <div className="flex-1">
-                      <p className="text-sm text-muted-foreground">Stage</p>
-                      {isEditing ? (
-                        <Select value={editableFields.stage} onValueChange={(value) => setEditableFields({...editableFields, stage: value})}>
-                          <SelectTrigger>
-                            <SelectValue placeholder="Select stage" />
-                          </SelectTrigger>
-                           <SelectContent>
-                              <SelectItem value="New Lead">New Lead</SelectItem>
-                              <SelectItem value="Initial Contact">Initial Contact</SelectItem>
-                              <SelectItem value="Loan Application Signed">Loan Application Signed</SelectItem>
-                              <SelectItem value="Waiting for Documentation">Waiting for Documentation</SelectItem>
-                              <SelectItem value="Pre-Approved">Pre-Approved</SelectItem>
-                              <SelectItem value="Term Sheet Signed">Term Sheet Signed</SelectItem>
-                              <SelectItem value="Loan Approved">Loan Approved</SelectItem>
-                              <SelectItem value="Closing">Closing</SelectItem>
-                              <SelectItem value="Loan Funded">Loan Funded</SelectItem>
-                           </SelectContent>
-                        </Select>
-                      ) : (
-                        <Badge variant={getStageColor(lead.stage)}>{lead.stage}</Badge>
-                      )}
-                    </div>
-                  </div>
                 </div>
 
                 {/* Right Column */}
@@ -1134,25 +1109,6 @@ export default function LeadDetail() {
                     </div>
                   </div>
 
-                  <div className="flex items-center gap-3">
-                    <div className="flex-1">
-                      <p className="text-sm text-muted-foreground">Priority</p>
-                      {isEditing ? (
-                        <Select value={editableFields.priority} onValueChange={(value) => setEditableFields({...editableFields, priority: value})}>
-                          <SelectTrigger>
-                            <SelectValue placeholder="Select priority" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="low">Low</SelectItem>
-                            <SelectItem value="medium">Medium</SelectItem>
-                            <SelectItem value="high">High</SelectItem>
-                          </SelectContent>
-                        </Select>
-                      ) : (
-                        <Badge variant={getPriorityColor(lead.priority)}>{lead.priority} Priority</Badge>
-                      )}
-                    </div>
-                  </div>
 
                   <div className="flex items-center gap-3">
                     <Calendar className="w-4 h-4 text-muted-foreground" />
