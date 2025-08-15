@@ -56,6 +56,9 @@ All colors MUST be HSL.
 
     --radius: 0.5rem;
 
+    /* Field styling */
+    --field-accent: 212 90% 70%;
+
     /* Navy blue for navigation */
     --navy: 220 91% 15%;
     --navy-foreground: 0 0% 100%;
@@ -112,6 +115,9 @@ All colors MUST be HSL.
     --shadow-glow: 0 0 20px hsl(220 91% 60% / 0.15);
     --gradient-card: linear-gradient(145deg, hsl(220 23% 12%), hsl(220 20% 15%));
     --gradient-accent: linear-gradient(135deg, hsl(142 76% 60%), hsl(142 60% 70%));
+
+    /* Field styling for dark mode */
+    --field-accent: 212 90% 75%;
 
     --sidebar-background: 220 30% 6%;
     --sidebar-foreground: 220 10% 95%;
@@ -182,5 +188,14 @@ All colors MUST be HSL.
   [class*="AlertDialogTitle"],
   [class*="alertdialog-title"] {
     @apply underline decoration-2 underline-offset-4 font-thin;
+  }
+
+  /* Field titles - thin light blue underline */
+  p:has(+ input):not([class*="border-b"]),
+  p:has(+ textarea):not([class*="border-b"]),
+  p:has(+ select):not([class*="border-b"]),
+  .text-sm.text-muted-foreground:not([class*="border-b"]) {
+    @apply border-b border-b-field-accent/30 pb-1;
+    border-bottom-width: 1px;
   }
 }

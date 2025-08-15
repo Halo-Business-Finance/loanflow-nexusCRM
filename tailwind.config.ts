@@ -80,6 +80,9 @@ export default {
 					DEFAULT: 'hsl(var(--navy))',
 					foreground: 'hsl(var(--navy-foreground))',
 					600: 'hsl(220 80% 45%)'
+				},
+				'field-accent': {
+					DEFAULT: 'hsl(var(--field-accent))'
 				}
 			},
 			borderRadius: {
