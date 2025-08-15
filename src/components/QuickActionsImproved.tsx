@@ -1,5 +1,7 @@
 import { useState } from "react"
-import { Plus, Phone, Mail, Calendar, User, Users, FileText, BarChart3, Bell, Settings, Zap } from "lucide-react"
+import { Plus, Phone, Mail, Calendar, User, Users, FileText, BarChart3, Bell, Settings, Zap, AlertTriangle } from "lucide-react"
+import { fortress } from "@/lib/fortress-security"
+import { toast } from "sonner"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
@@ -110,6 +112,16 @@ export function QuickActionsImproved() {
       category: 'manage',
       color: 'bg-gray-500',
       priority: 7
+    },
+    {
+      id: 'emergency-lockdown',
+      label: 'Emergency Lockdown',
+      description: 'Immediate security lockdown',
+      icon: AlertTriangle,
+      route: '',
+      category: 'manage',
+      color: 'bg-red-600',
+      priority: 8
     }
   ]
 
@@ -124,8 +136,18 @@ export function QuickActionsImproved() {
     ? quickActions 
     : quickActions.filter(action => action.category === selectedCategory)
 
-  const handleAction = (action: QuickAction) => {
-    navigate(action.route)
+  const handleAction = async (action: QuickAction) => {
+    if (action.id === 'emergency-lockdown') {
+      try {
+        await fortress.emergencyLockdown('Manual emergency lockdown triggered from quick actions')
+        toast.error('Emergency lockdown initiated')
+      } catch (error) {
+        console.error('Emergency lockdown failed:', error)
+        toast.error('Emergency lockdown failed')
+      }
+    } else {
+      navigate(action.route)
+    }
     setIsOpen(false)
   }
 
