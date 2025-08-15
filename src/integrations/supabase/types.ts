@@ -3143,6 +3143,36 @@ export type Database = {
         }
         Relationships: []
       }
+      security_configuration: {
+        Row: {
+          config_key: string
+          config_value: Json
+          created_at: string | null
+          created_by: string | null
+          description: string | null
+          id: string
+          updated_at: string | null
+        }
+        Insert: {
+          config_key: string
+          config_value: Json
+          created_at?: string | null
+          created_by?: string | null
+          description?: string | null
+          id?: string
+          updated_at?: string | null
+        }
+        Update: {
+          config_key?: string
+          config_value?: Json
+          created_at?: string | null
+          created_by?: string | null
+          description?: string | null
+          id?: string
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
       security_events: {
         Row: {
           created_at: string
@@ -3979,6 +4009,10 @@ export type Database = {
       get_secure_session_data: {
         Args: { p_key: string }
         Returns: string
+      }
+      get_security_config: {
+        Args: { p_config_key: string }
+        Returns: Json
       }
       get_user_role: {
         Args: { p_user_id?: string }

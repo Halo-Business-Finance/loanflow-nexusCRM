@@ -24,7 +24,9 @@ import { useAuth } from '@/components/auth/AuthProvider';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { LeadsList } from '@/components/leads/LeadsList';
-import { LeadForm } from '@/components/leads/LeadForm';
+import { SecureLeadForm } from '@/components/leads/SecureLeadForm';
+import { SecurityWrapper } from '@/components/SecurityWrapper';
+import { SecureFormProvider } from '@/components/security/SecureFormValidator';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Lead, ContactEntity } from '@/types/lead';
 import { useRoleBasedAccess } from '@/hooks/useRoleBasedAccess';
@@ -297,7 +299,9 @@ export default function Leads() {
   };
 
   return (
-    <Layout>
+    <SecurityWrapper requireRole="agent">
+      <SecureFormProvider>
+        <Layout>
       <div className="container mx-auto p-6 space-y-6">
         <div className="flex items-center justify-between mb-6">
           <div className="flex items-center gap-2">
@@ -554,7 +558,7 @@ export default function Leads() {
                 {editingLead ? 'Edit Lead' : 'Create New Lead'}
               </DialogTitle>
             </DialogHeader>
-            <LeadForm
+            <SecureLeadForm
               lead={editingLead}
               onSubmit={handleFormSubmit}
               onCancel={() => setIsFormOpen(false)}
@@ -568,7 +572,7 @@ export default function Leads() {
             <DialogHeader>
               <DialogTitle>Create New Lead</DialogTitle>
             </DialogHeader>
-            <LeadForm
+            <SecureLeadForm
               onSubmit={handleFormSubmit}
               onCancel={() => setShowNewLeadForm(false)}
               isSubmitting={false}
@@ -576,6 +580,8 @@ export default function Leads() {
           </DialogContent>
         </Dialog>
       </div>
-    </Layout>
+        </Layout>
+      </SecureFormProvider>
+    </SecurityWrapper>
   );
 }
