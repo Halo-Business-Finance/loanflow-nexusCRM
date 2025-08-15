@@ -55,8 +55,14 @@ export function SecureLeadForm({ lead, onSubmit, onCancel, isSubmitting = false 
       return
     }
     
+    console.log('SecureLeadForm handleSubmit - formData before validation:', formData);
+    console.log('SecureLeadForm handleSubmit - credit_score:', formData.credit_score, typeof formData.credit_score);
+    
     // Server-side validation before submission
     const { isValid, sanitizedData, errors } = await validateFormData(formData)
+    
+    console.log('SecureLeadForm handleSubmit - validation result:', { isValid, sanitizedData, errors });
+    console.log('SecureLeadForm handleSubmit - sanitized credit_score:', sanitizedData.credit_score, typeof sanitizedData.credit_score);
     
     if (!isValid) {
       setValidationErrors(errors)
@@ -223,8 +229,12 @@ export function SecureLeadForm({ lead, onSubmit, onCancel, isSubmitting = false 
             value={formData.credit_score || ""}
             onChange={(e) => {
               const value = e.target.value ? Number(e.target.value) : undefined;
+              console.log('Credit score input change:', e.target.value, 'parsed:', value, typeof value);
               if (value === undefined || (value >= 450 && value <= 850)) {
+                console.log('Credit score validation passed, calling handleInputChange');
                 handleInputChange("credit_score", value);
+              } else {
+                console.log('Credit score validation failed, value outside range:', value);
               }
             }}
             className={validationErrors.credit_score ? "border-destructive" : ""}
