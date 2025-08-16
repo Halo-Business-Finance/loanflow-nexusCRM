@@ -100,7 +100,49 @@ export function LoginForm({ onToggleMode }: LoginFormProps) {
         </CardDescription>
       </CardHeader>
       <CardContent>
-        {/* Email/Password Form - Primary and Working Option */}
+        {/* Microsoft 365 Sign In - Testing Configuration */}
+        <div className="space-y-4">
+          <Button
+            type="button"
+            onClick={handleMicrosoftSignIn}
+            disabled={isMicrosoftLoading || isLoading}
+            className="w-full bg-[#0078d4] hover:bg-[#106ebe] text-white border-0"
+            size="lg"
+          >
+            {isMicrosoftLoading ? (
+              <>
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                Connecting to Microsoft...
+              </>
+            ) : (
+              <>
+                <svg className="mr-2 h-5 w-5" viewBox="0 0 23 23">
+                  <path fill="currentColor" d="M1 1h10v10H1z"/>
+                  <path fill="currentColor" d="M12 1h10v10H12z"/>
+                  <path fill="currentColor" d="M1 12h10v10H1z"/>
+                  <path fill="currentColor" d="M12 12h10v10H12z"/>
+                </svg>
+                Sign in with Microsoft 365
+              </>
+            )}
+          </Button>
+        </div>
+
+        {/* Divider */}
+        <div className="my-6">
+          <div className="relative">
+            <div className="absolute inset-0 flex items-center">
+              <span className="w-full border-t" />
+            </div>
+            <div className="relative flex justify-center text-xs uppercase">
+              <span className="bg-background px-2 text-muted-foreground">
+                Or continue with email
+              </span>
+            </div>
+          </div>
+        </div>
+
+        {/* Email/Password Form */}
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-2">
             <Label htmlFor="email">Email</Label>
