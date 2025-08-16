@@ -68,17 +68,14 @@ function AuthenticatedApp() {
     );
   }
 
-  if (!user) {
-    return <AuthPage />;
-  }
-
   return (
     <BrowserRouter>
       <KeyboardShortcutsProvider />
       <SecurityProvider />
       <Routes>
-        {/* Public route for authentication */}
+        {/* Public routes - accessible without authentication */}
         <Route path="/auth" element={<AuthPage />} errorElement={<RouteErrorBoundary />} />
+        <Route path="/auth/callback" element={<AuthPage />} errorElement={<RouteErrorBoundary />} />
         
         {/* Protected routes - require authentication */}
         {user ? (
@@ -106,7 +103,6 @@ function AuthenticatedApp() {
             <Route path="/api-docs" element={<APIDocs />} errorElement={<RouteErrorBoundary />} />
             <Route path="/resources" element={<Resources />} errorElement={<RouteErrorBoundary />} />
             <Route path="/emergency-maintenance" element={<EmergencyMaintenance />} errorElement={<RouteErrorBoundary />} />
-            <Route path="/auth/callback" element={<Index />} errorElement={<RouteErrorBoundary />} />
             <Route path="*" element={<NotFound />} errorElement={<RouteErrorBoundary />} />
           </>
         ) : (
