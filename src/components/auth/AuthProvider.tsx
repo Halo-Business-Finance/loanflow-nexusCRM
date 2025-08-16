@@ -30,6 +30,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     // Set up auth state listener FIRST to avoid missing events
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
       if (mounted) {
+        // Clear OAuth flag on successful auth
+        if (session?.user) {
+          localStorage.removeItem('oauth_in_progress');
+        }
+        
         setSession(session)
         setUser(session?.user ?? null)
         if (session?.user) {

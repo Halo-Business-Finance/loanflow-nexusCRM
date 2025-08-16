@@ -42,6 +42,9 @@ export function LoginForm({ onToggleMode }: LoginFormProps) {
     try {
       console.log('Attempting Microsoft OAuth...')
       
+      // Temporarily disable security monitoring during OAuth
+      localStorage.setItem('oauth_in_progress', 'true')
+      
       // Check current session first
       const { data: sessionData } = await supabase.auth.getSession()
       console.log('Current session before OAuth:', sessionData.session?.user?.email || 'No session')
@@ -75,6 +78,7 @@ export function LoginForm({ onToggleMode }: LoginFormProps) {
       }
     } catch (error) {
       console.error('Microsoft sign in error:', error)
+      localStorage.removeItem('oauth_in_progress')
       alert(`Error: ${error instanceof Error ? error.message : 'Unknown error'}`)
       setIsMicrosoftLoading(false)
     }

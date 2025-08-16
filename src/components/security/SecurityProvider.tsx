@@ -50,6 +50,12 @@ export const SecurityProvider: React.FC<SecurityProviderProps> = ({ children }) 
     if (!isSecurityMonitoring) return;
 
     const handleSuspiciousActivity = (event: Event) => {
+      // Skip security monitoring during OAuth flow
+      if (localStorage.getItem('oauth_in_progress') === 'true') {
+        trackActivity();
+        return;
+      }
+      
       // Monitor for rapid clicks, unusual patterns
       const now = Date.now();
       const lastActivity = parseInt(localStorage.getItem('lastActivity') || '0');
