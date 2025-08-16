@@ -453,7 +453,7 @@ export default function LeadDetail() {
           email: `borrower_${Date.now()}@placeholder.com` // Provide a unique placeholder email
         })
         .select()
-        .single()
+        .maybeSingle()
 
       if (contactError) {
         console.error('Contact entity creation error:', contactError)
@@ -477,7 +477,7 @@ export default function LeadDetail() {
         .from('leads')
         .select('id')
         .eq('id', lead.id)
-        .single()
+        .maybeSingle()
 
       if (leadExistsError || !leadExists) {
         console.error('Lead does not exist in database:', { leadId: lead.id, error: leadExistsError })
@@ -495,7 +495,7 @@ export default function LeadDetail() {
           is_primary: false
         })
         .select()
-        .single()
+        .maybeSingle()
 
       if (borrowerError) {
         console.error('Additional borrower creation error:', borrowerError)
