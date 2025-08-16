@@ -88,7 +88,11 @@ export function LoginForm({ onToggleMode }: LoginFormProps) {
         <div className="space-y-4">
           <Button
             type="button"
-            onClick={handleMicrosoftSignIn}
+            onClick={(e) => {
+              e.preventDefault()
+              e.stopPropagation()
+              handleMicrosoftSignIn()
+            }}
             disabled={isMicrosoftLoading || isLoading}
             className="w-full bg-blue-600 hover:bg-blue-700 text-white"
           >
