@@ -49,11 +49,13 @@ import {
   Trash2,
   ChevronDown,
   ShoppingCart,
-  Percent
+  Percent,
+  UserPlus
 } from "lucide-react"
 
 import { Lead, Client as ClientType } from "@/types/lead"
 import { mapLeadFields, mapClientFields, extractContactEntityData, LEAD_WITH_CONTACT_QUERY, CLIENT_WITH_CONTACT_QUERY } from "@/lib/field-mapping"
+import { AdditionalBorrowerCard } from "@/components/AdditionalBorrowerCard"
 
 // Using imported ClientType interface from types/lead.ts
 
@@ -71,6 +73,8 @@ export default function LeadDetail() {
   const [client, setClient] = useState<ClientType | null>(null)
   const [loading, setLoading] = useState(true)
   const [loanRequests, setLoanRequests] = useState<any[]>([])
+  const [additionalBorrowers, setAdditionalBorrowers] = useState<any[]>([])
+  const [editingBorrowerId, setEditingBorrowerId] = useState<string | null>(null)
   const [isEditing, setIsEditing] = useState(false)
   const [callNotes, setCallNotes] = useState("")
   const [newCallNote, setNewCallNote] = useState("")
@@ -209,8 +213,8 @@ export default function LeadDetail() {
         await fetchClientData(data.id)
       }
       
-      // Fetch loan requests for this lead
-      await fetchLoanRequests(data.id)
+      // Fetch additional borrowers for this lead
+      await fetchAdditionalBorrowers(data.id)
     } catch (error) {
       console.error('Error fetching lead:', error)
       toast({
@@ -322,6 +326,194 @@ export default function LeadDetail() {
       toast({
         title: "Error",
         description: `Failed to save call notes: ${error.message}`,
+        variant: "destructive",
+      })
+    }
+  }
+
+  const fetchAdditionalBorrowers = async (leadId: string) => {
+    try {
+      const { data, error } = await supabase
+        .from('additional_borrowers')
+        .select(`
+          id,
+          borrower_order,
+          is_primary,
+          contact_entity:contact_entities (
+            id,
+            first_name,
+            last_name,
+            personal_email,
+            mobile_phone,
+            email,
+            phone,
+            credit_score,
+            ownership_percentage
+          )
+        `)
+        .eq('lead_id', leadId)
+        .order('borrower_order', { ascending: true })
+
+      if (error) throw error
+      
+      const mappedBorrowers = (data || []).map(item => ({
+        id: item.id,
+        borrower_order: item.borrower_order,
+        is_primary: item.is_primary,
+        contact_entity_id: item.contact_entity?.id,
+        ...item.contact_entity
+      }))
+      
+      setAdditionalBorrowers(mappedBorrowers)
+    } catch (error) {
+      console.error('Error fetching additional borrowers:', error)
+    }
+  }
+
+      const updatedNotes = callNotes + (newCallNote ? `\n\n${userName} [${new Date().toLocaleString()}]: ${newCallNote}` : "")
+      
+      console.log('Updated notes to save:', updatedNotes)
+      
+      const { error, data } = await supabase
+        .from('leads')
+        .update({ 
+          call_notes: updatedNotes,
+          last_contact: new Date().toISOString()
+        })
+        .eq('id', lead.id)
+        .select()
+
+      console.log('Update result:', { error, data })
+
+      if (error) throw error
+
+      setCallNotes(updatedNotes)
+      setNewCallNote("")
+      toast({
+        title: "Success",
+        description: "Call notes saved successfully",
+      })
+      
+      // Refresh lead data
+      fetchLead()
+    } catch (error) {
+      console.error('Error saving call notes:', error)
+      toast({
+        title: "Error",
+        description: `Failed to save call notes: ${error.message}`,
+        variant: "destructive",
+      })
+    }
+  }
+
+  const addAdditionalBorrower = async () => {
+    if (!lead || !user) return
+
+    try {
+      // First create a new contact entity for the additional borrower
+      const { data: contactEntity, error: contactError } = await supabase
+        .from('contact_entities')
+        .insert({
+          user_id: user.id,
+          name: 'Additional Borrower',
+          email: ''
+        })
+        .select()
+        .single()
+
+      if (contactError) throw contactError
+
+      // Then create the additional borrower record
+      const nextOrder = Math.max(...additionalBorrowers.map(b => b.borrower_order || 0), 0) + 1
+      
+      const { data: borrower, error: borrowerError } = await supabase
+        .from('additional_borrowers')
+        .insert({
+          lead_id: lead.id,
+          contact_entity_id: contactEntity.id,
+          borrower_order: nextOrder,
+          is_primary: false
+        })
+        .select()
+        .single()
+
+      if (borrowerError) throw borrowerError
+
+      toast({
+        title: "Success",
+        description: "Additional borrower added successfully",
+      })
+      
+      // Refresh additional borrowers
+      await fetchAdditionalBorrowers(lead.id)
+    } catch (error) {
+      console.error('Error adding additional borrower:', error)
+      toast({
+        title: "Error",
+        description: "Failed to add additional borrower",
+        variant: "destructive",
+      })
+    }
+  }
+
+  const updateAdditionalBorrower = async (borrower: any) => {
+    if (!borrower.contact_entity_id) return
+
+    try {
+      const { error } = await supabase
+        .from('contact_entities')
+        .update({
+          first_name: borrower.first_name || null,
+          last_name: borrower.last_name || null,
+          personal_email: borrower.personal_email || null,
+          mobile_phone: borrower.mobile_phone || null,
+          email: borrower.email || null,
+          phone: borrower.phone || null,
+          credit_score: borrower.credit_score || null,
+          ownership_percentage: borrower.ownership_percentage || null
+        })
+        .eq('id', borrower.contact_entity_id)
+
+      if (error) throw error
+
+      toast({
+        title: "Success",
+        description: "Additional borrower updated successfully",
+      })
+      
+      // Refresh additional borrowers
+      await fetchAdditionalBorrowers(lead.id)
+    } catch (error) {
+      console.error('Error updating additional borrower:', error)
+      toast({
+        title: "Error",
+        description: "Failed to update additional borrower",
+        variant: "destructive",
+      })
+    }
+  }
+
+  const deleteAdditionalBorrower = async (borrowerId: string) => {
+    try {
+      const { error } = await supabase
+        .from('additional_borrowers')
+        .delete()
+        .eq('id', borrowerId)
+
+      if (error) throw error
+
+      toast({
+        title: "Success",
+        description: "Additional borrower removed successfully",
+      })
+      
+      // Refresh additional borrowers
+      await fetchAdditionalBorrowers(lead.id)
+    } catch (error) {
+      console.error('Error deleting additional borrower:', error)
+      toast({
+        title: "Error",
+        description: "Failed to remove additional borrower",
         variant: "destructive",
       })
     }
@@ -1137,6 +1329,25 @@ export default function LeadDetail() {
 
                 </div>
               </div>
+            </CardContent>
+          </Card>
+
+          {/* Add Additional Borrower Button - Simple Implementation */}
+          <Card className="border-dashed border-2 hover:border-primary/50 transition-colors">
+            <CardContent className="flex items-center justify-center py-6">
+              <Button
+                onClick={() => {
+                  toast({
+                    title: "Coming Soon",
+                    description: "Additional borrower functionality will be available soon",
+                  })
+                }}
+                variant="ghost"
+                className="text-muted-foreground hover:text-primary"
+              >
+                <UserPlus className="w-4 h-4 mr-2" />
+                Add Additional Borrower
+              </Button>
             </CardContent>
           </Card>
 

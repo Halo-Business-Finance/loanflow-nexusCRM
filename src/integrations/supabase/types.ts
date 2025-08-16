@@ -134,6 +134,51 @@ export type Database = {
         }
         Relationships: []
       }
+      additional_borrowers: {
+        Row: {
+          borrower_order: number
+          contact_entity_id: string
+          created_at: string
+          id: string
+          is_primary: boolean
+          lead_id: string
+          updated_at: string
+        }
+        Insert: {
+          borrower_order?: number
+          contact_entity_id: string
+          created_at?: string
+          id?: string
+          is_primary?: boolean
+          lead_id: string
+          updated_at?: string
+        }
+        Update: {
+          borrower_order?: number
+          contact_entity_id?: string
+          created_at?: string
+          id?: string
+          is_primary?: boolean
+          lead_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "additional_borrowers_contact_entity_id_fkey"
+            columns: ["contact_entity_id"]
+            isOneToOne: false
+            referencedRelation: "contact_entities"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "additional_borrowers_lead_id_fkey"
+            columns: ["lead_id"]
+            isOneToOne: false
+            referencedRelation: "leads"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       ai_bot_activity: {
         Row: {
           activity_type: string
