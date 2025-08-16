@@ -375,6 +375,13 @@ export default function LeadDetail() {
     console.log('Lead object:', lead)
     console.log('User object:', user)
     console.log('Lead ID from params:', id)
+    console.log('Window location:', window.location.href)
+    
+    // Show immediate feedback to user
+    toast({
+      title: "Processing...",
+      description: "Adding additional borrower...",
+    })
     
     if (!lead || !user) {
       console.error('Missing lead or user data')
