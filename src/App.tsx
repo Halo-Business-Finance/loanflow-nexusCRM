@@ -106,6 +106,7 @@ function AuthenticatedApp() {
             <Route path="/api-docs" element={<APIDocs />} errorElement={<RouteErrorBoundary />} />
             <Route path="/resources" element={<Resources />} errorElement={<RouteErrorBoundary />} />
             <Route path="/emergency-maintenance" element={<EmergencyMaintenance />} errorElement={<RouteErrorBoundary />} />
+            <Route path="/auth/callback" element={<Index />} errorElement={<RouteErrorBoundary />} />
             <Route path="*" element={<NotFound />} errorElement={<RouteErrorBoundary />} />
           </>
         ) : (
