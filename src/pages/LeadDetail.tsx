@@ -422,7 +422,18 @@ export default function LeadDetail() {
     }
 
     try {
-      console.log('Adding additional borrower for lead:', leadId)
+      console.log('=== DEBUGGING LEAD DATA ===')
+      console.log('leadId from URL:', leadId)
+      console.log('lead object:', lead)
+      console.log('lead.id:', lead?.id)
+      console.log('lead.user_id:', lead?.user_id)
+      console.log('user.id:', user?.id)
+      console.log('typeof lead.id:', typeof lead?.id)
+      console.log('typeof leadId:', typeof leadId)
+      
+      if (!lead?.id) {
+        throw new Error('Lead data is not properly loaded')
+      }
 
       // Since lead data is already loaded on the page, use it directly
       console.log('Using existing lead data from state')
