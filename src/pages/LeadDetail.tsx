@@ -1005,9 +1005,9 @@ export default function LeadDetail() {
                     </div>
                   </div>
 
-                  <div className="flex items-center gap-3">
-                    <Phone className="w-4 h-4 text-muted-foreground" />
-                    <div className="flex-1">
+                  <div className="flex items-start gap-3">
+                    <Phone className="w-4 h-4 text-muted-foreground mt-1" />
+                    <div className="flex-1 space-y-1">
                       <p className="text-sm text-muted-foreground">Mobile Phone</p>
                       {isEditing ? (
                         <Input
@@ -1017,14 +1017,16 @@ export default function LeadDetail() {
                           type="tel"
                         />
                       ) : (
-                        (lead as any).mobile_phone ? (
-                          <ClickablePhone 
-                            phoneNumber={(lead as any).mobile_phone}
-                            className="font-medium"
-                          />
-                        ) : (
-                          <p className="font-medium text-foreground">N/A</p>
-                        )
+                        <div>
+                          {(lead as any).mobile_phone ? (
+                            <ClickablePhone 
+                              phoneNumber={(lead as any).mobile_phone}
+                              className="font-medium"
+                            />
+                          ) : (
+                            <p className="font-medium text-foreground">N/A</p>
+                          )}
+                        </div>
                       )}
                     </div>
                   </div>
@@ -1085,9 +1087,9 @@ export default function LeadDetail() {
                     </div>
                   </div>
 
-                  <div className="flex items-center gap-3">
-                    <Phone className="w-4 h-4 text-muted-foreground" />
-                    <div className="flex-1">
+                  <div className="flex items-start gap-3">
+                    <Phone className="w-4 h-4 text-muted-foreground mt-1" />
+                    <div className="flex-1 space-y-1">
                       <p className="text-sm text-muted-foreground">Company Phone</p>
                       {isEditing ? (
                         <Input
@@ -1096,14 +1098,16 @@ export default function LeadDetail() {
                           placeholder="Enter company phone number"
                         />
                       ) : (
-                        lead.phone ? (
-                          <ClickablePhone 
-                            phoneNumber={lead.phone}
-                            className="font-medium"
-                          />
-                        ) : (
-                          <p className="font-medium text-foreground">N/A</p>
-                        )
+                        <div>
+                          {lead.phone ? (
+                            <ClickablePhone 
+                              phoneNumber={lead.phone}
+                              className="font-medium"
+                            />
+                          ) : (
+                            <p className="font-medium text-foreground">N/A</p>
+                          )}
+                        </div>
                       )}
                     </div>
                   </div>
