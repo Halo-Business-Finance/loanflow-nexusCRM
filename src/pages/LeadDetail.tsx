@@ -472,10 +472,24 @@ export default function LeadDetail() {
         is_primary: false
       })
 
+      // Check if the lead actually exists in the database first
+      const { data: leadExists, error: leadExistsError } = await supabase
+        .from('leads')
+        .select('id')
+        .eq('id', lead.id)
+        .single()
+
+      if (leadExistsError || !leadExists) {
+        console.error('Lead does not exist in database:', { leadId: lead.id, error: leadExistsError })
+        throw new Error('Lead not found in database. Please refresh the page.')
+      }
+
+      console.log('Lead confirmed to exist in database:', leadExists.id)
+
       const { data: borrower, error: borrowerError } = await supabase
         .from('additional_borrowers')
         .insert({
-          lead_id: lead.id, // Use lead.id from the loaded data instead of leadId from URL
+          lead_id: lead.id,
           contact_entity_id: contactEntity.id,
           borrower_order: nextOrder,
           is_primary: false
@@ -485,6 +499,12 @@ export default function LeadDetail() {
 
       if (borrowerError) {
         console.error('Additional borrower creation error:', borrowerError)
+        console.error('Failed insert data:', {
+          lead_id: lead.id,
+          contact_entity_id: contactEntity.id,
+          borrower_order: nextOrder,
+          is_primary: false
+        })
         throw borrowerError
       }
 
