@@ -7,6 +7,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider, useAuth } from "@/components/auth/AuthProvider";
 import { AuthPage } from "@/components/auth/AuthPage";
+import { CallbackHandler } from "@/components/auth/CallbackHandler";
 import { SecurityManager } from "@/components/security/SecurityManager";
 import { GeoSecurityCheck } from "@/components/GeoSecurityCheck";
 import { AsyncErrorBoundary } from "@/components/AsyncErrorBoundary";
@@ -75,7 +76,7 @@ function AuthenticatedApp() {
       <Routes>
         {/* Public routes - accessible without authentication */}
         <Route path="/auth" element={<AuthPage />} errorElement={<RouteErrorBoundary />} />
-        <Route path="/auth/callback" element={<AuthPage />} errorElement={<RouteErrorBoundary />} />
+        <Route path="/auth/callback" element={<CallbackHandler />} errorElement={<RouteErrorBoundary />} />
         
         {/* Protected routes - require authentication */}
         {user ? (

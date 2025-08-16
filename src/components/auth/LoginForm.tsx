@@ -41,8 +41,8 @@ export function LoginForm({ onToggleMode }: LoginFormProps) {
       // Clear any existing auth state
       console.log('📝 Clearing existing auth state...')
       
-      // Get current origin for redirect
-      const redirectUrl = `${window.location.origin}/`
+      // Get current origin for redirect - use /auth/callback for cleaner handling
+      const redirectUrl = `${window.location.origin}/auth/callback`
       console.log('🔗 Redirect URL:', redirectUrl)
       
       // Start OAuth flow with comprehensive logging
