@@ -36,52 +36,93 @@ export function SignUpForm({ onToggleMode }: SignUpFormProps) {
   }
 
   const handleMicrosoftSignUp = async () => {
-    console.log('🚀 Starting Microsoft OAuth sign-up flow...')
+    console.log('🆕 Microsoft Sign-Up: Starting fresh OAuth registration flow...')
     setIsMicrosoftLoading(true)
     
     try {
-      // Get current origin for redirect
-      const redirectUrl = `${window.location.origin}/`
-      console.log('🔗 Sign-up Redirect URL:', redirectUrl)
+      // Clear any previous auth attempts
+      localStorage.removeItem('ms_oauth_attempt')
+      localStorage.removeItem('ms_oauth_signup_attempt')
       
-      // Start OAuth flow for sign-up
-      console.log('📝 Initiating Microsoft sign-up...')
-      const { data, error } = await supabase.auth.signInWithOAuth({
+      // Set new sign-up flag
+      const signupTimestamp = Date.now().toString()
+      localStorage.setItem('ms_signup_flow', signupTimestamp)
+      console.log('📝 Set sign-up flow flag:', signupTimestamp)
+      
+      // Prepare redirect URL
+      const baseUrl = window.location.origin
+      const redirectUrl = `${baseUrl}/`
+      console.log('🔗 Sign-up redirect configured:', redirectUrl)
+      
+      // Log current environment
+      console.log('🌍 Environment check:', {
+        origin: window.location.origin,
+        host: window.location.host,
+        protocol: window.location.protocol
+      })
+      
+      // Initialize Microsoft OAuth for new user registration
+      console.log('🚀 Launching Microsoft account creation flow...')
+      const oauthResponse = await supabase.auth.signInWithOAuth({
         provider: 'azure',
         options: {
-          scopes: 'openid profile email',
+          scopes: 'openid profile email User.Read',
           redirectTo: redirectUrl,
           queryParams: {
-            prompt: 'select_account',
-            access_type: 'offline'
+            prompt: 'consent', // Force consent screen for new users
+            access_type: 'offline',
+            response_mode: 'query'
           }
         }
       })
       
-      console.log('📊 Sign-up OAuth Response:', { data, error })
+      console.log('📋 Microsoft Sign-up OAuth Response:', {
+        hasData: !!oauthResponse.data,
+        hasUrl: !!oauthResponse.data?.url,
+        hasError: !!oauthResponse.error,
+        error: oauthResponse.error?.message
+      })
       
-      if (error) {
-        console.error('❌ Sign-up OAuth Error:', error)
-        toast.error(`Microsoft sign-up failed: ${error.message}`)
+      if (oauthResponse.error) {
+        console.error('❌ Microsoft sign-up OAuth failed:', oauthResponse.error)
+        toast.error(`Microsoft sign-up failed: ${oauthResponse.error.message}`)
+        localStorage.removeItem('ms_signup_flow')
+        setIsMicrosoftLoading(false)
         return
       }
       
-      if (data?.url) {
-        console.log('🌐 Redirecting to Microsoft for sign-up...', data.url)
-        // Store intention to prevent loops
-        localStorage.setItem('ms_oauth_signup_attempt', Date.now().toString())
-        window.location.href = data.url
+      if (oauthResponse.data?.url) {
+        console.log('🌐 Redirecting to Microsoft registration page...')
+        console.log('🔗 Full redirect URL:', oauthResponse.data.url)
+        
+        // Store additional context for post-redirect handling
+        localStorage.setItem('ms_signup_redirect_url', oauthResponse.data.url)
+        
+        // Notify user of redirect
+        toast.success('Redirecting to Microsoft...')
+        
+        // Perform redirect
+        window.location.href = oauthResponse.data.url
       } else {
-        console.warn('⚠️ No redirect URL received for sign-up')
-        toast.error('Microsoft sign-up failed: No redirect URL received')
+        console.warn('⚠️ No redirect URL provided by Microsoft OAuth')
+        toast.error('Microsoft sign-up setup failed: No redirect URL received')
+        localStorage.removeItem('ms_signup_flow')
+        setIsMicrosoftLoading(false)
       }
       
     } catch (error: any) {
-      console.error('💥 Microsoft Sign-up Error:', error)
-      toast.error(`Sign-up error: ${error.message || 'Unknown error'}`)
-    } finally {
-      // Only reset loading if we're not redirecting
-      setTimeout(() => setIsMicrosoftLoading(false), 1000)
+      console.error('💥 Microsoft Sign-up Critical Error:', {
+        message: error.message,
+        stack: error.stack,
+        name: error.name
+      })
+      
+      // Clean up on error
+      localStorage.removeItem('ms_signup_flow')
+      localStorage.removeItem('ms_signup_redirect_url')
+      
+      toast.error(`Sign-up failed: ${error.message || 'Unexpected error occurred'}`)
+      setIsMicrosoftLoading(false)
     }
   }
 
@@ -99,32 +140,46 @@ export function SignUpForm({ onToggleMode }: SignUpFormProps) {
         </CardDescription>
       </CardHeader>
       <CardContent>
-        {/* Microsoft 365 Sign Up - Primary Option */}
+        {/* Microsoft 365 Sign Up - Rebuilt from scratch */}
         <div className="space-y-4">
           <Button
             type="button"
             onClick={handleMicrosoftSignUp}
             disabled={isMicrosoftLoading || isLoading}
-            className="w-full bg-[#0078d4] hover:bg-[#106ebe] text-white border-0"
+            className="w-full bg-[#0078d4] hover:bg-[#106ebe] text-white border-0 transition-all duration-200 shadow-md hover:shadow-lg"
             size="lg"
           >
             {isMicrosoftLoading ? (
-              <>
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                Connecting to Microsoft...
-              </>
+              <div className="flex items-center justify-center">
+                <Loader2 className="mr-3 h-5 w-5 animate-spin" />
+                <div className="flex flex-col items-start">
+                  <span className="font-medium">Setting up Microsoft account...</span>
+                  <span className="text-xs opacity-90">This may take a moment</span>
+                </div>
+              </div>
             ) : (
-              <>
-                <svg className="mr-2 h-5 w-5" viewBox="0 0 23 23">
+              <div className="flex items-center justify-center">
+                <svg className="mr-3 h-5 w-5" viewBox="0 0 23 23">
                   <path fill="currentColor" d="M1 1h10v10H1z"/>
                   <path fill="currentColor" d="M12 1h10v10H12z"/>
                   <path fill="currentColor" d="M1 12h10v10H1z"/>
                   <path fill="currentColor" d="M12 12h10v10H12z"/>
                 </svg>
-                Sign up with Microsoft 365
-              </>
+                <div className="flex flex-col items-start">
+                  <span className="font-medium">Create account with Microsoft 365</span>
+                  <span className="text-xs opacity-90">Quick and secure registration</span>
+                </div>
+              </div>
             )}
           </Button>
+          
+          {isMicrosoftLoading && (
+            <div className="text-center">
+              <p className="text-sm text-muted-foreground">
+                🔐 Connecting to Microsoft's secure servers...
+              </p>
+            </div>
+          )}
         </div>
 
         {/* Divider */}
