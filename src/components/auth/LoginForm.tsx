@@ -35,6 +35,7 @@ export function LoginForm({ onToggleMode }: LoginFormProps) {
   const handleMicrosoftSignIn = () => {
     console.log('Microsoft button clicked!')
     console.log('Button disabled state:', isMicrosoftLoading || isLoading)
+    console.log('Current URL origin:', window.location.origin)
     
     setIsMicrosoftLoading(true)
     
@@ -43,7 +44,7 @@ export function LoginForm({ onToggleMode }: LoginFormProps) {
     supabase.auth.signInWithOAuth({
       provider: 'azure',
       options: {
-        scopes: 'email openid profile',
+        scopes: 'openid profile email',
         redirectTo: `${window.location.origin}/`
       }
     }).then(({ data, error }) => {
@@ -56,8 +57,13 @@ export function LoginForm({ onToggleMode }: LoginFormProps) {
         return
       }
       
-      console.log('OAuth initiated successfully')
-      // Don't set loading to false here as browser will redirect
+      if (data?.url) {
+        console.log('Redirecting to OAuth URL:', data.url)
+        window.location.href = data.url
+      } else {
+        console.log('No redirect URL received from OAuth')
+        setIsMicrosoftLoading(false)
+      }
     }).catch((error) => {
       console.error('Microsoft sign in error:', error)
       alert(`Error: ${error instanceof Error ? error.message : 'Unknown error'}`)
