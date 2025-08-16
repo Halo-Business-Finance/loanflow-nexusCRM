@@ -140,62 +140,6 @@ export function SignUpForm({ onToggleMode }: SignUpFormProps) {
         </CardDescription>
       </CardHeader>
       <CardContent>
-        {/* Microsoft 365 Sign Up - Rebuilt from scratch */}
-        <div className="space-y-4">
-          <Button
-            type="button"
-            onClick={handleMicrosoftSignUp}
-            disabled={isMicrosoftLoading || isLoading}
-            className="w-full bg-[#0078d4] hover:bg-[#106ebe] text-white border-0 transition-all duration-200 shadow-md hover:shadow-lg"
-            size="lg"
-          >
-            {isMicrosoftLoading ? (
-              <div className="flex items-center justify-center">
-                <Loader2 className="mr-3 h-5 w-5 animate-spin" />
-                <div className="flex flex-col items-start">
-                  <span className="font-medium">Setting up Microsoft account...</span>
-                  <span className="text-xs opacity-90">This may take a moment</span>
-                </div>
-              </div>
-            ) : (
-              <div className="flex items-center justify-center">
-                <svg className="mr-3 h-5 w-5" viewBox="0 0 23 23">
-                  <path fill="currentColor" d="M1 1h10v10H1z"/>
-                  <path fill="currentColor" d="M12 1h10v10H12z"/>
-                  <path fill="currentColor" d="M1 12h10v10H1z"/>
-                  <path fill="currentColor" d="M12 12h10v10H12z"/>
-                </svg>
-                <div className="flex flex-col items-start">
-                  <span className="font-medium">Create account with Microsoft 365</span>
-                  <span className="text-xs opacity-90">Quick and secure registration</span>
-                </div>
-              </div>
-            )}
-          </Button>
-          
-          {isMicrosoftLoading && (
-            <div className="text-center">
-              <p className="text-sm text-muted-foreground">
-                🔐 Connecting to Microsoft's secure servers...
-              </p>
-            </div>
-          )}
-        </div>
-
-        {/* Divider */}
-        <div className="my-6">
-          <div className="relative">
-            <div className="absolute inset-0 flex items-center">
-              <span className="w-full border-t" />
-            </div>
-            <div className="relative flex justify-center text-xs uppercase">
-              <span className="bg-background px-2 text-muted-foreground">
-                Or continue with email
-              </span>
-            </div>
-          </div>
-        </div>
-
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
