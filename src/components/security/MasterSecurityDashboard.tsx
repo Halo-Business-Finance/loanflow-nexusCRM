@@ -201,11 +201,31 @@ export function MasterSecurityDashboard() {
                 <Button 
                   className="w-full justify-start" 
                   variant="outline"
-                  onClick={() => {
-                    // Emergency lockdown - clear all sessions and local storage
-                    localStorage.clear();
-                    sessionStorage.clear();
-                    window.location.href = '/auth';
+                  onClick={async () => {
+                    try {
+                      // Emergency lockdown - comprehensive session cleanup
+                      console.log('Emergency lockdown initiated...');
+                      
+                      // Clear all storage
+                      localStorage.clear();
+                      sessionStorage.clear();
+                      
+                      // Clear cookies
+                      document.cookie.split(";").forEach(function(c) { 
+                        document.cookie = c.replace(/^ +/, "").replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/"); 
+                      });
+                      
+                      // Sign out from Supabase
+                      const { supabase } = await import('@/integrations/supabase/client');
+                      await supabase.auth.signOut();
+                      
+                      // Force reload to ensure clean state
+                      window.location.replace('/auth');
+                    } catch (error) {
+                      console.error('Emergency lockdown error:', error);
+                      // Even if there's an error, force redirect for security
+                      window.location.replace('/auth');
+                    }
                   }}
                 >
                   <AlertTriangle className="w-4 h-4 mr-2" />
