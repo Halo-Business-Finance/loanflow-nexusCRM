@@ -1300,12 +1300,7 @@ export default function LeadDetail() {
           <Card className="border-dashed border-2 hover:border-primary/50 transition-colors">
             <CardContent className="flex items-center justify-center py-6">
               <Button
-                onClick={() => {
-                  toast({
-                    title: "Coming Soon",
-                    description: "Additional borrower functionality will be available soon",
-                  })
-                }}
+                onClick={addAdditionalBorrower}
                 variant="ghost"
                 className="text-muted-foreground hover:text-primary"
               >
