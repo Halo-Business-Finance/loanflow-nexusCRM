@@ -424,31 +424,12 @@ export default function LeadDetail() {
     try {
       console.log('Adding additional borrower for lead:', leadId)
 
-      // First, verify the lead exists and we have access to it
-      console.log('Verifying lead access...')
-      const { data: leadCheck, error: leadCheckError } = await supabase
-        .from('leads')
-        .select('id, user_id, contact_entity_id')
-        .eq('id', leadId)
-        .maybeSingle()
-
-      console.log('Lead check result:', { leadCheck, leadCheckError })
-
-      if (leadCheckError) {
-        console.error('Lead query error:', leadCheckError)
-        throw new Error(`Database error: ${leadCheckError.message}`)
-      }
-
-      if (!leadCheck) {
-        console.error('No lead found with ID:', leadId)
-        throw new Error('Lead not found in database')
-      }
-
-      console.log('Lead verification successful:', leadCheck)
-
+      // Since lead data is already loaded on the page, use it directly
+      console.log('Using existing lead data from state')
+      
       // Verify user owns this lead
-      if (leadCheck.user_id !== user.id) {
-        console.error('User does not own lead:', { leadOwner: leadCheck.user_id, currentUser: user.id })
+      if (lead.user_id !== user.id) {
+        console.error('User does not own lead:', { leadOwner: lead.user_id, currentUser: user.id })
         throw new Error('You do not have permission to modify this lead')
       }
       
