@@ -32,42 +32,37 @@ export function LoginForm({ onToggleMode }: LoginFormProps) {
     }
   }
 
-  const handleMicrosoftSignIn = async () => {
+  const handleMicrosoftSignIn = () => {
     console.log('Microsoft button clicked!')
+    console.log('Button disabled state:', isMicrosoftLoading || isLoading)
+    
     setIsMicrosoftLoading(true)
-    try {
-      console.log('Attempting Microsoft OAuth...')
-      
-      // Check if Microsoft provider is configured
-      const { data, error } = await supabase.auth.signInWithOAuth({
-        provider: 'azure',
-        options: {
-          scopes: 'email openid profile',
-          redirectTo: `${window.location.origin}/`
-        }
-      })
-      
+    
+    console.log('Attempting Microsoft OAuth...')
+    
+    supabase.auth.signInWithOAuth({
+      provider: 'azure',
+      options: {
+        scopes: 'email openid profile',
+        redirectTo: `${window.location.origin}/`
+      }
+    }).then(({ data, error }) => {
       console.log('OAuth response:', { data, error })
       
       if (error) {
         console.error('OAuth error details:', error)
-        if (error.message.includes('Provider not found') || error.message.includes('azure')) {
-          alert('Microsoft Azure authentication is not configured. Please contact your administrator.')
-        } else {
-          alert(`Microsoft login failed: ${error.message}`)
-        }
+        alert(`Microsoft login failed: ${error.message}`)
+        setIsMicrosoftLoading(false)
         return
       }
       
-      // If successful, the browser will redirect
       console.log('OAuth initiated successfully')
-      
-    } catch (error) {
+      // Don't set loading to false here as browser will redirect
+    }).catch((error) => {
       console.error('Microsoft sign in error:', error)
       alert(`Error: ${error instanceof Error ? error.message : 'Unknown error'}`)
-    } finally {
       setIsMicrosoftLoading(false)
-    }
+    })
   }
 
   return (
