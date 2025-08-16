@@ -389,12 +389,26 @@ export default function LeadDetail() {
     // Use the lead ID from URL params as backup
     const leadId = lead.id || id
     console.log('Using lead ID:', leadId)
+    console.log('Lead ID type:', typeof leadId)
+    console.log('Lead ID length:', leadId?.length)
 
     if (!leadId) {
       console.error('No lead ID available')
       toast({
         title: "Error", 
         description: "Invalid lead ID. Please refresh the page and try again.",
+        variant: "destructive",
+      })
+      return
+    }
+
+    // Validate UUID format
+    const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
+    if (!uuidRegex.test(leadId)) {
+      console.error('Invalid UUID format:', leadId)
+      toast({
+        title: "Error",
+        description: "Invalid lead ID format. Please refresh the page and try again.",
         variant: "destructive",
       })
       return
@@ -407,15 +421,20 @@ export default function LeadDetail() {
       console.log('Verifying lead access...')
       const { data: leadCheck, error: leadCheckError } = await supabase
         .from('leads')
-        .select('id, user_id')
+        .select('id, user_id, contact_entity_id')
         .eq('id', leadId)
-        .single()
+        .maybeSingle()
 
       console.log('Lead check result:', { leadCheck, leadCheckError })
 
-      if (leadCheckError || !leadCheck) {
-        console.error('Lead verification failed:', leadCheckError)
-        throw new Error(`Lead not found or access denied: ${leadCheckError?.message || 'Unknown error'}`)
+      if (leadCheckError) {
+        console.error('Lead query error:', leadCheckError)
+        throw new Error(`Database error: ${leadCheckError.message}`)
+      }
+
+      if (!leadCheck) {
+        console.error('No lead found with ID:', leadId)
+        throw new Error('Lead not found in database')
       }
 
       console.log('Lead verification successful:', leadCheck)
