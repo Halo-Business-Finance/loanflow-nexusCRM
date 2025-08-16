@@ -33,9 +33,12 @@ export function LoginForm({ onToggleMode }: LoginFormProps) {
   }
 
   const handleMicrosoftSignIn = async () => {
+    console.log('Microsoft button clicked!')
     setIsMicrosoftLoading(true)
     try {
       console.log('Attempting Microsoft OAuth...')
+      
+      // Check if Microsoft provider is configured
       const { data, error } = await supabase.auth.signInWithOAuth({
         provider: 'azure',
         options: {
@@ -43,12 +46,22 @@ export function LoginForm({ onToggleMode }: LoginFormProps) {
           redirectTo: `${window.location.origin}/`
         }
       })
+      
       console.log('OAuth response:', { data, error })
+      
       if (error) {
         console.error('OAuth error details:', error)
-        alert(`Microsoft login failed: ${error.message}`)
-        throw error
+        if (error.message.includes('Provider not found') || error.message.includes('azure')) {
+          alert('Microsoft Azure authentication is not configured. Please contact your administrator.')
+        } else {
+          alert(`Microsoft login failed: ${error.message}`)
+        }
+        return
       }
+      
+      // If successful, the browser will redirect
+      console.log('OAuth initiated successfully')
+      
     } catch (error) {
       console.error('Microsoft sign in error:', error)
       alert(`Error: ${error instanceof Error ? error.message : 'Unknown error'}`)
