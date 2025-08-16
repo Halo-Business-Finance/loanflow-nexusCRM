@@ -32,27 +32,36 @@ export function LoginForm({ onToggleMode }: LoginFormProps) {
     }
   }
 
-  const handleMicrosoftSignIn = () => {
+  const handleMicrosoftSignIn = async () => {
     console.log('Microsoft button clicked!')
     console.log('Button disabled state:', isMicrosoftLoading || isLoading)
     console.log('Current URL origin:', window.location.origin)
     
     setIsMicrosoftLoading(true)
     
-    console.log('Attempting Microsoft OAuth...')
-    
-    supabase.auth.signInWithOAuth({
-      provider: 'azure',
-      options: {
-        scopes: 'openid profile email',
-        redirectTo: `${window.location.origin}/`
-      }
-    }).then(({ data, error }) => {
+    try {
+      console.log('Attempting Microsoft OAuth...')
+      
+      // Check current session first
+      const { data: sessionData } = await supabase.auth.getSession()
+      console.log('Current session before OAuth:', sessionData.session?.user?.email || 'No session')
+      
+      const { data, error } = await supabase.auth.signInWithOAuth({
+        provider: 'azure',
+        options: {
+          scopes: 'openid profile email',
+          redirectTo: `${window.location.origin}/`,
+          queryParams: {
+            prompt: 'select_account'
+          }
+        }
+      })
+      
       console.log('OAuth response:', { data, error })
       
       if (error) {
         console.error('OAuth error details:', error)
-        alert(`Microsoft login failed: ${error.message}`)
+        alert(`Microsoft login failed: ${error.message}\n\nPlease check:\n1. Azure App Registration redirect URI: https://gshxxsniwytjgcnthyfq.supabase.co/auth/v1/callback\n2. Web platform configured in Azure\n3. ID tokens enabled under Authentication`)
         setIsMicrosoftLoading(false)
         return
       }
@@ -64,11 +73,11 @@ export function LoginForm({ onToggleMode }: LoginFormProps) {
         console.log('No redirect URL received from OAuth')
         setIsMicrosoftLoading(false)
       }
-    }).catch((error) => {
+    } catch (error) {
       console.error('Microsoft sign in error:', error)
       alert(`Error: ${error instanceof Error ? error.message : 'Unknown error'}`)
       setIsMicrosoftLoading(false)
-    })
+    }
   }
 
   return (
