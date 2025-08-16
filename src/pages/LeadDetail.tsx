@@ -464,7 +464,7 @@ export default function LeadDetail() {
       const { data: borrower, error: borrowerError } = await supabase
         .from('additional_borrowers')
         .insert({
-          lead_id: leadId,
+          lead_id: lead.id, // Use lead.id from the loaded data instead of leadId from URL
           contact_entity_id: contactEntity.id,
           borrower_order: nextOrder,
           is_primary: false
