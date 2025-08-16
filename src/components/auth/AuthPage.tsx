@@ -1,9 +1,20 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+import { useNavigate } from 'react-router-dom'
+import { useAuth } from './AuthProvider'
 import { LoginForm } from './LoginForm'
 import { SignUpForm } from './SignUpForm'
 
 export function AuthPage() {
   const [isLogin, setIsLogin] = useState(true)
+  const navigate = useNavigate()
+  const { user, loading } = useAuth()
+
+  // Redirect authenticated users to dashboard
+  useEffect(() => {
+    if (!loading && user) {
+      navigate('/', { replace: true })
+    }
+  }, [user, loading, navigate])
 
   const toggleMode = () => setIsLogin(!isLogin)
 
