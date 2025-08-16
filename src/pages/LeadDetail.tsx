@@ -371,46 +371,58 @@ export default function LeadDetail() {
   }
 
   const addAdditionalBorrower = async () => {
+    console.log('=== Starting addAdditionalBorrower ===')
+    console.log('Lead object:', lead)
+    console.log('User object:', user)
+    console.log('Lead ID from params:', id)
+    
     if (!lead || !user) {
+      console.error('Missing lead or user data')
       toast({
         title: "Error",
-        description: "Lead information not available",
+        description: "Lead information not available. Please refresh the page and try again.",
         variant: "destructive",
       })
       return
     }
 
-    // Validate lead ID
-    if (!lead.id) {
+    // Use the lead ID from URL params as backup
+    const leadId = lead.id || id
+    console.log('Using lead ID:', leadId)
+
+    if (!leadId) {
+      console.error('No lead ID available')
       toast({
         title: "Error", 
-        description: "Invalid lead ID",
+        description: "Invalid lead ID. Please refresh the page and try again.",
         variant: "destructive",
       })
       return
     }
 
     try {
-      console.log('Adding additional borrower for lead:', lead.id)
-      console.log('Lead object:', lead)
-      console.log('User:', user.id)
+      console.log('Adding additional borrower for lead:', leadId)
 
       // First, verify the lead exists and we have access to it
+      console.log('Verifying lead access...')
       const { data: leadCheck, error: leadCheckError } = await supabase
         .from('leads')
         .select('id, user_id')
-        .eq('id', lead.id)
+        .eq('id', leadId)
         .single()
+
+      console.log('Lead check result:', { leadCheck, leadCheckError })
 
       if (leadCheckError || !leadCheck) {
         console.error('Lead verification failed:', leadCheckError)
-        throw new Error('Lead not found or access denied')
+        throw new Error(`Lead not found or access denied: ${leadCheckError?.message || 'Unknown error'}`)
       }
 
       console.log('Lead verification successful:', leadCheck)
 
       // Verify user owns this lead
       if (leadCheck.user_id !== user.id) {
+        console.error('User does not own lead:', { leadOwner: leadCheck.user_id, currentUser: user.id })
         throw new Error('You do not have permission to modify this lead')
       }
       
@@ -445,7 +457,7 @@ export default function LeadDetail() {
       const { data: borrower, error: borrowerError } = await supabase
         .from('additional_borrowers')
         .insert({
-          lead_id: lead.id,
+          lead_id: leadId,
           contact_entity_id: contactEntity.id,
           borrower_order: nextOrder,
           is_primary: false
@@ -466,7 +478,7 @@ export default function LeadDetail() {
       })
       
       // Refresh additional borrowers
-      await fetchAdditionalBorrowers(lead.id)
+      await fetchAdditionalBorrowers(leadId)
     } catch (error) {
       console.error('Error adding additional borrower:', error)
       toast({
