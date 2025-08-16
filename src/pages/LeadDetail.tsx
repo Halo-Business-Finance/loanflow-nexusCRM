@@ -370,42 +370,6 @@ export default function LeadDetail() {
     }
   }
 
-      const updatedNotes = callNotes + (newCallNote ? `\n\n${userName} [${new Date().toLocaleString()}]: ${newCallNote}` : "")
-      
-      console.log('Updated notes to save:', updatedNotes)
-      
-      const { error, data } = await supabase
-        .from('leads')
-        .update({ 
-          call_notes: updatedNotes,
-          last_contact: new Date().toISOString()
-        })
-        .eq('id', lead.id)
-        .select()
-
-      console.log('Update result:', { error, data })
-
-      if (error) throw error
-
-      setCallNotes(updatedNotes)
-      setNewCallNote("")
-      toast({
-        title: "Success",
-        description: "Call notes saved successfully",
-      })
-      
-      // Refresh lead data
-      fetchLead()
-    } catch (error) {
-      console.error('Error saving call notes:', error)
-      toast({
-        title: "Error",
-        description: `Failed to save call notes: ${error.message}`,
-        variant: "destructive",
-      })
-    }
-  }
-
   const addAdditionalBorrower = async () => {
     if (!lead || !user) return
 
