@@ -371,25 +371,56 @@ export default function LeadDetail() {
   }
 
   const addAdditionalBorrower = async () => {
-    if (!lead || !user) return
+    if (!lead || !user) {
+      toast({
+        title: "Error",
+        description: "Lead information not available",
+        variant: "destructive",
+      })
+      return
+    }
+
+    // Validate lead ID
+    if (!lead.id) {
+      toast({
+        title: "Error", 
+        description: "Invalid lead ID",
+        variant: "destructive",
+      })
+      return
+    }
 
     try {
+      console.log('Adding additional borrower for lead:', lead.id)
+      
       // First create a new contact entity for the additional borrower
       const { data: contactEntity, error: contactError } = await supabase
         .from('contact_entities')
         .insert({
           user_id: user.id,
           name: 'Additional Borrower',
-          email: ''
+          email: `borrower_${Date.now()}@placeholder.com` // Provide a unique placeholder email
         })
         .select()
         .single()
 
-      if (contactError) throw contactError
+      if (contactError) {
+        console.error('Contact entity creation error:', contactError)
+        throw contactError
+      }
+
+      console.log('Contact entity created:', contactEntity)
 
       // Then create the additional borrower record
       const nextOrder = Math.max(...additionalBorrowers.map(b => b.borrower_order || 0), 0) + 1
       
+      console.log('Creating additional borrower with:', {
+        lead_id: lead.id,
+        contact_entity_id: contactEntity.id,
+        borrower_order: nextOrder,
+        is_primary: false
+      })
+
       const { data: borrower, error: borrowerError } = await supabase
         .from('additional_borrowers')
         .insert({
@@ -401,7 +432,12 @@ export default function LeadDetail() {
         .select()
         .single()
 
-      if (borrowerError) throw borrowerError
+      if (borrowerError) {
+        console.error('Additional borrower creation error:', borrowerError)
+        throw borrowerError
+      }
+
+      console.log('Additional borrower created:', borrower)
 
       toast({
         title: "Success",
@@ -414,7 +450,7 @@ export default function LeadDetail() {
       console.error('Error adding additional borrower:', error)
       toast({
         title: "Error",
-        description: "Failed to add additional borrower",
+        description: `Failed to add additional borrower: ${error.message}`,
         variant: "destructive",
       })
     }
