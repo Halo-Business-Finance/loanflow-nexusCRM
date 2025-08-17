@@ -138,14 +138,14 @@ export function HorizontalNav() {
 
       {/* Navigation Bar */}
       <div className="px-6">
-        <nav className="flex items-center justify-center space-x-4">
+        <nav className="flex items-center justify-center space-x-6">
           {navigationItems.map((item) => {
             const isActive = isActivePath(item.path)
             return (
               <Link
                 key={item.name}
                 to={item.path}
-                className={`relative flex items-center gap-1 px-2 py-1 text-sm font-medium transition-colors hover:text-blue-600 hover:bg-blue-50 rounded-md ${
+                className={`relative flex items-center gap-1 px-3 py-2 text-sm font-medium transition-colors hover:text-blue-600 hover:bg-blue-50 rounded-md ${
                   isActive 
                     ? 'text-primary border-b-2 border-primary' 
                     : 'text-foreground/70 hover:text-blue-600'
