@@ -49,6 +49,7 @@ const enterpriseItems = [
   { name: "Users", path: "/users", icon: User },
   { name: "Integrations", path: "/integrations", icon: RefreshCw },
   { name: "AI Tools", path: "/ai-tools", icon: Settings },
+  { name: "API Docs", path: "/api-docs", icon: FileText },
   { name: "Custom Objects", path: "/enterprise#custom-objects", icon: Home },
   { name: "Workflow Builder", path: "/enterprise#workflows", icon: RefreshCw },
   { name: "Approval Processes", path: "/enterprise#approvals", icon: Calendar },
