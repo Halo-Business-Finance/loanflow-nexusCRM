@@ -481,6 +481,268 @@ export default function Dashboard() {
               </Card>
             </div>
           </TabsContent>
+
+          {/* Performance Tab */}
+          <TabsContent value="performance" className="space-y-6 min-h-[400px]">
+            <div className="grid gap-6 md:grid-cols-2">
+              <Card className="bg-card border-0 shadow-lg hover:shadow-xl transition-shadow duration-200">
+                <CardHeader className="pb-4">
+                  <CardTitle className="flex items-center gap-2 text-lg font-semibold text-foreground">
+                    <TrendingUp className="h-5 w-5 text-green-600" />
+                    Performance Metrics
+                  </CardTitle>
+                  <CardDescription className="text-muted-foreground">
+                    Key performance indicators and growth metrics
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-4">
+                    <div className="flex justify-between items-center p-3 rounded-lg bg-muted/30">
+                      <span className="text-sm font-medium text-muted-foreground">Monthly Growth</span>
+                      <span className="font-semibold text-green-600">+12.5%</span>
+                    </div>
+                    <div className="flex justify-between items-center p-3 rounded-lg bg-muted/30">
+                      <span className="text-sm font-medium text-muted-foreground">Lead Conversion</span>
+                      <span className="font-semibold text-foreground">24.8%</span>
+                    </div>
+                    <div className="flex justify-between items-center p-3 rounded-lg bg-muted/30">
+                      <span className="text-sm font-medium text-muted-foreground">Customer Retention</span>
+                      <span className="font-semibold text-blue-600">91%</span>
+                    </div>
+                    <div className="flex justify-between items-center p-3 rounded-lg bg-muted/30">
+                      <span className="text-sm font-medium text-muted-foreground">Average Deal Size</span>
+                      <span className="font-semibold text-foreground">{formatCurrency(totalRevenue / 12)}</span>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              <Card className="bg-card border-0 shadow-lg hover:shadow-xl transition-shadow duration-200">
+                <CardHeader className="pb-4">
+                  <CardTitle className="flex items-center gap-2 text-lg font-semibold text-foreground">
+                    <Target className="h-5 w-5 text-purple-600" />
+                    Goal Progress
+                  </CardTitle>
+                  <CardDescription className="text-muted-foreground">
+                    Progress towards monthly and quarterly goals
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-4">
+                    <div className="space-y-2">
+                      <div className="flex justify-between text-sm">
+                        <span>Monthly Revenue Goal</span>
+                        <span className="font-medium">85%</span>
+                      </div>
+                      <div className="w-full bg-gray-200 rounded-full h-2">
+                        <div className="bg-blue-600 h-2 rounded-full" style={{ width: '85%' }}></div>
+                      </div>
+                    </div>
+                    <div className="space-y-2">
+                      <div className="flex justify-between text-sm">
+                        <span>New Leads Target</span>
+                        <span className="font-medium">92%</span>
+                      </div>
+                      <div className="w-full bg-gray-200 rounded-full h-2">
+                        <div className="bg-green-600 h-2 rounded-full" style={{ width: '92%' }}></div>
+                      </div>
+                    </div>
+                    <div className="space-y-2">
+                      <div className="flex justify-between text-sm">
+                        <span>Pipeline Value</span>
+                        <span className="font-medium">78%</span>
+                      </div>
+                      <div className="w-full bg-gray-200 rounded-full h-2">
+                        <div className="bg-purple-600 h-2 rounded-full" style={{ width: '78%' }}></div>
+                      </div>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+          </TabsContent>
+
+          {/* Analytics Tab */}
+          <TabsContent value="analytics" className="space-y-6 min-h-[400px]">
+            <div className="grid gap-6">
+              <Card className="bg-card border-0 shadow-lg hover:shadow-xl transition-shadow duration-200">
+                <CardHeader className="pb-4">
+                  <CardTitle className="flex items-center gap-2 text-lg font-semibold text-foreground">
+                    <BarChart3 className="h-5 w-5 text-blue-600" />
+                    Advanced Analytics
+                  </CardTitle>
+                  <CardDescription className="text-muted-foreground">
+                    Deep insights into your business performance
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div className="text-center p-4 border rounded-lg">
+                      <div className="text-2xl font-bold text-blue-600">{formatCurrency(totalRevenue)}</div>
+                      <div className="text-sm text-muted-foreground">Total Revenue</div>
+                      <div className="text-xs text-green-600 mt-1">↗ +12.5% vs last month</div>
+                    </div>
+                    <div className="text-center p-4 border rounded-lg">
+                      <div className="text-2xl font-bold text-purple-600">1,247</div>
+                      <div className="text-sm text-muted-foreground">Active Leads</div>
+                      <div className="text-xs text-green-600 mt-1">↗ +8.2% vs last month</div>
+                    </div>
+                    <div className="text-center p-4 border rounded-lg">
+                      <div className="text-2xl font-bold text-green-600">24.8%</div>
+                      <div className="text-sm text-muted-foreground">Conversion Rate</div>
+                      <div className="text-xs text-green-600 mt-1">↗ +5.4% vs last month</div>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              <div className="grid gap-6 md:grid-cols-2">
+                <Card className="bg-card border-0 shadow-lg hover:shadow-xl transition-shadow duration-200">
+                  <CardHeader className="pb-4">
+                    <CardTitle className="text-lg font-semibold text-foreground">Lead Sources</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-3">
+                      <div className="flex justify-between items-center">
+                        <span className="text-sm">Website</span>
+                        <div className="flex items-center gap-2">
+                          <div className="w-20 bg-gray-200 rounded-full h-2">
+                            <div className="bg-blue-600 h-2 rounded-full" style={{ width: '45%' }}></div>
+                          </div>
+                          <span className="text-sm font-medium">45%</span>
+                        </div>
+                      </div>
+                      <div className="flex justify-between items-center">
+                        <span className="text-sm">Referrals</span>
+                        <div className="flex items-center gap-2">
+                          <div className="w-20 bg-gray-200 rounded-full h-2">
+                            <div className="bg-green-600 h-2 rounded-full" style={{ width: '30%' }}></div>
+                          </div>
+                          <span className="text-sm font-medium">30%</span>
+                        </div>
+                      </div>
+                      <div className="flex justify-between items-center">
+                        <span className="text-sm">Social Media</span>
+                        <div className="flex items-center gap-2">
+                          <div className="w-20 bg-gray-200 rounded-full h-2">
+                            <div className="bg-purple-600 h-2 rounded-full" style={{ width: '25%' }}></div>
+                          </div>
+                          <span className="text-sm font-medium">25%</span>
+                        </div>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+
+                <Card className="bg-card border-0 shadow-lg hover:shadow-xl transition-shadow duration-200">
+                  <CardHeader className="pb-4">
+                    <CardTitle className="text-lg font-semibold text-foreground">Recent Activity</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-3 text-sm">
+                      <div className="flex items-center gap-3">
+                        <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                        <span>New lead: John Smith submitted application</span>
+                      </div>
+                      <div className="flex items-center gap-3">
+                        <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
+                        <span>Deal closed: $150k SBA loan approved</span>
+                      </div>
+                      <div className="flex items-center gap-3">
+                        <div className="w-2 h-2 bg-yellow-500 rounded-full"></div>
+                        <span>Document uploaded: Financial statements</span>
+                      </div>
+                      <div className="flex items-center gap-3">
+                        <div className="w-2 h-2 bg-purple-500 rounded-full"></div>
+                        <span>Follow-up scheduled: Client meeting tomorrow</span>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
+            </div>
+          </TabsContent>
+
+          {/* Reports Tab */}
+          <TabsContent value="reports" className="space-y-6 min-h-[400px]">
+            <div className="grid gap-6">
+              <Card className="bg-card border-0 shadow-lg hover:shadow-xl transition-shadow duration-200">
+                <CardHeader className="pb-4">
+                  <CardTitle className="flex items-center gap-2 text-lg font-semibold text-foreground">
+                    <Activity className="h-5 w-5 text-orange-600" />
+                    Available Reports
+                  </CardTitle>
+                  <CardDescription className="text-muted-foreground">
+                    Generate and download business reports
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+                    <div className="p-4 border rounded-lg hover:bg-muted/50 transition-colors cursor-pointer">
+                      <div className="flex items-center gap-3 mb-2">
+                        <BarChart3 className="h-5 w-5 text-blue-600" />
+                        <h3 className="font-medium">Monthly Performance</h3>
+                      </div>
+                      <p className="text-sm text-muted-foreground">Revenue, leads, and conversion metrics</p>
+                      <Button size="sm" className="mt-3">Generate Report</Button>
+                    </div>
+                    
+                    <div className="p-4 border rounded-lg hover:bg-muted/50 transition-colors cursor-pointer">
+                      <div className="flex items-center gap-3 mb-2">
+                        <Users className="h-5 w-5 text-green-600" />
+                        <h3 className="font-medium">Lead Analysis</h3>
+                      </div>
+                      <p className="text-sm text-muted-foreground">Lead sources, conversion rates, and pipeline</p>
+                      <Button size="sm" className="mt-3">Generate Report</Button>
+                    </div>
+                    
+                    <div className="p-4 border rounded-lg hover:bg-muted/50 transition-colors cursor-pointer">
+                      <div className="flex items-center gap-3 mb-2">
+                        <DollarSign className="h-5 w-5 text-purple-600" />
+                        <h3 className="font-medium">Financial Summary</h3>
+                      </div>
+                      <p className="text-sm text-muted-foreground">Revenue breakdown and profit analysis</p>
+                      <Button size="sm" className="mt-3">Generate Report</Button>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              <Card className="bg-card border-0 shadow-lg hover:shadow-xl transition-shadow duration-200">
+                <CardHeader className="pb-4">
+                  <CardTitle className="text-lg font-semibold text-foreground">Recent Reports</CardTitle>
+                  <CardDescription className="text-muted-foreground">
+                    Previously generated reports
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-3">
+                    <div className="flex items-center justify-between p-3 border rounded-lg">
+                      <div className="flex items-center gap-3">
+                        <Activity className="h-4 w-4 text-muted-foreground" />
+                        <div>
+                          <div className="font-medium text-sm">Monthly Performance - December 2024</div>
+                          <div className="text-xs text-muted-foreground">Generated 2 days ago</div>
+                        </div>
+                      </div>
+                      <Button size="sm" variant="outline">Download</Button>
+                    </div>
+                    
+                    <div className="flex items-center justify-between p-3 border rounded-lg">
+                      <div className="flex items-center gap-3">
+                        <Activity className="h-4 w-4 text-muted-foreground" />
+                        <div>
+                          <div className="font-medium text-sm">Lead Analysis - Q4 2024</div>
+                          <div className="text-xs text-muted-foreground">Generated 1 week ago</div>
+                        </div>
+                      </div>
+                      <Button size="sm" variant="outline">Download</Button>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+          </TabsContent>
         </Tabs>
       </div>
     </div>
