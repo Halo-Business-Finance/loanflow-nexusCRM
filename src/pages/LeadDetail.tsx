@@ -479,19 +479,12 @@ export default function LeadDetail() {
         is_primary: false
       })
 
-      // Check if the lead actually exists in the database first
-      const { data: leadExists, error: leadExistsError } = await supabase
-        .from('leads')
-        .select('id')
-        .eq('id', lead.id)
-        .maybeSingle()
-
-      if (leadExistsError || !leadExists) {
-        console.error('Lead does not exist in database:', { leadId: lead.id, error: leadExistsError })
-        throw new Error('Lead not found in database. Please refresh the page.')
-      }
-
-      console.log('Lead confirmed to exist in database:', leadExists.id)
+      console.log('Lead object structure:', {
+        leadId: lead.id,
+        leadType: typeof lead.id,
+        leadKeys: Object.keys(lead),
+        fullLead: lead
+      })
 
       const { data: borrower, error: borrowerError } = await supabase
         .from('additional_borrowers')
