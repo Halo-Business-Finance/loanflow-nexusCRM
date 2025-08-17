@@ -45,6 +45,27 @@ export interface Lead {
   bdo_name?: string
   bdo_telephone?: string
   bdo_email?: string
+  // Additional computed fields
+  source?: string
+  tax_id?: string
+  business_type?: string
+  years_in_business?: number
+  employees?: number
+  monthly_revenue?: number
+  debt_to_income_ratio?: number
+  collateral_value?: number
+  requested_amount?: number
+  purpose_of_loan?: string
+  time_in_business?: string
+  industry?: string
+  website?: string
+  social_media?: string
+  referral_source?: string
+  campaign_source?: string
+  lead_score?: number
+  last_activity?: string
+  next_follow_up?: string
+  conversion_probability?: number
 }
 
 export interface Client {
@@ -106,6 +127,27 @@ export interface ContactEntity {
   bdo_name?: string
   bdo_telephone?: string
   bdo_email?: string
+  // Additional fields
+  source?: string
+  tax_id?: string
+  business_type?: string
+  years_in_business?: number
+  employees?: number
+  monthly_revenue?: number
+  debt_to_income_ratio?: number
+  collateral_value?: number
+  requested_amount?: number
+  purpose_of_loan?: string
+  time_in_business?: string
+  industry?: string
+  website?: string
+  social_media?: string
+  referral_source?: string
+  campaign_source?: string
+  lead_score?: number
+  last_activity?: string
+  next_follow_up?: string
+  conversion_probability?: number
   created_at?: string
   updated_at?: string
 }
