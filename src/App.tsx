@@ -85,54 +85,33 @@ function AuthenticatedApp() {
         {user ? (
           <>
             <Route path="/" element={<HorizontalLayout><Index /></HorizontalLayout>} errorElement={<RouteErrorBoundary />} />
-            <Route path="/dashboard" element={<HorizontalLayout><Index /></HorizontalLayout>} errorElement={<RouteErrorBoundary />} />
-            <Route path="/quick-actions" element={<HorizontalLayout><Index /></HorizontalLayout>} errorElement={<RouteErrorBoundary />} />
             
             <Route path="/leads" element={<HorizontalLayout><Leads /></HorizontalLayout>} errorElement={<RouteErrorBoundary />} />
-            <Route path="/leads/new" element={<HorizontalLayout><Leads /></HorizontalLayout>} errorElement={<RouteErrorBoundary />} />
-            <Route path="/leads/stats" element={<HorizontalLayout><Leads /></HorizontalLayout>} errorElement={<RouteErrorBoundary />} />
-            <Route path="/leads/assignment" element={<HorizontalLayout><Leads /></HorizontalLayout>} errorElement={<RouteErrorBoundary />} />
             <Route path="/leads/:id" element={<LeadDetail />} errorElement={<RouteErrorBoundary />} />
             <Route path="/leads/:leadId/documents" element={<HorizontalLayout><LeadDocuments /></HorizontalLayout>} errorElement={<RouteErrorBoundary />} />
             
             <Route path="/existing-borrowers" element={<HorizontalLayout><Clients /></HorizontalLayout>} errorElement={<RouteErrorBoundary />} />
-            <Route path="/existing-borrowers/details" element={<HorizontalLayout><Clients /></HorizontalLayout>} errorElement={<RouteErrorBoundary />} />
-            <Route path="/existing-borrowers/history" element={<HorizontalLayout><Clients /></HorizontalLayout>} errorElement={<RouteErrorBoundary />} />
             <Route path="/existing-borrowers/:id" element={<HorizontalLayout><ClientDetail /></HorizontalLayout>} errorElement={<RouteErrorBoundary />} />
             {/* Redirect old client routes to existing borrowers */}
             <Route path="/clients/:id" element={<HorizontalLayout><ClientDetail /></HorizontalLayout>} errorElement={<RouteErrorBoundary />} />
             
             <Route path="/pipeline" element={<HorizontalLayout><Pipeline /></HorizontalLayout>} errorElement={<RouteErrorBoundary />} />
-            <Route path="/pipeline/analytics" element={<HorizontalLayout><Pipeline /></HorizontalLayout>} errorElement={<RouteErrorBoundary />} />
-            <Route path="/pipeline/stages" element={<HorizontalLayout><Pipeline /></HorizontalLayout>} errorElement={<RouteErrorBoundary />} />
             
             <Route path="/underwriter" element={<HorizontalLayout><Underwriter /></HorizontalLayout>} errorElement={<RouteErrorBoundary />} />
-            <Route path="/underwriter/documents" element={<HorizontalLayout><Underwriter /></HorizontalLayout>} errorElement={<RouteErrorBoundary />} />
-            <Route path="/underwriter/risk" element={<HorizontalLayout><Underwriter /></HorizontalLayout>} errorElement={<RouteErrorBoundary />} />
             
             <Route path="/documents" element={<HorizontalLayout><Documents /></HorizontalLayout>} errorElement={<RouteErrorBoundary />} />
-            <Route path="/documents/upload" element={<HorizontalLayout><Documents /></HorizontalLayout>} errorElement={<RouteErrorBoundary />} />
-            <Route path="/documents/templates" element={<HorizontalLayout><Documents /></HorizontalLayout>} errorElement={<RouteErrorBoundary />} />
             
             <Route path="/activities" element={<HorizontalLayout><Activities /></HorizontalLayout>} errorElement={<RouteErrorBoundary />} />
-            <Route path="/activities/calendar" element={<HorizontalLayout><Activities /></HorizontalLayout>} errorElement={<RouteErrorBoundary />} />
-            <Route path="/activities/tasks" element={<HorizontalLayout><Activities /></HorizontalLayout>} errorElement={<RouteErrorBoundary />} />
             
             <Route path="/reports" element={<HorizontalLayout><Reports /></HorizontalLayout>} errorElement={<RouteErrorBoundary />} />
             
             <Route path="/settings" element={<HorizontalLayout><Settings /></HorizontalLayout>} errorElement={<RouteErrorBoundary />} />
-            <Route path="/settings/users" element={<HorizontalLayout><Settings /></HorizontalLayout>} errorElement={<RouteErrorBoundary />} />
-            <Route path="/settings/system" element={<HorizontalLayout><Settings /></HorizontalLayout>} errorElement={<RouteErrorBoundary />} />
             
             <Route path="/users" element={<HorizontalLayout><Users /></HorizontalLayout>} errorElement={<RouteErrorBoundary />} />
             {/* Debug route */}
             <Route path="/users-debug" element={<div>Users route test</div>} errorElement={<RouteErrorBoundary />} />
             
             <Route path="/security" element={<HorizontalLayout><Security /></HorizontalLayout>} errorElement={<RouteErrorBoundary />} />
-            <Route path="/security/access" element={<HorizontalLayout><Security /></HorizontalLayout>} errorElement={<RouteErrorBoundary />} />
-            <Route path="/security/audit" element={<HorizontalLayout><Security /></HorizontalLayout>} errorElement={<RouteErrorBoundary />} />
-            <Route path="/security/threats" element={<HorizontalLayout><Security /></HorizontalLayout>} errorElement={<RouteErrorBoundary />} />
-            <Route path="/security/compliance" element={<HorizontalLayout><Security /></HorizontalLayout>} errorElement={<RouteErrorBoundary />} />
             <Route path="/security/military" element={<Layout><MilitaryGradeSecurityDashboard /></Layout>} errorElement={<RouteErrorBoundary />} />
             
             <Route path="/enterprise" element={<HorizontalLayout><Enterprise /></HorizontalLayout>} errorElement={<RouteErrorBoundary />} />
