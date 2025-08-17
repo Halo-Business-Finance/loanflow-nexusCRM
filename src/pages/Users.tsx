@@ -27,12 +27,17 @@ import {
   UserCheck,
   Activity,
   UsersIcon,
-  Building
+  Building,
+  MapPin,
+  Briefcase,
+  TrendingUp,
+  Star
 } from "lucide-react"
 import { supabase } from "@/integrations/supabase/client"
 import { useAuth } from "@/components/auth/AuthProvider"
 import { useToast } from "@/hooks/use-toast"
 import { formatCurrency } from "@/lib/utils"
+import { mapLeadFields, LEAD_WITH_CONTACT_QUERY } from "@/lib/field-mapping"
 import { Lead } from "@/types/lead"
 import { UserRole } from "@/hooks/useRoleBasedAccess"
 
@@ -205,31 +210,26 @@ export default function Users() {
       for (const profile of users) {
         const { data: leads, error: leadsError } = await supabase
           .from('leads')
-          .select(`
-            *,
-            contact_entities(*)
-          `)
+          .select(LEAD_WITH_CONTACT_QUERY)
           .eq('user_id', profile.user_id || profile.id)
 
         if (leadsError) {
           continue
         }
 
-        const transformedLeads = leads?.map(lead => ({
-          ...lead,
-          contact_entity: lead.contact_entities
-        })) || []
+        // Use the enhanced field mapping
+        const mappedLeads = leads?.map(lead => mapLeadFields(lead)) || []
 
-        const totalLeadValue = transformedLeads.reduce((sum, lead) => {
-          return sum + (lead.contact_entity?.loan_amount || 0)
+        const totalLeadValue = mappedLeads.reduce((sum, lead) => {
+          return sum + (lead.loan_amount || 0)
         }, 0)
 
-        const activeLeads = transformedLeads.filter(lead => 
-          lead.contact_entity?.stage && !['Lost', 'Loan Funded'].includes(lead.contact_entity.stage)
+        const activeLeads = mappedLeads.filter(lead => 
+          lead.stage && !['Lost', 'Loan Funded'].includes(lead.stage)
         ).length
 
-        const convertedLeads = transformedLeads.filter(lead => 
-          lead.contact_entity?.stage === 'Loan Funded'
+        const convertedLeads = mappedLeads.filter(lead => 
+          lead.stage === 'Loan Funded'
         ).length
 
         usersData.push({
@@ -239,7 +239,7 @@ export default function Users() {
             ? `${profile.first_name} ${profile.last_name}` 
             : profile.first_name || profile.email,
           role: profile.role || 'agent',
-          leads: transformedLeads,
+          leads: mappedLeads,
           totalLeadValue,
           activeLeads,
           convertedLeads
@@ -393,6 +393,27 @@ export default function Users() {
       case 'admin': return 'default'
       case 'manager': return 'secondary'
       default: return 'outline'
+    }
+  }
+
+  const getPriorityColor = (priority: string) => {
+    switch (priority) {
+      case 'high': return 'text-red-600'
+      case 'medium': return 'text-yellow-600'
+      case 'low': return 'text-green-600'
+      default: return 'text-gray-600'
+    }
+  }
+
+  const getStageColor = (stage: string) => {
+    switch (stage) {
+      case 'Loan Funded': return 'bg-green-100 text-green-800'
+      case 'Closing': return 'bg-blue-100 text-blue-800'
+      case 'Underwriting': return 'bg-purple-100 text-purple-800'
+      case 'Processing': return 'bg-orange-100 text-orange-800'
+      case 'Qualified': return 'bg-yellow-100 text-yellow-800'
+      case 'New': return 'bg-gray-100 text-gray-800'
+      default: return 'bg-gray-100 text-gray-600'
     }
   }
 
@@ -637,11 +658,11 @@ export default function Users() {
                         </div>
                       ) : (
                         filteredUsers.map((user) => (
-                           <Card key={user.id} className="hover:shadow-md transition-shadow">
-                             <CardContent className="p-4">
+                          <Card key={user.id} className="hover:shadow-md transition-shadow">
+                            <CardContent className="p-4">
                               <div className="flex items-center justify-between">
                                 <div className="flex items-center space-x-4">
-                                   <Avatar className="h-10 w-10">
+                                  <Avatar className="h-10 w-10">
                                     <AvatarImage src="" />
                                     <AvatarFallback className="bg-primary text-primary-foreground">
                                       {user.first_name?.charAt(0)}{user.last_name?.charAt(0)}
@@ -715,7 +736,7 @@ export default function Users() {
                   </TabsContent>
 
                   <TabsContent value="analytics" className="space-y-6 mt-6">
-                    {/* Users & Leads Analytics */}
+                    {/* Enhanced Users & Leads Analytics with all fields */}
                     <div className="grid gap-6">
                       {loading ? (
                         <div className="text-center py-8">
@@ -730,8 +751,8 @@ export default function Users() {
                         </div>
                       ) : (
                         filteredUsersWithLeads.map((userWithLeads) => (
-                           <Card key={userWithLeads.id} className="hover:shadow-md transition-shadow">
-                             <CardContent className="p-4">
+                          <Card key={userWithLeads.id} className="hover:shadow-md transition-shadow">
+                            <CardContent className="p-4">
                               <div className="flex items-start justify-between mb-4">
                                 <div className="flex items-center space-x-4">
                                   <Avatar className="h-10 w-10">
@@ -761,68 +782,226 @@ export default function Users() {
                               </div>
                               
                               {/* Performance Metrics */}
-                               <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-3">
-                                 <div className="text-center p-2 bg-primary/5 rounded-lg">
-                                   <div className="flex items-center justify-center gap-1 mb-1">
-                                     <UsersIcon className="h-3 w-3 text-primary" />
-                                     <span className="text-xs font-medium text-primary">Total</span>
-                                   </div>
-                                   <p className="text-xl font-bold">{userWithLeads.leads.length}</p>
+                              <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-3">
+                                <div className="text-center p-2 bg-primary/5 rounded-lg">
+                                  <div className="flex items-center justify-center gap-1 mb-1">
+                                    <UsersIcon className="h-3 w-3 text-primary" />
+                                    <span className="text-xs font-medium text-primary">Total</span>
+                                  </div>
+                                  <p className="text-xl font-bold">{userWithLeads.leads.length}</p>
                                 </div>
                                 
-                                 <div className="text-center p-2 bg-secondary/10 rounded-lg">
-                                   <div className="flex items-center justify-center gap-1 mb-1">
-                                     <Activity className="h-3 w-3 text-secondary" />
-                                     <span className="text-xs font-medium text-secondary">Active</span>
-                                   </div>
-                                   <p className="text-xl font-bold text-secondary">{userWithLeads.activeLeads}</p>
+                                <div className="text-center p-2 bg-secondary/10 rounded-lg">
+                                  <div className="flex items-center justify-center gap-1 mb-1">
+                                    <Activity className="h-3 w-3 text-secondary" />
+                                    <span className="text-xs font-medium text-secondary">Active</span>
+                                  </div>
+                                  <p className="text-xl font-bold text-secondary">{userWithLeads.activeLeads}</p>
                                 </div>
                                 
-                                 <div className="text-center p-2 bg-accent/10 rounded-lg">
-                                   <div className="flex items-center justify-center gap-1 mb-1">
-                                     <Building className="h-3 w-3 text-accent" />
-                                     <span className="text-xs font-medium text-accent">Converted</span>
-                                   </div>
-                                   <p className="text-xl font-bold text-accent">{userWithLeads.convertedLeads}</p>
+                                <div className="text-center p-2 bg-accent/10 rounded-lg">
+                                  <div className="flex items-center justify-center gap-1 mb-1">
+                                    <Building className="h-3 w-3 text-accent" />
+                                    <span className="text-xs font-medium text-accent">Converted</span>
+                                  </div>
+                                  <p className="text-xl font-bold text-accent">{userWithLeads.convertedLeads}</p>
                                 </div>
                                 
-                                 <div className="text-center p-2 bg-muted/30 rounded-lg">
-                                   <div className="flex items-center justify-center gap-1 mb-1">
-                                     <DollarSign className="h-3 w-3 text-primary" />
-                                     <span className="text-xs font-medium text-primary">Value</span>
-                                   </div>
-                                   <p className="text-lg font-bold text-primary">
-                                     {formatCurrency(userWithLeads.totalLeadValue)}
-                                   </p>
+                                <div className="text-center p-2 bg-muted/30 rounded-lg">
+                                  <div className="flex items-center justify-center gap-1 mb-1">
+                                    <DollarSign className="h-3 w-3 text-primary" />
+                                    <span className="text-xs font-medium text-primary">Value</span>
+                                  </div>
+                                  <p className="text-lg font-bold text-primary">
+                                    {formatCurrency(userWithLeads.totalLeadValue)}
+                                  </p>
                                 </div>
                               </div>
                               
-                              {/* Lead Details */}
+                              {/* Enhanced Lead Details with All Fields */}
                               {selectedUser === userWithLeads.id && (
                                 <div className="border-t pt-4">
-                                  <h4 className="font-semibold mb-3">Lead Details</h4>
+                                  <h4 className="font-semibold mb-3">Detailed Lead Information</h4>
                                   {userWithLeads.leads.length === 0 ? (
                                     <p className="text-muted-foreground text-center py-4">No leads found for this user.</p>
                                   ) : (
-                                    <div className="space-y-2 max-h-64 overflow-y-auto">
+                                    <div className="space-y-4 max-h-96 overflow-y-auto">
                                       {userWithLeads.leads.map((lead) => (
-                                        <div key={lead.id} className="flex items-center justify-between p-3 bg-muted/30 rounded-lg">
-                                          <div>
-                                            <p className="font-medium">{lead.contact_entity?.name || 'Unnamed Lead'}</p>
-                                            <div className="flex items-center gap-4 text-sm text-muted-foreground">
-                                              <span>{lead.contact_entity?.business_name || 'No business name'}</span>
-                                              <span>{lead.contact_entity?.loan_type || 'Unknown type'}</span>
+                                        <Card key={lead.id} className="p-4 bg-muted/20">
+                                          <div className="space-y-3">
+                                            {/* Header with name and stage */}
+                                            <div className="flex items-start justify-between">
+                                              <div>
+                                                <h5 className="font-medium text-lg">{lead.name || 'Unnamed Lead'}</h5>
+                                                <p className="text-sm text-muted-foreground">{lead.business_name || 'No business name'}</p>
+                                              </div>
+                                              <div className="flex flex-col items-end gap-1">
+                                                <Badge className={getStageColor(lead.stage || '')}>
+                                                  {lead.stage || 'No stage'}
+                                                </Badge>
+                                                <Badge variant="outline" className={getPriorityColor(lead.priority || '')}>
+                                                  <Star className="h-3 w-3 mr-1" />
+                                                  {lead.priority || 'medium'} priority
+                                                </Badge>
+                                              </div>
+                                            </div>
+                                            
+                                            {/* Comprehensive Lead Information Grid */}
+                                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 text-sm">
+                                              {/* Contact Information */}
+                                              <div className="space-y-2">
+                                                <h6 className="font-medium text-xs text-muted-foreground uppercase">Contact Info</h6>
+                                                <div className="space-y-1">
+                                                  <div className="flex items-center gap-2">
+                                                    <Mail className="h-3 w-3" />
+                                                    <span className="truncate">{lead.email || 'No email'}</span>
+                                                  </div>
+                                                  {lead.phone && (
+                                                    <div className="flex items-center gap-2">
+                                                      <Phone className="h-3 w-3" />
+                                                      <span>{lead.phone}</span>
+                                                    </div>
+                                                  )}
+                                                  {lead.location && (
+                                                    <div className="flex items-center gap-2">
+                                                      <MapPin className="h-3 w-3" />
+                                                      <span className="truncate">{lead.location}</span>
+                                                    </div>
+                                                  )}
+                                                </div>
+                                              </div>
+
+                                              {/* Business Information */}
+                                              <div className="space-y-2">
+                                                <h6 className="font-medium text-xs text-muted-foreground uppercase">Business Info</h6>
+                                                <div className="space-y-1">
+                                                  {lead.industry && (
+                                                    <div className="flex items-center gap-2">
+                                                      <Briefcase className="h-3 w-3" />
+                                                      <span className="truncate">{lead.industry}</span>
+                                                    </div>
+                                                  )}
+                                                  {lead.business_type && (
+                                                    <div className="text-xs">
+                                                      <span className="font-medium">Type:</span> {lead.business_type}
+                                                    </div>
+                                                  )}
+                                                  {lead.years_in_business && (
+                                                    <div className="text-xs">
+                                                      <span className="font-medium">Years:</span> {lead.years_in_business}
+                                                    </div>
+                                                  )}
+                                                  {lead.employees && (
+                                                    <div className="text-xs">
+                                                      <span className="font-medium">Employees:</span> {lead.employees}
+                                                    </div>
+                                                  )}
+                                                </div>
+                                              </div>
+
+                                              {/* Financial Information */}
+                                              <div className="space-y-2">
+                                                <h6 className="font-medium text-xs text-muted-foreground uppercase">Financial Info</h6>
+                                                <div className="space-y-1">
+                                                  <div className="flex items-center gap-2">
+                                                    <DollarSign className="h-3 w-3" />
+                                                    <span className="font-medium text-primary">{formatCurrency(lead.loan_amount || 0)}</span>
+                                                  </div>
+                                                  {lead.loan_type && (
+                                                    <div className="text-xs">
+                                                      <span className="font-medium">Type:</span> {lead.loan_type}
+                                                    </div>
+                                                  )}
+                                                  {lead.annual_revenue && (
+                                                    <div className="text-xs">
+                                                      <span className="font-medium">Revenue:</span> {formatCurrency(lead.annual_revenue)}
+                                                    </div>
+                                                  )}
+                                                  {lead.credit_score && (
+                                                    <div className="text-xs">
+                                                      <span className="font-medium">Credit:</span> {lead.credit_score}
+                                                    </div>
+                                                  )}
+                                                </div>
+                                              </div>
+
+                                              {/* Additional Details */}
+                                              <div className="space-y-2">
+                                                <h6 className="font-medium text-xs text-muted-foreground uppercase">Additional Info</h6>
+                                                <div className="space-y-1">
+                                                  {lead.source && (
+                                                    <div className="text-xs">
+                                                      <span className="font-medium">Source:</span> {lead.source}
+                                                    </div>
+                                                  )}
+                                                  {lead.referral_source && (
+                                                    <div className="text-xs">
+                                                      <span className="font-medium">Referral:</span> {lead.referral_source}
+                                                    </div>
+                                                  )}
+                                                  {lead.lead_score && (
+                                                    <div className="flex items-center gap-2">
+                                                      <TrendingUp className="h-3 w-3" />
+                                                      <span className="text-xs">Score: {lead.lead_score}</span>
+                                                    </div>
+                                                  )}
+                                                </div>
+                                              </div>
+
+                                              {/* Dates */}
+                                              <div className="space-y-2">
+                                                <h6 className="font-medium text-xs text-muted-foreground uppercase">Timeline</h6>
+                                                <div className="space-y-1">
+                                                  <div className="flex items-center gap-2">
+                                                    <Calendar className="h-3 w-3" />
+                                                    <span className="text-xs">Created: {new Date(lead.created_at).toLocaleDateString()}</span>
+                                                  </div>
+                                                  {lead.last_contact && (
+                                                    <div className="text-xs">
+                                                      <span className="font-medium">Last Contact:</span> {new Date(lead.last_contact).toLocaleDateString()}
+                                                    </div>
+                                                  )}
+                                                  {lead.next_follow_up && (
+                                                    <div className="text-xs">
+                                                      <span className="font-medium">Next Follow-up:</span> {new Date(lead.next_follow_up).toLocaleDateString()}
+                                                    </div>
+                                                  )}
+                                                </div>
+                                              </div>
+
+                                              {/* Notes */}
+                                              {(lead.notes || lead.call_notes) && (
+                                                <div className="space-y-2 col-span-full">
+                                                  <h6 className="font-medium text-xs text-muted-foreground uppercase">Notes</h6>
+                                                  <div className="space-y-1">
+                                                    {lead.notes && (
+                                                      <div className="text-xs p-2 bg-muted/20 rounded">
+                                                        <span className="font-medium">General:</span> {lead.notes}
+                                                      </div>
+                                                    )}
+                                                    {lead.call_notes && (
+                                                      <div className="text-xs p-2 bg-muted/20 rounded">
+                                                        <span className="font-medium">Call Notes:</span> {lead.call_notes}
+                                                      </div>
+                                                    )}
+                                                  </div>
+                                                </div>
+                                              )}
+                                            </div>
+
+                                            {/* Action Button */}
+                                            <div className="flex justify-end pt-2 border-t">
+                                              <Button
+                                                size="sm"
+                                                variant="outline"
+                                                onClick={() => navigate(`/leads/${lead.id}`)}
+                                              >
+                                                <Eye className="h-3 w-3 mr-1" />
+                                                View Full Details
+                                              </Button>
                                             </div>
                                           </div>
-                                          <div className="text-right">
-                                            <Badge variant={lead.contact_entity?.stage === 'Loan Funded' ? 'default' : 'secondary'}>
-                                              {lead.contact_entity?.stage || 'No stage'}
-                                            </Badge>
-                                            <p className="text-sm font-medium text-primary mt-1">
-                                              {formatCurrency(lead.contact_entity?.loan_amount || 0)}
-                                            </p>
-                                          </div>
-                                        </div>
+                                        </Card>
                                       ))}
                                     </div>
                                   )}
