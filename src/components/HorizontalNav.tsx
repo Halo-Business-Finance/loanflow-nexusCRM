@@ -61,15 +61,11 @@ const pipelineItems = [
 
 const underwriterItems = [
   { name: "Underwriter Dashboard", path: "/underwriter", icon: Shield },
+  { name: "Documents", path: "/documents", icon: FileText },
   { name: "Document Review", path: "/underwriter/documents", icon: FileText },
   { name: "Risk Assessment", path: "/underwriter/risk", icon: Activity },
 ]
 
-const documentsItems = [
-  { name: "All Documents", path: "/documents", icon: FileText },
-  { name: "Upload Document", path: "/documents/upload", icon: Download },
-  { name: "Document Templates", path: "/documents/templates", icon: FileText },
-]
 
 const activitiesItems = [
   { name: "All Activities", path: "/activities", icon: Activity },
@@ -374,33 +370,6 @@ export function HorizontalNav() {
             </DropdownMenuContent>
           </DropdownMenu>
 
-          {/* Documents Dropdown */}
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button 
-                variant="ghost" 
-                className={`flex items-center gap-1 px-4 py-3 text-sm font-medium transition-colors hover:text-blue-600 hover:bg-blue-50 rounded-md ${
-                  documentsItems.some(item => isActivePath(item.path))
-                    ? 'text-primary border-b-2 border-primary'
-                    : 'text-foreground/70 hover:text-blue-600'
-                }`}
-              >
-                <FileText className="h-3 w-3" />
-                Documents
-                <ChevronDown className="h-2 w-2" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="start" className="w-48 bg-background border border-border shadow-lg z-50">
-              {documentsItems.map((item) => (
-                <DropdownMenuItem key={item.name} asChild>
-                  <Link to={item.path} className="flex items-center gap-2 w-full px-2 py-2 text-sm hover:bg-blue-50 hover:text-blue-700 rounded-sm">
-                    <item.icon className="h-4 w-4" />
-                    {item.name}
-                  </Link>
-                </DropdownMenuItem>
-              ))}
-            </DropdownMenuContent>
-          </DropdownMenu>
 
           {/* Activities Dropdown */}
           <DropdownMenu>
