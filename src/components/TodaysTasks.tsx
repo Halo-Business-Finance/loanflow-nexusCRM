@@ -2,7 +2,7 @@ import { useState, useEffect } from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-import { Clock, Phone, Mail, Calendar, AlertCircle } from "lucide-react"
+import { Clock, Phone, Mail, Calendar, AlertCircle, LucideIcon } from "lucide-react"
 import { supabase } from "@/integrations/supabase/client"
 import { useAuth } from "@/components/auth/AuthProvider"
 import { format, isToday, isBefore, startOfDay } from "date-fns"
@@ -72,7 +72,7 @@ export function TodaysTasks() {
     return 'low'
   }
 
-  const getIcon = (type: string) => {
+  const getIcon = (type: string): LucideIcon => {
     if (type.includes('call') || type.includes('follow_up')) return Phone
     if (type.includes('email')) return Mail
     if (type.includes('reminder')) return Clock

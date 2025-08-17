@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react"
-import { Search, User, Users, DollarSign, FileText } from "lucide-react"
+import { Search, User, Users, DollarSign, FileText, LucideIcon } from "lucide-react"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import {
@@ -145,7 +145,7 @@ export function GlobalSearch() {
     setQuery("")
   }
 
-  const getIcon = (type: string) => {
+  const getIcon = (type: string): LucideIcon => {
     switch (type) {
       case 'lead': return User
       case 'client': return Users
