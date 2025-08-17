@@ -98,7 +98,7 @@ function AuthenticatedApp() {
       <KeyboardShortcutsProvider />
       <SecurityProvider />
       <Routes>
-        {/* Public routes - accessible without authentication */}
+        {/* Public routes - always accessible */}
         <Route path="/auth" element={<AuthPage />} errorElement={<RouteErrorBoundary />} />
         <Route path="/auth/callback" element={<CallbackHandler />} errorElement={<RouteErrorBoundary />} />
         
