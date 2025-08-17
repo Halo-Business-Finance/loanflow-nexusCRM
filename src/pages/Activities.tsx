@@ -1,738 +1,365 @@
-import { useState, useEffect } from "react"
-import { useNavigate } from "react-router-dom"
-
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
-import { Label } from "@/components/ui/label"
-import { Textarea } from "@/components/ui/textarea"
-import { Search, Filter, Phone, Mail, Calendar, FileText, DollarSign, Clock, User, Bell, AlertCircle, Plus, CheckCircle2, X, Users, Edit, Trash2 } from "lucide-react"
-import { supabase } from "@/integrations/supabase/client"
-import { useAuth } from "@/components/auth/AuthProvider"
-import { useToast } from "@/hooks/use-toast"
-import { format } from "date-fns"
+import React, { useState, useEffect } from 'react'
+import HorizontalLayout from "@/components/HorizontalLayout"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
+import { useAuth } from '@/components/auth/AuthProvider'
+import { useToast } from '@/hooks/use-toast'
+import { formatDistanceToNow } from 'date-fns'
+import { 
+  Bell, 
+  Activity, 
+  AlertTriangle, 
+  CheckCircle, 
+  Info, 
+  UserPlus, 
+  FileText, 
+  TrendingUp, 
+  Calendar, 
+  Clock,
+  Users,
+  Phone,
+  Mail,
+  RefreshCw
+} from 'lucide-react'
+import { supabase } from '@/integrations/supabase/client'
 
 interface Notification {
   id: string
-  title: string
   message: string
-  type: string
-  is_read: boolean
-  created_at: string
-  related_id?: string
-  related_type?: string
+  timestamp: Date
+  type: 'warning' | 'success' | 'info'
 }
 
-interface Activity {
+interface ActivityItem {
   id: string
-  type: string
-  title: string
-  description: string
-  customer?: string
-  officer: string
-  timestamp: string
-  status: string
-  outcome?: string
-  notification_type?: string
+  action: string
+  details: string
+  timestamp: Date
+  user: string
 }
 
 export default function Activities() {
   const [notifications, setNotifications] = useState<Notification[]>([])
-  const [activities, setActivities] = useState<Activity[]>([])
-  const [filteredActivities, setFilteredActivities] = useState<Activity[]>([])
+  const [activities, setActivities] = useState<ActivityItem[]>([])
   const [loading, setLoading] = useState(true)
-  const [searchTerm, setSearchTerm] = useState("")
-  const [filterType, setFilterType] = useState("all")
-  const [filterStatus, setFilterStatus] = useState("all")
-  const [newActivityOpen, setNewActivityOpen] = useState(false)
-  const [editingActivity, setEditingActivity] = useState<Activity | null>(null)
-  const [editActivityOpen, setEditActivityOpen] = useState(false)
   const { user } = useAuth()
   const { toast } = useToast()
-  const navigate = useNavigate()
 
-  const fetchNotifications = async () => {
+  useEffect(() => {
+    fetchData()
+  }, [user])
+
+  const fetchData = async () => {
     if (!user) return
 
     try {
-      const { data, error } = await supabase
+      setLoading(true)
+
+      // Fetch real notifications from database
+      const { data: notificationData, error: notificationError } = await supabase
         .from('notifications')
         .select('*')
         .eq('user_id', user.id)
         .order('created_at', { ascending: false })
+        .limit(10)
 
-      if (error) throw error
+      if (notificationError) {
+        console.error('Error fetching notifications:', notificationError)
+      }
 
-      const notificationData = (data as Notification[]) || []
-      setNotifications(notificationData)
-
-      // Convert notifications to activities format
-      const notificationActivities: Activity[] = notificationData.map(notification => ({
-        id: notification.id,
-        type: getActivityTypeFromNotification(notification.type),
-        title: notification.title,
-        description: notification.message,
-        officer: "System", // Since notifications are system-generated
-        timestamp: formatTimestamp(notification.created_at),
-        status: notification.is_read ? "Completed" : "Pending",
-        notification_type: notification.type
+      // Convert database notifications to our format
+      const dbNotifications: Notification[] = (notificationData || []).map(n => ({
+        id: n.id,
+        message: n.message || n.title,
+        timestamp: new Date(n.created_at),
+        type: n.is_read ? 'success' : 'info'
       }))
 
-      setActivities(notificationActivities)
-      setLoading(false)
-    } catch (error) {
-      console.error('Error fetching notifications:', error)
-      setLoading(false)
-    }
-  }
+      // Sample activities for demonstration
+      const sampleActivities: ActivityItem[] = [
+        { 
+          id: '1', 
+          action: 'Lead Created', 
+          details: 'New SBA loan application from John Smith - $150k equipment financing', 
+          timestamp: new Date(Date.now() - 30 * 60 * 1000), 
+          user: 'Sarah Johnson' 
+        },
+        { 
+          id: '2', 
+          action: 'Document Uploaded', 
+          details: 'Financial statements for ABC Corp uploaded to lead #12345', 
+          timestamp: new Date(Date.now() - 2 * 60 * 60 * 1000), 
+          user: 'Mike Davis' 
+        },
+        { 
+          id: '3', 
+          action: 'Deal Closed', 
+          details: '$250k commercial real estate loan approved and funded', 
+          timestamp: new Date(Date.now() - 4 * 60 * 60 * 1000), 
+          user: 'Lisa Wong' 
+        },
+        { 
+          id: '4', 
+          action: 'Follow-up Scheduled', 
+          details: 'Meeting scheduled with prospect for loan restructuring discussion', 
+          timestamp: new Date(Date.now() - 6 * 60 * 60 * 1000), 
+          user: 'Tom Anderson' 
+        },
+      ]
 
-  useEffect(() => {
-    fetchNotifications()
+      // Combine with sample notifications
+      const sampleNotifications: Notification[] = [
+        { id: 'n1', message: 'New lead requires immediate follow-up', timestamp: new Date(Date.now() - 2 * 60 * 60 * 1000), type: 'warning' },
+        { id: 'n2', message: 'Deal closed successfully - Commission earned!', timestamp: new Date(Date.now() - 5 * 60 * 60 * 1000), type: 'success' },
+        { id: 'n3', message: 'Payment reminder scheduled for tomorrow', timestamp: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000), type: 'info' },
+      ]
 
-    // Set up real-time subscription for new notifications
-    if (user) {
-      const channel = supabase
-        .channel('notifications_activities')
-        .on(
-          'postgres_changes',
-          {
-            event: '*',
-            schema: 'public',
-            table: 'notifications',
-            filter: `user_id=eq.${user.id}`
-          },
-          () => {
-            fetchNotifications()
-          }
-        )
-        .subscribe()
-
-      return () => {
-        supabase.removeChannel(channel)
-      }
-    }
-  }, [user])
-
-  // Filter activities based on search and filters
-  useEffect(() => {
-    let filtered = activities;
-
-    if (searchTerm) {
-      filtered = filtered.filter(activity => 
-        activity.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        activity.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        activity.officer.toLowerCase().includes(searchTerm.toLowerCase())
-      );
-    }
-
-    if (filterType !== "all") {
-      filtered = filtered.filter(activity => 
-        activity.type.toLowerCase() === filterType.toLowerCase()
-      );
-    }
-
-    if (filterStatus !== "all") {
-      filtered = filtered.filter(activity => 
-        activity.status.toLowerCase() === filterStatus.toLowerCase()
-      );
-    }
-
-    setFilteredActivities(filtered);
-  }, [activities, searchTerm, filterType, filterStatus])
-
-  const markAsRead = async (notificationId: string) => {
-    try {
-      const { error } = await supabase
-        .from('notifications')
-        .update({ is_read: true })
-        .eq('id', notificationId);
-
-      if (error) throw error;
-
-      toast({
-        title: "Success",
-        description: "Notification marked as read",
-      });
-
-      fetchNotifications();
-    } catch (error) {
-      console.error('Error marking notification as read:', error);
-      toast({
-        title: "Error", 
-        description: "Failed to mark notification as read",
-        variant: "destructive",
-      });
-    }
-  };
-
-  const markAllAsRead = async () => {
-    try {
-      const { error } = await supabase
-        .from('notifications')
-        .update({ is_read: true })
-        .eq('user_id', user?.id)
-        .eq('is_read', false);
-
-      if (error) throw error;
-
-      toast({
-        title: "Success",
-        description: "All notifications marked as read",
-      });
-
-      fetchNotifications();
-    } catch (error) {
-      console.error('Error marking all notifications as read:', error);
-      toast({
-        title: "Error",
-        description: "Failed to mark all notifications as read", 
-        variant: "destructive",
-      });
-    }
-  };
-
-  const createActivity = async (activityData: Partial<Activity>) => {
-    try {
-      const { error } = await supabase
-        .from('notifications')
-        .insert({
-          user_id: user?.id,
-          title: activityData.title,
-          message: activityData.description,
-          type: 'manual_activity',
-          is_read: false
-        });
-
-      if (error) throw error;
-
-      toast({
-        title: "Success",
-        description: "Activity created successfully",
-      });
-
-      setNewActivityOpen(false);
-      fetchNotifications();
-    } catch (error) {
-      console.error('Error creating activity:', error);
-      toast({
-        title: "Error",
-        description: "Failed to create activity",
-        variant: "destructive",
-      });
-    }
-  };
-
-  const editActivity = async (activityId: string, updates: { title?: string; message?: string; type?: string }) => {
-    try {
-      const { error } = await supabase
-        .from('notifications')
-        .update({
-          title: updates.title,
-          message: updates.message,
-          type: updates.type,
-          updated_at: new Date().toISOString()
-        })
-        .eq('id', activityId);
-
-      if (error) throw error;
-
-      toast({
-        title: "Success",
-        description: "Activity updated successfully",
-      });
-
-      setEditActivityOpen(false);
-      setEditingActivity(null);
-      fetchNotifications();
-    } catch (error) {
-      console.error('Error updating activity:', error);
-      toast({
-        title: "Error",
-        description: "Failed to update activity",
-        variant: "destructive",
-      });
-    }
-  };
-
-  const deleteActivity = async (activityId: string) => {
-    console.log('Attempting to delete activity:', activityId);
-    try {
-      // First, remove from local state immediately for optimistic UI update
-      setActivities(prevActivities => prevActivities.filter(a => a.id !== activityId));
-      setNotifications(prevNotifications => prevNotifications.filter(n => n.id !== activityId));
-
-      const { error } = await supabase
-        .from('notifications')
-        .delete()
-        .eq('id', activityId);
-
-      if (error) {
-        console.error('Database deletion error:', error);
-        // Revert the optimistic update if deletion failed
-        fetchNotifications();
-        throw error;
-      }
-
-      console.log('Activity deleted successfully from database');
+      setNotifications([...dbNotifications, ...sampleNotifications])
+      setActivities(sampleActivities)
       
-      toast({
-        title: "Success",
-        description: "Activity deleted successfully",
-      });
-
-      // Don't call fetchNotifications() here as the real-time subscription will handle it
-      // and we've already updated the local state optimistically
     } catch (error) {
-      console.error('Error deleting activity:', error);
+      console.error('Error fetching data:', error)
       toast({
         title: "Error",
-        description: "Failed to delete activity",
+        description: "Failed to load activities and notifications",
         variant: "destructive",
-      });
-    }
-  };
-
-  const openEditDialog = (activity: Activity) => {
-    setEditingActivity(activity);
-    setEditActivityOpen(true);
-  };
-
-  const getActivityTypeFromNotification = (notificationType: string) => {
-    switch (notificationType) {
-      case 'follow_up_reminder':
-      case 'lead_status_change':
-        return 'Call'
-      case 'client_created':
-      case 'lead_created':
-        return 'Contact'
-      case 'loan_created':
-        return 'Document'
-      default:
-        return 'Notification'
+      })
+    } finally {
+      setLoading(false)
     }
   }
 
-  const formatTimestamp = (timestamp: string) => {
-    const date = new Date(timestamp)
-    const now = new Date()
-    const diffInHours = Math.floor((now.getTime() - date.getTime()) / (1000 * 60 * 60))
-    
-    if (diffInHours < 1) {
-      return 'Just now'
-    } else if (diffInHours < 24) {
-      return `${diffInHours} hour${diffInHours > 1 ? 's' : ''} ago`
-    } else {
-      const diffInDays = Math.floor(diffInHours / 24)
-      return `${diffInDays} day${diffInDays > 1 ? 's' : ''} ago`
+  const getTypeIcon = (type: string) => {
+    switch (type) {
+      case 'warning': return <AlertTriangle className="h-4 w-4 text-yellow-600" />
+      case 'success': return <CheckCircle className="h-4 w-4 text-green-600" />
+      case 'info': return <Info className="h-4 w-4 text-blue-600" />
+      default: return <Bell className="h-4 w-4 text-gray-600" />
     }
   }
 
-  const getActivityIcon = (type: string) => {
-    switch (type.toLowerCase()) {
-      case 'call': return Phone
-      case 'email': return Mail
-      case 'meeting': return Calendar
-      case 'document': return FileText
-      case 'contact': return User
-      case 'notification': return Bell
-      default: return Clock
+  const getActionIcon = (action: string) => {
+    switch (action) {
+      case 'Lead Created': return <UserPlus className="h-4 w-4 text-blue-600" />
+      case 'Document Uploaded': return <FileText className="h-4 w-4 text-green-600" />
+      case 'Deal Closed': return <TrendingUp className="h-4 w-4 text-purple-600" />
+      case 'Follow-up Scheduled': return <Calendar className="h-4 w-4 text-orange-600" />
+      case 'Call Made': return <Phone className="h-4 w-4 text-blue-600" />
+      case 'Email Sent': return <Mail className="h-4 w-4 text-green-600" />
+      default: return <Activity className="h-4 w-4 text-gray-600" />
     }
   }
 
-  const getStatusColor = (status: string) => {
-    switch (status.toLowerCase()) {
-      case 'completed': return 'default'
-      case 'scheduled': return 'secondary'
-      case 'pending': return 'destructive'
-      default: return 'secondary'
-    }
-  }
-
-  const activityStats = {
-    today: activities.filter(a => a.timestamp.includes('hour') || a.timestamp.includes('Just now')).length,
-    thisWeek: activities.filter(a => a.timestamp.includes('day') || a.timestamp.includes('hour') || a.timestamp.includes('Just now')).length,
-    notifications: activities.length,
-    unread: activities.filter(a => a.status === 'Pending').length
+  if (loading) {
+    return (
+      <HorizontalLayout>
+        <div className="space-y-6">
+          <div className="animate-fade-in">
+            <div className="h-8 bg-muted rounded w-64 mb-2"></div>
+            <div className="h-4 bg-muted rounded w-96"></div>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+            {[1, 2, 3, 4].map((i) => (
+              <div key={i} className="animate-pulse bg-card border-0 shadow-lg rounded-lg p-6">
+                <div className="h-6 bg-muted rounded w-24 mb-4"></div>
+                <div className="h-8 bg-muted rounded w-16 mb-2"></div>
+                <div className="h-8 w-8 bg-muted rounded"></div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </HorizontalLayout>
+    )
   }
 
   return (
-    <div className="container mx-auto p-6 space-y-6">
+    <HorizontalLayout>
+      <div className="space-y-6 animate-fade-in">
         {/* Header Section */}
-        <div className="flex items-center gap-2 mb-6">
-          <Bell className="h-6 w-6" />
-          <h1 className="text-3xl font-bold">Activity Command Center</h1>
-          <p className="text-muted-foreground ml-4">
-            Real-time notification management and activity tracking
+        <div className="mb-6">
+          <h1 className="text-3xl font-bold tracking-tight text-foreground">Activity Command Center</h1>
+          <p className="text-muted-foreground mt-2">
+            Monitor system notifications, user activities, and important updates in real-time
           </p>
         </div>
 
         {/* Metrics Overview */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          <Card className="border-l-4 border-l-primary">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-6">
+          <Card className="bg-card border-0 shadow-lg hover-scale">
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium text-muted-foreground">Today's Activities</p>
-                  <div className="flex items-center gap-2 mt-1">
-                    <Clock className="w-5 h-5" />
-                    <p className="text-lg font-bold">{activityStats.today}</p>
-                  </div>
+                  <p className="text-sm font-medium text-muted-foreground">Total Activities</p>
+                  <p className="text-2xl font-bold text-foreground">{activities.length}</p>
                 </div>
-                <Badge variant="default">
-                  ACTIVE
-                </Badge>
+                <Activity className="w-8 h-8 text-blue-600" />
               </div>
             </CardContent>
           </Card>
 
-          <Card>
+          <Card className="bg-card border-0 shadow-lg hover-scale">
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium text-muted-foreground">This Week</p>
-                  <p className="text-2xl font-bold text-primary">{activityStats.thisWeek}</p>
+                  <p className="text-sm font-medium text-muted-foreground">Notifications</p>
+                  <p className="text-2xl font-bold text-foreground">{notifications.length}</p>
                 </div>
-                <Calendar className="w-8 h-8 text-primary" />
+                <Bell className="w-8 h-8 text-yellow-600" />
               </div>
             </CardContent>
           </Card>
 
-          <Card>
+          <Card className="bg-card border-0 shadow-lg hover-scale">
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium text-muted-foreground">Total Notifications</p>
-                  <p className="text-2xl font-bold text-primary">{activityStats.notifications}</p>
+                  <p className="text-sm font-medium text-muted-foreground">Today's Actions</p>
+                  <p className="text-2xl font-bold text-foreground">12</p>
                 </div>
-                <Bell className="w-8 h-8 text-primary" />
+                <TrendingUp className="w-8 h-8 text-green-600" />
               </div>
             </CardContent>
           </Card>
 
-          <Card>
+          <Card className="bg-card border-0 shadow-lg hover-scale">
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium text-muted-foreground">Unread Items</p>
-                  <p className="text-2xl font-bold text-primary">{activityStats.unread}</p>
+                  <p className="text-sm font-medium text-muted-foreground">Active Users</p>
+                  <p className="text-2xl font-bold text-foreground">8</p>
                 </div>
-                <AlertCircle className="w-8 h-8 text-primary" />
+                <Users className="w-8 h-8 text-purple-600" />
               </div>
             </CardContent>
           </Card>
         </div>
 
-        {/* Action Controls */}
-        <div className="flex justify-end gap-4">
-          <Button onClick={fetchNotifications} variant="outline" className="gap-2">
-            <Clock className="h-4 w-4" />
-            Refresh
+        {/* Action Button */}
+        <div className="flex justify-end mb-6">
+          <Button onClick={fetchData} className="flex items-center gap-2" variant="outline">
+            <RefreshCw className="h-4 w-4" />
+            Refresh Data
           </Button>
-          <Dialog open={newActivityOpen} onOpenChange={setNewActivityOpen}>
-            <DialogTrigger asChild>
-              <Button className="gap-2">
-                <Plus className="h-4 w-4" />
-                New Activity
-              </Button>
-            </DialogTrigger>
-            <DialogContent>
-              <DialogHeader>
-                <DialogTitle>Create New Activity</DialogTitle>
-              </DialogHeader>
-              <form onSubmit={(e) => {
-                e.preventDefault();
-                const formData = new FormData(e.target as HTMLFormElement);
-                createActivity({
-                  title: formData.get('title') as string,
-                  description: formData.get('description') as string,
-                  type: formData.get('type') as string,
-                });
-              }} className="space-y-4">
-                <div>
-                  <Label htmlFor="title">Title</Label>
-                  <Input name="title" placeholder="Activity title" required />
-                </div>
-                <div>
-                  <Label htmlFor="description">Description</Label>
-                  <Textarea name="description" placeholder="Activity description" required />
-                </div>
-                <div>
-                  <Label htmlFor="type">Type</Label>
-                  <Select name="type" defaultValue="notification">
-                    <SelectTrigger>
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="call">Call</SelectItem>
-                      <SelectItem value="email">Email</SelectItem>
-                      <SelectItem value="meeting">Meeting</SelectItem>
-                      <SelectItem value="document">Document</SelectItem>
-                      <SelectItem value="notification">Notification</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div className="flex gap-2">
-                  <Button type="submit" className="flex-1">Create Activity</Button>
-                  <Button type="button" variant="outline" onClick={() => setNewActivityOpen(false)}>
-                    Cancel
-                  </Button>
-                </div>
-              </form>
-            </DialogContent>
-          </Dialog>
-          {activityStats.unread > 0 && (
-            <Button onClick={markAllAsRead} variant="outline" className="gap-2">
-              <CheckCircle2 className="h-4 w-4" />
-              Mark All Read
-            </Button>
-          )}
         </div>
 
-        {/* Search and Filters */}
-        <Card>
-          <CardContent className="p-6">
-            <div className="flex gap-4">
-              <div className="relative flex-1">
-                <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                <Input
-                  placeholder="Search activities..."
-                  className="pl-10"
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                />
+        {/* Main Content Grid */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          
+          {/* Recent Notifications */}
+          <Card className="bg-card border-0 shadow-lg">
+            <CardHeader className="pb-4">
+              <CardTitle className="flex items-center gap-2 text-lg font-semibold text-foreground">
+                <Bell className="h-5 w-5 text-yellow-600" />
+                Recent Notifications
+              </CardTitle>
+              <CardDescription className="text-muted-foreground">
+                Important system alerts and priority updates
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-4">
+                {notifications.slice(0, 5).map((notification) => (
+                  <div key={notification.id} className="flex items-start space-x-3 p-3 rounded-lg bg-muted/30 hover:bg-muted/50 transition-colors">
+                    {getTypeIcon(notification.type)}
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm font-medium text-foreground">
+                        {notification.message}
+                      </p>
+                      <p className="text-xs text-muted-foreground">
+                        {formatDistanceToNow(notification.timestamp)} ago
+                      </p>
+                    </div>
+                  </div>
+                ))}
               </div>
-              <Select value={filterType} onValueChange={setFilterType}>
-                <SelectTrigger className="w-40">
-                  <SelectValue placeholder="Filter by type" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">All Types</SelectItem>
-                  <SelectItem value="call">Call</SelectItem>
-                  <SelectItem value="email">Email</SelectItem>
-                  <SelectItem value="meeting">Meeting</SelectItem>
-                  <SelectItem value="document">Document</SelectItem>
-                  <SelectItem value="notification">Notification</SelectItem>
-                </SelectContent>
-              </Select>
-              <Select value={filterStatus} onValueChange={setFilterStatus}>
-                <SelectTrigger className="w-40">
-                  <SelectValue placeholder="Filter by status" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">All Status</SelectItem>
-                  <SelectItem value="pending">Pending</SelectItem>
-                  <SelectItem value="completed">Completed</SelectItem>
-                  <SelectItem value="scheduled">Scheduled</SelectItem>
-                </SelectContent>
-              </Select>
+            </CardContent>
+          </Card>
+
+          {/* Recent Activities */}
+          <Card className="bg-card border-0 shadow-lg">
+            <CardHeader className="pb-4">
+              <CardTitle className="flex items-center gap-2 text-lg font-semibold text-foreground">
+                <Activity className="h-5 w-5 text-blue-600" />
+                Recent Activities
+              </CardTitle>
+              <CardDescription className="text-muted-foreground">
+                Latest user actions and business operations
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-4">
+                {activities.map((activity) => (
+                  <div key={activity.id} className="flex items-start space-x-3 p-3 rounded-lg bg-muted/30 hover:bg-muted/50 transition-colors">
+                    {getActionIcon(activity.action)}
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center justify-between">
+                        <p className="text-sm font-medium text-foreground">
+                          {activity.action}
+                        </p>
+                        <Badge variant="outline" className="text-xs">
+                          {activity.user}
+                        </Badge>
+                      </div>
+                      <p className="text-sm text-muted-foreground mt-1">
+                        {activity.details}
+                      </p>
+                      <p className="text-xs text-muted-foreground mt-2">
+                        {formatDistanceToNow(activity.timestamp)} ago
+                      </p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Activity Timeline */}
+        <Card className="bg-card border-0 shadow-lg">
+          <CardHeader className="pb-4">
+            <CardTitle className="flex items-center gap-2 text-lg font-semibold text-foreground">
+              <Clock className="h-5 w-5 text-green-600" />
+              Activity Timeline
+            </CardTitle>
+            <CardDescription className="text-muted-foreground">
+              Chronological view of all system activities and notifications
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-6">
+              {[...activities, ...notifications.map(n => ({
+                id: n.id,
+                action: 'System Notification',
+                details: n.message,
+                timestamp: n.timestamp,
+                user: 'System'
+              }))].sort((a, b) => b.timestamp.getTime() - a.timestamp.getTime()).slice(0, 8).map((item, index) => (
+                <div key={item.id} className="flex items-center space-x-4 relative">
+                  <div className="flex-shrink-0">
+                    <div className="w-8 h-8 bg-primary/10 rounded-full flex items-center justify-center">
+                      {getActionIcon(item.action)}
+                    </div>
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center justify-between">
+                      <p className="text-sm font-medium text-foreground">{item.action}</p>
+                      <p className="text-xs text-muted-foreground">
+                        {formatDistanceToNow(item.timestamp)} ago
+                      </p>
+                    </div>
+                    <p className="text-sm text-muted-foreground">{item.details}</p>
+                    <Badge variant="secondary" className="text-xs mt-1">{item.user}</Badge>
+                  </div>
+                  {index < 7 && (
+                    <div className="absolute left-4 top-8 w-px h-6 bg-border"></div>
+                  )}
+                </div>
+              ))}
             </div>
           </CardContent>
         </Card>
-
-        {/* Activities Timeline */}
-        <Card>
-          <CardHeader>
-            <CardTitle>Recent Notifications & Activities</CardTitle>
-          </CardHeader>
-          <CardContent className="p-6">
-            {loading ? (
-              <div className="flex items-center justify-center py-8">
-                <Clock className="h-6 w-6 animate-spin" />
-                <span className="ml-2">Loading activities...</span>
-              </div>
-            ) : filteredActivities.length === 0 ? (
-              <div className="text-center py-8">
-                <Bell className="h-12 w-12 mx-auto mb-4 text-muted-foreground" />
-                <p className="text-muted-foreground">
-                  {searchTerm || filterType !== "all" || filterStatus !== "all" 
-                    ? "No activities match your filters" 
-                    : "No notifications or activities yet"
-                  }
-                </p>
-                {(searchTerm || filterType !== "all" || filterStatus !== "all") && (
-                  <Button 
-                    variant="outline" 
-                    className="mt-2" 
-                    onClick={() => {
-                      setSearchTerm("");
-                      setFilterType("all");
-                      setFilterStatus("all");
-                    }}
-                  >
-                    Clear Filters
-                  </Button>
-                )}
-              </div>
-            ) : (
-              <div className="space-y-4">
-                {filteredActivities.map((activity, index) => {
-                  const IconComponent = getActivityIcon(activity.type)
-                  return (
-                    <div key={activity.id} className="group">
-                      <Card className="p-4 hover:shadow-md transition-shadow border-l-4 border-l-primary/20 hover:border-l-primary/50">
-                        <div className="flex gap-4">
-                          {/* Timeline indicator */}
-                          <div className="flex flex-col items-center">
-                            <div className={`flex h-10 w-10 items-center justify-center rounded-full ${
-                              activity.status === 'Pending' ? 'bg-blue-500/20' : 'bg-primary/10'
-                            }`}>
-                              <IconComponent className="h-4 w-4 text-primary" />
-                            </div>
-                          </div>
-                          
-                          {/* Activity Content */}
-                          <div className="flex-1 min-w-0">
-                            <div className="flex items-start justify-between">
-                              <div className="flex-1">
-                                <div className="flex items-center gap-2 mb-2">
-                                  <h3 className="font-medium text-foreground">{activity.title}</h3>
-                                  <Badge variant={getStatusColor(activity.status)} className="text-xs">
-                                    {activity.status}
-                                  </Badge>
-                                </div>
-                                <p className="text-sm text-muted-foreground mb-3">
-                                  {activity.description}
-                                </p>
-                                <div className="flex items-center gap-4 text-sm text-muted-foreground">
-                                  <span className="flex items-center gap-1">
-                                    <User className="h-3 w-3" />
-                                    {activity.officer}
-                                  </span>
-                                  <span className="flex items-center gap-1">
-                                    <Clock className="h-3 w-3" />
-                                    {activity.timestamp}
-                                  </span>
-                                  {activity.type && (
-                                    <Badge variant="outline" className="text-xs">
-                                      {activity.type}
-                                    </Badge>
-                                  )}
-                                </div>
-                              </div>
-                              
-                              {/* Action Buttons */}
-                              <div className="flex items-start gap-2 transition-opacity">
-                                {activity.status === 'Pending' && (
-                                   <Button
-                                     size="sm"
-                                     variant="outline"
-                                     onClick={(e) => {
-                                       e.stopPropagation();
-                                       markAsRead(activity.id);
-                                     }}
-                                     className="h-8 px-3"
-                                   >
-                                     <CheckCircle2 className="h-3 w-3 mr-1" />
-                                     Mark Read
-                                   </Button>
-                                )}
-                                
-                                <Button
-                                  size="sm"
-                                  variant="outline"
-                                  onClick={(e) => {
-                                    e.stopPropagation();
-                                    openEditDialog(activity);
-                                  }}
-                                  className="h-8 px-3"
-                                >
-                                  <Edit className="h-3 w-3 mr-1" />
-                                  Edit
-                                </Button>
-                               
-                                <Button
-                                  size="sm"
-                                  variant="outline"
-                                  onClick={(e) => {
-                                    e.stopPropagation();
-                                    if (window.confirm('Are you sure you want to delete this activity?')) {
-                                      deleteActivity(activity.id);
-                                    }
-                                  }}
-                                  className="h-8 px-3 text-red-600 hover:text-red-700"
-                                >
-                                  <Trash2 className="h-3 w-3 mr-1" />
-                                  Delete
-                                </Button>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                      </Card>
-                    </div>
-                  )
-                })}
-              </div>
-            )}
-          </CardContent>
-        </Card>
-
-        {/* Edit Activity Dialog */}
-        <Dialog open={editActivityOpen} onOpenChange={setEditActivityOpen}>
-          <DialogContent>
-            <DialogHeader>
-              <DialogTitle>Edit Activity</DialogTitle>
-            </DialogHeader>
-            {editingActivity && (
-              <form onSubmit={(e) => {
-                e.preventDefault();
-                const formData = new FormData(e.target as HTMLFormElement);
-                editActivity(editingActivity.id, {
-                  title: formData.get('title') as string,
-                  message: formData.get('description') as string,
-                  type: formData.get('type') as string,
-                });
-              }} className="space-y-4">
-                <div>
-                  <Label htmlFor="edit-title">Title</Label>
-                  <Input 
-                    id="edit-title"
-                    name="title" 
-                    defaultValue={editingActivity.title}
-                    placeholder="Activity title" 
-                    required 
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="edit-description">Description</Label>
-                  <Textarea 
-                    id="edit-description"
-                    name="description" 
-                    defaultValue={editingActivity.description}
-                    placeholder="Activity description" 
-                    required 
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="edit-type">Type</Label>
-                  <Select name="type" defaultValue={editingActivity.notification_type || "notification"}>
-                    <SelectTrigger>
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="call_reminder">Call Reminder</SelectItem>
-                      <SelectItem value="email_reminder">Email Reminder</SelectItem>
-                      <SelectItem value="follow_up_reminder">Follow-up Reminder</SelectItem>
-                      <SelectItem value="meeting_reminder">Meeting Reminder</SelectItem>
-                      <SelectItem value="document_reminder">Document Reminder</SelectItem>
-                      <SelectItem value="notification">General Notification</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div className="flex gap-2">
-                  <Button type="submit" className="flex-1">Update Activity</Button>
-                  <Button type="button" variant="outline" onClick={() => setEditActivityOpen(false)}>
-                    Cancel
-                  </Button>
-                </div>
-              </form>
-            )}
-          </DialogContent>
-        </Dialog>
       </div>
+    </HorizontalLayout>
   )
 }
