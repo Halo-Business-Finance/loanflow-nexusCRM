@@ -37,11 +37,11 @@ const navigationItems = [
   { name: "Pipeline", path: "/pipeline", icon: Target },
   { name: "Documents", path: "/documents", icon: FileText },
   { name: "Activities", path: "/activities", icon: Activity },
+  { name: "Settings", path: "/settings", icon: Settings },
 ]
 
 const moreItems = [
   { name: "Reports", path: "/reports", icon: BarChart3 },
-  { name: "Settings", path: "/settings", icon: Settings },
   { name: "Users", path: "/users", icon: User },
   { name: "Security", path: "/security", icon: Settings },
   { name: "Enterprise", path: "/enterprise", icon: Building2 },
