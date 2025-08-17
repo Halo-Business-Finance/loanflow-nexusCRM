@@ -143,7 +143,7 @@ export default function Dashboard() {
     <HorizontalLayout>
       <div className="bg-muted/20 min-h-screen">
         {/* Page Header */}
-        <div className="bg-card border-b border-border shadow-sm">
+        <div className="bg-white border-b border-border shadow-sm">
           <div className="px-6 py-6">
             <div className="flex items-center justify-between">
               <div>

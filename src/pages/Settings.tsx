@@ -248,7 +248,7 @@ export default function Settings() {
         </div>
 
         <Tabs defaultValue="profile" className="space-y-6">
-          <TabsList className="bg-card border-0 shadow-sm">
+          <TabsList className="bg-white border border-border shadow-sm">
             <TabsTrigger value="profile" className="flex items-center space-x-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
               <User className="w-4 h-4" />
               <span>Profile</span>

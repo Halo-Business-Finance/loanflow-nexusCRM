@@ -360,7 +360,7 @@ export default function LeadDetail() {
       <HorizontalNav />
       <div className="min-h-screen bg-background">
         {/* Modern Header */}
-        <div className="bg-card border-b border-border sticky top-0 z-10">
+        <div className="bg-white border-b border-border sticky top-0 z-10">
           <div className="px-6 py-4">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-4">
@@ -474,7 +474,7 @@ export default function LeadDetail() {
           {/* Main Content Grid */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             {/* Contact Information Card */}
-            <Card className="border-0 shadow-sm bg-card">
+            <Card className="border border-border shadow-sm bg-white">
               <CardHeader className="pb-4">
                 <CardTitle className="text-base font-semibold text-foreground flex items-center gap-2">
                   <User className="h-4 w-4 text-muted-foreground" />
@@ -562,7 +562,7 @@ export default function LeadDetail() {
             </Card>
 
             {/* Company Information Card */}
-            <Card className="border-0 shadow-sm bg-card">
+            <Card className="border border-border shadow-sm bg-white">
               <CardHeader className="pb-4">
                 <CardTitle className="text-base font-semibold text-foreground flex items-center gap-2">
                   <Building className="h-4 w-4 text-muted-foreground" />

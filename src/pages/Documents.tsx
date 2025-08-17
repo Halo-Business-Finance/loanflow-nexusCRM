@@ -76,7 +76,7 @@ export default function Documents() {
           </div>
           <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
             {[1, 2, 3, 4].map((i) => (
-              <div key={i} className="animate-pulse bg-card border-0 shadow-lg rounded-lg p-6">
+              <div key={i} className="animate-pulse border border-border shadow-sm bg-white rounded-lg p-6">
                 <div className="h-6 bg-muted rounded w-24 mb-4"></div>
                 <div className="h-8 bg-muted rounded w-16 mb-2"></div>
                 <div className="h-8 w-8 bg-muted rounded"></div>
@@ -186,7 +186,7 @@ export default function Documents() {
           </div>
 
           {/* Search and Filters */}
-          <Card className="bg-card border-0 shadow-lg">
+          <Card className="border border-border shadow-sm bg-white">
             <CardContent className="p-6">
               <div className="flex gap-4">
                 <div className="relative flex-1">
@@ -215,7 +215,7 @@ export default function Documents() {
           {/* Documents List */}
           <div className="grid gap-6">
             {filteredDocuments.length === 0 ? (
-              <Card className="bg-card border-0 shadow-lg">
+              <Card className="border border-border shadow-sm bg-white">
                 <CardContent className="p-12 text-center">
                   <FileText className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
                   <h3 className="text-lg font-medium mb-2">No documents found</h3>
@@ -234,7 +234,7 @@ export default function Documents() {
               </Card>
             ) : (
               filteredDocuments.map((document) => (
-                <Card key={document.id} className="bg-card border-0 shadow-lg hover-scale transition-all">
+                <Card key={document.id} className="border border-border shadow-sm bg-white hover-scale transition-all">
                   <CardContent className="p-6">
                     <div className="space-y-4">
                       {/* Header Row */}
