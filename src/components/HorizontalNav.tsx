@@ -12,10 +12,9 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { 
   Search, 
-  Plus, 
   Bell, 
   HelpCircle, 
-  Settings, 
+  Settings,
   ChevronDown,
   Home,
   Users,
@@ -114,16 +113,10 @@ export function HorizontalNav() {
           {/* Right Side - Actions and Profile */}
           <div className="flex items-center gap-3">
             <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
-              <Plus className="h-4 w-4" />
-            </Button>
-            <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
               <Bell className="h-4 w-4" />
             </Button>
             <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
               <HelpCircle className="h-4 w-4" />
-            </Button>
-            <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
-              <Settings className="h-4 w-4" />
             </Button>
             
             {/* Theme Toggle */}
