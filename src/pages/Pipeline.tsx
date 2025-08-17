@@ -20,6 +20,9 @@ import { useAuth } from '@/components/auth/AuthProvider';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { InteractivePipeline } from '@/components/InteractivePipeline';
+import { AdvancedAnalytics } from '@/components/analytics/AdvancedAnalytics';
+import { TeamCollaboration } from '@/components/collaboration/TeamCollaboration';
+import { WorkflowAutomation } from '@/components/operations/WorkflowAutomation';
 
 interface PipelineOverview {
   totalOpportunities: number;
@@ -194,11 +197,14 @@ export default function Pipeline() {
         )}
 
         <Tabs defaultValue="visual" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-4">
+          <TabsList className="grid w-full grid-cols-7">
             <TabsTrigger value="visual">Visual Pipeline</TabsTrigger>
             <TabsTrigger value="analytics">Performance Analytics</TabsTrigger>
             <TabsTrigger value="stages">Stage Analysis</TabsTrigger>
             <TabsTrigger value="forecasting">Revenue Forecast</TabsTrigger>
+            <TabsTrigger value="advanced-analytics">Advanced Analytics</TabsTrigger>
+            <TabsTrigger value="collaboration">Team Collaboration</TabsTrigger>
+            <TabsTrigger value="automation">Workflow Automation</TabsTrigger>
           </TabsList>
 
           <TabsContent value="visual" className="space-y-6">
