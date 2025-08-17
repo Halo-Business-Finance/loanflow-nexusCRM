@@ -1425,8 +1425,8 @@ export default function LeadDetail() {
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-6">
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                {/* Left Column */}
+              <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+                {/* Column 1: Company Basic Info */}
                 <div className="space-y-4">
                   <div className="flex items-center gap-3">
                     <Building className="w-4 h-4 text-muted-foreground" />
@@ -1443,53 +1443,6 @@ export default function LeadDetail() {
                       )}
                     </div>
                   </div>
-
-                  <div className="flex items-center gap-3">
-                    <Home className="w-4 h-4 text-muted-foreground" />
-                    <div className="flex-1">
-                      <p className="text-sm text-muted-foreground">Company Address</p>
-                      {isEditing ? (
-                        <div className="space-y-2">
-                          <Textarea
-                            value={editableFields.business_address}
-                            onChange={(e) => setEditableFields({...editableFields, business_address: e.target.value})}
-                            placeholder="Enter street address"
-                            rows={2}
-                          />
-                          <div className="grid grid-cols-2 gap-2">
-                            <Input
-                              value={editableFields.business_city}
-                              onChange={(e) => setEditableFields({...editableFields, business_city: e.target.value})}
-                              placeholder="City"
-                            />
-                            <Input
-                              value={editableFields.business_state}
-                              onChange={(e) => setEditableFields({...editableFields, business_state: e.target.value})}
-                              placeholder="State"
-                            />
-                          </div>
-                          <Input
-                            value={editableFields.business_zip_code}
-                            onChange={(e) => setEditableFields({...editableFields, business_zip_code: e.target.value})}
-                            placeholder="ZIP Code"
-                          />
-                        </div>
-                      ) : (
-                        <div className="space-y-1">
-                          {lead.business_address && <p className="font-medium text-foreground">{lead.business_address}</p>}
-                          {(lead.business_city || lead.business_state || lead.business_zip_code) && (
-                            <p className="font-medium text-foreground">
-                              {[lead.business_city, lead.business_state, lead.business_zip_code].filter(Boolean).join(', ')}
-                            </p>
-                          )}
-                          {!lead.business_address && !lead.business_city && !lead.business_state && !lead.business_zip_code && (
-                            <p className="font-medium text-foreground">N/A</p>
-                          )}
-                        </div>
-                      )}
-                    </div>
-                  </div>
-
 
                   <div className="flex items-center gap-3">
                     <Building className="w-4 h-4 text-muted-foreground" />
@@ -1536,7 +1489,84 @@ export default function LeadDetail() {
                   </div>
                 </div>
 
-                {/* Middle Column */}
+                {/* Column 2: Company Address */}
+                <div className="space-y-4">
+                  <div className="flex items-center gap-3">
+                    <Home className="w-4 h-4 text-muted-foreground" />
+                    <div className="flex-1">
+                      <p className="text-sm text-muted-foreground">Company Address</p>
+                      {isEditing ? (
+                        <div className="space-y-2">
+                          <Textarea
+                            value={editableFields.business_address}
+                            onChange={(e) => setEditableFields({...editableFields, business_address: e.target.value})}
+                            placeholder="Enter street address"
+                            rows={2}
+                          />
+                          <div className="grid grid-cols-2 gap-2">
+                            <Input
+                              value={editableFields.business_city}
+                              onChange={(e) => setEditableFields({...editableFields, business_city: e.target.value})}
+                              placeholder="City"
+                            />
+                            <Input
+                              value={editableFields.business_state}
+                              onChange={(e) => setEditableFields({...editableFields, business_state: e.target.value})}
+                              placeholder="State"
+                            />
+                          </div>
+                          <Input
+                            value={editableFields.business_zip_code}
+                            onChange={(e) => setEditableFields({...editableFields, business_zip_code: e.target.value})}
+                            placeholder="ZIP Code"
+                          />
+                        </div>
+                      ) : (
+                        <div className="space-y-1">
+                          {lead.business_address && <p className="font-medium text-foreground">{lead.business_address}</p>}
+                          {(lead.business_city || lead.business_state || lead.business_zip_code) && (
+                            <p className="font-medium text-foreground">
+                              {[lead.business_city, lead.business_state, lead.business_zip_code].filter(Boolean).join(', ')}
+                            </p>
+                          )}
+                          {!lead.business_address && !lead.business_city && !lead.business_state && !lead.business_zip_code && (
+                            <p className="font-medium text-foreground">N/A</p>
+                          )}
+                        </div>
+                      )}
+                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-3">
+                    <div className="flex-1">
+                      <p className="text-sm text-muted-foreground">Property Ownership</p>
+                      {isEditing ? (
+                        <div className="flex items-center gap-2 mt-2">
+                          <Switch
+                            checked={editableFields.owns_property}
+                            onCheckedChange={(checked) => setEditableFields({...editableFields, owns_property: checked})}
+                          />
+                          <span className="text-sm text-foreground">
+                            {editableFields.owns_property ? 'Owns Property' : 'Does not own property'}
+                          </span>
+                        </div>
+                      ) : (
+                        <div className="flex items-center gap-2">
+                          {lead.owns_property ? (
+                            <CheckCircle className="w-4 h-4 text-green-500" />
+                          ) : (
+                            <XCircle className="w-4 h-4 text-red-500" />
+                          )}
+                          <p className="font-medium text-foreground">
+                            {lead.owns_property ? 'Owns Property' : 'Does not own property'}
+                          </p>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </div>
+
+                {/* Column 3: Financial Information */}
                 <div className="space-y-4">
                   <div className="flex items-center gap-3">
                     <Calendar className="w-4 h-4 text-muted-foreground" />
@@ -1596,7 +1626,10 @@ export default function LeadDetail() {
                       )}
                     </div>
                   </div>
+                </div>
 
+                {/* Column 4: Business Codes & Classification */}
+                <div className="space-y-4">
                   <div className="flex items-center gap-3">
                     <FileText className="w-4 h-4 text-muted-foreground" />
                     <div className="flex-1">
@@ -1612,37 +1645,6 @@ export default function LeadDetail() {
                         <p className="font-medium text-foreground">
                           {(lead as any).naics_code || 'N/A'}
                         </p>
-                      )}
-                    </div>
-                  </div>
-                </div>
-
-                {/* Right Column */}
-                <div className="space-y-4">
-                  <div className="flex items-center gap-3">
-                    <div className="flex-1">
-                      <p className="text-sm text-muted-foreground">Property Ownership</p>
-                      {isEditing ? (
-                        <div className="flex items-center gap-2 mt-2">
-                          <Switch
-                            checked={editableFields.owns_property}
-                            onCheckedChange={(checked) => setEditableFields({...editableFields, owns_property: checked})}
-                          />
-                          <span className="text-sm text-foreground">
-                            {editableFields.owns_property ? 'Owns Property' : 'Does not own property'}
-                          </span>
-                        </div>
-                      ) : (
-                        <div className="flex items-center gap-2">
-                          {lead.owns_property ? (
-                            <CheckCircle className="w-4 h-4 text-green-500" />
-                          ) : (
-                            <XCircle className="w-4 h-4 text-red-500" />
-                          )}
-                          <p className="font-medium text-foreground">
-                            {lead.owns_property ? 'Owns Property' : 'Does not own property'}
-                          </p>
-                        </div>
                       )}
                     </div>
                   </div>
