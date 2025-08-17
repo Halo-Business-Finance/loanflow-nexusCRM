@@ -93,20 +93,6 @@ export function HorizontalNav() {
             </div>
           </div>
 
-          {/* Center - Global Search */}
-          <div className="flex-1 max-w-xl mx-8">
-            <div className="relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-              <Input
-                type="text"
-                placeholder="Search..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-10 pr-4 py-2 bg-muted/50 border-border rounded-md text-sm focus:bg-background focus:border-primary focus:ring-1 focus:ring-primary"
-              />
-            </div>
-          </div>
-
           {/* Right Side - Actions and Profile */}
           <div className="flex items-center gap-3">
             <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
@@ -145,29 +131,43 @@ export function HorizontalNav() {
             </DropdownMenu>
           </div>
         </div>
-        </div>
-        
-        {/* Welcome Message */}
-        <div className="px-6 py-2 border-b border-border/50">
-          <div className="flex items-center justify-between">
-            <div>
-              <h2 className="text-lg font-medium text-foreground">
-                Welcome back, {getUserDisplayName()}
-              </h2>
-              <p className="text-sm text-muted-foreground">
-                {new Date().toLocaleDateString('en-US', { 
-                  weekday: 'long', 
-                  year: 'numeric', 
-                  month: 'long', 
-                  day: 'numeric' 
-                })} at {new Date().toLocaleTimeString('en-US', { 
-                  hour: '2-digit', 
-                  minute: '2-digit' 
-                })}
-              </p>
+      </div>
+      
+      {/* Welcome Message */}
+      <div className="px-6 py-2 border-b border-border/50">
+        <div className="flex items-center justify-between">
+          <div>
+            <h2 className="text-lg font-medium text-foreground">
+              Welcome back, {getUserDisplayName()}
+            </h2>
+            <p className="text-sm text-muted-foreground">
+              {new Date().toLocaleDateString('en-US', { 
+                weekday: 'long', 
+                year: 'numeric', 
+                month: 'long', 
+                day: 'numeric' 
+              })} at {new Date().toLocaleTimeString('en-US', { 
+                hour: '2-digit', 
+                minute: '2-digit' 
+              })}
+            </p>
+          </div>
+          
+          {/* Search Bar */}
+          <div className="flex-1 max-w-xl mx-8">
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+              <Input
+                type="text"
+                placeholder="Search..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="w-full pl-10 pr-4 py-2 bg-muted/50 border-border rounded-md text-sm focus:bg-background focus:border-primary focus:ring-1 focus:ring-primary"
+              />
             </div>
           </div>
         </div>
+      </div>
 
       {/* Navigation Bar */}
       <div className="px-6">
