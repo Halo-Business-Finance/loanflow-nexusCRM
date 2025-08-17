@@ -40,13 +40,13 @@ const navigationItems = [
   { name: "Documents", path: "/documents", icon: FileText },
   { name: "Activities", path: "/activities", icon: Activity },
   { name: "Reports", path: "/reports", icon: BarChart3 },
+  { name: "Users", path: "/users", icon: User },
+  { name: "Security", path: "/security", icon: Settings },
+  { name: "Enterprise", path: "/enterprise", icon: Building2 },
   { name: "Settings", path: "/settings", icon: Settings },
 ]
 
 const moreItems = [
-  { name: "Users", path: "/users", icon: User },
-  { name: "Security", path: "/security", icon: Settings },
-  { name: "Enterprise", path: "/enterprise", icon: Building2 },
 ]
 
 export function HorizontalNav() {
@@ -157,32 +157,6 @@ export function HorizontalNav() {
             )
           })}
           
-          {/* More Dropdown */}
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button 
-                variant="ghost" 
-                className={`flex items-center gap-1 px-2 py-1 text-sm font-medium transition-colors hover:text-blue-600 hover:bg-blue-50 rounded-md ${
-                  moreItems.some(item => isActivePath(item.path))
-                    ? 'text-primary border-b-2 border-primary'
-                    : 'text-foreground/70 hover:text-blue-600'
-                }`}
-              >
-                More
-                <ChevronDown className="h-2 w-2" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="start" className="w-48 bg-background border border-border shadow-lg">
-              {moreItems.map((item) => (
-                <DropdownMenuItem key={item.name} asChild>
-                  <Link to={item.path} className="flex items-center gap-2 w-full px-2 py-2 text-sm hover:bg-blue-50 hover:text-blue-700 rounded-sm">
-                    <item.icon className="h-4 w-4" />
-                    {item.name}
-                  </Link>
-                </DropdownMenuItem>
-              ))}
-            </DropdownMenuContent>
-          </DropdownMenu>
         </nav>
       </div>
     </div>
