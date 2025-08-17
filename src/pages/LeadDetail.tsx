@@ -235,7 +235,9 @@ export default function LeadDetail() {
         first_name: editableFields.first_name,
         last_name: editableFields.last_name,
         personal_email: editableFields.personal_email,
-        mobile_phone: editableFields.mobile_phone
+        mobile_phone: editableFields.mobile_phone,
+        call_notes: callNotes,
+        notes: generalNotes
       }
 
       const { error: contactError } = await supabase
@@ -662,6 +664,234 @@ export default function LeadDetail() {
                       />
                     ) : (
                       <p className="mt-1 text-sm font-medium">{editableFields.naics_code || 'N/A'}</p>
+                    )}
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Notes and Communication Card */}
+            <Card className="border-0 shadow-sm bg-card lg:col-span-2">
+              <CardHeader className="pb-4">
+                <CardTitle className="text-base font-semibold text-foreground flex items-center gap-2">
+                  <FileText className="h-4 w-4 text-muted-foreground" />
+                  Notes & Communication
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="pt-0 space-y-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <Label className="text-xs font-medium text-muted-foreground">Call Notes</Label>
+                    {isEditing ? (
+                      <Textarea
+                        value={callNotes}
+                        onChange={(e) => setCallNotes(e.target.value)}
+                        placeholder="Add call notes..."
+                        className="mt-1 min-h-[100px] text-sm"
+                      />
+                    ) : (
+                      <div className="mt-1 p-3 bg-muted/30 rounded-md border min-h-[100px]">
+                        <p className="text-sm text-foreground whitespace-pre-wrap">
+                          {callNotes || 'No call notes yet...'}
+                        </p>
+                      </div>
+                    )}
+                  </div>
+                  <div>
+                    <Label className="text-xs font-medium text-muted-foreground">General Notes</Label>
+                    {isEditing ? (
+                      <Textarea
+                        value={generalNotes}
+                        onChange={(e) => setGeneralNotes(e.target.value)}
+                        placeholder="Add general notes..."
+                        className="mt-1 min-h-[100px] text-sm"
+                      />
+                    ) : (
+                      <div className="mt-1 p-3 bg-muted/30 rounded-md border min-h-[100px]">
+                        <p className="text-sm text-foreground whitespace-pre-wrap">
+                          {generalNotes || 'No general notes yet...'}
+                        </p>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Additional Business Details Card */}
+            <Card className="border-0 shadow-sm bg-card">
+              <CardHeader className="pb-4">
+                <CardTitle className="text-base font-semibold text-foreground flex items-center gap-2">
+                  <Building className="h-4 w-4 text-muted-foreground" />
+                  Additional Business Details
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="pt-0 space-y-4">
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <Label className="text-xs font-medium text-muted-foreground">Year Established</Label>
+                    {isEditing ? (
+                      <Input
+                        type="number"
+                        value={editableFields.year_established}
+                        onChange={(e) => setEditableFields({...editableFields, year_established: e.target.value})}
+                        className="mt-1 h-8 text-sm"
+                      />
+                    ) : (
+                      <p className="mt-1 text-sm font-medium">{editableFields.year_established || 'N/A'}</p>
+                    )}
+                  </div>
+                  <div>
+                    <Label className="text-xs font-medium text-muted-foreground">Ownership Structure</Label>
+                    {isEditing ? (
+                      <Select
+                        value={editableFields.ownership_structure}
+                        onValueChange={(value) => setEditableFields({...editableFields, ownership_structure: value})}
+                      >
+                        <SelectTrigger className="mt-1 h-8 text-sm">
+                          <SelectValue placeholder="Select structure" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="Corporation">Corporation</SelectItem>
+                          <SelectItem value="LLC">LLC</SelectItem>
+                          <SelectItem value="Partnership">Partnership</SelectItem>
+                          <SelectItem value="Sole Proprietorship">Sole Proprietorship</SelectItem>
+                          <SelectItem value="S-Corp">S-Corp</SelectItem>
+                          <SelectItem value="Other">Other</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    ) : (
+                      <p className="mt-1 text-sm font-medium">{editableFields.ownership_structure || 'N/A'}</p>
+                    )}
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <Label className="text-xs font-medium text-muted-foreground">Income</Label>
+                    {isEditing ? (
+                      <Input
+                        type="number"
+                        value={lead.income?.toString() || ''}
+                        onChange={(e) => {
+                          // This would need to be saved to contact_entities
+                        }}
+                        className="mt-1 h-8 text-sm"
+                      />
+                    ) : (
+                      <p className="mt-1 text-sm font-medium">
+                        {lead.income ? formatCurrency(lead.income) : 'N/A'}
+                      </p>
+                    )}
+                  </div>
+                  <div>
+                    <Label className="text-xs font-medium text-muted-foreground">Owns Property</Label>
+                    {isEditing ? (
+                      <Select
+                        value={editableFields.owns_property.toString()}
+                        onValueChange={(value) => setEditableFields({...editableFields, owns_property: value === 'true'})}
+                      >
+                        <SelectTrigger className="mt-1 h-8 text-sm">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="true">Yes</SelectItem>
+                          <SelectItem value="false">No</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    ) : (
+                      <p className="mt-1 text-sm font-medium">
+                        {editableFields.owns_property ? 'Yes' : 'No'}
+                      </p>
+                    )}
+                  </div>
+                </div>
+
+                {editableFields.owns_property && (
+                  <div>
+                    <Label className="text-xs font-medium text-muted-foreground">Property Payment Amount</Label>
+                    {isEditing ? (
+                      <Input
+                        type="number"
+                        step="0.01"
+                        value={editableFields.property_payment_amount}
+                        onChange={(e) => setEditableFields({...editableFields, property_payment_amount: e.target.value})}
+                        className="mt-1 h-8 text-sm"
+                      />
+                    ) : (
+                      <p className="mt-1 text-sm font-medium">
+                        {editableFields.property_payment_amount ? formatCurrency(parseFloat(editableFields.property_payment_amount)) : 'N/A'}
+                      </p>
+                    )}
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+
+            {/* BDO Information Card */}
+            <Card className="border-0 shadow-sm bg-card">
+              <CardHeader className="pb-4">
+                <CardTitle className="text-base font-semibold text-foreground flex items-center gap-2">
+                  <UserPlus className="h-4 w-4 text-muted-foreground" />
+                  BDO Information
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="pt-0 space-y-4">
+                <div>
+                  <Label className="text-xs font-medium text-muted-foreground">BDO Name</Label>
+                  {isEditing ? (
+                    <Input
+                      value={editableFields.bdo_name}
+                      onChange={(e) => setEditableFields({...editableFields, bdo_name: e.target.value})}
+                      className="mt-1 h-8 text-sm"
+                    />
+                  ) : (
+                    <p className="mt-1 text-sm font-medium">{editableFields.bdo_name || 'N/A'}</p>
+                  )}
+                </div>
+
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <Label className="text-xs font-medium text-muted-foreground">BDO Phone</Label>
+                    {isEditing ? (
+                      <Input
+                        type="tel"
+                        value={editableFields.bdo_telephone}
+                        onChange={(e) => setEditableFields({...editableFields, bdo_telephone: e.target.value})}
+                        className="mt-1 h-8 text-sm"
+                      />
+                    ) : (
+                      <div className="mt-1">
+                        {editableFields.bdo_telephone ? (
+                          <ClickablePhone phoneNumber={editableFields.bdo_telephone} />
+                        ) : (
+                          <p className="text-sm font-medium">N/A</p>
+                        )}
+                      </div>
+                    )}
+                  </div>
+                  <div>
+                    <Label className="text-xs font-medium text-muted-foreground">BDO Email</Label>
+                    {isEditing ? (
+                      <Input
+                        type="email"
+                        value={editableFields.bdo_email}
+                        onChange={(e) => setEditableFields({...editableFields, bdo_email: e.target.value})}
+                        className="mt-1 h-8 text-sm"
+                      />
+                    ) : (
+                      <div className="mt-1">
+                        {editableFields.bdo_email ? (
+                          <a
+                            href={`mailto:${editableFields.bdo_email}`}
+                            className="text-sm font-medium text-primary hover:underline"
+                          >
+                            {editableFields.bdo_email}
+                          </a>
+                        ) : (
+                          <p className="text-sm font-medium">N/A</p>
+                        )}
+                      </div>
                     )}
                   </div>
                 </div>
