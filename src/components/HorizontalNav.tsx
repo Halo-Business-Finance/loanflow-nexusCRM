@@ -82,31 +82,17 @@ export function HorizontalNav() {
             </div>
           </div>
 
-          {/* Center - Analytics Dashboard Section */}
-          <div className="flex-1 flex items-center justify-between max-w-4xl mx-8">
-            <div>
-              <h1 className="text-2xl font-bold text-foreground mb-1">Analytics Dashboard</h1>
-              <p className="text-muted-foreground">
-                Monitor your business performance and key metrics
-              </p>
-            </div>
-            <div className="flex items-center gap-3">
-              <Button variant="outline" size="sm" className="text-sm">
-                <Calendar className="h-4 w-4 mr-2" />
-                Last 30 days
-              </Button>
-              <Button variant="outline" size="sm" className="text-sm">
-                <Download className="h-4 w-4 mr-2" />
-                Export
-              </Button>
-              <Button 
-                variant="default" 
-                size="sm"
-                className="text-sm bg-blue-600 hover:bg-blue-700"
-              >
-                <RefreshCw className="h-4 w-4 mr-2" />
-                Refresh Data
-              </Button>
+          {/* Center - Global Search */}
+          <div className="flex-1 max-w-2xl mx-8">
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+              <Input
+                type="text"
+                placeholder="Search..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="w-full pl-10 pr-4 py-2 bg-muted/50 border-border rounded-md text-sm focus:bg-background focus:border-primary focus:ring-1 focus:ring-primary"
+              />
             </div>
           </div>
 
