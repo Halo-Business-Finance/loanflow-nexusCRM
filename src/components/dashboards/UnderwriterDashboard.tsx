@@ -24,6 +24,7 @@ import { formatCurrency, formatNumber } from '@/lib/utils';
 import { AdvancedAnalytics } from '@/components/analytics/AdvancedAnalytics';
 import { TeamCollaboration } from '@/components/collaboration/TeamCollaboration';
 import { PieChart as RechartsPieChart, Pie, Cell, ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, LineChart, Line, Area, AreaChart } from 'recharts';
+import { UnderwriterDocuments } from './UnderwriterDocuments';
 
 interface UnderwriterMetrics {
   pendingReviews: number;
@@ -230,6 +231,7 @@ export const UnderwriterDashboard = () => {
       <Tabs defaultValue="pending" className="space-y-4">
         <TabsList>
           <TabsTrigger value="pending">Pending Reviews</TabsTrigger>
+          <TabsTrigger value="documents">Document Review</TabsTrigger>
           <TabsTrigger value="risk">Risk Assessment</TabsTrigger>
           <TabsTrigger value="analytics">Review Analytics</TabsTrigger>
           <TabsTrigger value="loan-tools">Loan Analysis Tools</TabsTrigger>
@@ -290,6 +292,10 @@ export const UnderwriterDashboard = () => {
               </div>
             </CardContent>
           </Card>
+        </TabsContent>
+
+        <TabsContent value="documents" className="space-y-4">
+          <UnderwriterDocuments />
         </TabsContent>
 
         <TabsContent value="risk" className="space-y-4">
