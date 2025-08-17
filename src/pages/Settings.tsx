@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react"
 import { Link } from "react-router-dom"
-import Layout from "@/components/Layout"
+import SimpleLayout from "@/components/SimpleLayout"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
@@ -178,7 +178,7 @@ export default function Settings() {
   }
 
   return (
-    <Layout>
+    <SimpleLayout>
       <div className="container mx-auto p-6 space-y-6">
         {/* Header Section */}
         <div className="flex items-center gap-2 mb-6">
@@ -496,6 +496,6 @@ export default function Settings() {
           </TabsContent>
         </Tabs>
       </div>
-    </Layout>
+    </SimpleLayout>
   )
 }
