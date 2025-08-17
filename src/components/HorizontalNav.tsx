@@ -142,7 +142,25 @@ export function HorizontalNav() {
 
       {/* Navigation Bar */}
       <div className="px-6">
-        <nav className="flex items-center justify-end space-x-8">
+        <nav className="flex items-center space-x-8">
+          {navigationItems.map((item) => {
+            const isActive = isActivePath(item.path)
+            return (
+              <Link
+                key={item.name}
+                to={item.path}
+                className={`relative flex items-center gap-2 px-3 py-1 text-sm font-medium transition-colors hover:text-primary ${
+                  isActive 
+                    ? 'text-primary border-b-2 border-primary' 
+                    : 'text-foreground/70 hover:text-primary'
+                }`}
+              >
+                <item.icon className="h-4 w-4" />
+                {item.name}
+              </Link>
+            )
+          })}
+          
           {/* More Dropdown */}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
@@ -169,24 +187,6 @@ export function HorizontalNav() {
               ))}
             </DropdownMenuContent>
           </DropdownMenu>
-          
-          {[...navigationItems].reverse().map((item) => {
-            const isActive = isActivePath(item.path)
-            return (
-              <Link
-                key={item.name}
-                to={item.path}
-                className={`relative flex items-center gap-2 px-3 py-1 text-sm font-medium transition-colors hover:text-primary ${
-                  isActive 
-                    ? 'text-primary border-b-2 border-primary' 
-                    : 'text-foreground/70 hover:text-primary'
-                }`}
-              >
-                <item.icon className="h-4 w-4" />
-                {item.name}
-              </Link>
-            )
-          })}
         </nav>
       </div>
     </div>
