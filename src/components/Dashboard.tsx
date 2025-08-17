@@ -1,863 +1,521 @@
-import { useState, useEffect } from "react"
-import { supabase } from "@/integrations/supabase/client"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { Progress } from "@/components/ui/progress"
-import { Badge } from "@/components/ui/badge"
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Input } from "@/components/ui/input"
+import React, { useState, useEffect } from 'react';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Badge } from '@/components/ui/badge';
 import { 
-  DollarSign, 
-  Users, 
-  FileText, 
+  BarChart3, 
   TrendingUp, 
-  Calendar,
-  Phone,
-  Mail,
-  Clock,
-  Search,
-  Filter,
-  Eye,
-  Edit,
-  ChevronRight,
+  Users, 
+  DollarSign,
   Target,
-  RefreshCw
-} from "lucide-react"
-import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart"
-import { LineChart, Line, XAxis, YAxis, ResponsiveContainer } from "recharts"
-import { useToast } from "@/hooks/use-toast"
-import { useNavigate } from "react-router-dom"
-import { TodaysTasks } from "@/components/TodaysTasks"
-import { AdminAITools } from "@/components/AdminAITools"
-import { useAuth } from "@/components/auth/AuthProvider"
-import { PhoneDialer } from "@/components/PhoneDialer"
-import { EmailComposer } from "@/components/EmailComposer"
-import { formatNumber, formatCurrency } from "@/lib/utils"
-import { LoanProcessorDashboard } from "@/components/dashboards/LoanProcessorDashboard"
-import { FunderDashboard } from "@/components/dashboards/FunderDashboard"
-import { UnderwriterDashboard } from "@/components/dashboards/UnderwriterDashboard"
-import { CloserDashboard } from "@/components/dashboards/CloserDashboard"
-import { SimpleQuickActions } from "@/components/SimpleQuickActions"
+  RefreshCw,
+  PieChart,
+  Activity,
+  ArrowUpRight,
+  ArrowDownRight,
+  Calendar,
+  Download
+} from 'lucide-react';
+import { 
+  BarChart, 
+  Bar, 
+  XAxis, 
+  YAxis, 
+  CartesianGrid, 
+  Tooltip, 
+  ResponsiveContainer, 
+  PieChart as RechartsPieChart, 
+  Pie,
+  Cell,
+  FunnelChart,
+  Funnel,
+  LabelList
+} from 'recharts';
+import { useAuth } from '@/components/auth/AuthProvider';
+import { supabase } from '@/integrations/supabase/client';
+import { useToast } from '@/hooks/use-toast';
+import { useNavigate } from 'react-router-dom';
 
-// Initial metrics structure - will be updated with real data
-const initialMetrics = [
-  {
-    title: "Total Pipeline Value",
-    value: "$0",
-    change: "0%",
-    trend: "neutral"
-  },
-  {
-    title: "Total Leads",
-    value: "0",
-    change: "0%",
-    trend: "neutral"
-  },
-  {
-    title: "Active Leads",
-    value: "0",
-    change: "0%",
-    trend: "neutral"
-  },
-  {
-    title: "Applications This Month",
-    value: "0",
-    change: "0%",
-    trend: "neutral"
-  },
-  {
-    title: "Conversion Rate",
-    value: "0%",
-    change: "0%",
-    trend: "neutral"
-  }
-]
+// Sample data for the dashboard widgets
+const performanceData = [
+  { name: 'Lead Generation', value: 85 },
+  { name: 'Conversion Rate', value: 72 },
+  { name: 'Customer Retention', value: 91 },
+  { name: 'Revenue Growth', value: 68 },
+  { name: 'Market Share', value: 76 }
+];
 
-import { Lead } from "@/types/lead"
+const funnelData = [
+  { name: 'Prospects', value: 1000, fill: '#1e40af' },
+  { name: 'Qualified Leads', value: 750, fill: '#3b82f6' },
+  { name: 'Proposals', value: 500, fill: '#60a5fa' },
+  { name: 'Negotiations', value: 250, fill: '#93c5fd' },
+  { name: 'Closed Deals', value: 100, fill: '#dbeafe' }
+];
 
-interface PipelineEntry {
-  id: string;
-  stage: string;
-  amount?: number;
-  created_at: string;
-  lead_id?: string;
-}
+const monthlyData = [
+  { month: 'Jan', revenue: 45000, deals: 12, target: 50000 },
+  { month: 'Feb', revenue: 52000, deals: 15, target: 55000 },
+  { month: 'Mar', revenue: 48000, deals: 13, target: 52000 },
+  { month: 'Apr', revenue: 67000, deals: 18, target: 60000 },
+  { month: 'May', revenue: 71000, deals: 20, target: 70000 },
+  { month: 'Jun', revenue: 89000, deals: 24, target: 75000 }
+];
 
-interface PipelineStage {
-  name: string;
-  count: number;
-  percentage: number;
-}
+const distributionData = [
+  { name: 'SBA Loans', value: 45, fill: '#1e40af' },
+  { name: 'Commercial', value: 30, fill: '#7c3aed' },
+  { name: 'Real Estate', value: 20, fill: '#059669' },
+  { name: 'Equipment', value: 5, fill: '#dc2626' }
+];
 
-const recentLeads: Array<{
-  name: string;
-  amount: string;
-  stage: string;
-  lastContact: string;
-  priority: string;
-}> = []
-
-// Initial pipeline stages - will be updated with real data
-const initialPipelineStages = [
-  { name: "Initial Contact", count: 0, percentage: 0 },
-  { name: "Qualified", count: 0, percentage: 0 },
-  { name: "Application", count: 0, percentage: 0 },
-  { name: "Pre-approval", count: 0, percentage: 0 },
-  { name: "Closing", count: 0, percentage: 0 }
-]
-
-const todayActivities: Array<{
-  type: string;
-  title: string;
-  time: string;
-  priority: string;
-}> = []
-
-const loanCloseData = [
-  { month: "Jan", closedLoans: 0, targetLoans: 0, avgDays: 0, closePercentage: 0 },
-  { month: "Feb", closedLoans: 0, targetLoans: 0, avgDays: 0, closePercentage: 0 },
-  { month: "Mar", closedLoans: 0, targetLoans: 0, avgDays: 0, closePercentage: 0 },
-  { month: "Apr", closedLoans: 0, targetLoans: 0, avgDays: 0, closePercentage: 0 },
-  { month: "May", closedLoans: 0, targetLoans: 0, avgDays: 0, closePercentage: 0 },
-  { month: "Jun", closedLoans: 0, targetLoans: 0, avgDays: 0, closePercentage: 0 },
-]
-
-const chartConfig = {
-  closedLoans: {
-    label: "Closed Loans",
-    color: "hsl(var(--primary))",
-  },
-  targetLoans: {
-    label: "Target Loans",
-    color: "hsl(var(--accent))",
-  },
-  closePercentage: {
-    label: "Close %",
-    color: "hsl(var(--destructive))",
-  },
-}
+const regionData = [
+  { name: 'West Coast', value: 35, fill: '#2563eb' },
+  { name: 'East Coast', value: 28, fill: '#7c3aed' },
+  { name: 'Midwest', value: 22, fill: '#059669' },
+  { name: 'South', value: 15, fill: '#dc2626' }
+];
 
 export default function Dashboard() {
-  const { toast } = useToast()
-  const navigate = useNavigate()
-  const { user, hasRole, userRole } = useAuth()
-
-  // Route to role-specific dashboards
-  if (userRole === 'loan_processor') {
-    return <LoanProcessorDashboard />
-  }
-  if (userRole === 'funder') {
-    return <FunderDashboard />
-  }
-  if (userRole === 'underwriter') {
-    return <UnderwriterDashboard />
-  }
-  if (userRole === 'closer') {
-    return <CloserDashboard />
-  }
-  const [currentDateTime, setCurrentDateTime] = useState(new Date())
-  const [selectedMetric, setSelectedMetric] = useState<string | null>(null)
-  const [selectedLead, setSelectedLead] = useState<typeof recentLeads[0] | null>(null)
-  const [isRefreshing, setIsRefreshing] = useState(false)
-  const [pipelineFilter, setPipelineFilter] = useState("")
-  const [leadsFilter, setLeadsFilter] = useState("")
+  const { user } = useAuth();
+  const { toast } = useToast();
+  const navigate = useNavigate();
   
-  // State for real data
-  const [metrics, setMetrics] = useState(initialMetrics)
-  const [pipelineStages, setPipelineStages] = useState<PipelineStage[]>(initialPipelineStages)
-  const [leads, setLeads] = useState<Lead[]>([])
-  const [pipelineEntries, setPipelineEntries] = useState<PipelineEntry[]>([])
-  const [totalClients, setTotalClients] = useState(0)
-
-  useEffect(() => {
-    const timer = setInterval(() => {
-      setCurrentDateTime(new Date())
-    }, 1000) // Update every second
-
-    return () => clearInterval(timer)
-  }, [])
-
-  // Fetch dashboard data
-  useEffect(() => {
-    if (user) {
-      fetchDashboardData()
-    }
-  }, [user])
+  const [loading, setLoading] = useState(false);
+  const [totalRevenue, setTotalRevenue] = useState(3600000);
+  const [pipelineValue, setPipelineValue] = useState(2100000);
 
   const fetchDashboardData = async () => {
-    if (!user) return
-
     try {
-      console.log('Current user:', user.id)
-      console.log('User roles:', hasRole('admin'), hasRole('super_admin'))
+      setLoading(true);
       
-      // Fetch ALL leads with contact entity data for now to debug
-      const { data: leadsData } = await supabase
+      // Fetch leads data for real metrics
+      const { data: leads, error: leadsError } = await supabase
         .from('leads')
         .select(`
           *,
-          contact_entity:contact_entities!contact_entity_id (*)
+          contact_entities(loan_amount, stage)
         `)
-        .order('created_at', { ascending: false })
+        .eq('user_id', user?.id);
 
-      console.log('Fetched leads data:', leadsData)
-
-      // Fetch pipeline entries  
-      const { data: pipelineData } = await supabase
-        .from('pipeline_entries')
-        .select('*')
-
-      // Fetch clients count
-      const { data: clientsData } = await supabase
-        .from('clients')
-        .select('id, total_loan_value')
-
-      // Transform leads data to merge contact entity fields
-      const transformedLeads = leadsData?.map(lead => ({
-        ...lead,
-        ...lead.contact_entity
-      })) || []
-
-      console.log('Transformed leads:', transformedLeads)
-
-      if (transformedLeads) setLeads(transformedLeads)
-      if (pipelineData) setPipelineEntries(pipelineData)
-      if (clientsData) setTotalClients(clientsData.length)
-
-      // Calculate pipeline stages
-      calculatePipelineStages(transformedLeads, pipelineData || [])
-      
-      // Calculate metrics
-      calculateMetrics(transformedLeads, clientsData || [], pipelineData || [])
+      if (!leadsError && leads) {
+        const totalLoanAmount = leads.reduce((sum, lead) => 
+          sum + (lead.contact_entities?.loan_amount || 0), 0
+        );
+        
+        if (totalLoanAmount > 0) {
+          setTotalRevenue(totalLoanAmount);
+          setPipelineValue(totalLoanAmount * 0.6);
+        }
+      }
 
     } catch (error) {
-      console.error('Error fetching dashboard data:', error)
+      console.error('Error fetching dashboard data:', error);
       toast({
         title: "Error",
-        description: "Failed to load dashboard data",
-        variant: "destructive",
-      })
+        description: "Failed to fetch dashboard data",
+        variant: "destructive"
+      });
+    } finally {
+      setLoading(false);
     }
-  }
+  };
 
-  const calculatePipelineStages = (leadsData: Lead[], pipelineData: PipelineEntry[]) => {
-    const stageCounts = {
-      "Initial Contact": 0,
-      "Qualified": 0, 
-      "Application": 0,
-      "Pre-approval": 0,
-      "Closing": 0,
-      "Funded": 0
+  useEffect(() => {
+    if (user) {
+      fetchDashboardData();
     }
+  }, [user]);
 
-    // Count active (non-converted) leads by their current stage
-    leadsData.forEach(lead => {
-      // Only count leads that haven't been converted to clients for active pipeline
-      if (!lead.is_converted_to_client && stageCounts.hasOwnProperty(lead.stage)) {
-        stageCounts[lead.stage as keyof typeof stageCounts]++
-      }
-    })
-
-    // Count pipeline entries (these represent active deals)
-    pipelineData.forEach(entry => {
-      if (stageCounts.hasOwnProperty(entry.stage)) {
-        stageCounts[entry.stage as keyof typeof stageCounts]++
-      }
-    })
-
-    // Calculate total for percentage calculation
-    const total = Object.values(stageCounts).reduce((sum, count) => sum + count, 0)
-
-    // Create pipeline stages with percentages
-    const stages: PipelineStage[] = Object.entries(stageCounts).map(([name, count]) => ({
-      name,
-      count,
-      percentage: total > 0 ? Math.round((count / total) * 100) : 0
-    }))
-
-    setPipelineStages(stages)
-  }
-
-  const calculateMetrics = (leadsData: Lead[], clientsData: any[], pipelineData: PipelineEntry[]) => {
-    // Calculate total pipeline value for ACTIVE deals only
-    // 1. Count non-converted leads (active pipeline)
-    const activeLeadsValue = leadsData.reduce((sum, lead) => {
-      if (lead.is_converted_to_client) return sum // Skip converted leads
-      // Use the loan_amount from the merged contact entity data
-      return sum + (lead.loan_amount || 0)
-    }, 0)
-    
-    // 2. Count all pipeline entries (these represent additional active deals)
-    const pipelineValue = pipelineData.reduce((sum, entry) => {
-      return sum + (entry.amount || 0)
-    }, 0)
-    
-    // Total active pipeline value
-    const totalPipelineValue = activeLeadsValue + pipelineValue
-
-    // Calculate applications this month (include all application-stage activities)
-    const currentMonth = new Date().getMonth()
-    const currentYear = new Date().getFullYear()
-    const applicationsThisMonth = leadsData.filter(lead => {
-      const leadDate = new Date(lead.created_at)
-      return leadDate.getMonth() === currentMonth && 
-             leadDate.getFullYear() === currentYear &&
-             // Use the stage from the merged contact entity data
-             ['Application', 'Pre-approval'].includes(lead.stage || '')
-    }).length
-
-    // Calculate conversion rate (converted leads / total leads)
-    const convertedLeads = leadsData.filter(lead => lead.is_converted_to_client).length
-    const conversionRate = leadsData.length > 0 ? 
-      Math.round((convertedLeads / leadsData.length) * 100) : 0
-
-    // Count only active (non-converted) leads for "Active Leads" metric
-    const activeLeadsCount = leadsData.filter(lead => !lead.is_converted_to_client).length
-
-    // Update metrics
-    setMetrics([
-      {
-        title: "Total Pipeline Value",
-        value: formatCurrency(totalPipelineValue),
-        change: "+0%", // Could calculate based on previous period
-        trend: "neutral"
-      },
-      {
-        title: "Total Leads", 
-        value: formatNumber(leadsData.length),
-        change: "+0%",
-        trend: "neutral"
-      },
-      {
-        title: "Active Leads", 
-        value: formatNumber(activeLeadsCount),
-        change: "+0%",
-        trend: "neutral"
-      },
-      {
-        title: "Applications This Month",
-        value: formatNumber(applicationsThisMonth),
-        change: "+0%",
-        trend: "neutral"
-      },
-      {
-        title: "Conversion Rate",
-        value: `${formatNumber(conversionRate)}%`,
-        change: "+0%",
-        trend: "neutral"
-      }
-    ])
-  }
-
-  const formatDateTime = (date: Date) => {
-    const options: Intl.DateTimeFormatOptions = {
-      weekday: 'long',
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric',
-      hour: 'numeric',
-      minute: '2-digit',
-      hour12: true
-    }
-    return date.toLocaleDateString('en-US', options)
-  }
-
-  const handleMetricClick = (metric: typeof metrics[0]) => {
-    // Navigate to relevant pages based on metric type
-    switch (metric.title) {
-      case "Total Pipeline Value":
-        navigate("/pipeline")
-        break
-      case "Total Leads":
-        navigate("/leads")
-        break
-      case "Active Leads":
-        navigate("/leads")
-        break
-      case "Applications This Month":
-        navigate("/documents")
-        break
-      case "Conversion Rate":
-        navigate("/reports")
-        break
-      default:
-        toast({
-          title: "Metric Details",
-          description: `Viewing ${metric.title}: ${metric.value}`,
-        })
-    }
-  }
-
-  const handleLeadClick = (lead: typeof recentLeads[0]) => {
-    // Navigate to leads page and potentially open lead details
-    navigate("/leads", { state: { selectedLead: lead } })
-  }
-
-  const handleRefreshData = () => {
-    setIsRefreshing(true)
-    toast({
-      title: "Refreshing Data",
-      description: "Updating dashboard with latest information...",
-    })
-    
-    fetchDashboardData().finally(() => {
-      setIsRefreshing(false)
-      toast({
-        title: "Data Updated", 
-        description: "Dashboard has been refreshed with the latest data.",
-      })
-    })
-  }
-
-  const handleActivityClick = (activity: typeof todayActivities[0]) => {
-    // Navigate to activities page or perform action based on activity type
-    if (activity.type === "call") {
-      // Could integrate with phone system
-      toast({
-        title: "Initiating Call",
-        description: `Starting call: ${activity.title}`,
-      })
-    } else if (activity.type === "email") {
-      // Could open email composer
-      navigate("/activities")
-    } else {
-      navigate("/activities")
-    }
-  }
-
-  const filteredPipelineStages = pipelineStages.filter(stage =>
-    stage.name.toLowerCase().includes(pipelineFilter.toLowerCase())
-  )
-
-  const filteredLeads = leads.filter(lead =>
-    (lead.name || '').toLowerCase().includes(leadsFilter.toLowerCase()) ||
-    (lead.stage || '').toLowerCase().includes(leadsFilter.toLowerCase())
-  ).map(lead => ({
-    name: lead.name || 'N/A',
-    amount: formatCurrency(lead.loan_amount || 0),
-    loanType: lead.loan_type || 'N/A',
-    stage: lead.stage || 'N/A',
-    lastContact: lead.last_contact ? new Date(lead.last_contact).toLocaleDateString() : 'N/A',
-    priority: lead.priority || 'medium'
-  }))
-
-  const handlePipelineStageClick = (stage: typeof pipelineStages[0]) => {
-    // Navigate to leads page filtered by this stage
-    navigate("/leads", { state: { filterByStage: stage.name } })
-  }
-
-  const handleNewLeadClick = () => {
-    // Navigate to leads page with add dialog open
-    navigate("/leads", { state: { openAddDialog: true } })
-  }
+  const formatCurrency = (amount: number) => {
+    return new Intl.NumberFormat('en-US', {
+      style: 'currency',
+      currency: 'USD',
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 1,
+      notation: 'compact'
+    }).format(amount);
+  };
 
   return (
-    <TooltipProvider delayDuration={300}>
-      <div className="space-y-6">
-        {/* Header */}
-        <div className="flex justify-between items-center bg-gradient-to-r from-card/60 to-card/30 backdrop-blur-sm rounded-xl p-6 border border-border/20 shadow-md">
-          <div className="space-y-1">
+    <div className="bg-muted/20 min-h-screen">
+      {/* Page Header */}
+      <div className="bg-card border-b border-border shadow-sm">
+        <div className="px-6 py-6">
+          <div className="flex items-center justify-between">
+            <div>
+              <h1 className="text-2xl font-bold text-foreground mb-1">Analytics Dashboard</h1>
+              <p className="text-muted-foreground">
+                Monitor your business performance and key metrics
+              </p>
+            </div>
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-lg bg-gradient-primary flex items-center justify-center">
-                <TrendingUp className="w-5 h-5 text-primary-foreground" />
-              </div>
-              <div>
-                <h1 className="text-2xl font-bold text-foreground">Dashboard</h1>
-                <p className="text-sm text-muted-foreground">Welcome back! Here's your performance overview.</p>
-              </div>
+              <Button variant="outline" size="sm" className="text-sm">
+                <Calendar className="h-4 w-4 mr-2" />
+                Last 30 days
+              </Button>
+              <Button variant="outline" size="sm" className="text-sm">
+                <Download className="h-4 w-4 mr-2" />
+                Export
+              </Button>
+              <Button 
+                onClick={fetchDashboardData} 
+                variant="default" 
+                size="sm"
+                disabled={loading}
+                className="text-sm bg-blue-600 hover:bg-blue-700"
+              >
+                <RefreshCw className={`h-4 w-4 mr-2 ${loading ? 'animate-spin' : ''}`} />
+                Refresh Data
+              </Button>
             </div>
-            <div className="flex items-center gap-2 text-xs text-muted-foreground ml-13">
-              <Clock className="w-3 h-3" />
-              {formatDateTime(currentDateTime)}
-            </div>
-          </div>
-          <div className="flex gap-2">
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Button 
-                  variant="modern" 
-                  size="sm"
-                  onClick={handleRefreshData}
-                  disabled={isRefreshing}
-                  className="gap-2 h-9 px-4 rounded-lg"
-                >
-                  <RefreshCw className={`h-4 w-4 ${isRefreshing ? 'animate-spin' : ''}`} />
-                  Refresh
-                </Button>
-              </TooltipTrigger>
-              <TooltipContent>
-                <p>Refresh all dashboard data</p>
-              </TooltipContent>
-            </Tooltip>
-            
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Button 
-                  variant="gradient" 
-                  size="sm"
-                  className="gap-2 h-9 px-4 rounded-lg" 
-                  onClick={handleNewLeadClick}
-                >
-                  <Users className="h-4 w-4" />
-                  New Lead
-                </Button>
-              </TooltipTrigger>
-              <TooltipContent>
-                <p>Create a new lead</p>
-              </TooltipContent>
-            </Tooltip>
           </div>
         </div>
-
-      {/* Key Metrics */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4">
-        {metrics.map((metric, index) => (
-          <Card 
-            key={metric.title} 
-            className="relative bg-gradient-to-br from-card/80 to-card/50 backdrop-blur-sm border border-border/20 shadow-md hover:shadow-lg transition-all duration-300 cursor-pointer hover:scale-105 group rounded-lg min-w-0"
-            onClick={() => handleMetricClick(metric)}
-          >            
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-xs font-medium text-muted-foreground uppercase tracking-wide truncate pr-2">
-                {metric.title}
-              </CardTitle>
-              <div className="w-6 h-6 rounded-md bg-primary/10 flex items-center justify-center group-hover:scale-110 transition-transform duration-300 flex-shrink-0">
-                {index === 0 && <DollarSign className="h-3 w-3 text-primary" />}
-                {index === 1 && <Users className="h-3 w-3 text-accent" />}
-                {index === 2 && <Target className="h-3 w-3 text-primary" />}
-                {index === 3 && <FileText className="h-3 w-3 text-accent" />}
-                {index === 4 && <TrendingUp className="h-3 w-3 text-primary" />}
-              </div>
-            </CardHeader>
-            <CardContent className="pt-0">
-              <div className="text-2xl font-bold text-foreground mb-1 truncate">
-                {metric.value}
-              </div>
-              <div className="flex items-center gap-1">
-                <span className="text-xs font-medium text-accent px-2 py-0.5 bg-accent/10 rounded flex-shrink-0">
-                  {metric.change}
-                </span>
-                <span className="text-xs text-muted-foreground truncate">vs last month</span>
-              </div>
-            </CardContent>
-          </Card>
-        ))}
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Pipeline Overview */}
-        <Card className="col-span-2 bg-gradient-to-br from-card/80 to-card/50 backdrop-blur-sm border border-border/20 shadow-md rounded-lg">
-          <CardHeader className="border-b border-border/20">
-            <div className="flex justify-between items-center">
-              <div className="flex items-center gap-2">
-                <div className="w-8 h-8 rounded-lg bg-gradient-primary flex items-center justify-center">
-                  <Target className="w-4 h-4 text-primary-foreground" />
-                </div>
-                <CardTitle className="text-lg font-semibold text-foreground">
-                  Sales Pipeline
-                </CardTitle>
-              </div>
-              <div className="relative">
-                <Search className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground dark:text-white" />
-                <Input
-                  placeholder="Filter stages..."
-                  value={pipelineFilter}
-                  onChange={(e) => setPipelineFilter(e.target.value)}
-                  className="pl-10 w-40 h-8 rounded-lg bg-background/50 border-border/30 dark:text-white dark:placeholder-white/70"
-                />
-              </div>
-            </div>
-          </CardHeader>
-          <CardContent className="p-4">
-            <div className="space-y-3">
-              {filteredPipelineStages.map((stage, index) => (
-                <div 
-                  key={stage.name} 
-                  className="group p-3 rounded-lg bg-background/30 border border-border/10 hover:border-primary/20 transition-all duration-200 cursor-pointer hover:shadow-sm"
-                  onClick={() => handlePipelineStageClick(stage)}
-                >
-                  <div className="space-y-2">
-                    <div className="flex justify-between items-center">
+      {/* Main Content */}
+      <div className="p-6">
+        <Tabs defaultValue="overview" className="space-y-6">
+          <TabsList className="bg-muted/50">
+            <TabsTrigger value="overview" className="text-sm">Overview</TabsTrigger>
+            <TabsTrigger value="performance" className="text-sm">Performance</TabsTrigger>
+            <TabsTrigger value="analytics" className="text-sm">Analytics</TabsTrigger>
+            <TabsTrigger value="reports" className="text-sm">Reports</TabsTrigger>
+          </TabsList>
+          
+          <TabsContent value="overview" className="space-y-6">
+            {/* KPI Cards */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+              <Card className="bg-card border-0 shadow-lg hover:shadow-xl transition-shadow duration-200">
+                <CardContent className="p-6">
+                  <div className="flex items-center justify-between">
+                    <div className="space-y-2">
+                      <p className="text-sm font-medium text-muted-foreground">Total Revenue</p>
                       <div className="flex items-center gap-2">
-                        <div className="w-6 h-6 rounded-md bg-primary/10 dark:bg-primary/20 flex items-center justify-center">
-                          <span className="text-xs font-bold text-primary dark:text-white">{index + 1}</span>
-                        </div>
-                        <span className="font-medium text-foreground text-sm">{stage.name}</span>
+                        <span className="text-3xl font-bold text-foreground">{formatCurrency(totalRevenue)}</span>
                       </div>
                       <div className="flex items-center gap-2">
-                        <Badge variant="outline" className="text-xs bg-background/50">
-                          {stage.count} leads
+                        <Badge variant="secondary" className="bg-green-100 text-green-700 border-green-200">
+                          <ArrowUpRight className="h-3 w-3 mr-1" />
+                          +12.5%
                         </Badge>
-                        <ChevronRight className="h-3 w-3 text-muted-foreground group-hover:text-primary transition-colors" />
+                        <span className="text-xs text-muted-foreground">vs last month</span>
                       </div>
                     </div>
-                    <div className="space-y-1">
-                      <Progress 
-                        value={stage.percentage} 
-                        className="h-2 rounded-full bg-background/50" 
-                      />
-                      <div className="flex justify-between text-xs">
-                        <span className="text-muted-foreground dark:text-white/70">Progress</span>
-                        <span className="font-medium text-primary dark:text-white">{stage.percentage}%</span>
-                      </div>
+                    <div className="h-12 w-12 bg-blue-100 rounded-full flex items-center justify-center">
+                      <DollarSign className="h-6 w-6 text-blue-600" />
                     </div>
                   </div>
-                </div>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
+                </CardContent>
+              </Card>
 
-        {/* Today's Tasks */}
-        <TodaysTasks />
+              <Card className="bg-card border-0 shadow-lg hover:shadow-xl transition-shadow duration-200">
+                <CardContent className="p-6">
+                  <div className="flex items-center justify-between">
+                    <div className="space-y-2">
+                      <p className="text-sm font-medium text-muted-foreground">Active Leads</p>
+                      <div className="flex items-center gap-2">
+                        <span className="text-3xl font-bold text-foreground">1,247</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <Badge variant="secondary" className="bg-green-100 text-green-700 border-green-200">
+                          <ArrowUpRight className="h-3 w-3 mr-1" />
+                          +8.2%
+                        </Badge>
+                        <span className="text-xs text-muted-foreground">vs last month</span>
+                      </div>
+                    </div>
+                    <div className="h-12 w-12 bg-purple-100 rounded-full flex items-center justify-center">
+                      <Users className="h-6 w-6 text-purple-600" />
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              <Card className="bg-card border-0 shadow-lg hover:shadow-xl transition-shadow duration-200">
+                <CardContent className="p-6">
+                  <div className="flex items-center justify-between">
+                    <div className="space-y-2">
+                      <p className="text-sm font-medium text-muted-foreground">Pipeline Value</p>
+                      <div className="flex items-center gap-2">
+                        <span className="text-3xl font-bold text-foreground">{formatCurrency(pipelineValue)}</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <Badge variant="secondary" className="bg-red-100 text-red-700 border-red-200">
+                          <ArrowDownRight className="h-3 w-3 mr-1" />
+                          -2.1%
+                        </Badge>
+                        <span className="text-xs text-muted-foreground">vs last month</span>
+                      </div>
+                    </div>
+                    <div className="h-12 w-12 bg-green-100 rounded-full flex items-center justify-center">
+                      <Target className="h-6 w-6 text-green-600" />
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              <Card className="bg-card border-0 shadow-lg hover:shadow-xl transition-shadow duration-200">
+                <CardContent className="p-6">
+                  <div className="flex items-center justify-between">
+                    <div className="space-y-2">
+                      <p className="text-sm font-medium text-muted-foreground">Conversion Rate</p>
+                      <div className="flex items-center gap-2">
+                        <span className="text-3xl font-bold text-foreground">24.8%</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <Badge variant="secondary" className="bg-green-100 text-green-700 border-green-200">
+                          <ArrowUpRight className="h-3 w-3 mr-1" />
+                          +5.4%
+                        </Badge>
+                        <span className="text-xs text-muted-foreground">vs last month</span>
+                      </div>
+                    </div>
+                    <div className="h-12 w-12 bg-orange-100 rounded-full flex items-center justify-center">
+                      <Activity className="h-6 w-6 text-orange-600" />
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+
+            {/* Charts Section */}
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+              
+              {/* Performance Metrics Bar Chart */}
+              <Card className="bg-card border-0 shadow-lg">
+                <CardHeader className="pb-4">
+                  <CardTitle className="flex items-center gap-2 text-lg font-semibold text-foreground">
+                    <BarChart3 className="h-5 w-5 text-blue-600" />
+                    Performance Metrics
+                  </CardTitle>
+                  <CardDescription className="text-muted-foreground">
+                    Key performance indicators across departments
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="h-72">
+                    <ResponsiveContainer width="100%" height="100%">
+                      <BarChart data={performanceData} layout="horizontal">
+                        <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
+                        <XAxis 
+                          type="number" 
+                          domain={[0, 100]}
+                          axisLine={false}
+                          tickLine={false}
+                          tick={{ fontSize: 12, fill: '#6b7280' }}
+                        />
+                        <YAxis 
+                          type="category" 
+                          dataKey="name" 
+                          axisLine={false}
+                          tickLine={false}
+                          tick={{ fontSize: 11, fill: '#6b7280' }}
+                          width={100}
+                        />
+                        <Tooltip 
+                          formatter={(value) => [`${value}%`, 'Performance']}
+                          contentStyle={{
+                            backgroundColor: 'white',
+                            border: '1px solid #e5e7eb',
+                            borderRadius: '8px',
+                            fontSize: '12px',
+                            boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)'
+                          }}
+                        />
+                        <Bar dataKey="value" fill="#2563eb" radius={[0, 4, 4, 0]} />
+                      </BarChart>
+                    </ResponsiveContainer>
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Sales Funnel */}
+              <Card className="bg-card border-0 shadow-lg">
+                <CardHeader className="pb-4">
+                  <CardTitle className="flex items-center gap-2 text-lg font-semibold text-foreground">
+                    <Target className="h-5 w-5 text-purple-600" />
+                    Sales Funnel
+                  </CardTitle>
+                  <CardDescription className="text-muted-foreground">
+                    Lead progression through sales stages
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="h-72">
+                    <ResponsiveContainer width="100%" height="100%">
+                      <FunnelChart>
+                        <Tooltip 
+                          formatter={(value) => [value, 'Leads']}
+                          contentStyle={{
+                            backgroundColor: 'white',
+                            border: '1px solid #e5e7eb',
+                            borderRadius: '8px',
+                            fontSize: '12px',
+                            boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)'
+                          }}
+                        />
+                        <Funnel
+                          dataKey="value"
+                          data={funnelData}
+                          isAnimationActive
+                        >
+                          <LabelList position="center" fill="#fff" stroke="none" fontSize={12} />
+                        </Funnel>
+                      </FunnelChart>
+                    </ResponsiveContainer>
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Monthly Performance */}
+              <Card className="bg-card border-0 shadow-lg">
+                <CardHeader className="pb-4">
+                  <CardTitle className="flex items-center gap-2 text-lg font-semibold text-foreground">
+                    <BarChart3 className="h-5 w-5 text-green-600" />
+                    Monthly Performance
+                  </CardTitle>
+                  <CardDescription className="text-muted-foreground">
+                    Revenue vs targets over time
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="h-72">
+                    <ResponsiveContainer width="100%" height="100%">
+                      <BarChart data={monthlyData}>
+                        <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
+                        <XAxis 
+                          dataKey="month" 
+                          axisLine={false}
+                          tickLine={false}
+                          tick={{ fontSize: 12, fill: '#6b7280' }}
+                        />
+                        <YAxis 
+                          axisLine={false}
+                          tickLine={false}
+                          tick={{ fontSize: 12, fill: '#6b7280' }}
+                          tickFormatter={(value) => `$${(value / 1000)}k`}
+                        />
+                        <Tooltip 
+                          formatter={(value, name) => [
+                            name === 'revenue' ? formatCurrency(value as number) : 
+                            name === 'target' ? formatCurrency(value as number) : value,
+                            name === 'revenue' ? 'Revenue' : 
+                            name === 'target' ? 'Target' : 'Deals'
+                          ]}
+                          labelFormatter={(label) => `Month: ${label}`}
+                          contentStyle={{
+                            backgroundColor: 'white',
+                            border: '1px solid #e5e7eb',
+                            borderRadius: '8px',
+                            fontSize: '12px',
+                            boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)'
+                          }}
+                        />
+                        <Bar dataKey="revenue" fill="#059669" radius={[4, 4, 0, 0]} />
+                        <Bar dataKey="target" fill="#d1fae5" radius={[4, 4, 0, 0]} />
+                      </BarChart>
+                    </ResponsiveContainer>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+
+            {/* Bottom Charts Row */}
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              
+              {/* Loan Type Distribution */}
+              <Card className="bg-card border-0 shadow-lg">
+                <CardHeader className="pb-4">
+                  <CardTitle className="flex items-center gap-2 text-lg font-semibold text-foreground">
+                    <PieChart className="h-5 w-5 text-orange-600" />
+                    Loan Type Distribution
+                  </CardTitle>
+                  <CardDescription className="text-muted-foreground">
+                    Breakdown by loan categories
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="h-64">
+                    <ResponsiveContainer width="100%" height="100%">
+                      <RechartsPieChart>
+                        <Tooltip 
+                          formatter={(value) => [`${value}%`, 'Share']}
+                          contentStyle={{
+                            backgroundColor: 'white',
+                            border: '1px solid #e5e7eb',
+                            borderRadius: '8px',
+                            fontSize: '12px',
+                            boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)'
+                          }}
+                        />
+                        <Pie
+                          data={distributionData}
+                          cx="50%"
+                          cy="50%"
+                          outerRadius={80}
+                          fill="#8884d8"
+                          dataKey="value"
+                          label={({name, value}) => `${name}: ${value}%`}
+                        >
+                          {distributionData.map((entry, index) => (
+                            <Cell key={`cell-${index}`} fill={entry.fill} />
+                          ))}
+                        </Pie>
+                      </RechartsPieChart>
+                    </ResponsiveContainer>
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Regional Distribution */}
+              <Card className="bg-card border-0 shadow-lg">
+                <CardHeader className="pb-4">
+                  <CardTitle className="flex items-center gap-2 text-lg font-semibold text-foreground">
+                    <Users className="h-5 w-5 text-purple-600" />
+                    Regional Performance
+                  </CardTitle>
+                  <CardDescription className="text-muted-foreground">
+                    Revenue distribution by region
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="h-64">
+                    <ResponsiveContainer width="100%" height="100%">
+                      <RechartsPieChart>
+                        <Tooltip 
+                          formatter={(value) => [`${value}%`, 'Share']}
+                          contentStyle={{
+                            backgroundColor: 'white',
+                            border: '1px solid #e5e7eb',
+                            borderRadius: '8px',
+                            fontSize: '12px',
+                            boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)'
+                          }}
+                        />
+                        <Pie
+                          data={regionData}
+                          cx="50%"
+                          cy="50%"
+                          outerRadius={80}
+                          fill="#8884d8"
+                          dataKey="value"
+                          label={({name, value}) => `${name}: ${value}%`}
+                        >
+                          {regionData.map((entry, index) => (
+                            <Cell key={`cell-${index}`} fill={entry.fill} />
+                          ))}
+                        </Pie>
+                      </RechartsPieChart>
+                    </ResponsiveContainer>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+          </TabsContent>
+        </Tabs>
       </div>
-
-      {/* Loan Close Performance */}
-      <Card className="bg-gradient-to-br from-card/80 to-card/50 backdrop-blur-sm border border-border/20 shadow-md rounded-lg">
-        <CardHeader className="border-b border-border/20">
-          <div className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-lg bg-gradient-accent flex items-center justify-center">
-              <TrendingUp className="w-4 h-4 text-accent-foreground" />
-            </div>
-            <div>
-              <CardTitle className="text-lg font-semibold text-foreground">
-                Loan Close Performance
-              </CardTitle>
-              <p className="text-xs text-muted-foreground">Monthly performance tracking</p>
-            </div>
-          </div>
-        </CardHeader>
-        <CardContent className="p-4">
-          <div className="bg-background/30 rounded-lg p-3 border border-border/10">
-            <ChartContainer config={chartConfig} className="h-[280px]">
-              <LineChart data={loanCloseData}>
-                <XAxis 
-                  dataKey="month" 
-                  tickLine={false}
-                  axisLine={false}
-                  tick={{ fill: 'var(--foreground)', fontSize: 12 }}
-                />
-                <YAxis 
-                  yAxisId="left"
-                  tickLine={false}
-                  axisLine={false}
-                  tick={{ fill: 'var(--foreground)', fontSize: 12 }}
-                />
-                <YAxis 
-                  yAxisId="right"
-                  orientation="right"
-                  tickLine={false}
-                  axisLine={false}
-                  tick={{ fill: 'var(--foreground)', fontSize: 12 }}
-                  tickFormatter={(value) => `${value}%`}
-                />
-                <ChartTooltip 
-                  content={
-                    <ChartTooltipContent 
-                      labelFormatter={(label) => `${label} 2024`}
-                      formatter={(value, name) => [
-                        name === "closePercentage" ? `${value}%` : value,
-                        name === "closedLoans" ? "Closed" : 
-                        name === "targetLoans" ? "Target" : "Close %"
-                      ]}
-                    />
-                  }
-                />
-                <Line
-                  yAxisId="left"
-                  type="monotone"
-                  dataKey="closedLoans"
-                  stroke="var(--color-closedLoans)"
-                  strokeWidth={3}
-                  dot={{ fill: "var(--color-closedLoans)", strokeWidth: 2, r: 6 }}
-                  activeDot={{ r: 8, stroke: "var(--color-closedLoans)", strokeWidth: 2 }}
-                />
-                <Line
-                  yAxisId="left"
-                  type="monotone"
-                  dataKey="targetLoans"
-                  stroke="var(--color-targetLoans)"
-                  strokeWidth={2}
-                  strokeDasharray="5 5"
-                  dot={{ fill: "var(--color-targetLoans)", strokeWidth: 2, r: 4 }}
-                />
-                <Line
-                  yAxisId="right"
-                  type="monotone"
-                  dataKey="closePercentage"
-                  stroke="var(--color-closePercentage)"
-                  strokeWidth={2}
-                  dot={{ fill: "var(--color-closePercentage)", strokeWidth: 2, r: 4 }}
-                  activeDot={{ r: 6, stroke: "var(--color-closePercentage)", strokeWidth: 2 }}
-                />
-              </LineChart>
-            </ChartContainer>
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Recent Leads */}
-      <Card className="bg-gradient-to-br from-card/80 to-card/50 backdrop-blur-sm border border-border/20 shadow-md rounded-lg">
-        <CardHeader className="border-b border-border/20">
-          <div className="flex justify-between items-center">
-            <div className="flex items-center gap-2">
-              <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center">
-                <Users className="w-4 h-4 text-primary" />
-              </div>
-              <CardTitle className="text-lg font-semibold text-foreground">
-                Recent Leads
-              </CardTitle>
-            </div>
-            <div className="relative">
-              <Search className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
-              <Input
-                placeholder="Search leads..."
-                value={leadsFilter}
-                onChange={(e) => setLeadsFilter(e.target.value)}
-                className="pl-10 w-40 h-8 rounded-lg bg-background/50 border-border/30"
-              />
-            </div>
-          </div>
-        </CardHeader>
-        <CardContent className="p-4">
-          <div className="space-y-3">
-            {filteredLeads.map((lead, index) => (
-              <div 
-                key={`lead-${index}-${lead.name}`}
-                className="group p-3 rounded-lg bg-background/30 border border-border/10 hover:border-primary/20 hover:shadow-sm transition-all duration-200 cursor-pointer"
-                onClick={() => handleLeadClick(lead)}
-              >
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-3">
-                    <div className="w-8 h-8 bg-primary/10 rounded-lg flex items-center justify-center">
-                      <Users className="w-4 h-4 text-primary" />
-                    </div>
-                    <div>
-                      <p className="font-medium text-foreground text-sm">{lead.name}</p>
-                      <div className="flex items-center gap-2 mt-0.5">
-                        <p className="text-xs font-medium text-primary">{lead.amount}</p>
-                        <Badge variant="outline" className="text-xs h-4 px-1.5">
-                          {lead.loanType}
-                        </Badge>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="flex items-center gap-3">
-                    <div className="text-right">
-                      <Badge variant="outline" className="text-xs h-5 mb-1">
-                        {lead.stage}
-                      </Badge>
-                      <p className="text-xs text-muted-foreground">Last: {lead.lastContact}</p>
-                    </div>
-                    <Badge 
-                      variant={lead.priority === 'high' ? 'destructive' : 
-                              lead.priority === 'medium' ? 'default' : 'secondary'}
-                      className="text-xs h-5 capitalize"
-                    >
-                      {lead.priority}
-                    </Badge>
-                    <ChevronRight className="h-4 w-4 text-muted-foreground group-hover:text-primary transition-colors" />
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Admin AI Tools */}
-      {hasRole('admin') && (
-        <AdminAITools />
-      )}
-
-      {/* Lead Details Dialog */}
-      <Dialog open={!!selectedLead} onOpenChange={() => setSelectedLead(null)}>
-        <DialogContent className="max-w-md">
-          <DialogHeader>
-            <DialogTitle>Lead Details</DialogTitle>
-          </DialogHeader>
-          {selectedLead && (
-            <div className="space-y-4">
-              <div className="flex items-center gap-4">
-                <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center">
-                  <Users className="w-6 h-6 text-primary-foreground" />
-                </div>
-                <div>
-                  <h3 className="font-semibold text-lg">{selectedLead.name}</h3>
-                  <p className="text-muted-foreground">{selectedLead.amount}</p>
-                </div>
-              </div>
-              
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="text-sm font-medium text-muted-foreground">Stage</label>
-                  <Badge variant="outline" className="mt-1">{selectedLead.stage}</Badge>
-                </div>
-                <div>
-                  <label className="text-sm font-medium text-muted-foreground">Priority</label>
-                  <Badge 
-                    variant={selectedLead.priority === 'high' ? 'destructive' : 
-                            selectedLead.priority === 'medium' ? 'default' : 'secondary'}
-                    className="mt-1"
-                  >
-                    {selectedLead.priority}
-                  </Badge>
-                </div>
-              </div>
-              
-              <div>
-                <label className="text-sm font-medium text-muted-foreground">Last Contact</label>
-                <p className="text-sm">{selectedLead.lastContact}</p>
-              </div>
-              
-              <div className="flex gap-2 pt-4">
-                <Button 
-                  className="flex-1 gap-2"
-                  onClick={() => {
-                    toast({
-                      title: "Initiating Call",
-                      description: `Calling ${selectedLead.name}...`,
-                    })
-                  }}
-                >
-                  <Phone className="h-4 w-4" />
-                  Call
-                </Button>
-                <Button 
-                  variant="outline" 
-                  className="flex-1 gap-2"
-                  onClick={() => {
-                    navigate("/activities")
-                    toast({
-                      title: "Email Composer",
-                      description: `Opening email to ${selectedLead.name}...`,
-                    })
-                  }}
-                >
-                  <Mail className="h-4 w-4" />
-                  Email
-                </Button>
-                <Button 
-                  variant="outline" 
-                  className="flex-1 gap-2"
-                  onClick={() => {
-                    navigate("/leads", { state: { editLead: selectedLead } })
-                  }}
-                >
-                  <Edit className="h-4 w-4" />
-                  Edit
-                </Button>
-              </div>
-            </div>
-          )}
-        </DialogContent>
-      </Dialog>
-
-      {/* Quick Actions */}
-      <SimpleQuickActions />
     </div>
-  </TooltipProvider>
-  )
+  );
 }
