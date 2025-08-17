@@ -95,7 +95,7 @@ export function AppSidebar() {
                   <Button
                     variant="ghost"
                     size="sm"
-                    className="w-8 h-8 p-0 bg-gradient-primary rounded-lg hover:bg-gradient-primary/80"
+                    className="w-9 h-9 p-0 bg-gradient-primary rounded-lg hover:bg-gradient-primary/80"
                     onClick={handleUserIconClick}
                   >
                     {user ? (
@@ -133,7 +133,7 @@ export function AppSidebar() {
                         <TooltipTrigger asChild>
                           <SidebarMenuButton asChild>
                             <NavLink to={item.url} end className={getNavClass}>
-                              <item.icon className="w-4 h-4 text-sidebar-primary" />
+                              <item.icon className="w-5 h-5 text-sidebar-primary" />
                               <span className="sr-only">{item.title}</span>
                             </NavLink>
                           </SidebarMenuButton>
@@ -148,7 +148,7 @@ export function AppSidebar() {
                     ) : (
                       <SidebarMenuButton asChild>
                         <NavLink to={item.url} end className={getNavClass} title={item.description}>
-                          <item.icon className="w-4 h-4 text-sidebar-primary" />
+                          <item.icon className="w-5 h-5 text-sidebar-primary" />
                           <span>{item.title}</span>
                         </NavLink>
                       </SidebarMenuButton>
@@ -181,7 +181,7 @@ export function AppSidebar() {
                         <TooltipTrigger asChild>
                           <SidebarMenuButton asChild>
                             <NavLink to={item.url} className={getNavClass}>
-                              <item.icon className="w-4 h-4 text-sidebar-primary" />
+                              <item.icon className="w-5 h-5 text-sidebar-primary" />
                               <span className="sr-only">{item.title}</span>
                             </NavLink>
                           </SidebarMenuButton>
@@ -196,7 +196,7 @@ export function AppSidebar() {
                     ) : (
                       <SidebarMenuButton asChild>
                         <NavLink to={item.url} className={getNavClass} title={item.description}>
-                          <item.icon className="w-4 h-4 text-sidebar-primary" />
+                          <item.icon className="w-5 h-5 text-sidebar-primary" />
                           <span>{item.title}</span>
                         </NavLink>
                       </SidebarMenuButton>

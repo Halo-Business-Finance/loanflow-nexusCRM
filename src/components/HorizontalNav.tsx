@@ -110,10 +110,10 @@ export function HorizontalNav() {
 
           {/* Right Side - Actions and Profile */}
           <div className="flex items-center gap-3">
-            <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
+            <Button variant="ghost" size="sm" className="h-9 w-9 p-0">
               <Bell className="h-4 w-4" />
             </Button>
-            <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
+            <Button variant="ghost" size="sm" className="h-9 w-9 p-0">
               <HelpCircle className="h-4 w-4" />
             </Button>
             
@@ -123,8 +123,8 @@ export function HorizontalNav() {
             {/* Profile Dropdown */}
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="ghost" className="h-8 w-8 p-0">
-                  <Avatar className="h-7 w-7">
+                <Button variant="ghost" className="h-9 w-9 p-0">
+                  <Avatar className="h-8 w-8">
                     <AvatarImage src="" />
                     <AvatarFallback className="text-xs bg-primary/10 text-primary">
                       {user?.email?.charAt(0).toUpperCase() || 'U'}
@@ -193,7 +193,7 @@ export function HorizontalNav() {
               <Link
                 key={item.name}
                 to={item.path}
-                className={`relative flex items-center gap-1 px-3 py-2 text-sm font-medium transition-colors hover:text-blue-600 hover:bg-blue-50 rounded-md ${
+                className={`relative flex items-center gap-1 px-4 py-3 text-sm font-medium transition-colors hover:text-blue-600 hover:bg-blue-50 rounded-md ${
                   isActive 
                     ? 'text-primary border-b-2 border-primary' 
                     : 'text-foreground/70 hover:text-blue-600'
@@ -210,7 +210,7 @@ export function HorizontalNav() {
             <DropdownMenuTrigger asChild>
               <Button 
                 variant="ghost" 
-                className={`flex items-center gap-1 px-3 py-2 text-sm font-medium transition-colors hover:text-blue-600 hover:bg-blue-50 rounded-md ${
+                className={`flex items-center gap-1 px-4 py-3 text-sm font-medium transition-colors hover:text-blue-600 hover:bg-blue-50 rounded-md ${
                   enterpriseItems.some(item => isActivePath(item.path.split('#')[0]))
                     ? 'text-primary border-b-2 border-primary'
                     : 'text-foreground/70 hover:text-blue-600'
