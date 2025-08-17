@@ -1424,8 +1424,8 @@ export default function LeadDetail() {
                 Company Information
               </CardTitle>
             </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <CardContent className="space-y-6">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 {/* Left Column */}
                 <div className="space-y-4">
                   <div className="flex items-center gap-3">
@@ -1536,7 +1536,7 @@ export default function LeadDetail() {
                   </div>
                 </div>
 
-                {/* Right Column */}
+                {/* Middle Column */}
                 <div className="space-y-4">
                   <div className="flex items-center gap-3">
                     <Calendar className="w-4 h-4 text-muted-foreground" />
@@ -1577,6 +1577,7 @@ export default function LeadDetail() {
                       )}
                     </div>
                   </div>
+
                   <div className="flex items-center gap-3">
                     <DollarSign className="w-4 h-4 text-muted-foreground" />
                     <div className="flex-1">
@@ -1614,7 +1615,10 @@ export default function LeadDetail() {
                       )}
                     </div>
                   </div>
+                </div>
 
+                {/* Right Column */}
+                <div className="space-y-4">
                   <div className="flex items-center gap-3">
                     <div className="flex-1">
                       <p className="text-sm text-muted-foreground">Property Ownership</p>
@@ -1642,103 +1646,101 @@ export default function LeadDetail() {
                       )}
                     </div>
                   </div>
-
                 </div>
+              </div>
 
-                {/* Conditional property-related fields */}
-                {(lead.owns_property || editableFields.owns_property) && (
-                  <div className="col-span-full">
-                    <h3 className="text-lg font-semibold text-foreground mb-4 flex items-center gap-2 pt-4 no-underline">
-                      <Home className="w-5 h-5" />
-                      Property Details
-                    </h3>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-4">
-                      {/* Property Fields Left Column */}
-                      <div className="space-y-4">
-                        <div className="flex items-center gap-3">
-                          <DollarSign className="w-4 h-4 text-muted-foreground" />
-                          <div className="flex-1">
-                            <p className="text-sm text-muted-foreground">Property Payment Amount</p>
-                            {isEditing ? (
-                              <Input
-                                type="number"
-                                value={editableFields.property_payment_amount}
-                                onChange={(e) => setEditableFields({...editableFields, property_payment_amount: e.target.value})}
-                                placeholder="Enter monthly/yearly payment amount"
-                              />
-                            ) : (
-                              <p className="font-medium text-foreground">
-                                {(lead as any).property_payment_amount ? formatCurrency((lead as any).property_payment_amount) : 'N/A'}
-                              </p>
-                            )}
-                          </div>
-                        </div>
-
-                        <div className="flex items-center gap-3">
-                          <Target className="w-4 h-4 text-muted-foreground" />
-                          <div className="flex-1">
-                            <p className="text-sm text-muted-foreground">Interest Rate (%)</p>
-                            {isEditing ? (
-                              <Input
-                                type="number"
-                                step="0.01"
-                                value={editableFields.interest_rate}
-                                onChange={(e) => setEditableFields({...editableFields, interest_rate: e.target.value})}
-                                placeholder="Enter interest rate"
-                              />
-                            ) : (
-                              <p className="font-medium text-foreground">
-                                {lead.interest_rate ? `${lead.interest_rate}%` : 'N/A'}
-                              </p>
-                            )}
-                          </div>
+              {/* Property Details Section - Integrated within Company Information */}
+              {(lead.owns_property || editableFields.owns_property) && (
+                <div className="border-t pt-6">
+                  <h3 className="text-lg font-semibold text-foreground mb-4 flex items-center gap-2">
+                    <Home className="w-5 h-5" />
+                    Property Details
+                  </h3>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    {/* Property Fields Left Column */}
+                    <div className="space-y-4">
+                      <div className="flex items-center gap-3">
+                        <DollarSign className="w-4 h-4 text-muted-foreground" />
+                        <div className="flex-1">
+                          <p className="text-sm text-muted-foreground">Property Payment Amount</p>
+                          {isEditing ? (
+                            <Input
+                              type="number"
+                              value={editableFields.property_payment_amount}
+                              onChange={(e) => setEditableFields({...editableFields, property_payment_amount: e.target.value})}
+                              placeholder="Enter monthly/yearly payment amount"
+                            />
+                          ) : (
+                            <p className="font-medium text-foreground">
+                              {(lead as any).property_payment_amount ? formatCurrency((lead as any).property_payment_amount) : 'N/A'}
+                            </p>
+                          )}
                         </div>
                       </div>
 
-                      {/* Property Fields Right Column */}
-                      <div className="space-y-4">
-                        <div className="flex items-center gap-3">
-                          <Calendar className="w-4 h-4 text-muted-foreground" />
-                          <div className="flex-1">
-                            <p className="text-sm text-muted-foreground">Loan Maturity Date</p>
-                            {isEditing ? (
-                              <Input
-                                type="date"
-                                value={editableFields.maturity_date}
-                                onChange={(e) => setEditableFields({...editableFields, maturity_date: e.target.value})}
-                              />
-                            ) : (
-                              <p className="font-medium text-foreground">
-                                {lead.maturity_date ? new Date(lead.maturity_date).toLocaleDateString() : 'N/A'}
-                              </p>
-                            )}
-                          </div>
+                      <div className="flex items-center gap-3">
+                        <Target className="w-4 h-4 text-muted-foreground" />
+                        <div className="flex-1">
+                          <p className="text-sm text-muted-foreground">Interest Rate (%)</p>
+                          {isEditing ? (
+                            <Input
+                              type="number"
+                              step="0.01"
+                              value={editableFields.interest_rate}
+                              onChange={(e) => setEditableFields({...editableFields, interest_rate: e.target.value})}
+                              placeholder="Enter interest rate"
+                            />
+                          ) : (
+                            <p className="font-medium text-foreground">
+                              {lead.interest_rate ? `${lead.interest_rate}%` : 'N/A'}
+                            </p>
+                          )}
                         </div>
+                      </div>
+                    </div>
 
-                        <div className="flex items-center gap-3">
-                          <DollarSign className="w-4 h-4 text-muted-foreground" />
-                          <div className="flex-1">
-                            <p className="text-sm text-muted-foreground">Existing Loan Amount</p>
-                            {isEditing ? (
-                              <Input
-                                type="number"
-                                value={editableFields.existing_loan_amount}
-                                onChange={(e) => setEditableFields({...editableFields, existing_loan_amount: e.target.value})}
-                                placeholder="Enter existing loan amount"
-                              />
-                            ) : (
-                              <p className="font-medium text-foreground">
-                                {lead.existing_loan_amount ? formatCurrency(lead.existing_loan_amount) : 'N/A'}
-                              </p>
-                            )}
-                          </div>
+                    {/* Property Fields Right Column */}
+                    <div className="space-y-4">
+                      <div className="flex items-center gap-3">
+                        <Calendar className="w-4 h-4 text-muted-foreground" />
+                        <div className="flex-1">
+                          <p className="text-sm text-muted-foreground">Maturity Date</p>
+                          {isEditing ? (
+                            <Input
+                              type="date"
+                              value={editableFields.maturity_date}
+                              onChange={(e) => setEditableFields({...editableFields, maturity_date: e.target.value})}
+                            />
+                          ) : (
+                            <p className="font-medium text-foreground">
+                              {lead.maturity_date ? new Date(lead.maturity_date).toLocaleDateString() : 'N/A'}
+                            </p>
+                          )}
+                        </div>
+                      </div>
+
+                      <div className="flex items-center gap-3">
+                        <DollarSign className="w-4 h-4 text-muted-foreground" />
+                        <div className="flex-1">
+                          <p className="text-sm text-muted-foreground">Existing Loan Amount</p>
+                          {isEditing ? (
+                            <Input
+                              type="number"
+                              value={editableFields.existing_loan_amount}
+                              onChange={(e) => setEditableFields({...editableFields, existing_loan_amount: e.target.value})}
+                              placeholder="Enter existing loan amount"
+                            />
+                          ) : (
+                            <p className="font-medium text-foreground">
+                              {formatCurrency((lead as any).existing_loan_amount)}
+                            </p>
+                          )}
                         </div>
                       </div>
                     </div>
                   </div>
-                )}
-
-              </div>
+                </div>
+              )}
             </CardContent>
           </Card>
         </div>
