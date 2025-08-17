@@ -35,12 +35,12 @@ const navigationItems = [
   { name: "Leads", path: "/leads", icon: Users },
   { name: "Existing Borrowers", path: "/existing-borrowers", icon: Building2 },
   { name: "Pipeline", path: "/pipeline", icon: Target },
-  { name: "Reports", path: "/reports", icon: BarChart3 },
   { name: "Documents", path: "/documents", icon: FileText },
   { name: "Activities", path: "/activities", icon: Activity },
 ]
 
 const moreItems = [
+  { name: "Reports", path: "/reports", icon: BarChart3 },
   { name: "Settings", path: "/settings", icon: Settings },
   { name: "Users", path: "/users", icon: User },
   { name: "Security", path: "/security", icon: Settings },
