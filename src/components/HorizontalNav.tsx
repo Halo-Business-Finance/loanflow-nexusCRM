@@ -38,9 +38,6 @@ const navigationItems = [
   { name: "Reports", path: "/reports", icon: BarChart3 },
   { name: "Documents", path: "/documents", icon: FileText },
   { name: "Activities", path: "/activities", icon: Activity },
-]
-
-const moreItems = [
   { name: "Settings", path: "/settings", icon: Settings },
   { name: "Users", path: "/users", icon: User },
   { name: "Security", path: "/security", icon: Settings },
@@ -160,33 +157,6 @@ export function HorizontalNav() {
               </Link>
             )
           })}
-          
-          {/* More Dropdown */}
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button 
-                variant="ghost" 
-                className={`flex items-center gap-2 px-3 py-1 text-sm font-medium transition-colors hover:text-primary ${
-                  moreItems.some(item => isActivePath(item.path))
-                    ? 'text-primary'
-                    : 'text-foreground/70'
-                }`}
-              >
-                More
-                <ChevronDown className="h-3 w-3" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="start" className="w-48">
-              {moreItems.map((item) => (
-                <DropdownMenuItem key={item.name} asChild>
-                  <Link to={item.path} className="flex items-center gap-2">
-                    <item.icon className="h-4 w-4" />
-                    {item.name}
-                  </Link>
-                </DropdownMenuItem>
-              ))}
-            </DropdownMenuContent>
-          </DropdownMenu>
         </nav>
       </div>
     </div>
