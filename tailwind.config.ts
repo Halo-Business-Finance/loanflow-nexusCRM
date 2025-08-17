@@ -30,6 +30,9 @@ export default {
 			colors: {
 				border: 'hsl(var(--border))',
 				input: 'hsl(var(--input))',
+				'input-border': 'hsl(var(--input-border))',
+				'input-border-hover': 'hsl(var(--input-border-hover))',
+				'input-border-focus': 'hsl(var(--input-border-focus))',
 				ring: 'hsl(var(--ring))',
 				background: 'hsl(var(--background))',
 				foreground: 'hsl(var(--foreground))',
