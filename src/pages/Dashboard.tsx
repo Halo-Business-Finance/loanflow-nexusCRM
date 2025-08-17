@@ -343,7 +343,7 @@ export default function Dashboard() {
     <HorizontalLayout>
       <div className="bg-background">
         {/* Page Header */}
-        <div className="border-b border-border bg-card">
+        <div className="border-b border-border bg-background">
           <div className="px-6 py-4">
             <div className="flex items-center justify-between">
               <div>
@@ -373,7 +373,7 @@ export default function Dashboard() {
           {/* Key Performance Metrics */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
             {performanceMetrics.map((metric, index) => (
-              <Card key={index} className="bg-card border border-border shadow-sm">
+              <Card key={index} className="bg-background border border-border shadow-sm">
                 <CardContent className="p-4">
                   <div className="flex items-center justify-between">
                     <div className="space-y-1">
@@ -427,7 +427,7 @@ export default function Dashboard() {
           {/* Main Content Grid */}
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
             {/* Revenue Chart */}
-            <Card className="lg:col-span-2 bg-card border border-border shadow-sm">
+            <Card className="lg:col-span-2 bg-background border border-border shadow-sm">
               <CardHeader className="pb-3">
                 <CardTitle className="flex items-center gap-2 text-sm font-semibold text-foreground">
                   <TrendingUp className="h-4 w-4 text-green-600" />
@@ -487,7 +487,7 @@ export default function Dashboard() {
             </Card>
 
             {/* Pipeline Overview */}
-            <Card className="bg-card border border-border shadow-sm">
+            <Card className="bg-background border border-border shadow-sm">
               <CardHeader className="pb-3">
                 <CardTitle className="flex items-center gap-2 text-sm font-semibold text-foreground">
                   <PieChart className="h-4 w-4 text-blue-600" />
@@ -533,7 +533,7 @@ export default function Dashboard() {
           {/* Bottom Section */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             {/* Recent Activity */}
-            <Card className="bg-card border border-border shadow-sm">
+            <Card className="bg-background border border-border shadow-sm">
               <CardHeader className="pb-3">
                 <CardTitle className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
@@ -569,7 +569,7 @@ export default function Dashboard() {
             </Card>
 
             {/* Top Performers */}
-            <Card className="bg-card border border-border shadow-sm">
+            <Card className="bg-background border border-border shadow-sm">
               <CardHeader className="pb-3">
                 <CardTitle className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
