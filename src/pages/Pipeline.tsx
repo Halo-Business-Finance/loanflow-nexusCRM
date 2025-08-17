@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import Layout from '@/components/Layout';
+
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
@@ -120,8 +120,7 @@ export default function Pipeline() {
   };
 
   return (
-    <Layout>
-      <div className="container mx-auto p-6 space-y-6">
+    <div className="container mx-auto p-6 space-y-6">
         <div className="flex items-center gap-2 mb-6">
           <GitBranch className="h-6 w-6" />
           <h1 className="text-3xl font-bold">Pipeline Management Center</h1>
@@ -384,6 +383,5 @@ export default function Pipeline() {
           </TabsContent>
         </Tabs>
       </div>
-    </Layout>
   );
 }

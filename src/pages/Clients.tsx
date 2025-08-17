@@ -3,8 +3,6 @@ import { mapClientFields, CLIENT_WITH_CONTACT_QUERY } from "@/lib/field-mapping"
 import { Client } from "@/types/lead"
 import { supabase } from "@/integrations/supabase/client"
 import { useAuth } from "@/components/auth/AuthProvider"
-import Layout from "@/components/Layout"
-import HorizontalLayout from "@/components/HorizontalLayout"
 import { useNavigate } from "react-router-dom"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
@@ -446,16 +444,13 @@ export default function Clients() {
 
   if (loading) {
     return (
-      <Layout>
-        <div className="flex items-center justify-center min-h-64">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
-        </div>
-      </Layout>
+      <div className="flex items-center justify-center min-h-64">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+      </div>
     )
   }
 
   return (
-    <HorizontalLayout>
       <div className="min-h-screen bg-background">
         {/* Modern Header */}
         <div className="bg-card border-b border-border sticky top-0 z-10">
@@ -951,7 +946,6 @@ export default function Clients() {
           )}
         </div>
       </div>
-    </div>
 
     {/* Action Reminder Dialog */}
     {selectedClientForReminder && (
@@ -963,6 +957,5 @@ export default function Clients() {
         onClose={() => setSelectedClientForReminder(null)}
       />
     )}
-    </HorizontalLayout>
   )
 }

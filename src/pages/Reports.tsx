@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import Layout from '@/components/Layout';
+
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
@@ -54,8 +54,7 @@ export default function Reports() {
   };
 
   return (
-    <Layout>
-      <div className="container mx-auto p-6 space-y-6">
+    <div className="container mx-auto p-6 space-y-6">
         <div className="flex items-center gap-2 mb-6">
           <BarChart3 className="h-6 w-6" />
           <h1 className="text-3xl font-bold">Business Intelligence Center</h1>
@@ -364,6 +363,5 @@ export default function Reports() {
           </TabsContent>
         </Tabs>
       </div>
-    </Layout>
   );
 }

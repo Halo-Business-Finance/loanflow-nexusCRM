@@ -1,5 +1,5 @@
 
-import Layout from "@/components/Layout"
+
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
@@ -69,11 +69,9 @@ export default function Documents() {
 
   if (loading) {
     return (
-      <Layout>
-        <div className="flex items-center justify-center h-64">
-          <div className="text-lg">Loading documents...</div>
-        </div>
-      </Layout>
+      <div className="flex items-center justify-center h-64">
+        <div className="text-lg">Loading documents...</div>
+      </div>
     )
   }
 
@@ -98,7 +96,7 @@ export default function Documents() {
   console.log('=== END DEBUG ===');
 
   return (
-    <Layout>
+    <>
       <DocumentTest />
       
       <div className="container mx-auto p-6 space-y-6">
@@ -408,6 +406,6 @@ export default function Documents() {
           }}
         />
       </div>
-    </Layout>
+    </>
   )
 }
