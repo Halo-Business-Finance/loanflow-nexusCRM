@@ -86,7 +86,7 @@ function AuthenticatedApp() {
           <>
             <Route path="/" element={<HorizontalLayout><Index /></HorizontalLayout>} errorElement={<RouteErrorBoundary />} />
             <Route path="/leads" element={<HorizontalLayout><Leads /></HorizontalLayout>} errorElement={<RouteErrorBoundary />} />
-            <Route path="/leads/:id" element={<HorizontalLayout><LeadDetail /></HorizontalLayout>} errorElement={<RouteErrorBoundary />} />
+            <Route path="/leads/:id" element={<LeadDetail />} errorElement={<RouteErrorBoundary />} />
             <Route path="/leads/:leadId/documents" element={<HorizontalLayout><LeadDocuments /></HorizontalLayout>} errorElement={<RouteErrorBoundary />} />
             <Route path="/existing-borrowers" element={<HorizontalLayout><Clients /></HorizontalLayout>} errorElement={<RouteErrorBoundary />} />
             <Route path="/clients/:id" element={<HorizontalLayout><ClientDetail /></HorizontalLayout>} errorElement={<RouteErrorBoundary />} />
