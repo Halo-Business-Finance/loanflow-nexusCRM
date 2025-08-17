@@ -81,7 +81,7 @@ export function HorizontalNav() {
   return (
     <div className="bg-background border-b border-border sticky top-0 z-50">
       {/* Top Bar */}
-      <div className="px-6 py-6 border-b border-border">
+      <div className="px-6 py-6">
         <div className="flex items-center justify-between">
           {/* Left Side - Logo and App Switcher */}
           <div className="flex items-center gap-4">
