@@ -2,7 +2,7 @@ import { useState, useEffect } from "react"
 import { useParams, useNavigate } from "react-router-dom"
 import { supabase } from "@/integrations/supabase/client"
 import { useAuth } from "@/components/auth/AuthProvider"
-import Layout from "@/components/Layout"
+import { HorizontalNav } from "@/components/HorizontalNav"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
@@ -328,31 +328,34 @@ export default function LeadDetail() {
 
   if (loading) {
     return (
-      <Layout>
+      <div className="min-h-screen bg-gray-50">
+        <HorizontalNav />
         <div className="flex items-center justify-center min-h-[400px]">
           <div className="text-center">
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
             <p className="text-sm text-muted-foreground">Loading lead details...</p>
           </div>
         </div>
-      </Layout>
+      </div>
     )
   }
 
   if (!lead) {
     return (
-      <Layout>
+      <div className="min-h-screen bg-gray-50">
+        <HorizontalNav />
         <div className="flex items-center justify-center min-h-[400px]">
           <div className="text-center">
             <p className="text-sm text-muted-foreground">Lead not found</p>
           </div>
         </div>
-      </Layout>
+      </div>
     )
   }
 
   return (
-    <Layout>
+    <div className="min-h-screen bg-gray-50">
+      <HorizontalNav />
       <div className="min-h-screen bg-background">
         {/* Modern Header */}
         <div className="bg-card border-b border-border sticky top-0 z-10">
@@ -700,6 +703,6 @@ export default function LeadDetail() {
           </AlertDialogContent>
         </AlertDialog>
       </div>
-    </Layout>
+    </div>
   )
 }
