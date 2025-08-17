@@ -6,8 +6,7 @@ import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar';
-import { AppSidebar } from '@/components/AppSidebar';
+import HorizontalLayout from '@/components/HorizontalLayout';
 import { 
   BarChart3, 
   TrendingUp, 
@@ -327,441 +326,293 @@ export default function Dashboard() {
 
   if (loading) {
     return (
-      <SidebarProvider>
-        <div className="min-h-screen flex w-full">
-          <AppSidebar />
-          <div className="flex-1">
-            <div className="flex items-center justify-center h-64">
-              <div className="text-center">
-                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
-                <p>Loading dashboard...</p>
-              </div>
+      <HorizontalLayout>
+        <div className="p-6">
+          <div className="flex items-center justify-center h-64">
+            <div className="text-center">
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+              <p className="text-sm text-gray-600">Loading dashboard...</p>
             </div>
           </div>
         </div>
-      </SidebarProvider>
+      </HorizontalLayout>
     );
   }
 
   return (
-    <SidebarProvider>
-      <div className="min-h-screen flex w-full">
-        <AppSidebar />
-        <div className="flex-1">
-          <div className="min-h-screen bg-background">
-            {/* Modern Header */}
-            <div className="bg-card border-b border-border sticky top-0 z-10">
-              <div className="px-6 py-4">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-4">
-                    <SidebarTrigger />
-                    <div>
-                      <div className="flex items-center gap-3">
-                        <h1 className="text-xl font-semibold text-foreground">
-                          Executive Dashboard
-                        </h1>
-                        <Badge variant="default" className="text-xs font-medium px-2 py-1">
-                          Real-time
-                        </Badge>
-                      </div>
-                      <p className="text-sm text-muted-foreground mt-1">
-                        Enterprise-grade business intelligence and performance analytics
-                      </p>
-                    </div>
-                  </div>
-                  
-                  <div className="flex items-center gap-2">
-                    <Button variant="outline" size="sm" onClick={() => navigate('/settings')} className="h-8 text-xs font-medium">
-                      <Settings className="h-3 w-3 mr-2" />
-                      Settings
-                    </Button>
-                    <Button 
-                      onClick={fetchDashboardData} 
-                      variant="outline" 
-                      size="sm"
-                      disabled={loading}
-                      className="h-8 text-xs font-medium"
-                    >
-                      <RefreshCw className={`h-3 w-3 mr-2 ${loading ? 'animate-spin' : ''}`} />
-                      Refresh
-                    </Button>
-                  </div>
-                </div>
+    <HorizontalLayout>
+      <div className="bg-white">
+        {/* Page Header */}
+        <div className="border-b border-gray-200 bg-white">
+          <div className="px-6 py-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <h1 className="text-lg font-semibold text-gray-900">Home</h1>
+                <p className="text-sm text-gray-600 mt-1">
+                  Welcome back! Here's your business overview.
+                </p>
               </div>
-            </div>
-
-            {/* Content Area */}
-            <div className="p-6 space-y-6">
-              {/* Key Performance Metrics */}
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                {performanceMetrics.map((metric, index) => (
-                  <Card key={index} className="relative overflow-hidden border-l-4 border-l-primary hover:shadow-lg transition-shadow">
-                    <CardContent className="p-6">
-                      <div className="flex items-center justify-between">
-                        <div className="space-y-2">
-                          <p className="text-sm font-medium text-muted-foreground">{metric.title}</p>
-                          <div className="flex items-center gap-2">
-                            <metric.icon className={`h-5 w-5 ${metric.color}`} />
-                            <span className="text-2xl font-bold">{metric.value}</span>
-                          </div>
-                          <div className="flex items-center gap-1">
-                            {getTrendIcon(metric.trend)}
-                            <span className={`text-sm font-medium ${
-                              metric.trend === 'up' ? 'text-green-600' : 
-                              metric.trend === 'down' ? 'text-red-600' : 'text-gray-600'
-                            }`}>
-                              {Math.abs(metric.change)}%
-                            </span>
-                            <span className="text-xs text-muted-foreground">vs last month</span>
-                          </div>
-                        </div>
-                        <div className="absolute top-4 right-4 opacity-10">
-                          <metric.icon className="h-12 w-12" />
-                        </div>
-                      </div>
-                    </CardContent>
-                  </Card>
-                ))}
+              <div className="flex items-center gap-2">
+                <Button 
+                  onClick={fetchDashboardData} 
+                  variant="outline" 
+                  size="sm"
+                  disabled={loading}
+                  className="text-xs"
+                >
+                  <RefreshCw className={`h-3 w-3 mr-1 ${loading ? 'animate-spin' : ''}`} />
+                  Refresh
+                </Button>
               </div>
-
-              {/* Performance Alerts */}
-              <div className="grid gap-4">
-                {overview.conversionRate < 15 && (
-                  <Alert className="border-orange-200 bg-orange-50">
-                    <AlertTriangle className="h-4 w-4 text-orange-600" />
-                    <AlertDescription className="text-orange-800">
-                      <strong>Low Conversion Rate:</strong> Current rate is {overview.conversionRate.toFixed(1)}%. 
-                      Consider reviewing lead qualification process or sales training.
-                    </AlertDescription>
-                  </Alert>
-                )}
-                
-                {overview.activeLeads > 100 && (
-                  <Alert className="border-blue-200 bg-blue-50">
-                    <AlertCircle className="h-4 w-4 text-blue-600" />
-                    <AlertDescription className="text-blue-800">
-                      <strong>High Lead Volume:</strong> You have {overview.activeLeads} active leads. 
-                      Consider lead prioritization or team expansion.
-                    </AlertDescription>
-                  </Alert>
-                )}
-              </div>
-
-              {/* Main Analytics Grid */}
-              <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                {/* Revenue Chart */}
-                <Card className="lg:col-span-2">
-                  <CardHeader>
-                    <CardTitle className="flex items-center gap-2">
-                      <TrendingUp className="h-5 w-5 text-green-600" />
-                      Revenue Performance
-                    </CardTitle>
-                    <CardDescription>
-                      Monthly revenue and deal closure trends
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="h-80">
-                      <ResponsiveContainer width="100%" height="100%">
-                        <AreaChart data={revenueChartData}>
-                          <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
-                          <XAxis 
-                            dataKey="month" 
-                            axisLine={false}
-                            tickLine={false}
-                            tick={{ fontSize: 12, fill: '#6b7280' }}
-                          />
-                          <YAxis 
-                            axisLine={false}
-                            tickLine={false}
-                            tick={{ fontSize: 12, fill: '#6b7280' }}
-                            tickFormatter={(value) => `$${(value / 1000)}k`}
-                          />
-                          <Tooltip 
-                            formatter={(value, name) => [
-                              name === 'revenue' ? formatCurrency(value as number) : value,
-                              name === 'revenue' ? 'Revenue' : 'Deals'
-                            ]}
-                            labelFormatter={(label) => `Month: ${label}`}
-                            contentStyle={{
-                              backgroundColor: 'white',
-                              border: '1px solid #e5e7eb',
-                              borderRadius: '8px',
-                              boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)'
-                            }}
-                          />
-                          <Area 
-                            type="monotone" 
-                            dataKey="revenue" 
-                            stroke="#10b981" 
-                            fill="url(#revenueGradient)"
-                            strokeWidth={2}
-                          />
-                          <defs>
-                            <linearGradient id="revenueGradient" x1="0" y1="0" x2="0" y2="1">
-                              <stop offset="5%" stopColor="#10b981" stopOpacity={0.3}/>
-                              <stop offset="95%" stopColor="#10b981" stopOpacity={0}/>
-                            </linearGradient>
-                          </defs>
-                        </AreaChart>
-                      </ResponsiveContainer>
-                    </div>
-                  </CardContent>
-                </Card>
-
-                {/* Digital Pipeline Overview */}
-                <Card className="bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 border-slate-700 text-white">
-                  <CardHeader className="pb-2">
-                    <CardTitle className="flex items-center gap-2 text-white">
-                      <div className="relative">
-                        <PieChart className="h-5 w-5 text-cyan-400" />
-                        <div className="absolute -top-1 -right-1 w-2 h-2 bg-cyan-400 rounded-full animate-pulse"></div>
-                      </div>
-                      Digital Sales Pipeline
-                    </CardTitle>
-                    <CardDescription className="text-slate-300">
-                      Real-time pipeline distribution with digital metrics
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent className="space-y-4">
-                    {/* Digital Status Bar */}
-                    <div className="flex items-center gap-2 p-2 bg-slate-800/50 rounded border border-slate-600">
-                      <div className="flex items-center gap-1">
-                        <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
-                        <span className="text-xs text-slate-300">LIVE</span>
-                      </div>
-                      <div className="text-xs text-slate-400 font-mono">
-                        {new Date().toLocaleTimeString()} EST
-                      </div>
-                      <div className="ml-auto text-xs text-cyan-400 font-mono">
-                        SYS_ONLINE
-                      </div>
-                    </div>
-
-                    {pipelineData.map((stage, index) => {
-                      const stageColors = [
-                        'from-blue-500 to-cyan-500',
-                        'from-purple-500 to-pink-500', 
-                        'from-orange-500 to-red-500',
-                        'from-green-500 to-emerald-500',
-                        'from-yellow-500 to-orange-500'
-                      ];
-                      const glowColors = [
-                        'shadow-blue-500/20',
-                        'shadow-purple-500/20',
-                        'shadow-orange-500/20', 
-                        'shadow-green-500/20',
-                        'shadow-yellow-500/20'
-                      ];
-                      
-                      return (
-                        <div key={index} className="space-y-3 p-3 rounded-lg bg-slate-800/30 border border-slate-700/50 hover:border-slate-600 transition-all duration-300">
-                          <div className="flex items-center justify-between">
-                            <div className="flex items-center gap-2">
-                              <div className={`w-3 h-3 rounded-full bg-gradient-to-r ${stageColors[index]} ${glowColors[index]} shadow-lg animate-pulse`}></div>
-                              <span className="text-sm font-medium text-white font-mono">{stage.name}</span>
-                            </div>
-                            <div className="flex items-center gap-2">
-                              <div className="text-xs text-slate-400 bg-slate-700 px-2 py-1 rounded font-mono">
-                                {stage.count} UNITS
-                              </div>
-                              <Badge className={`text-xs bg-gradient-to-r ${stageColors[index]} border-0 text-white font-mono`}>
-                                {formatCurrency(stage.value)}
-                              </Badge>
-                            </div>
-                          </div>
-                          
-                          {/* Digital Progress Bar */}
-                          <div className="relative">
-                            <div className="h-2 bg-slate-700 rounded-full overflow-hidden">
-                              <div 
-                                className={`h-full bg-gradient-to-r ${stageColors[index]} transition-all duration-1000 ease-out relative`}
-                                style={{ width: `${stage.percentage}%` }}
-                              >
-                                <div className="absolute inset-0 bg-white/20 animate-pulse"></div>
-                              </div>
-                            </div>
-                            <div className="absolute -top-1 -right-1 text-xs text-cyan-400 font-mono">
-                              {stage.percentage.toFixed(1)}%
-                            </div>
-                          </div>
-                          
-                          {/* Digital Status Indicators */}
-                          <div className="flex items-center gap-2 text-xs">
-                            <div className="flex items-center gap-1">
-                              <div className="w-1 h-1 bg-green-400 rounded-full"></div>
-                              <span className="text-slate-400 font-mono">ACTIVE</span>
-                            </div>
-                            <div className="w-px h-3 bg-slate-600"></div>
-                            <div className="text-slate-500 font-mono">
-                              VEL: {(stage.percentage * 0.1).toFixed(1)}x
-                            </div>
-                          </div>
-                        </div>
-                      );
-                    })}
-                    
-                    {/* Digital Summary */}
-                    <div className="pt-4 border-t border-slate-700">
-                      <div className="bg-gradient-to-r from-slate-800 to-slate-700 p-3 rounded-lg border border-slate-600">
-                        <div className="flex items-center justify-between">
-                          <div className="flex items-center gap-2">
-                            <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
-                            <span className="font-medium text-white font-mono">TOTAL PIPELINE VALUE</span>
-                          </div>
-                          <span className="font-bold text-green-400 text-lg font-mono">
-                            {formatCurrency(pipelineData.reduce((sum, stage) => sum + stage.value, 0))}
-                          </span>
-                        </div>
-                        <div className="mt-2 flex items-center gap-4 text-xs text-slate-400 font-mono">
-                          <span>CONVERSION_RATE: {overview.conversionRate.toFixed(1)}%</span>
-                          <span>•</span>
-                          <span>AVG_CYCLE: 23.4 DAYS</span>
-                          <span>•</span>
-                          <span>FORECAST: +{overview.monthlyGrowth.toFixed(1)}%</span>
-                        </div>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-              </div>
-
-              {/* Secondary Analytics */}
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                {/* Recent Activity */}
-                <Card>
-                  <CardHeader>
-                    <CardTitle className="flex items-center justify-between">
-                      <div className="flex items-center gap-2">
-                        <Activity className="h-5 w-5 text-purple-600" />
-                        Recent Activity
-                      </div>
-                      <Button variant="ghost" size="sm" onClick={() => navigate('/activities')}>
-                        <Eye className="h-4 w-4 mr-2" />
-                        View All
-                      </Button>
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent className="space-y-4">
-                    {recentActivity.map((activity) => (
-                      <div key={activity.id} className="flex items-start gap-3 p-3 rounded-lg hover:bg-muted/50 transition-colors">
-                        <div className="flex items-center justify-center w-8 h-8 rounded-full bg-muted">
-                          {getActivityIcon(activity.type)}
-                        </div>
-                        <div className="flex-1 space-y-1">
-                          <div className="flex items-center justify-between">
-                            <p className="text-sm font-medium">{activity.title}</p>
-                            <Badge variant="outline" className={getStatusColor(activity.status)}>
-                              {activity.status}
-                            </Badge>
-                          </div>
-                          <p className="text-xs text-muted-foreground">{activity.description}</p>
-                          <div className="flex items-center justify-between">
-                            <span className="text-xs text-muted-foreground">{activity.timestamp}</span>
-                            {activity.amount && (
-                              <span className="text-xs font-medium text-green-600">
-                                {formatCurrency(activity.amount)}
-                              </span>
-                            )}
-                          </div>
-                        </div>
-                      </div>
-                    ))}
-                  </CardContent>
-                </Card>
-
-                {/* Top Performers */}
-                <Card>
-                  <CardHeader>
-                    <CardTitle className="flex items-center justify-between">
-                      <div className="flex items-center gap-2">
-                        <Award className="h-5 w-5 text-yellow-600" />
-                        Top Performers
-                      </div>
-                      <Button variant="ghost" size="sm" onClick={() => navigate('/users')}>
-                        <Eye className="h-4 w-4 mr-2" />
-                        View All
-                      </Button>
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent className="space-y-4">
-                    {topPerformers.map((performer, index) => (
-                      <div key={performer.id} className="flex items-center gap-3 p-3 rounded-lg hover:bg-muted/50 transition-colors">
-                        <div className="flex items-center gap-3 flex-1">
-                          <div className="relative">
-                            <Avatar className="h-10 w-10">
-                              <AvatarImage src={performer.avatar} />
-                              <AvatarFallback className="bg-primary text-primary-foreground">
-                                {performer.name.split(' ').map(n => n[0]).join('')}
-                              </AvatarFallback>
-                            </Avatar>
-                            {index === 0 && (
-                              <div className="absolute -top-1 -right-1 w-4 h-4 bg-yellow-500 rounded-full flex items-center justify-center">
-                                <Star className="h-2 w-2 text-white fill-current" />
-                              </div>
-                            )}
-                          </div>
-                          <div className="space-y-1">
-                            <p className="text-sm font-medium">{performer.name}</p>
-                            <p className="text-xs text-muted-foreground">{performer.role}</p>
-                          </div>
-                        </div>
-                        <div className="text-right space-y-1">
-                          <p className="text-sm font-medium">{performer.deals} deals</p>
-                          <p className="text-xs text-green-600 font-medium">
-                            {formatCurrency(performer.revenue)}
-                          </p>
-                        </div>
-                      </div>
-                    ))}
-                  </CardContent>
-                </Card>
-              </div>
-
-              {/* Quick Actions */}
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <Target className="h-5 w-5 text-indigo-600" />
-                    Quick Actions
-                  </CardTitle>
-                  <CardDescription>
-                    Frequently used actions and shortcuts
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
-                    <Button variant="outline" className="h-20 flex-col gap-2" onClick={() => navigate('/leads?new=true')}>
-                      <Users className="h-5 w-5" />
-                      <span className="text-xs">New Lead</span>
-                    </Button>
-                    <Button variant="outline" className="h-20 flex-col gap-2" onClick={() => navigate('/pipeline')}>
-                      <BarChart3 className="h-5 w-5" />
-                      <span className="text-xs">Pipeline</span>
-                    </Button>
-                    <Button variant="outline" className="h-20 flex-col gap-2" onClick={() => navigate('/reports')}>
-                      <FileText className="h-5 w-5" />
-                      <span className="text-xs">Reports</span>
-                    </Button>
-                    <Button variant="outline" className="h-20 flex-col gap-2" onClick={() => navigate('/calendar')}>
-                      <Calendar className="h-5 w-5" />
-                      <span className="text-xs">Calendar</span>
-                    </Button>
-                    <Button variant="outline" className="h-20 flex-col gap-2" onClick={() => navigate('/documents')}>
-                      <FileText className="h-5 w-5" />
-                      <span className="text-xs">Documents</span>
-                    </Button>
-                    <Button variant="outline" className="h-20 flex-col gap-2" onClick={() => navigate('/settings')}>
-                      <Settings className="h-5 w-5" />
-                      <span className="text-xs">Settings</span>
-                    </Button>
-                  </div>
-                </CardContent>
-              </Card>
             </div>
           </div>
         </div>
+
+        {/* Content */}
+        <div className="p-6 bg-gray-50 min-h-screen">
+          {/* Key Performance Metrics */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+            {performanceMetrics.map((metric, index) => (
+              <Card key={index} className="bg-white border border-gray-200 shadow-sm">
+                <CardContent className="p-4">
+                  <div className="flex items-center justify-between">
+                    <div className="space-y-1">
+                      <p className="text-xs font-medium text-gray-500 uppercase tracking-wide">{metric.title}</p>
+                      <div className="flex items-center gap-2">
+                        <metric.icon className={`h-4 w-4 ${metric.color}`} />
+                        <span className="text-xl font-semibold text-gray-900">{metric.value}</span>
+                      </div>
+                      <div className="flex items-center gap-1">
+                        {getTrendIcon(metric.trend)}
+                        <span className={`text-xs font-medium ${
+                          metric.trend === 'up' ? 'text-green-600' : 
+                          metric.trend === 'down' ? 'text-red-600' : 'text-gray-600'
+                        }`}>
+                          {Math.abs(metric.change)}%
+                        </span>
+                        <span className="text-xs text-gray-500">vs last month</span>
+                      </div>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+
+          {/* Performance Alerts */}
+          {(overview.conversionRate < 15 || overview.activeLeads > 100) && (
+            <div className="grid gap-3 mb-6">
+              {overview.conversionRate < 15 && (
+                <Alert className="border-orange-200 bg-orange-50">
+                  <AlertTriangle className="h-4 w-4 text-orange-600" />
+                  <AlertDescription className="text-orange-800 text-sm">
+                    <strong>Low Conversion Rate:</strong> Current rate is {overview.conversionRate.toFixed(1)}%. 
+                    Consider reviewing lead qualification process.
+                  </AlertDescription>
+                </Alert>
+              )}
+              
+              {overview.activeLeads > 100 && (
+                <Alert className="border-blue-200 bg-blue-50">
+                  <AlertCircle className="h-4 w-4 text-blue-600" />
+                  <AlertDescription className="text-blue-800 text-sm">
+                    <strong>High Lead Volume:</strong> You have {overview.activeLeads} active leads. 
+                    Consider lead prioritization.
+                  </AlertDescription>
+                </Alert>
+              )}
+            </div>
+          )}
+
+          {/* Main Content Grid */}
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
+            {/* Revenue Chart */}
+            <Card className="lg:col-span-2 bg-white border border-gray-200 shadow-sm">
+              <CardHeader className="pb-3">
+                <CardTitle className="flex items-center gap-2 text-sm font-semibold text-gray-900">
+                  <TrendingUp className="h-4 w-4 text-green-600" />
+                  Revenue Performance
+                </CardTitle>
+                <CardDescription className="text-xs text-gray-600">
+                  Monthly revenue and deal closure trends
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="h-64">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <AreaChart data={revenueChartData}>
+                      <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
+                      <XAxis 
+                        dataKey="month" 
+                        axisLine={false}
+                        tickLine={false}
+                        tick={{ fontSize: 11, fill: '#6b7280' }}
+                      />
+                      <YAxis 
+                        axisLine={false}
+                        tickLine={false}
+                        tick={{ fontSize: 11, fill: '#6b7280' }}
+                        tickFormatter={(value) => `$${(value / 1000)}k`}
+                      />
+                      <Tooltip 
+                        formatter={(value, name) => [
+                          name === 'revenue' ? formatCurrency(value as number) : value,
+                          name === 'revenue' ? 'Revenue' : 'Deals'
+                        ]}
+                        labelFormatter={(label) => `Month: ${label}`}
+                        contentStyle={{
+                          backgroundColor: 'white',
+                          border: '1px solid #e5e7eb',
+                          borderRadius: '6px',
+                          fontSize: '12px'
+                        }}
+                      />
+                      <Area 
+                        type="monotone" 
+                        dataKey="revenue" 
+                        stroke="#0ea5e9" 
+                        fill="url(#revenueGradient)"
+                        strokeWidth={2}
+                      />
+                      <defs>
+                        <linearGradient id="revenueGradient" x1="0" y1="0" x2="0" y2="1">
+                          <stop offset="5%" stopColor="#0ea5e9" stopOpacity={0.3}/>
+                          <stop offset="95%" stopColor="#0ea5e9" stopOpacity={0}/>
+                        </linearGradient>
+                      </defs>
+                    </AreaChart>
+                  </ResponsiveContainer>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Pipeline Overview */}
+            <Card className="bg-white border border-gray-200 shadow-sm">
+              <CardHeader className="pb-3">
+                <CardTitle className="flex items-center gap-2 text-sm font-semibold text-gray-900">
+                  <PieChart className="h-4 w-4 text-blue-600" />
+                  Sales Pipeline
+                </CardTitle>
+                <CardDescription className="text-xs text-gray-600">
+                  Current pipeline distribution
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-3">
+                {pipelineData.map((stage, index) => (
+                  <div key={index} className="space-y-2">
+                    <div className="flex items-center justify-between">
+                      <span className="text-xs font-medium text-gray-700">{stage.name}</span>
+                      <div className="flex items-center gap-2">
+                        <span className="text-xs text-gray-500">{stage.count}</span>
+                        <span className="text-xs font-medium text-gray-900">
+                          {formatCurrency(stage.value)}
+                        </span>
+                      </div>
+                    </div>
+                    <div className="w-full bg-gray-200 rounded-full h-1.5">
+                      <div 
+                        className="bg-blue-600 h-1.5 rounded-full transition-all duration-300"
+                        style={{ width: `${stage.percentage}%` }}
+                      />
+                    </div>
+                  </div>
+                ))}
+                
+                <div className="pt-3 border-t border-gray-200">
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-medium text-gray-700">Total Pipeline</span>
+                    <span className="text-sm font-semibold text-gray-900">
+                      {formatCurrency(pipelineData.reduce((sum, stage) => sum + stage.value, 0))}
+                    </span>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* Bottom Section */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            {/* Recent Activity */}
+            <Card className="bg-white border border-gray-200 shadow-sm">
+              <CardHeader className="pb-3">
+                <CardTitle className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <Activity className="h-4 w-4 text-purple-600" />
+                    <span className="text-sm font-semibold text-gray-900">Recent Activity</span>
+                  </div>
+                  <Button variant="ghost" size="sm" onClick={() => navigate('/activities')} className="text-xs">
+                    View All
+                  </Button>
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-3">
+                {recentActivity.map((activity) => (
+                  <div key={activity.id} className="flex items-start gap-3 p-2 rounded-md hover:bg-gray-50">
+                    <div className="flex items-center justify-center w-6 h-6 rounded-full bg-gray-100">
+                      {getActivityIcon(activity.type)}
+                    </div>
+                    <div className="flex-1 space-y-1">
+                      <div className="flex items-center justify-between">
+                        <p className="text-xs font-medium text-gray-900">{activity.title}</p>
+                        <span className="text-xs text-gray-500">{activity.timestamp}</span>
+                      </div>
+                      <p className="text-xs text-gray-600">{activity.description}</p>
+                      {activity.amount && (
+                        <span className="text-xs font-medium text-green-600">
+                          {formatCurrency(activity.amount)}
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                ))}
+              </CardContent>
+            </Card>
+
+            {/* Top Performers */}
+            <Card className="bg-white border border-gray-200 shadow-sm">
+              <CardHeader className="pb-3">
+                <CardTitle className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <Award className="h-4 w-4 text-yellow-600" />
+                    <span className="text-sm font-semibold text-gray-900">Top Performers</span>
+                  </div>
+                  <Button variant="ghost" size="sm" onClick={() => navigate('/users')} className="text-xs">
+                    View All
+                  </Button>
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-3">
+                {topPerformers.map((performer, index) => (
+                  <div key={performer.id} className="flex items-center gap-3 p-2 rounded-md hover:bg-gray-50">
+                    <div className="relative">
+                      <Avatar className="h-8 w-8">
+                        <AvatarFallback className="bg-blue-100 text-blue-700 text-xs">
+                          {performer.name.split(' ').map(n => n[0]).join('')}
+                        </AvatarFallback>
+                      </Avatar>
+                      {index === 0 && (
+                        <div className="absolute -top-1 -right-1 w-3 h-3 bg-yellow-500 rounded-full flex items-center justify-center">
+                          <Star className="h-1.5 w-1.5 text-white fill-current" />
+                        </div>
+                      )}
+                    </div>
+                    <div className="flex-1">
+                      <p className="text-xs font-medium text-gray-900">{performer.name}</p>
+                      <p className="text-xs text-gray-500">{performer.role}</p>
+                    </div>
+                    <div className="text-right">
+                      <p className="text-xs font-medium text-gray-900">{performer.deals} deals</p>
+                      <p className="text-xs text-green-600 font-medium">
+                        {formatCurrency(performer.revenue)}
+                      </p>
+                    </div>
+                  </div>
+                ))}
+              </CardContent>
+            </Card>
+          </div>
+        </div>
       </div>
-    </SidebarProvider>
+    </HorizontalLayout>
   );
 }

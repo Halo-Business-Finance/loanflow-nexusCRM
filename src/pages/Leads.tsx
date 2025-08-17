@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import Layout from '@/components/Layout';
+import HorizontalLayout from '@/components/HorizontalLayout';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
@@ -355,7 +356,7 @@ export default function Leads() {
   return (
     <SecurityWrapper>
       <SecureFormProvider>
-        <Layout>
+        <HorizontalLayout>
           <div className="min-h-screen bg-background">
             {/* Modern Header */}
             <div className="bg-card border-b border-border sticky top-0 z-10">
@@ -683,7 +684,7 @@ export default function Leads() {
         </Dialog>
             </div>
           </div>
-        </Layout>
+        </HorizontalLayout>
       </SecureFormProvider>
     </SecurityWrapper>
   );
