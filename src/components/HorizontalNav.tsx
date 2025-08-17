@@ -54,6 +54,17 @@ export function HorizontalNav() {
   const { user, signOut } = useAuth()
   const [searchQuery, setSearchQuery] = useState("")
 
+  const capitalizeFirstLetter = (str: string) => {
+    return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase()
+  }
+
+  const getUserDisplayName = () => {
+    const firstName = user?.user_metadata?.first_name
+    const emailName = user?.email?.split('@')[0]
+    const name = firstName || emailName || 'User'
+    return capitalizeFirstLetter(name)
+  }
+
   const isActivePath = (path: string) => {
     if (path === "/") return location.pathname === "/"
     return location.pathname.startsWith(path)
@@ -141,7 +152,7 @@ export function HorizontalNav() {
           <div className="flex items-center justify-between">
             <div>
               <h2 className="text-lg font-medium text-foreground">
-                Welcome back, {user?.user_metadata?.first_name || user?.email?.split('@')[0] || 'User'}
+                Welcome back, {getUserDisplayName()}
               </h2>
               <p className="text-sm text-muted-foreground">
                 {new Date().toLocaleDateString('en-US', { 
