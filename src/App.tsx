@@ -20,12 +20,21 @@ import { SecurityEnhancementProvider } from "@/components/security/SecurityEnhan
 import { SecurityProvider as EnhancedSecurityProvider } from "@/components/security/SecurityProvider";
 import { RouteErrorBoundary } from "@/components/RouteErrorBoundary";
 import Index from "./pages/Index";
+import Overview from "./pages/Overview";
+import QuickActions from "./pages/QuickActions";
 import Leads from "./pages/Leads";
+import NewLead from "./pages/NewLead";
+import LeadStats from "./pages/LeadStats";
+import LeadAssignment from "./pages/LeadAssignment";
 import LeadDetail from "./pages/LeadDetail";
 import LeadDocuments from "./pages/LeadDocuments";
 import Pipeline from "./pages/Pipeline";
+import PipelineAnalytics from "./pages/PipelineAnalytics";
+import StageManagement from "./pages/StageManagement";
 import Underwriter from "./pages/Underwriter";
 import Clients from "./pages/Clients";
+import BorrowerDetails from "./pages/BorrowerDetails";
+import LoanHistory from "./pages/LoanHistory";
 import ClientDetail from "./pages/ClientDetail";
 import Documents from "./pages/Documents";
 import Activities from "./pages/Activities";
@@ -85,17 +94,26 @@ function AuthenticatedApp() {
         {user ? (
           <>
             <Route path="/" element={<HorizontalLayout><Index /></HorizontalLayout>} errorElement={<RouteErrorBoundary />} />
+            <Route path="/overview" element={<HorizontalLayout><Overview /></HorizontalLayout>} errorElement={<RouteErrorBoundary />} />
+            <Route path="/quick-actions" element={<HorizontalLayout><QuickActions /></HorizontalLayout>} errorElement={<RouteErrorBoundary />} />
             
             <Route path="/leads" element={<HorizontalLayout><Leads /></HorizontalLayout>} errorElement={<RouteErrorBoundary />} />
+            <Route path="/leads/new" element={<HorizontalLayout><NewLead /></HorizontalLayout>} errorElement={<RouteErrorBoundary />} />
+            <Route path="/leads/stats" element={<HorizontalLayout><LeadStats /></HorizontalLayout>} errorElement={<RouteErrorBoundary />} />
+            <Route path="/leads/assignment" element={<HorizontalLayout><LeadAssignment /></HorizontalLayout>} errorElement={<RouteErrorBoundary />} />
             <Route path="/leads/:id" element={<LeadDetail />} errorElement={<RouteErrorBoundary />} />
             <Route path="/leads/:leadId/documents" element={<HorizontalLayout><LeadDocuments /></HorizontalLayout>} errorElement={<RouteErrorBoundary />} />
             
             <Route path="/existing-borrowers" element={<HorizontalLayout><Clients /></HorizontalLayout>} errorElement={<RouteErrorBoundary />} />
+            <Route path="/existing-borrowers/details" element={<HorizontalLayout><BorrowerDetails /></HorizontalLayout>} errorElement={<RouteErrorBoundary />} />
+            <Route path="/existing-borrowers/history" element={<HorizontalLayout><LoanHistory /></HorizontalLayout>} errorElement={<RouteErrorBoundary />} />
             <Route path="/existing-borrowers/:id" element={<HorizontalLayout><ClientDetail /></HorizontalLayout>} errorElement={<RouteErrorBoundary />} />
             {/* Redirect old client routes to existing borrowers */}
             <Route path="/clients/:id" element={<HorizontalLayout><ClientDetail /></HorizontalLayout>} errorElement={<RouteErrorBoundary />} />
             
             <Route path="/pipeline" element={<HorizontalLayout><Pipeline /></HorizontalLayout>} errorElement={<RouteErrorBoundary />} />
+            <Route path="/pipeline/analytics" element={<HorizontalLayout><PipelineAnalytics /></HorizontalLayout>} errorElement={<RouteErrorBoundary />} />
+            <Route path="/pipeline/stages" element={<HorizontalLayout><StageManagement /></HorizontalLayout>} errorElement={<RouteErrorBoundary />} />
             
             <Route path="/underwriter" element={<HorizontalLayout><Underwriter /></HorizontalLayout>} errorElement={<RouteErrorBoundary />} />
             

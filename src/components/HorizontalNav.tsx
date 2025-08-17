@@ -36,59 +36,59 @@ import { ThemeToggle } from "@/components/ThemeToggle"
 
 const homeItems = [
   { name: "Dashboard", path: "/", icon: Home },
-  { name: "Overview", path: "/?view=overview", icon: BarChart3 },
-  { name: "Quick Actions", path: "/?view=actions", icon: Activity },
+  { name: "Overview", path: "/overview", icon: BarChart3 },
+  { name: "Quick Actions", path: "/quick-actions", icon: Activity },
 ]
 
 const leadsItems = [
   { name: "All Leads", path: "/leads", icon: Users },
-  { name: "New Lead", path: "/leads?view=new", icon: User },
-  { name: "Lead Stats", path: "/leads?view=stats", icon: BarChart3 },
-  { name: "Lead Assignment", path: "/leads?view=assignment", icon: Target },
+  { name: "New Lead", path: "/leads/new", icon: User },
+  { name: "Lead Stats", path: "/leads/stats", icon: BarChart3 },
+  { name: "Lead Assignment", path: "/leads/assignment", icon: Target },
 ]
 
 const borrowersItems = [
   { name: "All Borrowers", path: "/existing-borrowers", icon: Building2 },
-  { name: "Borrower Details", path: "/existing-borrowers?view=details", icon: User },
-  { name: "Loan History", path: "/existing-borrowers?view=history", icon: FileText },
+  { name: "Borrower Details", path: "/existing-borrowers/details", icon: User },
+  { name: "Loan History", path: "/existing-borrowers/history", icon: FileText },
 ]
 
 const pipelineItems = [
   { name: "Pipeline View", path: "/pipeline", icon: Target },
-  { name: "Pipeline Analytics", path: "/pipeline?view=analytics", icon: BarChart3 },
-  { name: "Stage Management", path: "/pipeline?view=stages", icon: Settings },
+  { name: "Pipeline Analytics", path: "/pipeline/analytics", icon: BarChart3 },
+  { name: "Stage Management", path: "/pipeline/stages", icon: Settings },
 ]
 
 const underwriterItems = [
   { name: "Underwriter Dashboard", path: "/underwriter", icon: Shield },
-  { name: "Document Review", path: "/underwriter?view=documents", icon: FileText },
-  { name: "Risk Assessment", path: "/underwriter?view=risk", icon: Activity },
+  { name: "Document Review", path: "/underwriter/documents", icon: FileText },
+  { name: "Risk Assessment", path: "/underwriter/risk", icon: Activity },
 ]
 
 const documentsItems = [
   { name: "All Documents", path: "/documents", icon: FileText },
-  { name: "Upload Document", path: "/documents?view=upload", icon: Download },
-  { name: "Document Templates", path: "/documents?view=templates", icon: FileText },
+  { name: "Upload Document", path: "/documents/upload", icon: Download },
+  { name: "Document Templates", path: "/documents/templates", icon: FileText },
 ]
 
 const activitiesItems = [
   { name: "All Activities", path: "/activities", icon: Activity },
-  { name: "Calendar", path: "/activities?view=calendar", icon: Calendar },
-  { name: "Tasks", path: "/activities?view=tasks", icon: FileText },
+  { name: "Calendar", path: "/activities/calendar", icon: Calendar },
+  { name: "Tasks", path: "/activities/tasks", icon: FileText },
 ]
 
 const settingsItems = [
   { name: "General Settings", path: "/settings", icon: Settings },
-  { name: "User Management", path: "/settings?view=users", icon: User },
-  { name: "System Config", path: "/settings?view=system", icon: Settings },
+  { name: "User Management", path: "/settings/users", icon: User },
+  { name: "System Config", path: "/settings/system", icon: Settings },
 ]
 
 const securityItems = [
   { name: "Security Dashboard", path: "/security", icon: Shield },
-  { name: "Access Management", path: "/security?view=access", icon: User },
-  { name: "Audit Logs", path: "/security?view=audit", icon: FileText },
-  { name: "Threat Detection", path: "/security?view=threats", icon: Activity },
-  { name: "Compliance", path: "/security?view=compliance", icon: Settings },
+  { name: "Access Management", path: "/security/access", icon: User },
+  { name: "Audit Logs", path: "/security/audit", icon: FileText },
+  { name: "Threat Detection", path: "/security/threats", icon: Activity },
+  { name: "Compliance", path: "/security/compliance", icon: Settings },
 ]
 
 const enterpriseItems = [
