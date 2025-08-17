@@ -101,8 +101,8 @@ export function HorizontalNav() {
           {/* Left Side - Logo and App Switcher */}
           <div className="flex items-center gap-4">
             <div className="flex items-center gap-2">
-              <div className="w-8 h-8 bg-primary rounded flex items-center justify-center">
-                <Building2 className="h-5 w-5 text-primary-foreground" />
+              <div className="w-12 h-12 bg-primary rounded flex items-center justify-center">
+                <Building2 className="h-8 w-8 text-primary-foreground" />
               </div>
               <span className="font-semibold text-foreground">LoanFlow CRM</span>
             </div>
