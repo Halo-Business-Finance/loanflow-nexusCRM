@@ -519,9 +519,9 @@ export default function Dashboard() {
             </TabsContent>
 
             {/* Performance Tab */}
-            <TabsContent value="performance" className="space-y-6">
+            <TabsContent value="performance" className="space-y-6 min-h-[400px]">
               <div className="grid gap-6 md:grid-cols-2">
-                <Card className="border border-border shadow-sm bg-white">
+                <Card className="bg-card border-0 shadow-lg hover:shadow-xl transition-shadow duration-200">
                   <CardHeader className="pb-4">
                     <CardTitle className="flex items-center gap-2 text-lg font-semibold text-foreground">
                       <TrendingUp className="h-5 w-5 text-green-600" />
@@ -553,7 +553,7 @@ export default function Dashboard() {
                   </CardContent>
                 </Card>
 
-                <Card className="border border-border shadow-sm bg-white">
+                <Card className="bg-card border-0 shadow-lg hover:shadow-xl transition-shadow duration-200">
                   <CardHeader className="pb-4">
                     <CardTitle className="flex items-center gap-2 text-lg font-semibold text-foreground">
                       <Target className="h-5 w-5 text-purple-600" />
@@ -599,9 +599,9 @@ export default function Dashboard() {
             </TabsContent>
 
             {/* Analytics Tab */}
-            <TabsContent value="analytics" className="space-y-6">
+            <TabsContent value="analytics" className="space-y-6 min-h-[400px]">
               <div className="grid gap-6">
-                <Card className="border border-border shadow-sm bg-white">
+                <Card className="bg-card border-0 shadow-lg hover:shadow-xl transition-shadow duration-200">
                   <CardHeader className="pb-4">
                     <CardTitle className="flex items-center gap-2 text-lg font-semibold text-foreground">
                       <BarChart3 className="h-5 w-5 text-blue-600" />
@@ -633,7 +633,7 @@ export default function Dashboard() {
                 </Card>
 
                 <div className="grid gap-6 md:grid-cols-2">
-                  <Card className="border border-border shadow-sm bg-white">
+                  <Card className="bg-card border-0 shadow-lg hover:shadow-xl transition-shadow duration-200">
                     <CardHeader className="pb-4">
                       <CardTitle className="text-lg font-semibold text-foreground">Lead Sources</CardTitle>
                     </CardHeader>
@@ -670,7 +670,7 @@ export default function Dashboard() {
                     </CardContent>
                   </Card>
 
-                  <Card className="border border-border shadow-sm bg-white">
+                  <Card className="bg-card border-0 shadow-lg hover:shadow-xl transition-shadow duration-200">
                     <CardHeader className="pb-4">
                       <CardTitle className="text-lg font-semibold text-foreground">Recent Activity</CardTitle>
                     </CardHeader>
@@ -700,9 +700,9 @@ export default function Dashboard() {
             </TabsContent>
 
             {/* Reports Tab */}
-            <TabsContent value="reports" className="space-y-6">
+            <TabsContent value="reports" className="space-y-6 min-h-[400px]">
               <div className="grid gap-6">
-                <Card className="border border-border shadow-sm bg-white">
+                <Card className="bg-card border-0 shadow-lg hover:shadow-xl transition-shadow duration-200">
                   <CardHeader className="pb-4">
                     <CardTitle className="flex items-center gap-2 text-lg font-semibold text-foreground">
                       <FileText className="h-5 w-5 text-orange-600" />
@@ -771,7 +771,7 @@ export default function Dashboard() {
                   </CardContent>
                 </Card>
 
-                <Card className="border border-border shadow-sm bg-white">
+                <Card className="bg-card border-0 shadow-lg hover:shadow-xl transition-shadow duration-200">
                   <CardHeader className="pb-4">
                     <CardTitle className="text-lg font-semibold text-foreground">Recent Reports</CardTitle>
                     <CardDescription className="text-muted-foreground">
