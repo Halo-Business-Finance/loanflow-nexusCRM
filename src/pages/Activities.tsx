@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react'
-import HorizontalLayout from "@/components/HorizontalLayout"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
@@ -153,7 +152,7 @@ export default function Activities() {
 
   if (loading) {
     return (
-      <HorizontalLayout>
+      <div className="min-h-screen bg-gray-50 p-6">
         <div className="space-y-6">
           <div className="animate-fade-in">
             <div className="h-8 bg-muted rounded w-64 mb-2"></div>
@@ -169,12 +168,12 @@ export default function Activities() {
             ))}
           </div>
         </div>
-      </HorizontalLayout>
+      </div>
     )
   }
 
   return (
-    <HorizontalLayout>
+    <div className="min-h-screen bg-gray-50 p-6">
       <div className="space-y-6 animate-fade-in">
         {/* Header Section */}
         <div className="mb-6">
@@ -360,6 +359,6 @@ export default function Activities() {
           </CardContent>
         </Card>
       </div>
-    </HorizontalLayout>
+    </div>
   )
 }
