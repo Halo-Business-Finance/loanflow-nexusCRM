@@ -4,7 +4,7 @@ import { Client } from "@/types/lead"
 import { supabase } from "@/integrations/supabase/client"
 import { useAuth } from "@/components/auth/AuthProvider"
 import { useNavigate } from "react-router-dom"
-import { HorizontalNav } from "@/components/HorizontalNav"
+
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
@@ -445,66 +445,442 @@ export default function ExistingBorrowers() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50">
-        <HorizontalNav />
-        <div className="flex items-center justify-center min-h-64">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
-        </div>
+      <div className="flex items-center justify-center min-h-64">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
       </div>
     )
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <HorizontalNav />
-      <div className="min-h-screen bg-background">
-        {/* Modern Header */}
-        <div className="bg-card border-b border-border sticky top-0 z-10">
-          <div className="px-6 py-4">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-4">
-                <div>
-                  <div className="flex items-center gap-3">
-                    <h1 className="text-xl font-semibold text-foreground">
-                      Existing Borrowers
-                    </h1>
-                    <Badge variant="default" className="text-xs font-medium px-2 py-1">
-                      {clients.length} Borrowers
-                    </Badge>
-                  </div>
-                  <p className="text-sm text-muted-foreground mt-1">
-                    Manage and track your existing borrower relationships and portfolios
-                  </p>
+    <div className="min-h-screen bg-background">
+      {/* Modern Header */}
+      <div className="bg-card border-b border-border sticky top-0 z-10">
+        <div className="px-6 py-4">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-4">
+              <div>
+                <div className="flex items-center gap-3">
+                  <h1 className="text-xl font-semibold text-foreground">
+                    Existing Borrowers
+                  </h1>
+                  <Badge variant="default" className="text-xs font-medium px-2 py-1">
+                    {clients.length} Borrowers
+                  </Badge>
                 </div>
+                <p className="text-sm text-muted-foreground mt-1">
+                  Manage and track your existing borrower relationships and portfolios
+                </p>
               </div>
-              
-              <div className="flex items-center gap-2">
-                <Button variant="outline" size="sm" className="h-8 text-xs font-medium">
-                  <Filter className="h-3 w-3 mr-2" />
-                  Filter
-                </Button>
-                <Button onClick={() => setShowAddDialog(true)} size="sm" className="h-8 text-xs font-medium">
-                  <Plus className="h-3 w-3 mr-2" />
-                  Add Borrower
-                </Button>
-              </div>
+            </div>
+            
+            <div className="flex items-center gap-2">
+              <Button variant="outline" size="sm" className="h-8 text-xs font-medium">
+                <Filter className="h-3 w-3 mr-2" />
+                Filter
+              </Button>
+              <Button onClick={() => setShowAddDialog(true)} size="sm" className="h-8 text-xs font-medium">
+                <Plus className="h-3 w-3 mr-2" />
+                Add Borrower
+              </Button>
             </div>
           </div>
         </div>
-
-        {/* ... keep existing code (all the content sections) */}
-
-        {/* Action Reminder Dialog */}
-        {selectedClientForReminder && (
-          <ActionReminder
-            entityId={selectedClientForReminder.id}
-            entityName={selectedClientForReminder.name}
-            entityType="client"
-            isOpen={!!selectedClientForReminder}
-            onClose={() => setSelectedClientForReminder(null)}
-          />
-        )}
       </div>
+
+      {/* Content Area */}
+      <div className="p-6 space-y-6">
+        {/* Client Metrics Overview */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <Card className="border-0 shadow-sm bg-card">
+            <CardContent className="pt-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <Label className="text-xs font-medium text-muted-foreground">Total Borrowers</Label>
+                  <div className="flex items-center gap-2 mt-1">
+                    <Users className="h-4 w-4 text-muted-foreground" />
+                    <p className="text-2xl font-bold">{clients.length}</p>
+                  </div>
+                </div>
+                <Badge variant="default" className="text-xs">
+                  ACTIVE
+                </Badge>
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-medium text-muted-foreground">Active Borrowers</p>
+                  <p className="text-2xl font-bold text-primary">{activeClients}</p>
+                </div>
+                <CheckCircle2 className="w-8 h-8 text-primary" />
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-medium text-muted-foreground">Total Loan Value</p>
+                  <p className="text-2xl font-bold text-primary">{formatCurrency(totalLoanValue)}</p>
+                </div>
+                <DollarSign className="w-8 h-8 text-primary" />
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-medium text-muted-foreground">Avg Loan Size</p>
+                  <p className="text-2xl font-bold text-primary">{formatCurrency(avgLoanSize)}</p>
+                </div>
+                <DollarSign className="w-8 h-8 text-primary" />
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Search and Filters */}
+        <Card className="shadow-soft">
+          <CardContent className="p-6">
+            <div className="flex flex-col sm:flex-row gap-4 justify-between">
+              <div className="flex gap-4 flex-1">
+                <div className="relative flex-1">
+                  <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                  <Input
+                    placeholder="Search borrowers..."
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    className="pl-10"
+                  />
+                </div>
+                <Button variant="outline" className="gap-2">
+                  <Filter className="h-4 w-4" />
+                  Filter
+                </Button>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Client List */}
+        <div className="grid gap-6">
+          {filteredClients.map((client) => {
+            const loans = clientLoans[client.id] || []
+            const isExpanded = expandedClient === client.id
+            
+            return (
+              <Card key={client.id} className="shadow-soft hover:shadow-medium transition-shadow">
+                <CardContent className="p-6">
+                  <div className="flex items-start justify-between">
+                    <div className="flex gap-4">
+                      <Avatar className="h-12 w-12">
+                        <AvatarImage src={`https://api.dicebear.com/6/initials/svg?seed=${client.name}`} />
+                        <AvatarFallback>{(client.name || 'Unknown').split(' ').map(n => n[0]).join('')}</AvatarFallback>
+                      </Avatar>
+                      
+                      <div className="space-y-2">
+                        <div>
+                          <button 
+                            onClick={() => navigate(`/existing-borrowers/${client.id}`)}
+                            className="hover:underline cursor-pointer"
+                          >
+                            <h3 className="font-semibold text-foreground hover:text-primary transition-colors">{client.name}</h3>
+                          </button>
+                          <p className="text-sm text-muted-foreground">
+                            Borrower since {new Date(client.join_date).toLocaleDateString()}
+                          </p>
+                        </div>
+                        
+                        <div className="flex items-center gap-4 text-sm text-muted-foreground">
+                          <EmailComposer 
+                            recipientEmail={client.email}
+                            recipientName={client.name}
+                            trigger={
+                              <button className="flex items-center gap-1 text-sm text-muted-foreground hover:text-primary transition-colors">
+                                <Mail className="h-4 w-4" />
+                                {client.email}
+                              </button>
+                            }
+                          />
+                          {client.phone && (
+                            <PhoneDialer 
+                              phoneNumber={client.phone}
+                              trigger={
+                                <button className="flex items-center gap-1 text-sm text-muted-foreground hover:text-primary transition-colors">
+                                  <Phone className="h-4 w-4" />
+                                  {client.phone}
+                                </button>
+                              }
+                            />
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                    
+                    <div className="text-right space-y-2">
+                      <div className="flex gap-2">
+                        <Badge variant={getStatusColor(client.status)}>
+                          {client.status}
+                        </Badge>
+                        {client.stage && (
+                          <Badge variant={getStageColor(client.stage)}>
+                            {client.stage}
+                          </Badge>
+                        )}
+                      </div>
+                      <div className="text-sm text-muted-foreground">
+                        Last activity: {new Date(client.last_activity).toLocaleDateString()}
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div className="mt-4 pt-4 border-t flex justify-between items-center">
+                    <div className="flex gap-6">
+                      <div className="text-center">
+                        <div className="text-sm text-muted-foreground">Total Loans</div>
+                        <div className="font-semibold">{formatNumber(client.total_loans)}</div>
+                      </div>
+                      <div className="text-center">
+                        <div className="text-sm text-muted-foreground">Total Value</div>
+                        <div className="font-semibold text-accent">
+                          {formatCurrency(client.total_loan_value)}
+                        </div>
+                      </div>
+                    </div>
+                    
+                    <div className="flex gap-2">
+                      <Button 
+                        size="sm" 
+                        variant="outline"
+                        onClick={() => setExpandedClient(isExpanded ? null : client.id)}
+                      >
+                        {isExpanded ? (
+                          <>
+                            <ChevronUp className="h-4 w-4 mr-1" />
+                            Hide Loans
+                          </>
+                        ) : (
+                          <>
+                            <ChevronDown className="h-4 w-4 mr-1" />
+                            View Loans
+                          </>
+                        )}
+                      </Button>
+                      
+                      <PhoneDialer 
+                        phoneNumber={client.phone}
+                        trigger={
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            className="h-8 px-3 text-xs"
+                          >
+                            <Phone className="w-3 h-3 mr-1" />
+                            Call
+                          </Button>
+                        }
+                      />
+                      <EmailComposer 
+                        recipientEmail={client.email}
+                        recipientName={client.name}
+                        trigger={
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            className="h-8 px-3 text-xs"
+                          >
+                            <Mail className="w-3 h-3 mr-1" />
+                            Email
+                          </Button>
+                        }
+                      />
+                      <Button 
+                        size="sm" 
+                        variant="outline"
+                        onClick={() => setSelectedClientForReminder(client)}
+                        className="h-8 px-3 text-xs"
+                      >
+                        <Bell className="w-3 h-3 mr-1" />
+                        Reminder
+                      </Button>
+                      {hasRole('admin') && (
+                        <AlertDialog>
+                          <AlertDialogTrigger asChild>
+                            <Button size="sm" variant="destructive">
+                              <Trash2 className="h-4 w-4" />
+                            </Button>
+                          </AlertDialogTrigger>
+                          <AlertDialogContent>
+                            <AlertDialogHeader>
+                              <AlertDialogTitle>Delete Borrower</AlertDialogTitle>
+                              <AlertDialogDescription>
+                                Are you sure you want to delete <strong>{client.name}</strong>? This will also delete all associated loans and pipeline entries. This action cannot be undone.
+                              </AlertDialogDescription>
+                            </AlertDialogHeader>
+                            <AlertDialogFooter>
+                              <AlertDialogCancel>Cancel</AlertDialogCancel>
+                              <AlertDialogAction
+                                onClick={() => deleteClient(client.id, client.name)}
+                                className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                              >
+                                Delete
+                              </AlertDialogAction>
+                            </AlertDialogFooter>
+                          </AlertDialogContent>
+                        </AlertDialog>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Expanded Loan Section */}
+                  {isExpanded && (
+                    <div className="mt-6 pt-6 border-t">
+                      <LoanRequestManager
+                        clientId={client.id}
+                        loanRequests={loanRequests.filter(req => req.client_id === client.id)}
+                        onLoanRequestsUpdate={setLoanRequests}
+                      />
+                      
+                      <div className="mt-6">
+                        <LoanManager
+                          clientId={client.id}
+                          clientName={client.name}
+                          loans={loans}
+                          onLoansUpdate={handleLoansUpdate}
+                        />
+                      </div>
+                    </div>
+                  )}
+
+                </CardContent>
+              </Card>
+            )
+          })}
+          
+          {filteredClients.length === 0 && (
+            <Card className="shadow-soft">
+              <CardContent className="p-12 text-center">
+                <div className="text-muted-foreground">
+                  {searchTerm ? 'No borrowers found matching your search.' : 'No borrowers yet. Convert some leads to get started!'}
+                </div>
+              </CardContent>
+            </Card>
+          )}
+        </div>
+
+        {/* Add Client Dialog */}
+        <Dialog open={showAddDialog} onOpenChange={setShowAddDialog}>
+          <DialogContent className="max-w-2xl">
+            <DialogHeader>
+              <DialogTitle>Add New Borrower</DialogTitle>
+            </DialogHeader>
+            <div className="space-y-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="name">Name *</Label>
+                  <Input
+                    id="name"
+                    value={newClient.name}
+                    onChange={(e) => setNewClient(prev => ({ ...prev, name: e.target.value }))}
+                    placeholder="Enter borrower name"
+                    required
+                  />
+                </div>
+                
+                <div className="space-y-2">
+                  <Label htmlFor="email">Email *</Label>
+                  <Input
+                    id="email"
+                    type="email"
+                    value={newClient.email}
+                    onChange={(e) => setNewClient(prev => ({ ...prev, email: e.target.value }))}
+                    placeholder="Enter email address"
+                    required
+                  />
+                </div>
+                
+                <div className="space-y-2">
+                  <Label htmlFor="phone">Phone</Label>
+                  <Input
+                    id="phone"
+                    value={newClient.phone}
+                    onChange={(e) => setNewClient(prev => ({ ...prev, phone: e.target.value }))}
+                    placeholder="Enter phone number"
+                  />
+                </div>
+                
+                <div className="space-y-2">
+                  <Label htmlFor="business_name">Business Name</Label>
+                  <Input
+                    id="business_name"
+                    value={newClient.business_name}
+                    onChange={(e) => setNewClient(prev => ({ ...prev, business_name: e.target.value }))}
+                    placeholder="Enter business name"
+                  />
+                </div>
+                
+                <div className="space-y-2">
+                  <Label htmlFor="status">Status</Label>
+                  <Select
+                    value={newClient.status}
+                    onValueChange={(value) => setNewClient(prev => ({ ...prev, status: value }))}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select status" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="Active">Active</SelectItem>
+                      <SelectItem value="Pending">Pending</SelectItem>
+                      <SelectItem value="Inactive">Inactive</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+              
+              <div className="space-y-2">
+                <Label htmlFor="business_address">Company Address</Label>
+                <Textarea
+                  id="business_address"
+                  value={newClient.business_address}
+                  onChange={(e) => setNewClient(prev => ({ ...prev, business_address: e.target.value }))}
+                  placeholder="Enter business address"
+                  rows={3}
+                />
+              </div>
+            </div>
+            
+            <DialogFooter>
+              <Button type="button" variant="outline" onClick={() => setShowAddDialog(false)}>
+                Cancel
+              </Button>
+              <Button 
+                onClick={addNewClient} 
+                disabled={isSubmitting}
+              >
+                {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                {isSubmitting ? "Adding..." : "Add Borrower"}
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+      </div>
+
+      {/* Action Reminder Dialog */}
+      {selectedClientForReminder && (
+        <ActionReminder
+          entityId={selectedClientForReminder.id}
+          entityName={selectedClientForReminder.name}
+          entityType="client"
+          isOpen={!!selectedClientForReminder}
+          onClose={() => setSelectedClientForReminder(null)}
+        />
+      )}
     </div>
   )
 }
