@@ -43,7 +43,7 @@ interface Loan {
   notes?: string
 }
 
-export default function Clients() {
+export default function ExistingBorrowers() {
   const navigate = useNavigate()
   const { user, hasRole } = useAuth()
   const { toast } = useToast()
@@ -460,14 +460,14 @@ export default function Clients() {
                 <div>
                   <div className="flex items-center gap-3">
                     <h1 className="text-xl font-semibold text-foreground">
-                      Client Management
+                      Existing Borrowers
                     </h1>
                     <Badge variant="default" className="text-xs font-medium px-2 py-1">
-                      {clients.length} Clients
+                      {clients.length} Borrowers
                     </Badge>
                   </div>
                   <p className="text-sm text-muted-foreground mt-1">
-                    Manage and track your client relationships and portfolios
+                    Manage and track your existing borrower relationships and portfolios
                   </p>
                 </div>
               </div>
@@ -479,7 +479,7 @@ export default function Clients() {
                 </Button>
                 <Button onClick={() => setShowAddDialog(true)} size="sm" className="h-8 text-xs font-medium">
                   <Plus className="h-3 w-3 mr-2" />
-                  Add Client
+                  Add Borrower
                 </Button>
               </div>
             </div>
@@ -494,7 +494,7 @@ export default function Clients() {
               <CardContent className="pt-6">
                 <div className="flex items-center justify-between">
                   <div>
-                    <Label className="text-xs font-medium text-muted-foreground">Total Clients</Label>
+                    <Label className="text-xs font-medium text-muted-foreground">Total Borrowers</Label>
                     <div className="flex items-center gap-2 mt-1">
                       <Users className="h-4 w-4 text-muted-foreground" />
                       <p className="text-2xl font-bold">{clients.length}</p>
@@ -511,7 +511,7 @@ export default function Clients() {
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium text-muted-foreground">Active Clients</p>
+                  <p className="text-sm font-medium text-muted-foreground">Active Borrowers</p>
                   <p className="text-2xl font-bold text-primary">{activeClients}</p>
                 </div>
                 <CheckCircle2 className="w-8 h-8 text-primary" />

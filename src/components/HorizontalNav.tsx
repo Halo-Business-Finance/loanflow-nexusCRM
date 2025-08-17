@@ -33,7 +33,7 @@ import { ThemeToggle } from "@/components/ThemeToggle"
 const navigationItems = [
   { name: "Home", path: "/", icon: Home },
   { name: "Leads", path: "/leads", icon: Users },
-  { name: "Clients", path: "/clients", icon: Building2 },
+  { name: "Existing Borrowers", path: "/existing-borrowers", icon: Building2 },
   { name: "Pipeline", path: "/pipeline", icon: Target },
   { name: "Reports", path: "/reports", icon: BarChart3 },
   { name: "Documents", path: "/documents", icon: FileText },
