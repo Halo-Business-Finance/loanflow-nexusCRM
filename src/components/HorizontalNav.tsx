@@ -152,7 +152,7 @@ export function HorizontalNav() {
 
       {/* Navigation Bar */}
       <div className="px-6">
-        <nav className="flex items-center space-x-8">
+        <nav className="flex items-center justify-center space-x-8">
           {navigationItems.map((item) => {
             const isActive = isActivePath(item.path)
             return (
