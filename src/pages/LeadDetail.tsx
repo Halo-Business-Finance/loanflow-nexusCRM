@@ -11,10 +11,6 @@ import { Textarea } from "@/components/ui/textarea"
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog"
 import { Badge } from "@/components/ui/badge"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Calendar as CalendarComponent } from "@/components/ui/calendar"
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
-import { Switch } from "@/components/ui/switch"
-import { Separator } from "@/components/ui/separator"
 import { useToast } from "@/hooks/use-toast"
 import { ActionReminder } from "@/components/ActionReminder"
 import { PhoneDialer } from "@/components/PhoneDialer"
@@ -24,7 +20,6 @@ import { ClickablePhone } from "@/components/ui/clickable-phone"
 import { formatNumber, formatCurrency, formatPhoneNumber } from "@/lib/utils"
 import { useNotifications } from "@/hooks/useNotifications"
 import { format } from "date-fns"
-import LoanRequestManager from "@/components/LoanRequestManager"
 import { 
   ArrowLeft, 
   User, 
@@ -55,9 +50,6 @@ import {
 
 import { Lead, Client as ClientType } from "@/types/lead"
 import { mapLeadFields, mapClientFields, extractContactEntityData, LEAD_WITH_CONTACT_QUERY, CLIENT_WITH_CONTACT_QUERY } from "@/lib/field-mapping"
-import { AdditionalBorrowerCard } from "@/components/AdditionalBorrowerCard"
-
-// Using imported ClientType interface from types/lead.ts
 
 export default function LeadDetail() {
   const { id } = useParams<{ id: string }>()
@@ -66,28 +58,17 @@ export default function LeadDetail() {
   const { toast } = useToast()
   const { createNotification } = useNotifications()
 
-  console.log('LeadDetail: User authenticated:', !!user)
-  console.log('LeadDetail: Lead ID from params:', id)
-  
   const [lead, setLead] = useState<Lead | null>(null)
   const [client, setClient] = useState<ClientType | null>(null)
   const [loading, setLoading] = useState(true)
-  const [loanRequests, setLoanRequests] = useState<any[]>([])
-  const [additionalBorrowers, setAdditionalBorrowers] = useState<any[]>([])
-  const [editingBorrowerId, setEditingBorrowerId] = useState<string | null>(null)
   const [isEditing, setIsEditing] = useState(false)
   const [callNotes, setCallNotes] = useState("")
-  const [newCallNote, setNewCallNote] = useState("")
   const [generalNotes, setGeneralNotes] = useState("")
-  const [notificationTitle, setNotificationTitle] = useState("")
-  const [notificationMessage, setNotificationMessage] = useState("")
-  const [followUpDate, setFollowUpDate] = useState<Date | undefined>()
   const [showReminderDialog, setShowReminderDialog] = useState(false)
   const [editableFields, setEditableFields] = useState({
     name: "",
     email: "",
     phone: "",
-    
     business_name: "",
     business_address: "",
     business_city: "",
@@ -112,17 +93,10 @@ export default function LeadDetail() {
     bdo_name: "",
     bdo_telephone: "",
     bdo_email: "",
-    // POS Information fields
-    pos_system: "",
-    monthly_processing_volume: "",
-    average_transaction_size: "",
-    processor_name: "",
-    current_processing_rate: "",
-    ownership_percentage: "",
-    mobile_phone: "",
-    personal_email: "",
     first_name: "",
-    last_name: ""
+    last_name: "",
+    personal_email: "",
+    mobile_phone: ""
   })
 
   useEffect(() => {
@@ -133,20 +107,15 @@ export default function LeadDetail() {
 
   const fetchLead = async () => {
     try {
-      console.log('fetchLead: Fetching lead with ID:', id)
       const { data, error } = await supabase
         .from('leads')
         .select(LEAD_WITH_CONTACT_QUERY)
         .eq('id', id)
         .maybeSingle()
 
-      if (error) {
-        console.error('fetchLead: Error fetching lead:', error)
-        throw error
-      }
+      if (error) throw error
       
       if (!data) {
-        console.log('fetchLead: No lead found with ID:', id)
         toast({
           title: "Error",
           description: "Lead not found or you don't have permission to view it",
@@ -156,7 +125,6 @@ export default function LeadDetail() {
         return
       }
       
-      // Merge contact entity data with lead data
       const mergedLead = {
         ...data,
         ...data.contact_entity
@@ -165,12 +133,10 @@ export default function LeadDetail() {
       setCallNotes(mergedLead.call_notes || "")
       setGeneralNotes(mergedLead.notes || "")
       
-      // Set editable fields for edit mode
       setEditableFields({
         name: mergedLead.name || "",
         email: mergedLead.email || "",
         phone: mergedLead.phone || "",
-        
         business_name: mergedLead.business_name || "",
         business_address: mergedLead.business_address || "",
         business_city: mergedLead.business_city || "",
@@ -195,26 +161,15 @@ export default function LeadDetail() {
         bdo_name: mergedLead.bdo_name || "",
         bdo_telephone: mergedLead.bdo_telephone || "",
         bdo_email: mergedLead.bdo_email || "",
-        // POS Information fields
-        pos_system: mergedLead.pos_system || "",
-        monthly_processing_volume: mergedLead.monthly_processing_volume?.toString() || "",
-        average_transaction_size: mergedLead.average_transaction_size?.toString() || "",
-        processor_name: mergedLead.processor_name || "",
-        current_processing_rate: mergedLead.current_processing_rate?.toString() || "",
-        ownership_percentage: mergedLead.ownership_percentage?.toString() || "",
-        mobile_phone: mergedLead.mobile_phone || "",
-        personal_email: mergedLead.personal_email || "",
         first_name: mergedLead.first_name || "",
-        last_name: mergedLead.last_name || ""
+        last_name: mergedLead.last_name || "",
+        personal_email: mergedLead.personal_email || "",
+        mobile_phone: mergedLead.mobile_phone || ""
       })
       
-      // If lead is converted, fetch client data
       if (data.is_converted_to_client) {
         await fetchClientData(data.id)
       }
-      
-      // Fetch additional borrowers for this lead
-      await fetchAdditionalBorrowers(data.id)
     } catch (error) {
       console.error('Error fetching lead:', error)
       toast({
@@ -236,12 +191,8 @@ export default function LeadDetail() {
         .eq('lead_id', leadId)
         .single()
 
-      if (error) {
-        console.error('Error fetching client data:', error)
-        return
-      }
+      if (error) return
       
-      // Merge client with contact entity data
       const mergedClient = mapClientFields(data)
       setClient(mergedClient)
     } catch (error) {
@@ -249,561 +200,44 @@ export default function LeadDetail() {
     }
   }
 
-  const fetchLoanRequests = async (leadId: string) => {
-    try {
-      const { data, error } = await supabase
-        .from('loan_requests')
-        .select('*')
-        .eq('lead_id', leadId)
-        .order('created_at', { ascending: false })
-
-      if (error) throw error
-      
-      setLoanRequests(data || [])
-    } catch (error) {
-      console.error('Error fetching loan requests:', error)
-    }
-  }
-
-  const saveCallNotes = async () => {
+  const saveLeadChanges = async () => {
     if (!lead || !user) return
 
     try {
-      console.log('Saving call notes for lead:', lead.id)
-      console.log('Current callNotes:', callNotes)
-      console.log('New call note:', newCallNote)
-      
-      // Get user's profile for display name - handle missing profile gracefully
-      let userName = user.email?.split('@')[0] || 'Unknown User'
-      
-      try {
-        const { data: profile, error: profileError } = await supabase
-          .from('profiles')
-          .select('first_name, last_name')
-          .eq('id', user.id)
-          .maybeSingle()
-
-        console.log('Profile lookup result:', { profile, profileError })
-
-        if (profile && !profileError) {
-          const fullName = `${profile.first_name || ''} ${profile.last_name || ''}`.trim()
-          if (fullName) {
-            userName = fullName
-          }
-        }
-      } catch (profileError) {
-        console.log('Profile lookup failed, using email:', profileError)
-      }
-
-      const updatedNotes = callNotes + (newCallNote ? `\n\n${userName} [${new Date().toLocaleString()}]: ${newCallNote}` : "")
-      
-      console.log('Updated notes to save:', updatedNotes)
-      
-      const { error, data } = await supabase
-        .from('leads')
-        .update({ 
-          call_notes: updatedNotes,
-          last_contact: new Date().toISOString()
-        })
-        .eq('id', lead.id)
-        .select()
-
-      console.log('Update result:', { error, data })
-
-      if (error) throw error
-
-      setCallNotes(updatedNotes)
-      setNewCallNote("")
-      toast({
-        title: "Success",
-        description: "Call notes saved successfully",
-      })
-      
-      // Refresh lead data
-      fetchLead()
-    } catch (error) {
-      console.error('Error saving call notes:', error)
-      toast({
-        title: "Error",
-        description: `Failed to save call notes: ${error.message}`,
-        variant: "destructive",
-      })
-    }
-  }
-
-  const fetchAdditionalBorrowers = async (leadId: string) => {
-    try {
-      const { data, error } = await supabase
-        .from('additional_borrowers')
-        .select(`
-          id,
-          borrower_order,
-          is_primary,
-          contact_entity:contact_entities (
-            id,
-            first_name,
-            last_name,
-            personal_email,
-            mobile_phone,
-            email,
-            phone,
-            credit_score,
-            ownership_percentage
-          )
-        `)
-        .eq('lead_id', leadId)
-        .order('borrower_order', { ascending: true })
-
-      if (error) throw error
-      
-      const mappedBorrowers = (data || []).map(item => ({
-        id: item.id,
-        borrower_order: item.borrower_order,
-        is_primary: item.is_primary,
-        contact_entity_id: item.contact_entity?.id,
-        ...item.contact_entity
-      }))
-      
-      setAdditionalBorrowers(mappedBorrowers)
-    } catch (error) {
-      console.error('Error fetching additional borrowers:', error)
-    }
-  }
-
-  const addAdditionalBorrower = async () => {
-    console.log('=== Starting addAdditionalBorrower ===')
-    console.log('Lead object:', lead)
-    console.log('User object:', user)
-    console.log('Lead ID from params:', id)
-    console.log('Window location:', window.location.href)
-    
-    // Show immediate feedback to user
-    toast({
-      title: "Processing...",
-      description: "Adding additional borrower...",
-    })
-    
-    if (!lead || !user) {
-      console.error('Missing lead or user data')
-      toast({
-        title: "Error",
-        description: "Lead information not available. Please refresh the page and try again.",
-        variant: "destructive",
-      })
-      return
-    }
-
-    // Use the lead ID from URL params as backup
-    const leadId = lead.id || id
-    console.log('Using lead ID:', leadId)
-    console.log('Lead ID type:', typeof leadId)
-    console.log('Lead ID length:', leadId?.length)
-
-    if (!leadId) {
-      console.error('No lead ID available')
-      toast({
-        title: "Error", 
-        description: "Invalid lead ID. Please refresh the page and try again.",
-        variant: "destructive",
-      })
-      return
-    }
-
-    // Validate UUID format
-    const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
-    if (!uuidRegex.test(leadId)) {
-      console.error('Invalid UUID format:', leadId)
-      toast({
-        title: "Error",
-        description: "Invalid lead ID format. Please refresh the page and try again.",
-        variant: "destructive",
-      })
-      return
-    }
-
-    try {
-      console.log('=== DEBUGGING LEAD DATA ===')
-      console.log('leadId from URL:', leadId)
-      console.log('lead object:', lead)
-      console.log('lead.id:', lead?.id)
-      console.log('lead.user_id:', lead?.user_id)
-      console.log('user.id:', user?.id)
-      console.log('typeof lead.id:', typeof lead?.id)
-      console.log('typeof leadId:', typeof leadId)
-      
-      if (!lead?.id) {
-        throw new Error('Lead data is not properly loaded')
-      }
-
-      // Since lead data is already loaded on the page, use it directly
-      console.log('Using existing lead data from state')
-      
-      // Verify user owns this lead
-      if (lead.user_id !== user.id) {
-        console.error('User does not own lead:', { leadOwner: lead.user_id, currentUser: user.id })
-        throw new Error('You do not have permission to modify this lead')
-      }
-      
-      // First create a new contact entity for the additional borrower
-      const { data: contactEntity, error: contactError } = await supabase
-        .from('contact_entities')
-        .insert({
-          user_id: user.id,
-          name: 'Additional Borrower',
-          first_name: 'Additional',
-          last_name: 'Borrower',
-          email: `borrower_${Date.now()}@placeholder.com`,
-          personal_email: `borrower_${Date.now()}@placeholder.com`,
-          mobile_phone: '',
-          phone: '',
-          credit_score: null,
-          ownership_percentage: null
-        })
-        .select()
-        .maybeSingle()
-
-      if (contactError) {
-        console.error('Contact entity creation error:', contactError)
-        throw contactError
-      }
-
-      console.log('Contact entity created:', contactEntity)
-
-      // Then create the additional borrower record
-      const nextOrder = Math.max(...additionalBorrowers.map(b => b.borrower_order || 0), 0) + 1
-      
-      console.log('Creating additional borrower with:', {
-        lead_id: lead.id,
-        contact_entity_id: contactEntity.id,
-        borrower_order: nextOrder,
-        is_primary: false
-      })
-
-      console.log('Lead object structure:', {
-        leadId: lead.id,
-        leadType: typeof lead.id,
-        leadKeys: Object.keys(lead),
-        fullLead: lead
-      })
-
-      const { data: borrower, error: borrowerError } = await supabase
-        .from('additional_borrowers')
-        .insert({
-          lead_id: lead.id,
-          contact_entity_id: contactEntity.id,
-          borrower_order: nextOrder,
-          is_primary: false
-        })
-        .select()
-        .maybeSingle()
-
-      if (borrowerError) {
-        console.error('Additional borrower creation error:', borrowerError)
-        console.error('Failed insert data:', {
-          lead_id: lead.id,
-          contact_entity_id: contactEntity.id,
-          borrower_order: nextOrder,
-          is_primary: false
-        })
-        throw borrowerError
-      }
-
-      console.log('Additional borrower created:', borrower)
-
-      toast({
-        title: "Success",
-        description: "Additional borrower added successfully",
-      })
-      
-      // Refresh additional borrowers
-      await fetchAdditionalBorrowers(leadId)
-    } catch (error) {
-      console.error('Error adding additional borrower:', error)
-      toast({
-        title: "Error",
-        description: `Failed to add additional borrower: ${error.message}`,
-        variant: "destructive",
-      })
-    }
-  }
-
-  const updateAdditionalBorrower = async (borrower: any) => {
-    if (!borrower.contact_entity_id) return
-
-    try {
-      const { error } = await supabase
-        .from('contact_entities')
-        .update({
-          first_name: borrower.first_name || null,
-          last_name: borrower.last_name || null,
-          personal_email: borrower.personal_email || null,
-          mobile_phone: borrower.mobile_phone || null,
-          email: borrower.email || null,
-          phone: borrower.phone || null,
-          credit_score: borrower.credit_score || null,
-          ownership_percentage: borrower.ownership_percentage || null
-        })
-        .eq('id', borrower.contact_entity_id)
-
-      if (error) throw error
-
-      toast({
-        title: "Success",
-        description: "Additional borrower updated successfully",
-      })
-      
-      // Refresh additional borrowers
-      await fetchAdditionalBorrowers(lead.id)
-    } catch (error) {
-      console.error('Error updating additional borrower:', error)
-      toast({
-        title: "Error",
-        description: "Failed to update additional borrower",
-        variant: "destructive",
-      })
-    }
-  }
-
-  const deleteAdditionalBorrower = async (borrowerId: string) => {
-    try {
-      const { error } = await supabase
-        .from('additional_borrowers')
-        .delete()
-        .eq('id', borrowerId)
-
-      if (error) throw error
-
-      toast({
-        title: "Success",
-        description: "Additional borrower removed successfully",
-      })
-      
-      // Refresh additional borrowers
-      await fetchAdditionalBorrowers(lead.id)
-    } catch (error) {
-      console.error('Error deleting additional borrower:', error)
-      toast({
-        title: "Error",
-        description: "Failed to remove additional borrower",
-        variant: "destructive",
-      })
-    }
-  }
-
-  const saveGeneralNotes = async () => {
-    if (!lead) return
-
-    try {
-      const { error } = await supabase
-        .from('contact_entities')
-        .update({ notes: generalNotes })
-        .eq('id', lead.contact_entity_id)
-
-      if (error) throw error
-
-      toast({
-        title: "Success",
-        description: "General notes saved successfully",
-      })
-      
-      // Refresh lead data
-      fetchLead()
-    } catch (error) {
-      console.error('Error saving general notes:', error)
-      toast({
-        title: "Error",
-        description: "Failed to save general notes",
-        variant: "destructive",
-      })
-    }
-  }
-
-  const createCallReminder = async () => {
-    if (!followUpDate) {
-      toast({
-        title: "Error",
-        description: "Please select a follow-up date",
-        variant: "destructive",
-      })
-      return
-    }
-
-    try {
-      await createNotification({
-        title: "Call Reminder",
-        message: `Schedule a call with ${lead?.name || client?.name} on ${format(followUpDate, 'PPP')}`,
-        type: 'call_reminder',
-        leadId: lead?.id,
-        clientId: client?.id,
-      })
-
-      setFollowUpDate(undefined)
-      toast({
-        title: "Success",
-        description: "Call reminder created successfully",
-      })
-    } catch (error) {
-      console.error('Error creating call reminder:', error)
-      toast({
-        title: "Error",
-        description: "Failed to create call reminder",
-        variant: "destructive",
-      })
-    }
-  }
-
-  const createEmailReminder = async () => {
-    if (!followUpDate) {
-      toast({
-        title: "Error",
-        description: "Please select a follow-up date",
-        variant: "destructive",
-      })
-      return
-    }
-
-    try {
-      await createNotification({
-        title: "Email Reminder",
-        message: `Send follow-up email to ${lead?.name || client?.name} on ${format(followUpDate, 'PPP')}`,
-        type: 'email_reminder',
-        leadId: lead?.id,
-        clientId: client?.id,
-      })
-
-      setFollowUpDate(undefined)
-      toast({
-        title: "Success",
-        description: "Email reminder created successfully",
-      })
-    } catch (error) {
-      console.error('Error creating email reminder:', error)
-      toast({
-        title: "Error",
-        description: "Failed to create email reminder",
-        variant: "destructive",
-      })
-    }
-  }
-
-  const createFollowUpReminder = async () => {
-    if (!followUpDate) {
-      toast({
-        title: "Error",
-        description: "Please select a follow-up date",
-        variant: "destructive",
-      })
-      return
-    }
-
-    try {
-      await createNotification({
-        title: "Follow-up Reminder",
-        message: `Follow up with ${lead?.name || client?.name} on ${format(followUpDate, 'PPP')}`,
-        type: 'follow_up_reminder',
-        leadId: lead?.id,
-        clientId: client?.id,
-      })
-
-      setFollowUpDate(undefined)
-      toast({
-        title: "Success",
-        description: "Follow-up reminder created successfully",
-      })
-    } catch (error) {
-      console.error('Error creating follow-up reminder:', error)
-      toast({
-        title: "Error",
-        description: "Failed to create follow-up reminder",
-        variant: "destructive",
-      })
-    }
-  }
-
-  const saveNotification = async () => {
-    if (!notificationTitle.trim() || !notificationMessage.trim()) {
-      toast({
-        title: "Error",
-        description: "Please fill in both title and message for the notification",
-        variant: "destructive",
-      })
-      return
-    }
-
-    try {
-      await createNotification({
-        title: notificationTitle,
-        message: notificationMessage,
-        type: lead ? 'lead_note' : 'client_note',
-        leadId: lead?.id,
-        clientId: client?.id,
-      })
-
-      setNotificationTitle("")
-      setNotificationMessage("")
-      toast({
-        title: "Success",
-        description: "Notification created successfully",
-      })
-    } catch (error) {
-      console.error('Error creating notification:', error)
-      toast({
-        title: "Error",
-        description: "Failed to create notification",
-        variant: "destructive",
-      })
-    }
-  }
-
-  const saveLeadChanges = async () => {
-    if (!lead) return
-
-    try {
-      // Update the contact entity with all the lead details
       const contactUpdateData: any = {
         name: editableFields.name,
         email: editableFields.email,
-        phone: editableFields.phone || null,
-        business_name: editableFields.business_name || null,
-        business_address: editableFields.business_address || null,
-        business_city: editableFields.business_city || null,
-        business_state: editableFields.business_state || null,
-        business_zip_code: editableFields.business_zip_code || null,
-        naics_code: editableFields.naics_code || null,
-        ownership_structure: editableFields.ownership_structure || null,
+        phone: editableFields.phone,
+        business_name: editableFields.business_name,
+        business_address: editableFields.business_address,
+        business_city: editableFields.business_city,
+        business_state: editableFields.business_state,
+        business_zip_code: editableFields.business_zip_code,
+        naics_code: editableFields.naics_code,
+        ownership_structure: editableFields.ownership_structure,
         owns_property: editableFields.owns_property,
         property_payment_amount: editableFields.property_payment_amount ? parseFloat(editableFields.property_payment_amount) : null,
         year_established: editableFields.year_established ? parseInt(editableFields.year_established) : null,
         loan_amount: editableFields.loan_amount ? parseFloat(editableFields.loan_amount) : null,
-        loan_type: editableFields.loan_type || null,
+        loan_type: editableFields.loan_type,
         stage: editableFields.stage,
         priority: editableFields.priority,
         credit_score: editableFields.credit_score ? parseInt(editableFields.credit_score) : null,
         net_operating_income: editableFields.net_operating_income ? parseFloat(editableFields.net_operating_income) : null,
-        bank_lender_name: editableFields.bank_lender_name || null,
+        bank_lender_name: editableFields.bank_lender_name,
         annual_revenue: editableFields.annual_revenue ? parseFloat(editableFields.annual_revenue) : null,
         interest_rate: editableFields.interest_rate ? parseFloat(editableFields.interest_rate) : null,
-        maturity_date: editableFields.maturity_date || null,
+        maturity_date: editableFields.maturity_date,
         existing_loan_amount: editableFields.existing_loan_amount ? parseFloat(editableFields.existing_loan_amount) : null,
-        bdo_name: editableFields.bdo_name || null,
-        bdo_telephone: editableFields.bdo_telephone || null,
-        bdo_email: editableFields.bdo_email || null,
-        pos_system: editableFields.pos_system || null,
-        monthly_processing_volume: editableFields.monthly_processing_volume ? parseFloat(editableFields.monthly_processing_volume) : null,
-        average_transaction_size: editableFields.average_transaction_size ? parseFloat(editableFields.average_transaction_size) : null,
-        processor_name: editableFields.processor_name || null,
-        current_processing_rate: editableFields.current_processing_rate ? parseFloat(editableFields.current_processing_rate) : null,
-        ownership_percentage: editableFields.ownership_percentage ? parseFloat(editableFields.ownership_percentage) : null,
-        mobile_phone: editableFields.mobile_phone || null,
-        personal_email: editableFields.personal_email || null,
-        first_name: editableFields.first_name || null,
-        last_name: editableFields.last_name || null
+        bdo_name: editableFields.bdo_name,
+        bdo_telephone: editableFields.bdo_telephone,
+        bdo_email: editableFields.bdo_email,
+        first_name: editableFields.first_name,
+        last_name: editableFields.last_name,
+        personal_email: editableFields.personal_email,
+        mobile_phone: editableFields.mobile_phone
       }
 
-      // Check if stage is being changed to "Loan Funded" and lead isn't already converted
-      const isBeingFunded = editableFields.stage === "Loan Funded" && lead.stage !== "Loan Funded" && !lead.is_converted_to_client
-
-      // Update the contact entity
       const { error: contactError } = await supabase
         .from('contact_entities')
         .update(contactUpdateData)
@@ -811,16 +245,9 @@ export default function LeadDetail() {
 
       if (contactError) throw contactError
 
-      // Update the lead table only with lead-specific fields (NO STAGE - stage is in contact_entities)
       const leadUpdateData: any = {
         last_contact: new Date().toISOString(),
         updated_at: new Date().toISOString()
-      }
-
-      if (isBeingFunded) {
-        // Mark lead as converted
-        leadUpdateData.is_converted_to_client = true
-        leadUpdateData.converted_at = new Date().toISOString()
       }
 
       const { error: leadError } = await supabase
@@ -828,34 +255,17 @@ export default function LeadDetail() {
         .update(leadUpdateData)
         .eq('id', lead.id)
 
-      console.log('Lead update result:', { leadUpdateData, leadError })
-
-      if (leadError) {
-        console.error('Lead update error:', leadError)
-        throw leadError
-      }
-
-      // If being funded, create client record
-      if (isBeingFunded) {
-        await convertLeadToClient()
-      }
+      if (leadError) throw leadError
 
       toast({
         title: "Success",
-        description: isBeingFunded 
-          ? "Lead updated and converted to client successfully" 
-          : "Lead information updated successfully",
+        description: "Lead information updated successfully",
       })
       
       setIsEditing(false)
-      // Refresh lead data
       fetchLead()
     } catch (error) {
       console.error('Error updating lead:', error)
-      console.error('Error details:', JSON.stringify(error, null, 2))
-      console.error('Lead data:', lead)
-      console.error('Editable fields:', editableFields)
-      
       toast({
         title: "Error",
         description: `Failed to update lead information: ${error?.message || 'Unknown error'}`,
@@ -864,107 +274,8 @@ export default function LeadDetail() {
     }
   }
 
-  const convertLeadToClient = async () => {
-    if (!lead || !user) return
-
-    try {
-      const clientData = {
-        name: editableFields.name,
-        email: editableFields.email,
-        phone: editableFields.phone || null,
-        
-        status: 'Active',
-        user_id: user.id,
-        lead_id: lead.id,
-        join_date: new Date().toISOString(),
-        last_activity: new Date().toISOString(),
-        // Transfer all business and financial information from lead
-        business_name: editableFields.business_name || null,
-        business_address: editableFields.business_address || null,
-        business_city: editableFields.business_city || null,
-        business_state: editableFields.business_state || null,
-        business_zip_code: editableFields.business_zip_code || null,
-        owns_property: editableFields.owns_property || false,
-        property_payment_amount: editableFields.property_payment_amount ? parseFloat(editableFields.property_payment_amount) : null,
-        year_established: editableFields.year_established ? parseInt(editableFields.year_established) : null,
-        credit_score: editableFields.credit_score ? parseInt(editableFields.credit_score) : null,
-        net_operating_income: editableFields.net_operating_income ? parseFloat(editableFields.net_operating_income) : null,
-        bank_lender_name: editableFields.bank_lender_name || null,
-        annual_revenue: editableFields.annual_revenue ? parseFloat(editableFields.annual_revenue) : null,
-        existing_loan_amount: editableFields.existing_loan_amount ? parseFloat(editableFields.existing_loan_amount) : null,
-        notes: generalNotes || lead.notes || null,
-        call_notes: callNotes || lead.call_notes || null,
-        priority: editableFields.priority || 'medium',
-        income: lead.income || null,
-        // POS Information fields
-        pos_system: editableFields.pos_system || null,
-        monthly_processing_volume: editableFields.monthly_processing_volume ? parseFloat(editableFields.monthly_processing_volume) : null,
-        average_transaction_size: editableFields.average_transaction_size ? parseFloat(editableFields.average_transaction_size) : null,
-        processor_name: editableFields.processor_name || null,
-        current_processing_rate: editableFields.current_processing_rate ? parseFloat(editableFields.current_processing_rate) : null
-      }
-
-      // Create client record with reference to existing contact entity
-      const { data: newClient, error: clientError } = await supabase
-        .from('clients')
-        .insert({
-          user_id: lead.user_id,
-          contact_entity_id: lead.contact_entity_id,
-          lead_id: lead.id,
-          status: 'Active'
-        })
-        .select(CLIENT_WITH_CONTACT_QUERY)
-        .single()
-
-      if (clientError) throw clientError
-
-      // Create a loan record if loan amount is specified
-      if (editableFields.loan_amount && parseFloat(editableFields.loan_amount) > 0) {
-        const loanAmount = Math.max(0, parseFloat(editableFields.loan_amount) || 0)
-        const loanData = {
-          client_id: newClient.id,
-          lead_id: lead.id,
-          user_id: user.id,
-          loan_amount: loanAmount,
-          loan_type: editableFields.loan_type?.trim() || 'Mortgage',
-          interest_rate: editableFields.interest_rate ? Math.max(0, parseFloat(editableFields.interest_rate) || 0) : null,
-          maturity_date: editableFields.maturity_date || null,
-          status: 'Active',
-          remaining_balance: loanAmount
-        }
-
-        const { error: loanError } = await supabase
-          .from('loans')
-          .insert(loanData)
-
-        if (loanError) {
-          console.error('Error creating loan:', loanError)
-          // Don't throw error here as client was already created successfully
-        }
-      }
-
-      // Merge client with contact entity data
-      const mergedClient = mapClientFields(newClient)
-      setClient(mergedClient)
-      
-      console.log('Lead successfully converted to client:', newClient)
-    } catch (error) {
-      console.error('Error converting lead to client:', error)
-      toast({
-        title: "Warning", 
-        description: "Lead updated but there was an issue creating the client record",
-        variant: "destructive",
-      })
-    }
-  }
-
   const deleteLead = async () => {
-    if (!lead) {
-      console.log('deleteLead: No lead found')
-      return
-    }
-
-    console.log('deleteLead: Starting deletion for lead:', lead.id, 'name:', lead.name)
+    if (!lead) return
 
     try {
       const { error } = await supabase
@@ -972,20 +283,13 @@ export default function LeadDetail() {
         .delete()
         .eq('id', lead.id)
 
-      if (error) {
-        console.error('deleteLead: Database error:', error)
-        throw error
-      }
-
-      console.log('deleteLead: Lead deleted successfully from database')
+      if (error) throw error
       
       toast({
         title: "Success!",
         description: `${lead.name || 'Lead'} has been deleted successfully.`,
       })
 
-      console.log('deleteLead: Navigating to /leads')
-      // Navigate back to leads page
       navigate('/leads')
     } catch (error) {
       console.error('Error deleting lead:', error)
@@ -1025,8 +329,11 @@ export default function LeadDetail() {
   if (loading) {
     return (
       <Layout>
-        <div className="flex items-center justify-center min-h-64">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+        <div className="flex items-center justify-center min-h-[400px]">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
+            <p className="text-sm text-muted-foreground">Loading lead details...</p>
+          </div>
         </div>
       </Layout>
     )
@@ -1035,12 +342,10 @@ export default function LeadDetail() {
   if (!lead) {
     return (
       <Layout>
-        <div className="text-center">
-          <h1 className="text-2xl font-bold mb-4 text-foreground">Lead Not Found</h1>
-          <Button onClick={() => navigate('/leads')}>
-            <ArrowLeft className="w-4 h-4 mr-2" />
-            Back to Leads
-          </Button>
+        <div className="flex items-center justify-center min-h-[400px]">
+          <div className="text-center">
+            <p className="text-sm text-muted-foreground">Lead not found</p>
+          </div>
         </div>
       </Layout>
     )
@@ -1048,1217 +353,353 @@ export default function LeadDetail() {
 
   return (
     <Layout>
-      <div className="space-y-6">
-        {/* Header */}
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-4">
-            <Button 
-              variant="modern" 
-              className="h-10 px-4 rounded-lg font-medium"
-              onClick={() => navigate('/leads')}
-            >
-              <ArrowLeft className="w-4 h-4 mr-2" />
-              Back to Leads
-            </Button>
-             <div className="bg-gradient-to-r from-card to-card/50 backdrop-blur-sm rounded-2xl p-6 border border-border/50 shadow-medium">
-               <div className="flex items-center gap-3 mb-3">
-                 <div className="w-12 h-12 rounded-full bg-gradient-to-br from-primary to-primary-glow flex items-center justify-center shadow-lg">
-                   <User className="w-6 h-6 text-primary-foreground" />
-                 </div>
-                 <div>
-                   <h1 className="text-2xl font-bold text-foreground bg-gradient-to-r from-foreground to-foreground/80 bg-clip-text">{lead.name}</h1>
-                   <p className="text-sm text-muted-foreground">Lead Profile</p>
-                 </div>
-               </div>
-               <div className="flex items-center gap-3 flex-wrap">
-                 <Badge 
-                   variant={getPriorityColor(lead.priority)}
-                   className="px-3 py-1 rounded-full font-medium shadow-sm"
-                 >
-                   {lead.priority} Priority
-                 </Badge>
-                 <Badge 
-                   variant={getStageColor(lead.stage)}
-                   className="px-3 py-1 rounded-full font-medium shadow-sm"
-                 >
-                   {lead.stage}
-                 </Badge>
-                 {lead.is_converted_to_client && (
-                   <Badge 
-                     variant="default"
-                     className="px-3 py-1 rounded-full font-medium shadow-sm bg-gradient-to-r from-accent to-accent/80"
-                   >
-                     Client
-                   </Badge>
-                 )}
-               </div>
-             </div>
-          </div>
-          <div className="flex flex-col gap-3">
-            {/* First Row - Quick Action Buttons */}
-            <div className="flex gap-3 flex-wrap">
-              <PhoneDialer 
-                phoneNumber={lead.phone}
-                trigger={
-                  <Button
-                    size="sm"
-                    variant="gradient-blue"
-                    className="h-10 px-4 rounded-lg font-medium shadow-md"
-                  >
-                    <PhoneIcon className="w-4 h-4 mr-2" />
-                    Call
-                  </Button>
-                }
-              />
-              <EmailComposer 
-                recipientEmail={lead.email}
-                recipientName={lead.name}
-                trigger={
-                  <Button
-                    size="sm"
-                    variant="gradient-green"
-                    className="h-10 px-4 rounded-lg font-medium shadow-md"
-                  >
-                    <Mail className="w-4 h-4 mr-2" />
-                    Email
-                  </Button>
-                }
-              />
-              <Button
-                size="sm"
-                variant="gradient-purple"
-                className="h-10 px-4 rounded-lg font-medium shadow-md"
-                onClick={() => navigate(`/leads/${lead.id}/documents`)}
-              >
-                <FileText className="w-4 h-4 mr-2" />
-                Documents
-              </Button>
-              <Button
-                onClick={() => setShowReminderDialog(true)}
-                size="sm"
-                variant="gradient"
-                className="h-10 px-4 rounded-lg font-medium shadow-md"
-              >
-                <Bell className="w-4 h-4 mr-2" />
-                Reminder
-              </Button>
-            </div>
-            
-            {/* Second Row - Edit/Save/Delete Buttons */}
-            <div className="flex gap-3 flex-wrap">
-              <Button 
-                onClick={() => setIsEditing(!isEditing)}
-                variant="modern"
-                className="h-10 px-4 rounded-lg font-medium"
-              >
-                <Edit className="w-4 h-4 mr-2" />
-                {isEditing ? 'Cancel' : 'Edit'}
-              </Button>
-              {isEditing && (
-                <Button 
-                  onClick={saveLeadChanges}
-                  variant="gradient"
-                  className="h-10 px-4 rounded-lg font-medium shadow-md"
+      <div className="min-h-screen bg-background">
+        {/* Modern Header */}
+        <div className="bg-card border-b border-border sticky top-0 z-10">
+          <div className="px-6 py-4">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-4">
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => navigate('/leads')}
+                  className="h-8 w-8 p-0 hover:bg-muted rounded-md"
                 >
-                  <Save className="w-4 h-4 mr-2" />
-                  Save Changes
+                  <ArrowLeft className="h-4 w-4" />
                 </Button>
-              )}
-              <AlertDialog>
-                <AlertDialogTrigger asChild>
-                  <Button 
-                    variant="gradient-red"
-                    className="h-10 px-4 rounded-lg font-medium shadow-md"
-                  >
-                    <Trash2 className="w-4 h-4 mr-2" />
-                    Delete Lead
-                  </Button>
-                </AlertDialogTrigger>
-                <AlertDialogContent>
-                  <AlertDialogHeader>
-                    <AlertDialogTitle>Delete Lead</AlertDialogTitle>
-                    <AlertDialogDescription>
-                      Are you sure you want to delete <strong>{lead?.name || 'this lead'}</strong>? This action cannot be undone and you will be redirected back to the leads page.
-                    </AlertDialogDescription>
-                  </AlertDialogHeader>
-                  <AlertDialogFooter>
-                    <AlertDialogCancel>Cancel</AlertDialogCancel>
-                    <AlertDialogAction
-                      onClick={deleteLead}
-                      className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                <div>
+                  <div className="flex items-center gap-3">
+                    <h1 className="text-xl font-semibold text-foreground">
+                      {lead.name || lead.business_name || 'Lead Details'}
+                    </h1>
+                    <div className="flex items-center gap-2">
+                      <Badge 
+                        variant={getStageColor(lead.stage)}
+                        className="text-xs font-medium px-2 py-1"
+                      >
+                        {lead.stage || 'new'}
+                      </Badge>
+                      <Badge 
+                        variant={getPriorityColor(lead.priority)}
+                        className="text-xs font-medium px-2 py-1"
+                      >
+                        {lead.priority || 'normal'}
+                      </Badge>
+                      {lead.is_converted_to_client && (
+                        <Badge variant="default" className="text-xs font-medium px-2 py-1 bg-green-100 text-green-800 border-green-200">
+                          <CheckCircle className="h-3 w-3 mr-1" />
+                          Converted
+                        </Badge>
+                      )}
+                    </div>
+                  </div>
+                  <p className="text-sm text-muted-foreground mt-1">
+                    Lead ID: {lead.id?.slice(0, 8)}... • Created {format(new Date(lead.created_at), 'MMM dd, yyyy')}
+                  </p>
+                </div>
+              </div>
+              
+              <div className="flex items-center gap-2">
+                <PhoneDialer 
+                  phoneNumber={lead.phone}
+                  trigger={
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="h-8 text-xs font-medium"
                     >
-                      Delete Lead
-                    </AlertDialogAction>
-                  </AlertDialogFooter>
-                </AlertDialogContent>
-              </AlertDialog>
+                      <PhoneIcon className="h-3 w-3 mr-2" />
+                      Call
+                    </Button>
+                  }
+                />
+                <EmailComposer 
+                  recipientEmail={lead.email}
+                  recipientName={lead.name}
+                  trigger={
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="h-8 text-xs font-medium"
+                    >
+                      <Mail className="h-3 w-3 mr-2" />
+                      Email
+                    </Button>
+                  }
+                />
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setShowReminderDialog(true)}
+                  className="h-8 text-xs font-medium"
+                >
+                  <Bell className="h-3 w-3 mr-2" />
+                  Set Reminder
+                </Button>
+                <Button
+                  variant={isEditing ? "default" : "outline"}
+                  size="sm"
+                  onClick={isEditing ? saveLeadChanges : () => setIsEditing(true)}
+                  className={isEditing ? 
+                    "h-8 text-xs font-medium bg-primary hover:bg-primary/90" : 
+                    "h-8 text-xs font-medium"
+                  }
+                >
+                  <Edit className="h-3 w-3 mr-2" />
+                  {isEditing ? 'Save Changes' : 'Edit'}
+                </Button>
+                
+                {isEditing && (
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => setIsEditing(false)}
+                    className="h-8 text-xs font-medium"
+                  >
+                    Cancel
+                  </Button>
+                )}
+              </div>
             </div>
           </div>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          {/* Lead Information */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-foreground">
-                Borrower Information
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                {/* Left Column */}
-                <div className="space-y-4">
-                  <div className="grid grid-cols-2 gap-3">
-                    <div className="flex items-center gap-3">
-                      <User className="w-4 h-4 text-muted-foreground" />
-                      <div className="flex-1">
-                        <p className="text-sm text-muted-foreground">First Name</p>
-                        {isEditing ? (
-                          <Input
-                            value={editableFields.first_name}
-                            onChange={(e) => setEditableFields({...editableFields, first_name: e.target.value})}
-                            placeholder="Enter first name"
-                          />
-                        ) : (
-                          <p className="font-medium text-foreground">{(lead as any).first_name || 'N/A'}</p>
-                        )}
-                      </div>
-                    </div>
-                    
-                    <div className="flex items-center gap-3">
-                      <div className="flex-1">
-                        <p className="text-sm text-muted-foreground">Last Name</p>
-                        {isEditing ? (
-                          <Input
-                            value={editableFields.last_name}
-                            onChange={(e) => setEditableFields({...editableFields, last_name: e.target.value})}
-                            placeholder="Enter last name"
-                          />
-                        ) : (
-                          <p className="font-medium text-foreground">{(lead as any).last_name || 'N/A'}</p>
-                        )}
-                      </div>
-                    </div>
+        {/* Content Area */}
+        <div className="p-6 space-y-6">
+          {/* Main Content Grid */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            {/* Contact Information Card */}
+            <Card className="border-0 shadow-sm bg-card">
+              <CardHeader className="pb-4">
+                <CardTitle className="text-base font-semibold text-foreground flex items-center gap-2">
+                  <User className="h-4 w-4 text-muted-foreground" />
+                  Contact Information
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="pt-0 space-y-4">
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <Label className="text-xs font-medium text-muted-foreground">First Name</Label>
+                    {isEditing ? (
+                      <Input
+                        value={editableFields.first_name}
+                        onChange={(e) => setEditableFields({...editableFields, first_name: e.target.value})}
+                        className="mt-1 h-8 text-sm"
+                      />
+                    ) : (
+                      <p className="mt-1 text-sm font-medium">{editableFields.first_name || 'N/A'}</p>
+                    )}
                   </div>
-
-                  <div className="flex items-center gap-3">
-                    <Mail className="w-4 h-4 text-muted-foreground" />
-                    <div className="flex-1">
-                      <p className="text-sm text-muted-foreground">Personal Email</p>
-                      {isEditing ? (
-                        <Input
-                          type="email"
-                          value={editableFields.personal_email}
-                          onChange={(e) => setEditableFields({...editableFields, personal_email: e.target.value})}
-                          placeholder="Enter personal email"
-                        />
-                      ) : (
-                        (lead as any).personal_email ? (
-                          <EmailComposer 
-                            trigger={
-                              <button className="font-medium hover:text-primary transition-colors text-left text-foreground">
-                                {(lead as any).personal_email}
-                              </button>
-                            }
-                          />
-                        ) : (
-                          <p className="font-medium text-foreground">N/A</p>
-                        )
-                      )}
-                    </div>
+                  <div>
+                    <Label className="text-xs font-medium text-muted-foreground">Last Name</Label>
+                    {isEditing ? (
+                      <Input
+                        value={editableFields.last_name}
+                        onChange={(e) => setEditableFields({...editableFields, last_name: e.target.value})}
+                        className="mt-1 h-8 text-sm"
+                      />
+                    ) : (
+                      <p className="mt-1 text-sm font-medium">{editableFields.last_name || 'N/A'}</p>
+                    )}
                   </div>
+                </div>
 
-                  <div className="flex items-start gap-3">
-                    <Phone className="w-4 h-4 text-muted-foreground mt-1" />
-                    <div className="flex-1 space-y-1">
-                      <p className="text-sm text-muted-foreground">Mobile Phone</p>
-                      {isEditing ? (
-                        <Input
-                          value={editableFields.mobile_phone}
-                          onChange={(e) => setEditableFields({...editableFields, mobile_phone: e.target.value})}
-                          placeholder="Enter mobile phone number"
-                          type="tel"
-                        />
-                      ) : (
-                        <div>
-                          {(lead as any).mobile_phone ? (
-                            <ClickablePhone 
-                              phoneNumber={(lead as any).mobile_phone}
-                              className="font-medium"
-                            />
-                          ) : (
-                            <p className="font-medium text-foreground">N/A</p>
-                          )}
-                        </div>
-                      )}
-                    </div>
+                <div>
+                  <Label className="text-xs font-medium text-muted-foreground">Email</Label>
+                  {isEditing ? (
+                    <Input
+                      type="email"
+                      value={editableFields.email}
+                      onChange={(e) => setEditableFields({...editableFields, email: e.target.value})}
+                      className="mt-1 h-8 text-sm"
+                    />
+                  ) : (
+                    <p className="mt-1 text-sm font-medium">{editableFields.email || 'N/A'}</p>
+                  )}
+                </div>
+
+                <div>
+                  <Label className="text-xs font-medium text-muted-foreground">Phone</Label>
+                  {isEditing ? (
+                    <Input
+                      value={editableFields.phone}
+                      onChange={(e) => setEditableFields({...editableFields, phone: e.target.value})}
+                      className="mt-1 h-8 text-sm"
+                    />
+                  ) : (
+                    <p className="mt-1 text-sm font-medium">{editableFields.phone || 'N/A'}</p>
+                  )}
+                </div>
+
+                <div>
+                  <Label className="text-xs font-medium text-muted-foreground">Mobile Phone</Label>
+                  {isEditing ? (
+                    <Input
+                      value={editableFields.mobile_phone}
+                      onChange={(e) => setEditableFields({...editableFields, mobile_phone: e.target.value})}
+                      className="mt-1 h-8 text-sm"
+                    />
+                  ) : (
+                    <p className="mt-1 text-sm font-medium">{editableFields.mobile_phone || 'N/A'}</p>
+                  )}
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Company Information Card */}
+            <Card className="border-0 shadow-sm bg-card">
+              <CardHeader className="pb-4">
+                <CardTitle className="text-base font-semibold text-foreground flex items-center gap-2">
+                  <Building className="h-4 w-4 text-muted-foreground" />
+                  Company Information
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="pt-0 space-y-4">
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <Label className="text-xs font-medium text-muted-foreground">Business Name</Label>
+                    {isEditing ? (
+                      <Input
+                        value={editableFields.business_name}
+                        onChange={(e) => setEditableFields({...editableFields, business_name: e.target.value})}
+                        className="mt-1 h-8 text-sm"
+                      />
+                    ) : (
+                      <p className="mt-1 text-sm font-medium">{editableFields.business_name || 'N/A'}</p>
+                    )}
                   </div>
+                  <div>
+                    <Label className="text-xs font-medium text-muted-foreground">Year Established</Label>
+                    {isEditing ? (
+                      <Input
+                        value={editableFields.year_established}
+                        onChange={(e) => setEditableFields({...editableFields, year_established: e.target.value})}
+                        className="mt-1 h-8 text-sm"
+                      />
+                    ) : (
+                      <p className="mt-1 text-sm font-medium">{editableFields.year_established || 'N/A'}</p>
+                    )}
+                  </div>
+                </div>
 
-                  <div className="flex items-center gap-3">
-                    <Calendar className="w-4 h-4 text-muted-foreground" />
-                    <div>
-                      <p className="text-sm text-muted-foreground">Last Contact</p>
-                      <p className="font-medium text-foreground">
-                        {new Date(lead.last_contact).toLocaleString()}
+                <div>
+                  <Label className="text-xs font-medium text-muted-foreground">Business Address</Label>
+                  {isEditing ? (
+                    <Input
+                      value={editableFields.business_address}
+                      onChange={(e) => setEditableFields({...editableFields, business_address: e.target.value})}
+                      className="mt-1 h-8 text-sm"
+                    />
+                  ) : (
+                    <p className="mt-1 text-sm font-medium">{editableFields.business_address || 'N/A'}</p>
+                  )}
+                </div>
+
+                <div className="grid grid-cols-3 gap-4">
+                  <div>
+                    <Label className="text-xs font-medium text-muted-foreground">City</Label>
+                    {isEditing ? (
+                      <Input
+                        value={editableFields.business_city}
+                        onChange={(e) => setEditableFields({...editableFields, business_city: e.target.value})}
+                        className="mt-1 h-8 text-sm"
+                      />
+                    ) : (
+                      <p className="mt-1 text-sm font-medium">{editableFields.business_city || 'N/A'}</p>
+                    )}
+                  </div>
+                  <div>
+                    <Label className="text-xs font-medium text-muted-foreground">State</Label>
+                    {isEditing ? (
+                      <Input
+                        value={editableFields.business_state}
+                        onChange={(e) => setEditableFields({...editableFields, business_state: e.target.value})}
+                        className="mt-1 h-8 text-sm"
+                      />
+                    ) : (
+                      <p className="mt-1 text-sm font-medium">{editableFields.business_state || 'N/A'}</p>
+                    )}
+                  </div>
+                  <div>
+                    <Label className="text-xs font-medium text-muted-foreground">ZIP Code</Label>
+                    {isEditing ? (
+                      <Input
+                        value={editableFields.business_zip_code}
+                        onChange={(e) => setEditableFields({...editableFields, business_zip_code: e.target.value})}
+                        className="mt-1 h-8 text-sm"
+                      />
+                    ) : (
+                      <p className="mt-1 text-sm font-medium">{editableFields.business_zip_code || 'N/A'}</p>
+                    )}
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <Label className="text-xs font-medium text-muted-foreground">Annual Revenue</Label>
+                    {isEditing ? (
+                      <Input
+                        value={editableFields.annual_revenue}
+                        onChange={(e) => setEditableFields({...editableFields, annual_revenue: e.target.value})}
+                        className="mt-1 h-8 text-sm"
+                      />
+                    ) : (
+                      <p className="mt-1 text-sm font-medium">
+                        {editableFields.annual_revenue ? formatCurrency(parseFloat(editableFields.annual_revenue)) : 'N/A'}
                       </p>
-                    </div>
+                    )}
                   </div>
-
+                  <div>
+                    <Label className="text-xs font-medium text-muted-foreground">NAICS Code</Label>
+                    {isEditing ? (
+                      <Input
+                        value={editableFields.naics_code}
+                        onChange={(e) => setEditableFields({...editableFields, naics_code: e.target.value})}
+                        className="mt-1 h-8 text-sm"
+                      />
+                    ) : (
+                      <p className="mt-1 text-sm font-medium">{editableFields.naics_code || 'N/A'}</p>
+                    )}
+                  </div>
                 </div>
+              </CardContent>
+            </Card>
+          </div>
+        </div>
 
-                {/* Right Column */}
-                <div className="space-y-4">
-                  <div className="flex items-center gap-3">
-                    <CreditCard className="w-4 h-4 text-muted-foreground" />
-                    <div className="flex-1">
-                      <p className="text-sm text-muted-foreground">Experian Credit Score</p>
-                      {isEditing ? (
-                        <Input
-                          type="number"
-                          value={editableFields.credit_score}
-                          onChange={(e) => setEditableFields({...editableFields, credit_score: e.target.value})}
-                          placeholder="Enter credit score"
-                          min="300"
-                          max="850"
-                        />
-                      ) : (
-                        <p className="font-medium text-foreground">{formatNumber(lead.credit_score)}</p>
-                      )}
-                    </div>
-                  </div>
+        {/* Future: Action Reminder Dialog can be added here */}
 
-                  <div className="flex items-center gap-3">
-                    <Mail className="w-4 h-4 text-muted-foreground" />
-                    <div className="flex-1">
-                      <p className="text-sm text-muted-foreground">Company Email</p>
-                      {isEditing ? (
-                        <Input
-                          type="email"
-                          value={editableFields.email}
-                          onChange={(e) => setEditableFields({...editableFields, email: e.target.value})}
-                          placeholder="Enter company email"
-                        />
-                      ) : (
-                        <EmailComposer 
-                          trigger={
-                            <button className="font-medium hover:text-primary transition-colors text-left text-foreground">
-                              {lead.email}
-                            </button>
-                          }
-                        />
-                      )}
-                    </div>
-                  </div>
-
-                  <div className="flex items-start gap-3">
-                    <Phone className="w-4 h-4 text-muted-foreground mt-1" />
-                    <div className="flex-1 space-y-1">
-                      <p className="text-sm text-muted-foreground">Company Phone</p>
-                      {isEditing ? (
-                        <Input
-                          value={editableFields.phone}
-                          onChange={(e) => setEditableFields({...editableFields, phone: e.target.value})}
-                          placeholder="Enter company phone number"
-                        />
-                      ) : (
-                        <div>
-                          {lead.phone ? (
-                            <ClickablePhone 
-                              phoneNumber={lead.phone}
-                              className="font-medium"
-                            />
-                          ) : (
-                            <p className="font-medium text-foreground">N/A</p>
-                          )}
-                        </div>
-                      )}
-                    </div>
-                  </div>
-
-                  <div className="flex items-center gap-3">
-                    <Percent className="w-4 h-4 text-muted-foreground" />
-                    <div className="flex-1">
-                      <p className="text-sm text-muted-foreground">Ownership Percentage</p>
-                      {isEditing ? (
-                        <Input
-                          type="number"
-                          min="0"
-                          max="100"
-                          step="0.01"
-                          value={editableFields.ownership_percentage}
-                          onChange={(e) => setEditableFields({...editableFields, ownership_percentage: e.target.value})}
-                          placeholder="Enter ownership percentage"
-                        />
-                      ) : (
-                        <p className="font-medium text-foreground">
-                          {(lead as any).ownership_percentage ? `${(lead as any).ownership_percentage}%` : 'N/A'}
-                        </p>
-                      )}
-                    </div>
-                  </div>
-
-
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Add Additional Borrower Button - Simple Implementation */}
-          <Card className="border-dashed border-2 hover:border-primary/50 transition-colors">
-            <CardContent className="flex items-center justify-center py-6">
-              <Button
-                onClick={addAdditionalBorrower}
-                variant="ghost"
-                className="text-muted-foreground hover:text-primary"
+        {/* Delete Lead Dialog */}
+        <AlertDialog>
+          <AlertDialogTrigger asChild>
+            <Button 
+              variant="destructive"
+              size="sm"
+              className="fixed bottom-6 right-6 h-10 px-4 shadow-lg"
+            >
+              <Trash2 className="h-4 w-4 mr-2" />
+              Delete Lead
+            </Button>
+          </AlertDialogTrigger>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>Delete Lead</AlertDialogTitle>
+              <AlertDialogDescription>
+                Are you sure you want to delete <strong>{lead?.name || 'this lead'}</strong>? This action cannot be undone.
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel>Cancel</AlertDialogCancel>
+              <AlertDialogAction
+                onClick={deleteLead}
+                className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
               >
-                <UserPlus className="w-4 h-4 mr-2" />
-                Add Additional Borrower
-              </Button>
-            </CardContent>
-          </Card>
-
-          {/* Business Information */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-foreground">
-                Company Information
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-6">
-              <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-                {/* Column 1: Company Basic Info */}
-                <div className="space-y-4">
-                  <div className="flex items-center gap-3">
-                    <Building className="w-4 h-4 text-muted-foreground" />
-                    <div className="flex-1">
-                      <p className="text-sm text-muted-foreground">Company Name</p>
-                      {isEditing ? (
-                        <Input
-                          value={editableFields.business_name}
-                          onChange={(e) => setEditableFields({...editableFields, business_name: e.target.value})}
-                          placeholder="Enter company name"
-                        />
-                      ) : (
-                        <p className="font-medium text-foreground">{lead.business_name || 'N/A'}</p>
-                      )}
-                    </div>
-                  </div>
-
-                  <div className="flex items-center gap-3">
-                    <Building className="w-4 h-4 text-muted-foreground" />
-                    <div className="flex-1">
-                      <p className="text-sm text-muted-foreground">Ownership Structure</p>
-                      {isEditing ? (
-                        <Select value={editableFields.ownership_structure} onValueChange={(value) => setEditableFields({...editableFields, ownership_structure: value})}>
-                          <SelectTrigger className="bg-background border-border z-50">
-                            <SelectValue placeholder="Select ownership structure" />
-                          </SelectTrigger>
-                          <SelectContent className="bg-background border-border shadow-lg z-50">
-                            <SelectItem value="sole_proprietorship">Sole Proprietorship</SelectItem>
-                            <SelectItem value="partnership">Partnership</SelectItem>
-                            <SelectItem value="llc">Limited Liability Company (LLC)</SelectItem>
-                            <SelectItem value="corporation">Corporation (C-Corp)</SelectItem>
-                            <SelectItem value="s_corporation">S Corporation (S-Corp)</SelectItem>
-                            <SelectItem value="limited_partnership">Limited Partnership (LP)</SelectItem>
-                            <SelectItem value="llp">Limited Liability Partnership (LLP)</SelectItem>
-                            <SelectItem value="professional_corporation">Professional Corporation (PC)</SelectItem>
-                            <SelectItem value="nonprofit">Nonprofit Corporation</SelectItem>
-                            <SelectItem value="cooperative">Cooperative</SelectItem>
-                          </SelectContent>
-                        </Select>
-                      ) : (
-                        <p className="font-medium text-foreground">
-                          {(lead as any).ownership_structure ? 
-                            {
-                              'sole_proprietorship': 'Sole Proprietorship',
-                              'partnership': 'Partnership',
-                              'llc': 'Limited Liability Company (LLC)',
-                              'corporation': 'Corporation (C-Corp)',
-                              's_corporation': 'S Corporation (S-Corp)',
-                              'limited_partnership': 'Limited Partnership (LP)',
-                              'llp': 'Limited Liability Partnership (LLP)',
-                              'professional_corporation': 'Professional Corporation (PC)',
-                              'nonprofit': 'Nonprofit Corporation',
-                              'cooperative': 'Cooperative'
-                            }[(lead as any).ownership_structure] || (lead as any).ownership_structure
-                            : 'N/A'
-                          }
-                        </p>
-                      )}
-                    </div>
-                  </div>
-                </div>
-
-                {/* Column 2: Company Address */}
-                <div className="space-y-4">
-                  <div className="flex items-center gap-3">
-                    <Home className="w-4 h-4 text-muted-foreground" />
-                    <div className="flex-1">
-                      <p className="text-sm text-muted-foreground">Company Address</p>
-                      {isEditing ? (
-                        <div className="space-y-2">
-                          <Textarea
-                            value={editableFields.business_address}
-                            onChange={(e) => setEditableFields({...editableFields, business_address: e.target.value})}
-                            placeholder="Enter street address"
-                            rows={2}
-                          />
-                          <div className="grid grid-cols-2 gap-2">
-                            <Input
-                              value={editableFields.business_city}
-                              onChange={(e) => setEditableFields({...editableFields, business_city: e.target.value})}
-                              placeholder="City"
-                            />
-                            <Input
-                              value={editableFields.business_state}
-                              onChange={(e) => setEditableFields({...editableFields, business_state: e.target.value})}
-                              placeholder="State"
-                            />
-                          </div>
-                          <Input
-                            value={editableFields.business_zip_code}
-                            onChange={(e) => setEditableFields({...editableFields, business_zip_code: e.target.value})}
-                            placeholder="ZIP Code"
-                          />
-                        </div>
-                      ) : (
-                        <div className="space-y-1">
-                          {lead.business_address && <p className="font-medium text-foreground">{lead.business_address}</p>}
-                          {(lead.business_city || lead.business_state || lead.business_zip_code) && (
-                            <p className="font-medium text-foreground">
-                              {[lead.business_city, lead.business_state, lead.business_zip_code].filter(Boolean).join(', ')}
-                            </p>
-                          )}
-                          {!lead.business_address && !lead.business_city && !lead.business_state && !lead.business_zip_code && (
-                            <p className="font-medium text-foreground">N/A</p>
-                          )}
-                        </div>
-                      )}
-                    </div>
-                  </div>
-
-                  <div className="flex items-center gap-3">
-                    <div className="flex-1">
-                      <p className="text-sm text-muted-foreground">Property Ownership</p>
-                      {isEditing ? (
-                        <div className="flex items-center gap-2 mt-2">
-                          <Switch
-                            checked={editableFields.owns_property}
-                            onCheckedChange={(checked) => setEditableFields({...editableFields, owns_property: checked})}
-                          />
-                          <span className="text-sm text-foreground">
-                            {editableFields.owns_property ? 'Owns Property' : 'Does not own property'}
-                          </span>
-                        </div>
-                      ) : (
-                        <div className="flex items-center gap-2">
-                          {lead.owns_property ? (
-                            <CheckCircle className="w-4 h-4 text-green-500" />
-                          ) : (
-                            <XCircle className="w-4 h-4 text-red-500" />
-                          )}
-                          <p className="font-medium text-foreground">
-                            {lead.owns_property ? 'Owns Property' : 'Does not own property'}
-                          </p>
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                </div>
-
-                {/* Column 3: Financial Information */}
-                <div className="space-y-4">
-                  <div className="flex items-center gap-3">
-                    <Calendar className="w-4 h-4 text-muted-foreground" />
-                    <div className="flex-1">
-                      <p className="text-sm text-muted-foreground">Year Established</p>
-                      {isEditing ? (
-                        <Input
-                          type="number"
-                          value={editableFields.year_established}
-                          onChange={(e) => setEditableFields({...editableFields, year_established: e.target.value})}
-                          placeholder="Enter year established (e.g., 2010)"
-                          min="1800"
-                          max={new Date().getFullYear()}
-                        />
-                      ) : (
-                        <p className="font-medium text-foreground">
-                          {(lead as any).year_established || 'N/A'}
-                        </p>
-                      )}
-                    </div>
-                  </div>
-
-                  <div className="flex items-center gap-3">
-                    <DollarSign className="w-4 h-4 text-muted-foreground" />
-                    <div className="flex-1">
-                      <p className="text-sm text-muted-foreground">Annual Revenue</p>
-                      {isEditing ? (
-                        <Input
-                          type="number"
-                          value={editableFields.annual_revenue}
-                          onChange={(e) => setEditableFields({...editableFields, annual_revenue: e.target.value})}
-                          placeholder="Enter annual revenue"
-                        />
-                      ) : (
-                        <p className="font-medium text-foreground">
-                          {formatCurrency(lead.annual_revenue)}
-                        </p>
-                      )}
-                    </div>
-                  </div>
-
-                  <div className="flex items-center gap-3">
-                    <DollarSign className="w-4 h-4 text-muted-foreground" />
-                    <div className="flex-1">
-                      <p className="text-sm text-muted-foreground">Net Operating Income</p>
-                      {isEditing ? (
-                        <Input
-                          type="number"
-                          value={editableFields.net_operating_income}
-                          onChange={(e) => setEditableFields({...editableFields, net_operating_income: e.target.value})}
-                          placeholder="Enter net operating income"
-                        />
-                      ) : (
-                        <p className="font-medium text-foreground">
-                          {formatCurrency((lead as any).net_operating_income)}
-                        </p>
-                      )}
-                    </div>
-                  </div>
-                </div>
-
-                {/* Column 4: Business Codes & Classification */}
-                <div className="space-y-4">
-                  <div className="flex items-center gap-3">
-                    <FileText className="w-4 h-4 text-muted-foreground" />
-                    <div className="flex-1">
-                      <p className="text-sm text-muted-foreground">NAICS Code</p>
-                      {isEditing ? (
-                        <Input
-                          value={editableFields.naics_code}
-                          onChange={(e) => setEditableFields({...editableFields, naics_code: e.target.value})}
-                          placeholder="Enter NAICS code (e.g., 541110)"
-                          maxLength={6}
-                        />
-                      ) : (
-                        <p className="font-medium text-foreground">
-                          {(lead as any).naics_code || 'N/A'}
-                        </p>
-                      )}
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              {/* Property Details Section - Integrated within Company Information */}
-              {(lead.owns_property || editableFields.owns_property) && (
-                <div className="border-t pt-6">
-                  <h3 className="text-lg font-semibold text-foreground mb-4 flex items-center gap-2">
-                    <Home className="w-5 h-5" />
-                    Property Details
-                  </h3>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    {/* Property Fields Left Column */}
-                    <div className="space-y-4">
-                      <div className="flex items-center gap-3">
-                        <DollarSign className="w-4 h-4 text-muted-foreground" />
-                        <div className="flex-1">
-                          <p className="text-sm text-muted-foreground">Property Payment Amount</p>
-                          {isEditing ? (
-                            <Input
-                              type="number"
-                              value={editableFields.property_payment_amount}
-                              onChange={(e) => setEditableFields({...editableFields, property_payment_amount: e.target.value})}
-                              placeholder="Enter monthly/yearly payment amount"
-                            />
-                          ) : (
-                            <p className="font-medium text-foreground">
-                              {(lead as any).property_payment_amount ? formatCurrency((lead as any).property_payment_amount) : 'N/A'}
-                            </p>
-                          )}
-                        </div>
-                      </div>
-
-                      <div className="flex items-center gap-3">
-                        <Target className="w-4 h-4 text-muted-foreground" />
-                        <div className="flex-1">
-                          <p className="text-sm text-muted-foreground">Interest Rate (%)</p>
-                          {isEditing ? (
-                            <Input
-                              type="number"
-                              step="0.01"
-                              value={editableFields.interest_rate}
-                              onChange={(e) => setEditableFields({...editableFields, interest_rate: e.target.value})}
-                              placeholder="Enter interest rate"
-                            />
-                          ) : (
-                            <p className="font-medium text-foreground">
-                              {lead.interest_rate ? `${lead.interest_rate}%` : 'N/A'}
-                            </p>
-                          )}
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* Property Fields Right Column */}
-                    <div className="space-y-4">
-                      <div className="flex items-center gap-3">
-                        <Calendar className="w-4 h-4 text-muted-foreground" />
-                        <div className="flex-1">
-                          <p className="text-sm text-muted-foreground">Maturity Date</p>
-                          {isEditing ? (
-                            <Input
-                              type="date"
-                              value={editableFields.maturity_date}
-                              onChange={(e) => setEditableFields({...editableFields, maturity_date: e.target.value})}
-                            />
-                          ) : (
-                            <p className="font-medium text-foreground">
-                              {lead.maturity_date ? new Date(lead.maturity_date).toLocaleDateString() : 'N/A'}
-                            </p>
-                          )}
-                        </div>
-                      </div>
-
-                      <div className="flex items-center gap-3">
-                        <DollarSign className="w-4 h-4 text-muted-foreground" />
-                        <div className="flex-1">
-                          <p className="text-sm text-muted-foreground">Existing Loan Amount</p>
-                          {isEditing ? (
-                            <Input
-                              type="number"
-                              value={editableFields.existing_loan_amount}
-                              onChange={(e) => setEditableFields({...editableFields, existing_loan_amount: e.target.value})}
-                              placeholder="Enter existing loan amount"
-                            />
-                          ) : (
-                            <p className="font-medium text-foreground">
-                              {formatCurrency((lead as any).existing_loan_amount)}
-                            </p>
-                          )}
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              )}
-            </CardContent>
-          </Card>
-        </div>
-
-        <div className="grid grid-cols-1 gap-6">
-          {/* POS Information */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-foreground">
-                POS Information
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                {/* Left Column */}
-                <div className="space-y-4">
-                  <div className="flex items-center gap-3">
-                    <ShoppingCart className="w-4 h-4 text-muted-foreground" />
-                    <div className="flex-1">
-                      <p className="text-sm text-muted-foreground">POS System</p>
-                      {isEditing ? (
-                        <Input
-                          value={editableFields.pos_system}
-                          onChange={(e) => setEditableFields({...editableFields, pos_system: e.target.value})}
-                          placeholder="Enter POS system name"
-                        />
-                      ) : (
-                        <p className="font-medium text-foreground">
-                          {(lead as any).pos_system || 'N/A'}
-                        </p>
-                      )}
-                    </div>
-                  </div>
-
-                  <div className="flex items-center gap-3">
-                    <DollarSign className="w-4 h-4 text-muted-foreground" />
-                    <div className="flex-1">
-                      <p className="text-sm text-muted-foreground">Monthly Processing Volume</p>
-                      {isEditing ? (
-                        <Input
-                          type="number"
-                          value={editableFields.monthly_processing_volume}
-                          onChange={(e) => setEditableFields({...editableFields, monthly_processing_volume: e.target.value})}
-                          placeholder="Enter monthly volume"
-                        />
-                      ) : (
-                        <p className="font-medium text-foreground">
-                          {formatCurrency((lead as any).monthly_processing_volume)}
-                        </p>
-                      )}
-                    </div>
-                  </div>
-                </div>
-
-                {/* Right Column */}
-                <div className="space-y-4">
-                  <div className="flex items-center gap-3">
-                    <DollarSign className="w-4 h-4 text-muted-foreground" />
-                    <div className="flex-1">
-                      <p className="text-sm text-muted-foreground">Average Transaction Size</p>
-                      {isEditing ? (
-                        <Input
-                          type="number"
-                          value={editableFields.average_transaction_size}
-                          onChange={(e) => setEditableFields({...editableFields, average_transaction_size: e.target.value})}
-                          placeholder="Enter average transaction size"
-                        />
-                      ) : (
-                        <p className="font-medium text-foreground">
-                          {formatCurrency((lead as any).average_transaction_size)}
-                        </p>
-                      )}
-                    </div>
-                  </div>
-
-                  <div className="flex items-center gap-3">
-                    <Building className="w-4 h-4 text-muted-foreground" />
-                    <div className="flex-1">
-                      <p className="text-sm text-muted-foreground">Current Processor</p>
-                      {isEditing ? (
-                        <Input
-                          value={editableFields.processor_name}
-                          onChange={(e) => setEditableFields({...editableFields, processor_name: e.target.value})}
-                          placeholder="Enter processor name"
-                        />
-                      ) : (
-                        <p className="font-medium text-foreground">
-                          {(lead as any).processor_name || 'N/A'}
-                        </p>
-                      )}
-                    </div>
-                  </div>
-
-                  <div className="flex items-center gap-3">
-                    <CreditCard className="w-4 h-4 text-muted-foreground" />
-                    <div className="flex-1">
-                      <p className="text-sm text-muted-foreground">Current Processing Rate (%)</p>
-                      {isEditing ? (
-                        <Input
-                          type="number"
-                          step="0.01"
-                          value={editableFields.current_processing_rate}
-                          onChange={(e) => setEditableFields({...editableFields, current_processing_rate: e.target.value})}
-                          placeholder="Enter processing rate"
-                        />
-                      ) : (
-                        <p className="font-medium text-foreground">
-                          {(lead as any).current_processing_rate ? `${(lead as any).current_processing_rate}%` : 'N/A'}
-                        </p>
-                      )}
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Loan Information */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-foreground">
-                Loan Information
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                {/* Left Column */}
-                <div className="space-y-4">
-                  <div className="flex items-center gap-3">
-                    <DollarSign className="w-4 h-4 text-muted-foreground" />
-                    <div className="flex-1">
-                      <p className="text-sm text-muted-foreground">Loan Amount</p>
-                      {isEditing ? (
-                        <Input
-                          type="number"
-                          value={editableFields.loan_amount}
-                          onChange={(e) => setEditableFields({...editableFields, loan_amount: e.target.value})}
-                          placeholder="Enter loan amount"
-                        />
-                      ) : (
-                        <p className="font-medium text-lg text-foreground">
-                          {formatCurrency(lead.loan_amount)}
-                        </p>
-                      )}
-                    </div>
-                  </div>
-
-                  <div className="flex items-center gap-3">
-                    <Building className="w-4 h-4 text-muted-foreground" />
-                    <div className="flex-1">
-                      <p className="text-sm text-muted-foreground">Loan Type</p>
-                      {isEditing ? (
-                          <Select value={editableFields.loan_type} onValueChange={(value) => setEditableFields({...editableFields, loan_type: value})}>
-                            <SelectTrigger>
-                              <SelectValue placeholder="Select loan type" />
-                            </SelectTrigger>
-                            <SelectContent>
-                              <SelectItem value="SBA 7(a) Loan">SBA 7(a) Loan</SelectItem>
-                              <SelectItem value="SBA 504 Loan">SBA 504 Loan</SelectItem>
-                              <SelectItem value="Bridge Loan">Bridge Loan</SelectItem>
-                              <SelectItem value="Conventional Loan">Conventional Loan</SelectItem>
-                              <SelectItem value="Equipment Financing">Equipment Financing</SelectItem>
-                              <SelectItem value="USDA B&I Loan">USDA B&I Loan</SelectItem>
-                              <SelectItem value="Working Capital Loan">Working Capital Loan</SelectItem>
-                              <SelectItem value="Line of Credit">Line of Credit</SelectItem>
-                              <SelectItem value="Land Loan">Land Loan</SelectItem>
-                              <SelectItem value="Factoring">Factoring</SelectItem>
-                            </SelectContent>
-                          </Select>
-                      ) : (
-                        <p className="font-medium text-foreground">{lead.loan_type || 'N/A'}</p>
-                      )}
-                    </div>
-                  </div>
-
-                  <div className="flex items-center gap-3">
-                    <DollarSign className="w-4 h-4 text-muted-foreground" />
-                    <div className="flex-1">
-                      <p className="text-sm text-muted-foreground">Interest Rate</p>
-                      {isEditing ? (
-                        <Input
-                          type="number"
-                          step="0.01"
-                          value={editableFields.interest_rate}
-                          onChange={(e) => setEditableFields({...editableFields, interest_rate: e.target.value})}
-                          placeholder="Enter interest rate (%)"
-                        />
-                      ) : (
-                        <p className="font-medium text-foreground">
-                          {lead.interest_rate ? `${lead.interest_rate}%` : 'N/A'}
-                        </p>
-                      )}
-                    </div>
-                  </div>
-                </div>
-
-                {/* Right Column */}
-                <div className="space-y-4">
-                  <div className="flex items-center gap-3">
-                    <Calendar className="w-4 h-4 text-muted-foreground" />
-                    <div className="flex-1">
-                      <p className="text-sm text-muted-foreground">Maturity Date</p>
-                      {isEditing ? (
-                        <Input
-                          type="date"
-                          value={editableFields.maturity_date}
-                          onChange={(e) => setEditableFields({...editableFields, maturity_date: e.target.value})}
-                        />
-                      ) : (
-                        <p className="font-medium text-foreground">
-                          {lead.maturity_date ? new Date(lead.maturity_date).toLocaleDateString() : 'N/A'}
-                        </p>
-                      )}
-                    </div>
-                  </div>
-
-                  <div className="flex items-center gap-3">
-                    <Building className="w-4 h-4 text-muted-foreground" />
-                    <div className="flex-1">
-                      <p className="text-sm text-muted-foreground">Bank/Lender Name</p>
-                      {isEditing ? (
-                        <Input
-                          value={editableFields.bank_lender_name}
-                          onChange={(e) => setEditableFields({...editableFields, bank_lender_name: e.target.value})}
-                          placeholder="Enter bank or lender name"
-                        />
-                      ) : (
-                        <p className="font-medium text-foreground">
-                          {(lead as any).bank_lender_name || 'N/A'}
-                        </p>
-                      )}
-                    </div>
-                  </div>
-
-                  <div className="flex items-center gap-3">
-                    <Target className="w-4 h-4 text-muted-foreground" />
-                    <div className="flex-1">
-                      <p className="text-sm text-muted-foreground">Loan Stage</p>
-                      {isEditing ? (
-                        <Select value={editableFields.stage} onValueChange={(value) => setEditableFields({...editableFields, stage: value})}>
-                          <SelectTrigger>
-                            <SelectValue placeholder="Select stage" />
-                          </SelectTrigger>
-                           <SelectContent>
-                              <SelectItem value="New Lead">New Lead</SelectItem>
-                              <SelectItem value="Initial Contact">Initial Contact</SelectItem>
-                              <SelectItem value="Loan Application Signed">Loan Application Signed</SelectItem>
-                              <SelectItem value="Waiting for Documentation">Waiting for Documentation</SelectItem>
-                              <SelectItem value="Pre-Approved">Pre-Approved</SelectItem>
-                              <SelectItem value="Term Sheet Signed">Term Sheet Signed</SelectItem>
-                              <SelectItem value="Loan Approved">Loan Approved</SelectItem>
-                              <SelectItem value="Closing">Closing</SelectItem>
-                              <SelectItem value="Loan Funded">Loan Funded</SelectItem>
-                           </SelectContent>
-                        </Select>
-                      ) : (
-                        <p className="font-medium text-foreground">{lead.stage || 'N/A'}</p>
-                      )}
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-                {/* BDO Information Section */}
-                <div className="col-span-full mt-6">
-                  <h3 className="text-lg font-semibold text-foreground mb-4 flex items-center gap-2">
-                    <User className="w-5 h-5" />
-                    BDO Information
-                  </h3>
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6 pt-4 border-t border-gray-200/10">
-                    <div className="flex items-center gap-3">
-                      <User className="w-4 h-4 text-muted-foreground" />
-                      <div className="flex-1">
-                        <p className="text-sm text-muted-foreground">BDO Name</p>
-                        {isEditing ? (
-                          <Input
-                            value={editableFields.bdo_name}
-                            onChange={(e) => setEditableFields({...editableFields, bdo_name: e.target.value})}
-                            placeholder="Enter BDO name"
-                          />
-                        ) : (
-                          <p className="font-medium text-foreground">
-                            {lead.bdo_name || 'N/A'}
-                          </p>
-                        )}
-                      </div>
-                    </div>
-
-                    <div className="flex items-center gap-3">
-                      <Phone className="w-4 h-4 text-muted-foreground" />
-                      <div className="flex-1">
-                        <p className="text-sm text-muted-foreground">BDO Telephone</p>
-                        {isEditing ? (
-                          <Input
-                            value={editableFields.bdo_telephone}
-                            onChange={(e) => setEditableFields({...editableFields, bdo_telephone: e.target.value})}
-                            placeholder="Enter BDO telephone"
-                          />
-                        ) : (
-                          lead.bdo_telephone ? (
-                            <PhoneDialer 
-                              phoneNumber={lead.bdo_telephone} // Pre-fill with BDO telephone
-                              trigger={
-                                <button className="font-medium hover:text-primary transition-colors text-left text-foreground">
-                                  {lead.bdo_telephone}
-                                </button>
-                              }
-                            />
-                          ) : (
-                            <p className="font-medium text-foreground">N/A</p>
-                          )
-                        )}
-                      </div>
-                    </div>
-
-                    <div className="flex items-center gap-3">
-                      <Mail className="w-4 h-4 text-muted-foreground" />
-                      <div className="flex-1">
-                        <p className="text-sm text-muted-foreground">BDO Email</p>
-                        {isEditing ? (
-                          <Input
-                            type="email"
-                            value={editableFields.bdo_email}
-                            onChange={(e) => setEditableFields({...editableFields, bdo_email: e.target.value})}
-                            placeholder="Enter BDO email"
-                          />
-                        ) : (
-                          <p className="font-medium text-foreground">
-                            {lead.bdo_email || 'N/A'}
-                          </p>
-                        )}
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-            </CardContent>
-          </Card>
-        </div>
-
-        {/* Loan Requests Section */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-foreground">
-              Loan Requests
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <LoanRequestManager
-              leadId={lead?.id}
-              loanRequests={loanRequests}
-              onLoanRequestsUpdate={setLoanRequests}
-            />
-          </CardContent>
-        </Card>
-
-        {/* General Notes Section */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-foreground">General Notes</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="generalNotes" className="text-foreground">
-                Notes
-              </Label>
-              <Textarea
-                id="generalNotes"
-                placeholder="Enter general notes about this lead..."
-                value={generalNotes}
-                onChange={(e) => setGeneralNotes(e.target.value)}
-                rows={4}
-              />
-              <Button onClick={saveGeneralNotes}>
-                <Save className="w-4 h-4 mr-2" />
-                Save General Notes
-              </Button>
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Call Notes Section */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-foreground">
-              Call Notes
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            {/* Existing Call Notes */}
-            {callNotes && (
-              <div>
-                <Label className="text-foreground">Previous Call Notes</Label>
-                <div className="mt-2 p-3 bg-muted rounded-lg">
-                  <pre className="whitespace-pre-wrap text-sm text-foreground">
-                    {callNotes}
-                  </pre>
-                </div>
-              </div>
-            )}
-
-            <Separator />
-
-            {/* Add New Call Note */}
-            <div className="space-y-2">
-              <Label htmlFor="newCallNote" className="text-foreground">
-                Add New Call Note
-              </Label>
-              <Textarea
-                id="newCallNote"
-                placeholder="Enter your call notes here..."
-                value={newCallNote}
-                onChange={(e) => setNewCallNote(e.target.value)}
-                rows={4}
-              />
-              <Button onClick={saveCallNotes} disabled={!newCallNote.trim()}>
-                <Save className="w-4 h-4 mr-2" />
-                Save Call Note
-              </Button>
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Existing Client Information */}
-        {lead.is_converted_to_client && client && (
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-foreground">
-                Existing Client Information
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="flex items-center gap-3">
-                  <User className="w-4 h-4 text-muted-foreground" />
-                  <div>
-                    <p className="text-sm text-muted-foreground">Client Name</p>
-                    <p className="font-medium text-foreground">{client.name}</p>
-                  </div>
-                </div>
-
-                <div className="flex items-center gap-3">
-                  <Mail className="w-4 h-4 text-muted-foreground" />
-                  <div>
-                    <p className="text-sm text-muted-foreground">Email</p>
-                    <p className="font-medium text-foreground">{client.email}</p>
-                  </div>
-                </div>
-
-                {client.phone && (
-                  <div className="flex items-center gap-3">
-                    <Phone className="w-4 h-4 text-muted-foreground" />
-                     <div>
-                       <p className="text-sm text-muted-foreground">Phone</p>
-                       <PhoneDialer 
-                         phoneNumber={client.phone} // Pre-fill with client phone
-                         trigger={
-                           <button className="font-medium hover:text-primary transition-colors text-left text-foreground">
-                             {client.phone}
-                           </button>
-                         }
-                       />
-                     </div>
-                  </div>
-                )}
-
-                <div className="flex items-center gap-3">
-                  <Badge variant="default" className="w-fit">
-                    {client.status}
-                  </Badge>
-                </div>
-
-                <div className="flex items-center gap-3">
-                  <DollarSign className="w-4 h-4 text-muted-foreground" />
-                  <div>
-                    <p className="text-sm text-muted-foreground">Total Loans</p>
-                    <p className="font-medium text-foreground">{formatNumber(client.total_loans)}</p>
-                  </div>
-                </div>
-
-                <div className="flex items-center gap-3">
-                  <DollarSign className="w-4 h-4 text-muted-foreground" />
-                  <div>
-                    <p className="text-sm text-muted-foreground">Total Loan Value</p>
-                    <p className="font-medium text-foreground">
-                      {formatCurrency(client.total_loan_value)}
-                    </p>
-                  </div>
-                </div>
-
-                <div className="flex items-center gap-3">
-                  <Calendar className="w-4 h-4 text-muted-foreground" />
-                  <div>
-                    <p className="text-sm text-muted-foreground">Client Since</p>
-                    <p className="font-medium text-foreground">
-                      {new Date(client.join_date).toLocaleDateString()}
-                    </p>
-                  </div>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        )}
-
+                Delete Lead
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
       </div>
-
-      {/* Action Reminder Dialog */}
-      {lead && (
-        <ActionReminder
-          entityId={lead.id}
-          entityName={lead.name}
-          entityType="lead"
-          isOpen={showReminderDialog}
-          onClose={() => setShowReminderDialog(false)}
-        />
-      )}
     </Layout>
   )
 }
