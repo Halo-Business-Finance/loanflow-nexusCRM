@@ -393,7 +393,7 @@ export default function Leads() {
             <div className="p-6 space-y-6">
               {/* Key Metrics Cards */}
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                <Card className="border-0 shadow-sm bg-card">
+                <Card className="border border-border shadow-sm bg-white">
                   <CardContent className="pt-6">
                     <div className="flex items-center justify-between">
                       <div>
@@ -410,7 +410,7 @@ export default function Leads() {
                   </CardContent>
                 </Card>
 
-                <Card className="border-0 shadow-sm bg-card">
+                <Card className="border border-border shadow-sm bg-white">
                   <CardContent className="pt-6">
                     <div className="flex items-center justify-between">
                       <div>
@@ -427,7 +427,7 @@ export default function Leads() {
                   </CardContent>
                 </Card>
 
-                <Card className="border-0 shadow-sm bg-card">
+                <Card className="border border-border shadow-sm bg-white">
                   <CardContent className="pt-6">
                     <div className="flex items-center justify-between">
                       <div>
@@ -444,7 +444,7 @@ export default function Leads() {
                   </CardContent>
                 </Card>
 
-                <Card className="border-0 shadow-sm bg-card">
+                <Card className="border border-border shadow-sm bg-white">
                   <CardContent className="pt-6">
                     <div className="flex items-center justify-between">
                       <div>

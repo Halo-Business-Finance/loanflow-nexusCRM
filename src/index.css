@@ -228,4 +228,14 @@ All colors MUST be HSL.
     @apply px-3 py-2 rounded-md min-h-[32px] flex items-center;
     @apply text-sm cursor-default;
   }
+
+  /* Enhanced card visibility */
+  .card, [data-card="true"], .bg-card {
+    @apply border border-border shadow-sm bg-white;
+  }
+
+  /* Widget visibility fixes */
+  .widget, .metric-card, .stats-card {
+    @apply border border-border shadow-sm bg-white rounded-lg;
+  }
 }
