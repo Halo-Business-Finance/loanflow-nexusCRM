@@ -145,10 +145,10 @@ export function HorizontalNav() {
               <Link
                 key={item.name}
                 to={item.path}
-                className={`relative flex items-center gap-2 px-3 py-1 text-sm font-medium transition-colors hover:text-primary ${
+                className={`relative flex items-center gap-2 px-3 py-1 text-sm font-medium transition-colors hover:text-blue-600 hover:bg-blue-50 rounded-md ${
                   isActive 
                     ? 'text-primary border-b-2 border-primary' 
-                    : 'text-foreground/70 hover:text-primary'
+                    : 'text-foreground/70 hover:text-blue-600'
                 }`}
               >
                 <item.icon className="h-4 w-4" />
@@ -162,10 +162,10 @@ export function HorizontalNav() {
             <DropdownMenuTrigger asChild>
               <Button 
                 variant="ghost" 
-                className={`flex items-center gap-2 px-3 py-1 text-sm font-medium transition-colors hover:text-primary ${
+                className={`flex items-center gap-2 px-3 py-1 text-sm font-medium transition-colors hover:text-blue-600 hover:bg-blue-50 rounded-md ${
                   moreItems.some(item => isActivePath(item.path))
                     ? 'text-primary border-b-2 border-primary'
-                    : 'text-foreground/70 hover:text-primary'
+                    : 'text-foreground/70 hover:text-blue-600'
                 }`}
               >
                 More
@@ -175,7 +175,7 @@ export function HorizontalNav() {
             <DropdownMenuContent align="start" className="w-48 bg-background border border-border shadow-lg">
               {moreItems.map((item) => (
                 <DropdownMenuItem key={item.name} asChild>
-                  <Link to={item.path} className="flex items-center gap-2 w-full px-2 py-2 text-sm hover:bg-muted rounded-sm">
+                  <Link to={item.path} className="flex items-center gap-2 w-full px-2 py-2 text-sm hover:bg-blue-50 hover:text-blue-700 rounded-sm">
                     <item.icon className="h-4 w-4" />
                     {item.name}
                   </Link>
