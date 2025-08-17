@@ -52,6 +52,18 @@ import Screenshots from "./pages/Screenshots";
 import Security from "./pages/Security";
 import EmergencyMaintenance from "./pages/EmergencyMaintenance";
 import NotFound from "./pages/NotFound";
+import UnderwriterDocuments from "./pages/UnderwriterDocuments";
+import UnderwriterRisk from "./pages/UnderwriterRisk";
+import DocumentUpload from "./pages/DocumentUpload";
+import DocumentTemplates from "./pages/DocumentTemplates";
+import ActivitiesCalendar from "./pages/ActivitiesCalendar";
+import ActivitiesTasks from "./pages/ActivitiesTasks";
+import SecurityAccess from "./pages/SecurityAccess";
+import SecurityAudit from "./pages/SecurityAudit";
+import SecurityThreats from "./pages/SecurityThreats";
+import SecurityCompliance from "./pages/SecurityCompliance";
+import SettingsUsers from "./pages/SettingsUsers";
+import SettingsSystem from "./pages/SettingsSystem";
 import { useKeyboardShortcuts } from "@/hooks/useKeyboardShortcuts";
 import { useEnhancedSecurity } from "@/hooks/useEnhancedSecurity";
 
@@ -116,20 +128,32 @@ function AuthenticatedApp() {
             <Route path="/pipeline/stages" element={<HorizontalLayout><StageManagement /></HorizontalLayout>} errorElement={<RouteErrorBoundary />} />
             
             <Route path="/underwriter" element={<HorizontalLayout><Underwriter /></HorizontalLayout>} errorElement={<RouteErrorBoundary />} />
+            <Route path="/underwriter/documents" element={<HorizontalLayout><UnderwriterDocuments /></HorizontalLayout>} errorElement={<RouteErrorBoundary />} />
+            <Route path="/underwriter/risk" element={<HorizontalLayout><UnderwriterRisk /></HorizontalLayout>} errorElement={<RouteErrorBoundary />} />
             
             <Route path="/documents" element={<HorizontalLayout><Documents /></HorizontalLayout>} errorElement={<RouteErrorBoundary />} />
+            <Route path="/documents/upload" element={<HorizontalLayout><DocumentUpload /></HorizontalLayout>} errorElement={<RouteErrorBoundary />} />
+            <Route path="/documents/templates" element={<HorizontalLayout><DocumentTemplates /></HorizontalLayout>} errorElement={<RouteErrorBoundary />} />
             
             <Route path="/activities" element={<HorizontalLayout><Activities /></HorizontalLayout>} errorElement={<RouteErrorBoundary />} />
+            <Route path="/activities/calendar" element={<HorizontalLayout><ActivitiesCalendar /></HorizontalLayout>} errorElement={<RouteErrorBoundary />} />
+            <Route path="/activities/tasks" element={<HorizontalLayout><ActivitiesTasks /></HorizontalLayout>} errorElement={<RouteErrorBoundary />} />
             
             <Route path="/reports" element={<HorizontalLayout><Reports /></HorizontalLayout>} errorElement={<RouteErrorBoundary />} />
             
             <Route path="/settings" element={<HorizontalLayout><Settings /></HorizontalLayout>} errorElement={<RouteErrorBoundary />} />
+            <Route path="/settings/users" element={<HorizontalLayout><SettingsUsers /></HorizontalLayout>} errorElement={<RouteErrorBoundary />} />
+            <Route path="/settings/system" element={<HorizontalLayout><SettingsSystem /></HorizontalLayout>} errorElement={<RouteErrorBoundary />} />
             
             <Route path="/users" element={<HorizontalLayout><Users /></HorizontalLayout>} errorElement={<RouteErrorBoundary />} />
             {/* Debug route */}
             <Route path="/users-debug" element={<div>Users route test</div>} errorElement={<RouteErrorBoundary />} />
             
             <Route path="/security" element={<HorizontalLayout><Security /></HorizontalLayout>} errorElement={<RouteErrorBoundary />} />
+            <Route path="/security/access" element={<HorizontalLayout><SecurityAccess /></HorizontalLayout>} errorElement={<RouteErrorBoundary />} />
+            <Route path="/security/audit" element={<HorizontalLayout><SecurityAudit /></HorizontalLayout>} errorElement={<RouteErrorBoundary />} />
+            <Route path="/security/threats" element={<HorizontalLayout><SecurityThreats /></HorizontalLayout>} errorElement={<RouteErrorBoundary />} />
+            <Route path="/security/compliance" element={<HorizontalLayout><SecurityCompliance /></HorizontalLayout>} errorElement={<RouteErrorBoundary />} />
             <Route path="/security/military" element={<Layout><MilitaryGradeSecurityDashboard /></Layout>} errorElement={<RouteErrorBoundary />} />
             
             <Route path="/enterprise" element={<HorizontalLayout><Enterprise /></HorizontalLayout>} errorElement={<RouteErrorBoundary />} />
