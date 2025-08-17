@@ -341,14 +341,14 @@ export default function Dashboard() {
 
   return (
     <HorizontalLayout>
-      <div className="bg-white">
+      <div className="bg-background">
         {/* Page Header */}
-        <div className="border-b border-gray-200 bg-white">
+        <div className="border-b border-border bg-card">
           <div className="px-6 py-4">
             <div className="flex items-center justify-between">
               <div>
-                <h1 className="text-lg font-semibold text-gray-900">Home</h1>
-                <p className="text-sm text-gray-600 mt-1">
+                <h1 className="text-lg font-semibold text-foreground">Home</h1>
+                <p className="text-sm text-muted-foreground mt-1">
                   Welcome back! Here's your business overview.
                 </p>
               </div>
@@ -369,28 +369,28 @@ export default function Dashboard() {
         </div>
 
         {/* Content */}
-        <div className="p-6 bg-gray-50 min-h-screen">
+        <div className="p-6 bg-muted/30 min-h-screen">
           {/* Key Performance Metrics */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
             {performanceMetrics.map((metric, index) => (
-              <Card key={index} className="bg-white border border-gray-200 shadow-sm">
+              <Card key={index} className="bg-card border border-border shadow-sm">
                 <CardContent className="p-4">
                   <div className="flex items-center justify-between">
                     <div className="space-y-1">
-                      <p className="text-xs font-medium text-gray-500 uppercase tracking-wide">{metric.title}</p>
+                      <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide">{metric.title}</p>
                       <div className="flex items-center gap-2">
                         <metric.icon className={`h-4 w-4 ${metric.color}`} />
-                        <span className="text-xl font-semibold text-gray-900">{metric.value}</span>
+                        <span className="text-xl font-semibold text-foreground">{metric.value}</span>
                       </div>
                       <div className="flex items-center gap-1">
                         {getTrendIcon(metric.trend)}
                         <span className={`text-xs font-medium ${
                           metric.trend === 'up' ? 'text-green-600' : 
-                          metric.trend === 'down' ? 'text-red-600' : 'text-gray-600'
+                          metric.trend === 'down' ? 'text-red-600' : 'text-muted-foreground'
                         }`}>
                           {Math.abs(metric.change)}%
                         </span>
-                        <span className="text-xs text-gray-500">vs last month</span>
+                        <span className="text-xs text-muted-foreground">vs last month</span>
                       </div>
                     </div>
                   </div>
@@ -427,13 +427,13 @@ export default function Dashboard() {
           {/* Main Content Grid */}
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
             {/* Revenue Chart */}
-            <Card className="lg:col-span-2 bg-white border border-gray-200 shadow-sm">
+            <Card className="lg:col-span-2 bg-card border border-border shadow-sm">
               <CardHeader className="pb-3">
-                <CardTitle className="flex items-center gap-2 text-sm font-semibold text-gray-900">
+                <CardTitle className="flex items-center gap-2 text-sm font-semibold text-foreground">
                   <TrendingUp className="h-4 w-4 text-green-600" />
                   Revenue Performance
                 </CardTitle>
-                <CardDescription className="text-xs text-gray-600">
+                <CardDescription className="text-xs text-muted-foreground">
                   Monthly revenue and deal closure trends
                 </CardDescription>
               </CardHeader>
@@ -487,13 +487,13 @@ export default function Dashboard() {
             </Card>
 
             {/* Pipeline Overview */}
-            <Card className="bg-white border border-gray-200 shadow-sm">
+            <Card className="bg-card border border-border shadow-sm">
               <CardHeader className="pb-3">
-                <CardTitle className="flex items-center gap-2 text-sm font-semibold text-gray-900">
+                <CardTitle className="flex items-center gap-2 text-sm font-semibold text-foreground">
                   <PieChart className="h-4 w-4 text-blue-600" />
                   Sales Pipeline
                 </CardTitle>
-                <CardDescription className="text-xs text-gray-600">
+                <CardDescription className="text-xs text-muted-foreground">
                   Current pipeline distribution
                 </CardDescription>
               </CardHeader>
@@ -501,15 +501,15 @@ export default function Dashboard() {
                 {pipelineData.map((stage, index) => (
                   <div key={index} className="space-y-2">
                     <div className="flex items-center justify-between">
-                      <span className="text-xs font-medium text-gray-700">{stage.name}</span>
+                      <span className="text-xs font-medium text-foreground">{stage.name}</span>
                       <div className="flex items-center gap-2">
-                        <span className="text-xs text-gray-500">{stage.count}</span>
-                        <span className="text-xs font-medium text-gray-900">
+                        <span className="text-xs text-muted-foreground">{stage.count}</span>
+                        <span className="text-xs font-medium text-foreground">
                           {formatCurrency(stage.value)}
                         </span>
                       </div>
                     </div>
-                    <div className="w-full bg-gray-200 rounded-full h-1.5">
+                    <div className="w-full bg-muted rounded-full h-1.5">
                       <div 
                         className="bg-blue-600 h-1.5 rounded-full transition-all duration-300"
                         style={{ width: `${stage.percentage}%` }}
@@ -518,10 +518,10 @@ export default function Dashboard() {
                   </div>
                 ))}
                 
-                <div className="pt-3 border-t border-gray-200">
+                <div className="pt-3 border-t border-border">
                   <div className="flex items-center justify-between">
-                    <span className="text-xs font-medium text-gray-700">Total Pipeline</span>
-                    <span className="text-sm font-semibold text-gray-900">
+                    <span className="text-xs font-medium text-foreground">Total Pipeline</span>
+                    <span className="text-sm font-semibold text-foreground">
                       {formatCurrency(pipelineData.reduce((sum, stage) => sum + stage.value, 0))}
                     </span>
                   </div>
@@ -533,12 +533,12 @@ export default function Dashboard() {
           {/* Bottom Section */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             {/* Recent Activity */}
-            <Card className="bg-white border border-gray-200 shadow-sm">
+            <Card className="bg-card border border-border shadow-sm">
               <CardHeader className="pb-3">
                 <CardTitle className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
                     <Activity className="h-4 w-4 text-purple-600" />
-                    <span className="text-sm font-semibold text-gray-900">Recent Activity</span>
+                    <span className="text-sm font-semibold text-foreground">Recent Activity</span>
                   </div>
                   <Button variant="ghost" size="sm" onClick={() => navigate('/activities')} className="text-xs">
                     View All
@@ -547,16 +547,16 @@ export default function Dashboard() {
               </CardHeader>
               <CardContent className="space-y-3">
                 {recentActivity.map((activity) => (
-                  <div key={activity.id} className="flex items-start gap-3 p-2 rounded-md hover:bg-gray-50">
-                    <div className="flex items-center justify-center w-6 h-6 rounded-full bg-gray-100">
+                  <div key={activity.id} className="flex items-start gap-3 p-2 rounded-md hover:bg-muted/50">
+                    <div className="flex items-center justify-center w-6 h-6 rounded-full bg-muted">
                       {getActivityIcon(activity.type)}
                     </div>
                     <div className="flex-1 space-y-1">
                       <div className="flex items-center justify-between">
-                        <p className="text-xs font-medium text-gray-900">{activity.title}</p>
-                        <span className="text-xs text-gray-500">{activity.timestamp}</span>
+                        <p className="text-xs font-medium text-foreground">{activity.title}</p>
+                        <span className="text-xs text-muted-foreground">{activity.timestamp}</span>
                       </div>
-                      <p className="text-xs text-gray-600">{activity.description}</p>
+                      <p className="text-xs text-muted-foreground">{activity.description}</p>
                       {activity.amount && (
                         <span className="text-xs font-medium text-green-600">
                           {formatCurrency(activity.amount)}
@@ -569,12 +569,12 @@ export default function Dashboard() {
             </Card>
 
             {/* Top Performers */}
-            <Card className="bg-white border border-gray-200 shadow-sm">
+            <Card className="bg-card border border-border shadow-sm">
               <CardHeader className="pb-3">
                 <CardTitle className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
                     <Award className="h-4 w-4 text-yellow-600" />
-                    <span className="text-sm font-semibold text-gray-900">Top Performers</span>
+                    <span className="text-sm font-semibold text-foreground">Top Performers</span>
                   </div>
                   <Button variant="ghost" size="sm" onClick={() => navigate('/users')} className="text-xs">
                     View All
@@ -583,7 +583,7 @@ export default function Dashboard() {
               </CardHeader>
               <CardContent className="space-y-3">
                 {topPerformers.map((performer, index) => (
-                  <div key={performer.id} className="flex items-center gap-3 p-2 rounded-md hover:bg-gray-50">
+                  <div key={performer.id} className="flex items-center gap-3 p-2 rounded-md hover:bg-muted/50">
                     <div className="relative">
                       <Avatar className="h-8 w-8">
                         <AvatarFallback className="bg-blue-100 text-blue-700 text-xs">
@@ -597,11 +597,11 @@ export default function Dashboard() {
                       )}
                     </div>
                     <div className="flex-1">
-                      <p className="text-xs font-medium text-gray-900">{performer.name}</p>
-                      <p className="text-xs text-gray-500">{performer.role}</p>
+                      <p className="text-xs font-medium text-foreground">{performer.name}</p>
+                      <p className="text-xs text-muted-foreground">{performer.role}</p>
                     </div>
                     <div className="text-right">
-                      <p className="text-xs font-medium text-gray-900">{performer.deals} deals</p>
+                      <p className="text-xs font-medium text-foreground">{performer.deals} deals</p>
                       <p className="text-xs text-green-600 font-medium">
                         {formatCurrency(performer.revenue)}
                       </p>
