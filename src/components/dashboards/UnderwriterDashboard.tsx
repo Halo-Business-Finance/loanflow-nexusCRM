@@ -231,7 +231,7 @@ export const UnderwriterDashboard = () => {
       <Tabs defaultValue="pending" className="space-y-4">
         <TabsList>
           <TabsTrigger value="pending">Pending Reviews</TabsTrigger>
-          <TabsTrigger value="documents">Document Review</TabsTrigger>
+          <TabsTrigger value="documents">Documents & Files</TabsTrigger>
           <TabsTrigger value="risk">Risk Assessment</TabsTrigger>
           <TabsTrigger value="analytics">Review Analytics</TabsTrigger>
           <TabsTrigger value="loan-tools">Loan Analysis Tools</TabsTrigger>

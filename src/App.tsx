@@ -131,9 +131,10 @@ function AuthenticatedApp() {
             <Route path="/underwriter/documents" element={<HorizontalLayout><UnderwriterDocuments /></HorizontalLayout>} errorElement={<RouteErrorBoundary />} />
             <Route path="/underwriter/risk" element={<HorizontalLayout><UnderwriterRisk /></HorizontalLayout>} errorElement={<RouteErrorBoundary />} />
             
-            <Route path="/documents" element={<HorizontalLayout><Documents /></HorizontalLayout>} errorElement={<RouteErrorBoundary />} />
-            <Route path="/documents/upload" element={<HorizontalLayout><DocumentUpload /></HorizontalLayout>} errorElement={<RouteErrorBoundary />} />
-            <Route path="/documents/templates" element={<HorizontalLayout><DocumentTemplates /></HorizontalLayout>} errorElement={<RouteErrorBoundary />} />
+            {/* Documents routes now redirect to Underwriter */}
+            <Route path="/documents" element={<HorizontalLayout><Underwriter /></HorizontalLayout>} errorElement={<RouteErrorBoundary />} />
+            <Route path="/documents/upload" element={<HorizontalLayout><Underwriter /></HorizontalLayout>} errorElement={<RouteErrorBoundary />} />
+            <Route path="/documents/templates" element={<HorizontalLayout><Underwriter /></HorizontalLayout>} errorElement={<RouteErrorBoundary />} />
             
             <Route path="/activities" element={<HorizontalLayout><Activities /></HorizontalLayout>} errorElement={<RouteErrorBoundary />} />
             <Route path="/activities/calendar" element={<HorizontalLayout><ActivitiesCalendar /></HorizontalLayout>} errorElement={<RouteErrorBoundary />} />
