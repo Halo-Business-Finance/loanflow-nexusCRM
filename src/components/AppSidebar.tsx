@@ -1,8 +1,9 @@
-import { BarChart3, Users, UserCheck, FileText, Settings, Home, Target, Calendar, Phone, Mail, Shield, LogOut, BookOpen, User, Lock, Building2, Zap } from "lucide-react"
+import { BarChart3, Users, UserCheck, FileText, Settings, Home, Target, Calendar, Phone, Mail, Shield, LogOut, BookOpen, User, Lock, Building2, Zap, ChevronDown } from "lucide-react"
 import { NavLink, useLocation, useNavigate } from "react-router-dom"
 import { Button } from "@/components/ui/button"
 import { Separator } from "@/components/ui/separator"
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import { PhoneDialer } from "@/components/PhoneDialer"
 import { EmailComposer } from "@/components/EmailComposer"
 import { useAuth } from "@/components/auth/AuthProvider"
@@ -27,8 +28,13 @@ const navigationItems = [
   { title: "Existing Borrowers", url: "/existing-borrowers", icon: Users, description: "View and manage your current borrower base" },
   { title: "Pipeline", url: "/pipeline", icon: BarChart3, description: "Track deals through your sales pipeline" },
   { title: "Activities", url: "/activities", icon: Calendar, description: "Schedule and track meetings, calls, and tasks" },
-  { title: "Underwriter", url: "/underwriter", icon: UserCheck, description: "Underwriting workflows and document management" },
   { title: "Resources", url: "/resources", icon: BookOpen, description: "Access training materials and documentation" },
+]
+
+const underwriterItems = [
+  { title: "Underwriter Dashboard", url: "/underwriter", icon: UserCheck, description: "Main underwriting dashboard and workflows" },
+  { title: "Documents", url: "/documents", icon: FileText, description: "Manage loan documents and borrower files" },
+  { title: "Risk Assessment", url: "/underwriter/risk", icon: Shield, description: "Risk analysis and assessment tools" },
 ]
 
 const settingsItems = [
@@ -155,6 +161,50 @@ export function AppSidebar() {
                     )}
                   </SidebarMenuItem>
                 ))}
+                
+                {/* Underwriter Dropdown */}
+                <SidebarMenuItem>
+                  {state === "collapsed" ? (
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <SidebarMenuButton asChild>
+                          <NavLink to="/underwriter" className={getNavClass}>
+                            <UserCheck className="w-5 h-5 text-sidebar-primary" />
+                            <span className="sr-only">Underwriter</span>
+                          </NavLink>
+                        </SidebarMenuButton>
+                      </TooltipTrigger>
+                      <TooltipContent side="right">
+                        <div className="max-w-xs">
+                          <p className="font-semibold">Underwriter</p>
+                          <p className="text-sm text-muted-foreground">Underwriting workflows and document management</p>
+                        </div>
+                      </TooltipContent>
+                    </Tooltip>
+                  ) : (
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <SidebarMenuButton className="w-full justify-between hover:bg-accent hover:text-accent-foreground">
+                          <div className="flex items-center gap-2">
+                            <UserCheck className="w-5 h-5 text-sidebar-primary" />
+                            <span>Underwriter</span>
+                          </div>
+                          <ChevronDown className="w-4 h-4 text-muted-foreground" />
+                        </SidebarMenuButton>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent side="right" className="w-56 bg-white dark:bg-gray-800 border border-border shadow-lg z-50 rounded-lg">
+                        {underwriterItems.map((item) => (
+                          <DropdownMenuItem key={item.title} asChild>
+                            <NavLink to={item.url} className="flex items-center gap-2 w-full px-3 py-2 text-sm hover:bg-accent hover:text-accent-foreground rounded-sm cursor-pointer">
+                              <item.icon className="w-4 h-4" />
+                              <span>{item.title}</span>
+                            </NavLink>
+                          </DropdownMenuItem>
+                        ))}
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                  )}
+                </SidebarMenuItem>
               </SidebarMenu>
             </SidebarGroupContent>
           </SidebarGroup>

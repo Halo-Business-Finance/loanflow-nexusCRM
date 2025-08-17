@@ -238,4 +238,9 @@ All colors MUST be HSL.
   .widget, .metric-card, .stats-card {
     @apply border border-border shadow-sm bg-white rounded-lg;
   }
+
+  /* Dropdown menu styling for proper visibility */
+  [data-radix-dropdown-menu-content] {
+    @apply bg-white border border-border shadow-lg z-50;
+  }
 }
