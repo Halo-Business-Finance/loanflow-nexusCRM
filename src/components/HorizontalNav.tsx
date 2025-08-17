@@ -78,7 +78,7 @@ export function HorizontalNav() {
               <div className="w-8 h-8 bg-primary rounded flex items-center justify-center">
                 <Building2 className="h-5 w-5 text-primary-foreground" />
               </div>
-              <span className="font-semibold text-foreground">Sales</span>
+              <span className="font-semibold text-foreground">LoanFlow CRM</span>
             </div>
           </div>
 
