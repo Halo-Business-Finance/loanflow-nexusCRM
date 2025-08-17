@@ -134,7 +134,29 @@ export function HorizontalNav() {
             </DropdownMenu>
           </div>
         </div>
-      </div>
+        </div>
+        
+        {/* Welcome Message */}
+        <div className="px-6 py-2 border-b border-border/50">
+          <div className="flex items-center justify-between">
+            <div>
+              <h2 className="text-lg font-medium text-foreground">
+                Welcome back, {user?.user_metadata?.first_name || user?.email?.split('@')[0] || 'User'}
+              </h2>
+              <p className="text-sm text-muted-foreground">
+                {new Date().toLocaleDateString('en-US', { 
+                  weekday: 'long', 
+                  year: 'numeric', 
+                  month: 'long', 
+                  day: 'numeric' 
+                })} at {new Date().toLocaleTimeString('en-US', { 
+                  hour: '2-digit', 
+                  minute: '2-digit' 
+                })}
+              </p>
+            </div>
+          </div>
+        </div>
 
       {/* Navigation Bar */}
       <div className="px-6">
