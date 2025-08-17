@@ -28,6 +28,7 @@ import {
   LogOut
 } from "lucide-react"
 import { useAuth } from "@/components/auth/AuthProvider"
+import { ThemeToggle } from "@/components/ThemeToggle"
 
 const navigationItems = [
   { name: "Home", path: "/", icon: Home },
@@ -65,30 +66,30 @@ export function HorizontalNav() {
   }
 
   return (
-    <div className="bg-white border-b border-gray-200 sticky top-0 z-50">
+    <div className="bg-background border-b border-border sticky top-0 z-50">
       {/* Top Bar */}
-      <div className="px-6 py-2 border-b border-gray-100">
+      <div className="px-6 py-2 border-b border-border">
         <div className="flex items-center justify-between">
           {/* Left Side - Logo and App Switcher */}
           <div className="flex items-center gap-4">
             <div className="flex items-center gap-2">
-              <div className="w-8 h-8 bg-blue-600 rounded flex items-center justify-center">
-                <Building2 className="h-5 w-5 text-white" />
+              <div className="w-8 h-8 bg-primary rounded flex items-center justify-center">
+                <Building2 className="h-5 w-5 text-primary-foreground" />
               </div>
-              <span className="font-semibold text-gray-900">Sales</span>
+              <span className="font-semibold text-foreground">Sales</span>
             </div>
           </div>
 
           {/* Center - Global Search */}
           <div className="flex-1 max-w-2xl mx-8">
             <div className="relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
               <Input
                 type="text"
                 placeholder="Search..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-10 pr-4 py-2 bg-gray-50 border-gray-200 rounded-md text-sm focus:bg-white focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+                className="w-full pl-10 pr-4 py-2 bg-muted/50 border-border rounded-md text-sm focus:bg-background focus:border-primary focus:ring-1 focus:ring-primary"
               />
             </div>
           </div>
@@ -108,13 +109,16 @@ export function HorizontalNav() {
               <Settings className="h-4 w-4" />
             </Button>
             
+            {/* Theme Toggle */}
+            <ThemeToggle />
+            
             {/* Profile Dropdown */}
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="ghost" className="h-8 w-8 p-0">
                   <Avatar className="h-7 w-7">
                     <AvatarImage src="" />
-                    <AvatarFallback className="text-xs bg-blue-100 text-blue-700">
+                    <AvatarFallback className="text-xs bg-primary/10 text-primary">
                       {user?.email?.charAt(0).toUpperCase() || 'U'}
                     </AvatarFallback>
                   </Avatar>
@@ -145,10 +149,10 @@ export function HorizontalNav() {
               <Link
                 key={item.name}
                 to={item.path}
-                className={`relative flex items-center gap-2 px-3 py-4 text-sm font-medium transition-colors hover:text-blue-600 ${
+                className={`relative flex items-center gap-2 px-3 py-4 text-sm font-medium transition-colors hover:text-primary ${
                   isActive 
-                    ? 'text-blue-600 border-b-2 border-blue-600' 
-                    : 'text-gray-700 hover:text-blue-600'
+                    ? 'text-primary border-b-2 border-primary' 
+                    : 'text-foreground/70 hover:text-primary'
                 }`}
               >
                 <item.icon className="h-4 w-4" />
@@ -162,10 +166,10 @@ export function HorizontalNav() {
             <DropdownMenuTrigger asChild>
               <Button 
                 variant="ghost" 
-                className={`flex items-center gap-2 px-3 py-4 text-sm font-medium transition-colors hover:text-blue-600 ${
+                className={`flex items-center gap-2 px-3 py-4 text-sm font-medium transition-colors hover:text-primary ${
                   moreItems.some(item => isActivePath(item.path))
-                    ? 'text-blue-600'
-                    : 'text-gray-700'
+                    ? 'text-primary'
+                    : 'text-foreground/70'
                 }`}
               >
                 More
