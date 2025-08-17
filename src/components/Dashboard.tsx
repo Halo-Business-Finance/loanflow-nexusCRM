@@ -140,39 +140,6 @@ export default function Dashboard() {
 
   return (
     <div className="bg-muted/20 min-h-screen">
-      {/* Page Header */}
-      <div className="bg-card border-b border-border shadow-sm">
-        <div className="px-6 py-6">
-          <div className="flex items-center justify-between">
-            <div>
-              <h1 className="text-2xl font-bold text-foreground mb-1">Analytics Dashboard</h1>
-              <p className="text-muted-foreground">
-                Monitor your business performance and key metrics
-              </p>
-            </div>
-            <div className="flex items-center gap-3">
-              <Button variant="outline" size="sm" className="text-sm">
-                <Calendar className="h-4 w-4 mr-2" />
-                Last 30 days
-              </Button>
-              <Button variant="outline" size="sm" className="text-sm">
-                <Download className="h-4 w-4 mr-2" />
-                Export
-              </Button>
-              <Button 
-                onClick={fetchDashboardData} 
-                variant="default" 
-                size="sm"
-                disabled={loading}
-                className="text-sm bg-blue-600 hover:bg-blue-700"
-              >
-                <RefreshCw className={`h-4 w-4 mr-2 ${loading ? 'animate-spin' : ''}`} />
-                Refresh Data
-              </Button>
-            </div>
-          </div>
-        </div>
-      </div>
 
       {/* Main Content */}
       <div className="p-6">
