@@ -15,6 +15,7 @@ import { CSPHeaders } from "@/components/security/CSPHeaders";
 import { MasterSecurityDashboard } from "@/components/security/MasterSecurityDashboard";
 import { MilitaryGradeSecurityDashboard } from "@/components/security/MilitaryGradeSecurityDashboard";
 import Layout from "@/components/Layout";
+import HorizontalLayout from "@/components/HorizontalLayout";
 import { SecurityEnhancementProvider } from "@/components/security/SecurityEnhancementProvider";
 import { SecurityProvider as EnhancedSecurityProvider } from "@/components/security/SecurityProvider";
 import { RouteErrorBoundary } from "@/components/RouteErrorBoundary";
@@ -81,30 +82,30 @@ function AuthenticatedApp() {
         {/* Protected routes - require authentication */}
         {user ? (
           <>
-            <Route path="/" element={<Index />} errorElement={<RouteErrorBoundary />} />
-            <Route path="/leads" element={<Leads />} errorElement={<RouteErrorBoundary />} />
-            <Route path="/leads/:id" element={<LeadDetail />} errorElement={<RouteErrorBoundary />} />
-            <Route path="/leads/:leadId/documents" element={<LeadDocuments />} errorElement={<RouteErrorBoundary />} />
-            <Route path="/existing-borrowers" element={<Clients />} errorElement={<RouteErrorBoundary />} />
-            <Route path="/existing-borrowers/:id" element={<ClientDetail />} errorElement={<RouteErrorBoundary />} />
-            <Route path="/pipeline" element={<Pipeline />} errorElement={<RouteErrorBoundary />} />
-            <Route path="/documents" element={<Documents />} errorElement={<RouteErrorBoundary />} />
-            <Route path="/activities" element={<Activities />} errorElement={<RouteErrorBoundary />} />
-            <Route path="/reports" element={<Reports />} errorElement={<RouteErrorBoundary />} />
-            <Route path="/settings" element={<Settings />} errorElement={<RouteErrorBoundary />} />
-            <Route path="/users" element={<Users />} errorElement={<RouteErrorBoundary />} />
+            <Route path="/" element={<HorizontalLayout><Index /></HorizontalLayout>} errorElement={<RouteErrorBoundary />} />
+            <Route path="/leads" element={<HorizontalLayout><Leads /></HorizontalLayout>} errorElement={<RouteErrorBoundary />} />
+            <Route path="/leads/:id" element={<HorizontalLayout><LeadDetail /></HorizontalLayout>} errorElement={<RouteErrorBoundary />} />
+            <Route path="/leads/:leadId/documents" element={<HorizontalLayout><LeadDocuments /></HorizontalLayout>} errorElement={<RouteErrorBoundary />} />
+            <Route path="/existing-borrowers" element={<HorizontalLayout><Clients /></HorizontalLayout>} errorElement={<RouteErrorBoundary />} />
+            <Route path="/existing-borrowers/:id" element={<HorizontalLayout><ClientDetail /></HorizontalLayout>} errorElement={<RouteErrorBoundary />} />
+            <Route path="/pipeline" element={<HorizontalLayout><Pipeline /></HorizontalLayout>} errorElement={<RouteErrorBoundary />} />
+            <Route path="/documents" element={<HorizontalLayout><Documents /></HorizontalLayout>} errorElement={<RouteErrorBoundary />} />
+            <Route path="/activities" element={<HorizontalLayout><Activities /></HorizontalLayout>} errorElement={<RouteErrorBoundary />} />
+            <Route path="/reports" element={<HorizontalLayout><Reports /></HorizontalLayout>} errorElement={<RouteErrorBoundary />} />
+            <Route path="/settings" element={<HorizontalLayout><Settings /></HorizontalLayout>} errorElement={<RouteErrorBoundary />} />
+            <Route path="/users" element={<HorizontalLayout><Users /></HorizontalLayout>} errorElement={<RouteErrorBoundary />} />
             {/* Debug route */}
             <Route path="/users-debug" element={<div>Users route test</div>} errorElement={<RouteErrorBoundary />} />
             <Route path="/security" element={<Layout><MasterSecurityDashboard /></Layout>} errorElement={<RouteErrorBoundary />} />
             <Route path="/security/military" element={<Layout><MilitaryGradeSecurityDashboard /></Layout>} errorElement={<RouteErrorBoundary />} />
-            <Route path="/enterprise" element={<Enterprise />} errorElement={<RouteErrorBoundary />} />
-            <Route path="/integrations" element={<Integrations />} errorElement={<RouteErrorBoundary />} />
-            <Route path="/ai-tools" element={<AITools />} errorElement={<RouteErrorBoundary />} />
-            <Route path="/screenshots" element={<Screenshots />} errorElement={<RouteErrorBoundary />} />
-            <Route path="/api-docs" element={<APIDocs />} errorElement={<RouteErrorBoundary />} />
-            <Route path="/resources" element={<Resources />} errorElement={<RouteErrorBoundary />} />
-            <Route path="/emergency-maintenance" element={<EmergencyMaintenance />} errorElement={<RouteErrorBoundary />} />
-            <Route path="*" element={<NotFound />} errorElement={<RouteErrorBoundary />} />
+            <Route path="/enterprise" element={<HorizontalLayout><Enterprise /></HorizontalLayout>} errorElement={<RouteErrorBoundary />} />
+            <Route path="/integrations" element={<HorizontalLayout><Integrations /></HorizontalLayout>} errorElement={<RouteErrorBoundary />} />
+            <Route path="/ai-tools" element={<HorizontalLayout><AITools /></HorizontalLayout>} errorElement={<RouteErrorBoundary />} />
+            <Route path="/screenshots" element={<HorizontalLayout><Screenshots /></HorizontalLayout>} errorElement={<RouteErrorBoundary />} />
+            <Route path="/api-docs" element={<HorizontalLayout><APIDocs /></HorizontalLayout>} errorElement={<RouteErrorBoundary />} />
+            <Route path="/resources" element={<HorizontalLayout><Resources /></HorizontalLayout>} errorElement={<RouteErrorBoundary />} />
+            <Route path="/emergency-maintenance" element={<HorizontalLayout><EmergencyMaintenance /></HorizontalLayout>} errorElement={<RouteErrorBoundary />} />
+            <Route path="*" element={<HorizontalLayout><NotFound /></HorizontalLayout>} errorElement={<RouteErrorBoundary />} />
           </>
         ) : (
           <>
