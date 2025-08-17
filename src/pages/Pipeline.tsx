@@ -370,6 +370,18 @@ export default function Pipeline() {
               </Card>
             </div>
           </TabsContent>
+
+          <TabsContent value="advanced-analytics" className="space-y-6">
+            <AdvancedAnalytics />
+          </TabsContent>
+
+          <TabsContent value="collaboration" className="space-y-6">
+            <TeamCollaboration />
+          </TabsContent>
+
+          <TabsContent value="automation" className="space-y-6">
+            <WorkflowAutomation />
+          </TabsContent>
         </Tabs>
       </div>
     </Layout>

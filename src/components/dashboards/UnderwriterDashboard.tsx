@@ -16,6 +16,8 @@ import {
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { formatCurrency, formatNumber } from '@/lib/utils';
+import { AdvancedAnalytics } from '@/components/analytics/AdvancedAnalytics';
+import { TeamCollaboration } from '@/components/collaboration/TeamCollaboration';
 
 interface UnderwriterMetrics {
   pendingReviews: number;
@@ -224,6 +226,8 @@ export const UnderwriterDashboard = () => {
           <TabsTrigger value="pending">Pending Reviews</TabsTrigger>
           <TabsTrigger value="risk">Risk Assessment</TabsTrigger>
           <TabsTrigger value="analytics">Review Analytics</TabsTrigger>
+          <TabsTrigger value="advanced-analytics">Advanced Analytics</TabsTrigger>
+          <TabsTrigger value="collaboration">Team Collaboration</TabsTrigger>
         </TabsList>
 
         <TabsContent value="pending" className="space-y-4">
@@ -349,6 +353,14 @@ export const UnderwriterDashboard = () => {
               </div>
             </CardContent>
           </Card>
+        </TabsContent>
+
+        <TabsContent value="advanced-analytics" className="space-y-4">
+          <AdvancedAnalytics />
+        </TabsContent>
+
+        <TabsContent value="collaboration" className="space-y-4">
+          <TeamCollaboration />
         </TabsContent>
       </Tabs>
     </div>

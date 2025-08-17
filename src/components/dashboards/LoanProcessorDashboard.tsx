@@ -16,6 +16,8 @@ import {
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { formatCurrency, formatNumber } from '@/lib/utils';
+import { AdvancedAnalytics } from '@/components/analytics/AdvancedAnalytics';
+import { WorkflowAutomation } from '@/components/operations/WorkflowAutomation';
 
 interface ProcessorMetrics {
   pendingApplications: number;
@@ -262,6 +264,8 @@ export const LoanProcessorDashboard = () => {
           <TabsTrigger value="pending">Pending Applications</TabsTrigger>
           <TabsTrigger value="pipeline">Processing Pipeline</TabsTrigger>
           <TabsTrigger value="completed">Completed Today</TabsTrigger>
+          <TabsTrigger value="analytics">Advanced Analytics</TabsTrigger>
+          <TabsTrigger value="automation">Workflow Automation</TabsTrigger>
         </TabsList>
 
         <TabsContent value="pending" className="space-y-4">
@@ -351,6 +355,14 @@ export const LoanProcessorDashboard = () => {
               </div>
             </CardContent>
           </Card>
+        </TabsContent>
+
+        <TabsContent value="analytics" className="space-y-4">
+          <AdvancedAnalytics />
+        </TabsContent>
+
+        <TabsContent value="automation" className="space-y-4">
+          <WorkflowAutomation />
         </TabsContent>
       </Tabs>
     </div>
