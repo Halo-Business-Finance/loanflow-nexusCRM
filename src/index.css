@@ -140,23 +140,17 @@ All colors MUST be HSL.
     font-family: sans-serif;
   }
 
-  /* Global underline styles for titles and column headers */
-  /* Only apply to elements that don't already have border-b classes or no-underline class */
-  h1:not([class*="border-b"]):not([class*="no-underline"]), 
-  h2:not([class*="border-b"]):not([class*="no-underline"]), 
-  h3:not([class*="border-b"]):not([class*="no-underline"]), 
-  h4:not([class*="border-b"]):not([class*="no-underline"]), 
-  h5:not([class*="border-b"]):not([class*="no-underline"]), 
-  h6:not([class*="border-b"]):not([class*="no-underline"]) {
-    @apply underline decoration-2 underline-offset-4 font-thin;
+  /* Global styles for titles and column headers - underlines removed */
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-thin;
   }
 
-  /* Table headers */
+  /* Table headers - underlines removed */
   th {
-    @apply underline decoration-1 underline-offset-2 font-thin;
+    @apply font-thin;
   }
 
-  /* Card titles - no underline for widget titles with higher specificity */
+  /* Card titles */
   .card h3:not([class*="border-b"]),
   [data-testid="card-title"]:not([class*="border-b"]),
   .card-title:not([class*="border-b"]),
@@ -171,7 +165,7 @@ All colors MUST be HSL.
   .dialog-title,
   [class*="DialogTitle"],
   [class*="dialog-title"] {
-    @apply underline decoration-2 underline-offset-4 font-thin;
+    @apply font-thin;
   }
 
   /* Sheet titles */
@@ -179,7 +173,7 @@ All colors MUST be HSL.
   .sheet-title,
   [class*="SheetTitle"],
   [class*="sheet-title"] {
-    @apply underline decoration-2 underline-offset-4 font-thin;
+    @apply font-thin;
   }
 
   /* Alert dialog titles */
@@ -187,14 +181,6 @@ All colors MUST be HSL.
   .alertdialog-title,
   [class*="AlertDialogTitle"],
   [class*="alertdialog-title"] {
-    @apply underline decoration-2 underline-offset-4 font-thin;
-  }
-
-  /* Field titles - thin light blue underline matching text width */
-  p.text-sm.text-muted-foreground:not([class*="border-b"]) {
-    @apply border-b border-b-field-accent/30 pb-1;
-    border-bottom-width: 1px;
-    display: inline-block;
-    width: fit-content;
+    @apply font-thin;
   }
 }
