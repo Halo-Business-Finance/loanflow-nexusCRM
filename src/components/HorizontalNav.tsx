@@ -39,7 +39,6 @@ const navigationItems = [
   { name: "Pipeline", path: "/pipeline", icon: Target },
   { name: "Documents", path: "/documents", icon: FileText },
   { name: "Activities", path: "/activities", icon: Activity },
-  { name: "Users", path: "/users", icon: User },
   { name: "Security", path: "/security", icon: Settings },
   { name: "Settings", path: "/settings", icon: Settings },
 ]
@@ -47,6 +46,7 @@ const navigationItems = [
 const enterpriseItems = [
   { name: "Overview", path: "/enterprise", icon: Building2 },
   { name: "Reports", path: "/reports", icon: BarChart3 },
+  { name: "Users", path: "/users", icon: User },
   { name: "Custom Objects", path: "/enterprise#custom-objects", icon: Home },
   { name: "Workflow Builder", path: "/enterprise#workflows", icon: RefreshCw },
   { name: "Approval Processes", path: "/enterprise#approvals", icon: Calendar },
