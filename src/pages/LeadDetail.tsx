@@ -492,7 +492,9 @@ export default function LeadDetail() {
                         className="mt-1 h-8 text-sm"
                       />
                     ) : (
-                      <p className="mt-1 text-sm font-medium">{editableFields.first_name || 'N/A'}</p>
+                      <div className="field-display mt-1">
+                        {editableFields.first_name || 'N/A'}
+                      </div>
                     )}
                   </div>
                   <div>
@@ -504,7 +506,9 @@ export default function LeadDetail() {
                         className="mt-1 h-8 text-sm"
                       />
                     ) : (
-                      <p className="mt-1 text-sm font-medium">{editableFields.last_name || 'N/A'}</p>
+                      <div className="field-display mt-1">
+                        {editableFields.last_name || 'N/A'}
+                      </div>
                     )}
                   </div>
                 </div>
@@ -519,7 +523,9 @@ export default function LeadDetail() {
                       className="mt-1 h-8 text-sm"
                     />
                   ) : (
-                    <p className="mt-1 text-sm font-medium">{editableFields.email || 'N/A'}</p>
+                    <div className="field-display mt-1">
+                      {editableFields.email || 'N/A'}
+                    </div>
                   )}
                 </div>
 
@@ -532,7 +538,9 @@ export default function LeadDetail() {
                       className="mt-1 h-8 text-sm"
                     />
                   ) : (
-                    <p className="mt-1 text-sm font-medium">{editableFields.phone || 'N/A'}</p>
+                    <div className="field-display mt-1">
+                      {editableFields.phone || 'N/A'}
+                    </div>
                   )}
                 </div>
 
@@ -545,7 +553,9 @@ export default function LeadDetail() {
                       className="mt-1 h-8 text-sm"
                     />
                   ) : (
-                    <p className="mt-1 text-sm font-medium">{editableFields.mobile_phone || 'N/A'}</p>
+                    <div className="field-display mt-1">
+                      {editableFields.mobile_phone || 'N/A'}
+                    </div>
                   )}
                 </div>
               </CardContent>
@@ -570,7 +580,9 @@ export default function LeadDetail() {
                         className="mt-1 h-8 text-sm"
                       />
                     ) : (
-                      <p className="mt-1 text-sm font-medium">{editableFields.business_name || 'N/A'}</p>
+                      <div className="field-display mt-1">
+                        {editableFields.business_name || 'N/A'}
+                      </div>
                     )}
                   </div>
                   <div>
@@ -582,7 +594,9 @@ export default function LeadDetail() {
                         className="mt-1 h-8 text-sm"
                       />
                     ) : (
-                      <p className="mt-1 text-sm font-medium">{editableFields.year_established || 'N/A'}</p>
+                      <div className="field-display mt-1">
+                        {editableFields.year_established || 'N/A'}
+                      </div>
                     )}
                   </div>
                 </div>
@@ -596,7 +610,9 @@ export default function LeadDetail() {
                       className="mt-1 h-8 text-sm"
                     />
                   ) : (
-                    <p className="mt-1 text-sm font-medium">{editableFields.business_address || 'N/A'}</p>
+                    <div className="field-display mt-1">
+                      {editableFields.business_address || 'N/A'}
+                    </div>
                   )}
                 </div>
 
@@ -610,7 +626,9 @@ export default function LeadDetail() {
                         className="mt-1 h-8 text-sm"
                       />
                     ) : (
-                      <p className="mt-1 text-sm font-medium">{editableFields.business_city || 'N/A'}</p>
+                      <div className="field-display mt-1">
+                        {editableFields.business_city || 'N/A'}
+                      </div>
                     )}
                   </div>
                   <div>
@@ -622,7 +640,9 @@ export default function LeadDetail() {
                         className="mt-1 h-8 text-sm"
                       />
                     ) : (
-                      <p className="mt-1 text-sm font-medium">{editableFields.business_state || 'N/A'}</p>
+                      <div className="field-display mt-1">
+                        {editableFields.business_state || 'N/A'}
+                      </div>
                     )}
                   </div>
                   <div>
@@ -634,7 +654,9 @@ export default function LeadDetail() {
                         className="mt-1 h-8 text-sm"
                       />
                     ) : (
-                      <p className="mt-1 text-sm font-medium">{editableFields.business_zip_code || 'N/A'}</p>
+                      <div className="field-display mt-1">
+                        {editableFields.business_zip_code || 'N/A'}
+                      </div>
                     )}
                   </div>
                 </div>
@@ -649,9 +671,9 @@ export default function LeadDetail() {
                         className="mt-1 h-8 text-sm"
                       />
                     ) : (
-                      <p className="mt-1 text-sm font-medium">
+                      <div className="field-display mt-1">
                         {editableFields.annual_revenue ? formatCurrency(parseFloat(editableFields.annual_revenue)) : 'N/A'}
-                      </p>
+                      </div>
                     )}
                   </div>
                   <div>
@@ -663,7 +685,9 @@ export default function LeadDetail() {
                         className="mt-1 h-8 text-sm"
                       />
                     ) : (
-                      <p className="mt-1 text-sm font-medium">{editableFields.naics_code || 'N/A'}</p>
+                      <div className="field-display mt-1">
+                        {editableFields.naics_code || 'N/A'}
+                      </div>
                     )}
                   </div>
                 </div>
@@ -738,7 +762,9 @@ export default function LeadDetail() {
                         className="mt-1 h-8 text-sm"
                       />
                     ) : (
-                      <p className="mt-1 text-sm font-medium">{editableFields.year_established || 'N/A'}</p>
+                      <div className="field-display mt-1">
+                        {editableFields.year_established || 'N/A'}
+                      </div>
                     )}
                   </div>
                   <div>
@@ -761,7 +787,9 @@ export default function LeadDetail() {
                         </SelectContent>
                       </Select>
                     ) : (
-                      <p className="mt-1 text-sm font-medium">{editableFields.ownership_structure || 'N/A'}</p>
+                      <div className="field-display mt-1">
+                        {editableFields.ownership_structure || 'N/A'}
+                      </div>
                     )}
                   </div>
                 </div>
@@ -779,9 +807,9 @@ export default function LeadDetail() {
                         className="mt-1 h-8 text-sm"
                       />
                     ) : (
-                      <p className="mt-1 text-sm font-medium">
+                      <div className="field-display mt-1">
                         {lead.income ? formatCurrency(lead.income) : 'N/A'}
-                      </p>
+                      </div>
                     )}
                   </div>
                   <div>
@@ -800,9 +828,9 @@ export default function LeadDetail() {
                         </SelectContent>
                       </Select>
                     ) : (
-                      <p className="mt-1 text-sm font-medium">
+                      <div className="field-display mt-1">
                         {editableFields.owns_property ? 'Yes' : 'No'}
-                      </p>
+                      </div>
                     )}
                   </div>
                 </div>
@@ -819,9 +847,9 @@ export default function LeadDetail() {
                         className="mt-1 h-8 text-sm"
                       />
                     ) : (
-                      <p className="mt-1 text-sm font-medium">
+                      <div className="field-display mt-1">
                         {editableFields.property_payment_amount ? formatCurrency(parseFloat(editableFields.property_payment_amount)) : 'N/A'}
-                      </p>
+                      </div>
                     )}
                   </div>
                 )}
@@ -846,7 +874,9 @@ export default function LeadDetail() {
                       className="mt-1 h-8 text-sm"
                     />
                   ) : (
-                    <p className="mt-1 text-sm font-medium">{editableFields.bdo_name || 'N/A'}</p>
+                    <div className="field-display mt-1">
+                      {editableFields.bdo_name || 'N/A'}
+                    </div>
                   )}
                 </div>
 

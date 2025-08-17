@@ -214,4 +214,18 @@ All colors MUST be HSL.
     @apply hover:border-input-border-hover;
     @apply focus-within:border-input-border-focus focus-within:ring-2 focus-within:ring-input-border-focus/20;
   }
+
+  /* Field display styling - makes view mode fields look like outlined inputs */
+  .field-display {
+    @apply border border-input-border bg-input text-foreground;
+    @apply px-3 py-2 rounded-md min-h-[32px] flex items-center;
+    @apply text-sm transition-colors duration-200;
+  }
+
+  /* Readonly field styling */
+  .field-readonly {
+    @apply border border-input-border bg-muted/20 text-foreground;
+    @apply px-3 py-2 rounded-md min-h-[32px] flex items-center;
+    @apply text-sm cursor-default;
+  }
 }
