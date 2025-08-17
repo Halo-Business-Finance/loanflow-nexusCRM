@@ -149,7 +149,7 @@ export function HorizontalNav() {
               <Link
                 key={item.name}
                 to={item.path}
-                className={`relative flex items-center gap-2 px-3 py-8 text-sm font-medium transition-colors hover:text-primary ${
+                className={`relative flex items-center gap-2 px-3 py-1 text-sm font-medium transition-colors hover:text-primary ${
                   isActive 
                     ? 'text-primary border-b-2 border-primary' 
                     : 'text-foreground/70 hover:text-primary'
@@ -166,7 +166,7 @@ export function HorizontalNav() {
             <DropdownMenuTrigger asChild>
               <Button 
                 variant="ghost" 
-                className={`flex items-center gap-2 px-3 py-8 text-sm font-medium transition-colors hover:text-primary ${
+                className={`flex items-center gap-2 px-3 py-1 text-sm font-medium transition-colors hover:text-primary ${
                   moreItems.some(item => isActivePath(item.path))
                     ? 'text-primary'
                     : 'text-foreground/70'
