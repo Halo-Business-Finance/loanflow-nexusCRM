@@ -48,7 +48,7 @@ import {
   UserPlus
 } from "lucide-react"
 
-import { Lead, Client as ClientType } from "@/types/lead"
+import { Lead, Client as ClientType, LOAN_TYPES } from "@/types/lead"
 import { mapLeadFields, mapClientFields, extractContactEntityData, LEAD_WITH_CONTACT_QUERY, CLIENT_WITH_CONTACT_QUERY } from "@/lib/field-mapping"
 
 export default function LeadDetail() {
@@ -687,6 +687,159 @@ export default function LeadDetail() {
                     ) : (
                       <div className="field-display mt-1">
                         {editableFields.naics_code || 'N/A'}
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Financial Information Card */}
+            <Card className="border-0 shadow-sm bg-card lg:col-span-2">
+              <CardHeader className="pb-4">
+                <CardTitle className="text-base font-semibold text-foreground flex items-center gap-2">
+                  <DollarSign className="h-4 w-4 text-muted-foreground" />
+                  Loan & Financial Information
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="pt-0 space-y-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                  <div>
+                    <Label className="text-xs font-medium text-muted-foreground">Loan Type</Label>
+                    {isEditing ? (
+                      <Select
+                        value={editableFields.loan_type}
+                        onValueChange={(value) => setEditableFields({...editableFields, loan_type: value})}
+                      >
+                        <SelectTrigger className="mt-1 h-8 text-sm">
+                          <SelectValue placeholder="Select loan type" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {LOAN_TYPES.map((type) => (
+                            <SelectItem key={type} value={type}>
+                              {type}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    ) : (
+                      <div className="field-display mt-1">
+                        {editableFields.loan_type || 'N/A'}
+                      </div>
+                    )}
+                  </div>
+                  <div>
+                    <Label className="text-xs font-medium text-muted-foreground">Loan Amount</Label>
+                    {isEditing ? (
+                      <Input
+                        type="number"
+                        step="0.01"
+                        value={editableFields.loan_amount}
+                        onChange={(e) => setEditableFields({...editableFields, loan_amount: e.target.value})}
+                        className="mt-1 h-8 text-sm"
+                      />
+                    ) : (
+                      <div className="field-display mt-1">
+                        {editableFields.loan_amount ? formatCurrency(parseFloat(editableFields.loan_amount)) : 'N/A'}
+                      </div>
+                    )}
+                  </div>
+                  <div>
+                    <Label className="text-xs font-medium text-muted-foreground">Interest Rate</Label>
+                    {isEditing ? (
+                      <Input
+                        type="number"
+                        step="0.01"
+                        value={editableFields.interest_rate}
+                        onChange={(e) => setEditableFields({...editableFields, interest_rate: e.target.value})}
+                        className="mt-1 h-8 text-sm"
+                        placeholder="5.25"
+                      />
+                    ) : (
+                      <div className="field-display mt-1">
+                        {editableFields.interest_rate ? `${editableFields.interest_rate}%` : 'N/A'}
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                  <div>
+                    <Label className="text-xs font-medium text-muted-foreground">Credit Score</Label>
+                    {isEditing ? (
+                      <Input
+                        type="number"
+                        value={editableFields.credit_score}
+                        onChange={(e) => setEditableFields({...editableFields, credit_score: e.target.value})}
+                        className="mt-1 h-8 text-sm"
+                      />
+                    ) : (
+                      <div className="field-display mt-1">
+                        {editableFields.credit_score || 'N/A'}
+                      </div>
+                    )}
+                  </div>
+                  <div>
+                    <Label className="text-xs font-medium text-muted-foreground">Net Operating Income</Label>
+                    {isEditing ? (
+                      <Input
+                        type="number"
+                        step="0.01"
+                        value={editableFields.net_operating_income}
+                        onChange={(e) => setEditableFields({...editableFields, net_operating_income: e.target.value})}
+                        className="mt-1 h-8 text-sm"
+                      />
+                    ) : (
+                      <div className="field-display mt-1">
+                        {editableFields.net_operating_income ? formatCurrency(parseFloat(editableFields.net_operating_income)) : 'N/A'}
+                      </div>
+                    )}
+                  </div>
+                  <div>
+                    <Label className="text-xs font-medium text-muted-foreground">Existing Loan Amount</Label>
+                    {isEditing ? (
+                      <Input
+                        type="number"
+                        step="0.01"
+                        value={editableFields.existing_loan_amount}
+                        onChange={(e) => setEditableFields({...editableFields, existing_loan_amount: e.target.value})}
+                        className="mt-1 h-8 text-sm"
+                      />
+                    ) : (
+                      <div className="field-display mt-1">
+                        {editableFields.existing_loan_amount ? formatCurrency(parseFloat(editableFields.existing_loan_amount)) : 'N/A'}
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <Label className="text-xs font-medium text-muted-foreground">Bank/Lender Name</Label>
+                    {isEditing ? (
+                      <Input
+                        value={editableFields.bank_lender_name}
+                        onChange={(e) => setEditableFields({...editableFields, bank_lender_name: e.target.value})}
+                        className="mt-1 h-8 text-sm"
+                      />
+                    ) : (
+                      <div className="field-display mt-1">
+                        {editableFields.bank_lender_name || 'N/A'}
+                      </div>
+                    )}
+                  </div>
+                  <div>
+                    <Label className="text-xs font-medium text-muted-foreground">Maturity Date</Label>
+                    {isEditing ? (
+                      <Input
+                        type="date"
+                        value={editableFields.maturity_date}
+                        onChange={(e) => setEditableFields({...editableFields, maturity_date: e.target.value})}
+                        className="mt-1 h-8 text-sm"
+                      />
+                    ) : (
+                      <div className="field-display mt-1">
+                        {editableFields.maturity_date ? format(new Date(editableFields.maturity_date), 'MMM dd, yyyy') : 'N/A'}
                       </div>
                     )}
                   </div>
