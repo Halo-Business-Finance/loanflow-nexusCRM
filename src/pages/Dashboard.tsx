@@ -369,7 +369,7 @@ export default function Dashboard() {
         </div>
 
         {/* Content */}
-        <div className="p-6 bg-muted/30 min-h-screen">
+        <div className="p-6 bg-background min-h-screen">
           {/* Key Performance Metrics */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
             {performanceMetrics.map((metric, index) => (
