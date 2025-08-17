@@ -24,6 +24,7 @@ import Leads from "./pages/Leads";
 import LeadDetail from "./pages/LeadDetail";
 import LeadDocuments from "./pages/LeadDocuments";
 import Pipeline from "./pages/Pipeline";
+import Underwriter from "./pages/Underwriter";
 import Clients from "./pages/Clients";
 import ClientDetail from "./pages/ClientDetail";
 import Documents from "./pages/Documents";
@@ -90,6 +91,7 @@ function AuthenticatedApp() {
             <Route path="/existing-borrowers" element={<HorizontalLayout><Clients /></HorizontalLayout>} errorElement={<RouteErrorBoundary />} />
             <Route path="/clients/:id" element={<HorizontalLayout><ClientDetail /></HorizontalLayout>} errorElement={<RouteErrorBoundary />} />
             <Route path="/pipeline" element={<HorizontalLayout><Pipeline /></HorizontalLayout>} errorElement={<RouteErrorBoundary />} />
+            <Route path="/underwriter" element={<HorizontalLayout><Underwriter /></HorizontalLayout>} errorElement={<RouteErrorBoundary />} />
             <Route path="/documents" element={<HorizontalLayout><Documents /></HorizontalLayout>} errorElement={<RouteErrorBoundary />} />
             <Route path="/activities" element={<HorizontalLayout><Activities /></HorizontalLayout>} errorElement={<RouteErrorBoundary />} />
             <Route path="/reports" element={<HorizontalLayout><Reports /></HorizontalLayout>} errorElement={<RouteErrorBoundary />} />

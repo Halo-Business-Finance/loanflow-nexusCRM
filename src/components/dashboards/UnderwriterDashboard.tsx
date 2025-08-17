@@ -11,13 +11,19 @@ import {
   AlertTriangle,
   TrendingUp,
   FileCheck,
-  Users
+  Users,
+  PieChart,
+  BarChart3,
+  Calculator,
+  Eye,
+  DollarSign
 } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { formatCurrency, formatNumber } from '@/lib/utils';
 import { AdvancedAnalytics } from '@/components/analytics/AdvancedAnalytics';
 import { TeamCollaboration } from '@/components/collaboration/TeamCollaboration';
+import { PieChart as RechartsPieChart, Pie, Cell, ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, LineChart, Line, Area, AreaChart } from 'recharts';
 
 interface UnderwriterMetrics {
   pendingReviews: number;
@@ -226,6 +232,8 @@ export const UnderwriterDashboard = () => {
           <TabsTrigger value="pending">Pending Reviews</TabsTrigger>
           <TabsTrigger value="risk">Risk Assessment</TabsTrigger>
           <TabsTrigger value="analytics">Review Analytics</TabsTrigger>
+          <TabsTrigger value="loan-tools">Loan Analysis Tools</TabsTrigger>
+          <TabsTrigger value="charts">Charts & Visualizations</TabsTrigger>
           <TabsTrigger value="advanced-analytics">Advanced Analytics</TabsTrigger>
           <TabsTrigger value="collaboration">Team Collaboration</TabsTrigger>
         </TabsList>
@@ -353,6 +361,280 @@ export const UnderwriterDashboard = () => {
               </div>
             </CardContent>
           </Card>
+        </TabsContent>
+
+        <TabsContent value="loan-tools" className="space-y-4">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            {/* Debt-to-Income Calculator */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Calculator className="h-5 w-5" />
+                  Debt-to-Income Calculator
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-4">
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <label className="text-sm font-medium">Monthly Income</label>
+                      <div className="text-lg font-semibold text-green-600">$8,500</div>
+                    </div>
+                    <div>
+                      <label className="text-sm font-medium">Monthly Debt</label>
+                      <div className="text-lg font-semibold text-red-600">$3,200</div>
+                    </div>
+                  </div>
+                  <div className="p-4 bg-muted rounded-lg">
+                    <div className="text-sm text-muted-foreground">DTI Ratio</div>
+                    <div className="text-2xl font-bold text-orange-600">37.6%</div>
+                    <Progress value={37.6} className="mt-2" />
+                  </div>
+                  <div className="text-sm text-muted-foreground">
+                    Recommended max DTI: 43% for conventional loans
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Loan-to-Value Calculator */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <DollarSign className="h-5 w-5" />
+                  Loan-to-Value Ratio
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-4">
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <label className="text-sm font-medium">Loan Amount</label>
+                      <div className="text-lg font-semibold text-blue-600">$320,000</div>
+                    </div>
+                    <div>
+                      <label className="text-sm font-medium">Property Value</label>
+                      <div className="text-lg font-semibold text-green-600">$400,000</div>
+                    </div>
+                  </div>
+                  <div className="p-4 bg-muted rounded-lg">
+                    <div className="text-sm text-muted-foreground">LTV Ratio</div>
+                    <div className="text-2xl font-bold text-blue-600">80%</div>
+                    <Progress value={80} className="mt-2" />
+                  </div>
+                  <div className="text-sm text-muted-foreground">
+                    Standard conventional loan max: 80% LTV
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Credit Score Analysis */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <TrendingUp className="h-5 w-5" />
+                  Credit Score Breakdown
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-4">
+                  <div className="flex items-center justify-between">
+                    <span>FICO Score</span>
+                    <span className="text-2xl font-bold text-green-600">742</span>
+                  </div>
+                  <div className="space-y-2">
+                    <div className="flex justify-between text-sm">
+                      <span>Payment History (35%)</span>
+                      <span className="text-green-600">Excellent</span>
+                    </div>
+                    <div className="flex justify-between text-sm">
+                      <span>Credit Utilization (30%)</span>
+                      <span className="text-yellow-600">Good (22%)</span>
+                    </div>
+                    <div className="flex justify-between text-sm">
+                      <span>Length of History (15%)</span>
+                      <span className="text-green-600">Excellent</span>
+                    </div>
+                    <div className="flex justify-between text-sm">
+                      <span>Credit Mix (10%)</span>
+                      <span className="text-green-600">Good</span>
+                    </div>
+                    <div className="flex justify-between text-sm">
+                      <span>New Credit (10%)</span>
+                      <span className="text-green-600">Good</span>
+                    </div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Risk Assessment Matrix */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Eye className="h-5 w-5" />
+                  Risk Assessment Matrix
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-4">
+                  <div className="grid grid-cols-3 gap-2 text-xs">
+                    <div className="p-2 bg-red-100 text-red-800 rounded text-center font-medium">
+                      High Risk
+                    </div>
+                    <div className="p-2 bg-yellow-100 text-yellow-800 rounded text-center font-medium">
+                      Medium Risk
+                    </div>
+                    <div className="p-2 bg-green-100 text-green-800 rounded text-center font-medium">
+                      Low Risk
+                    </div>
+                  </div>
+                  <div className="space-y-2">
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm">Overall Risk Score</span>
+                      <Badge variant="secondary" className="bg-green-100 text-green-800">
+                        Low Risk
+                      </Badge>
+                    </div>
+                    <div className="text-xs text-muted-foreground">
+                      Based on credit score (742), DTI (37.6%), LTV (80%), and employment history
+                    </div>
+                  </div>
+                  <div className="flex gap-2">
+                    <Button size="sm" className="bg-green-600 hover:bg-green-700 flex-1">
+                      Recommend Approval
+                    </Button>
+                    <Button size="sm" variant="outline" className="flex-1">
+                      Request More Info
+                    </Button>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        </TabsContent>
+
+        <TabsContent value="charts" className="space-y-4">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            {/* Risk Distribution Pie Chart */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <PieChart className="h-5 w-5" />
+                  Applications by Risk Level
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <ResponsiveContainer width="100%" height={300}>
+                  <RechartsPieChart>
+                    <Pie
+                      data={[
+                        { name: 'Low Risk', value: pendingReviews.filter(app => (app.credit_score || 0) >= 700).length, fill: '#22c55e' },
+                        { name: 'Medium Risk', value: pendingReviews.filter(app => (app.credit_score || 0) >= 600 && (app.credit_score || 0) < 700).length, fill: '#eab308' },
+                        { name: 'High Risk', value: pendingReviews.filter(app => (app.credit_score || 0) < 600).length, fill: '#ef4444' }
+                      ]}
+                      dataKey="value"
+                      nameKey="name"
+                      cx="50%"
+                      cy="50%"
+                      outerRadius={80}
+                      label={({name, value}) => `${name}: ${value}`}
+                    >
+                      <Cell fill="#22c55e" />
+                      <Cell fill="#eab308" />
+                      <Cell fill="#ef4444" />
+                    </Pie>
+                    <Tooltip />
+                    <Legend />
+                  </RechartsPieChart>
+                </ResponsiveContainer>
+              </CardContent>
+            </Card>
+
+            {/* Loan Amounts Bar Chart */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <BarChart3 className="h-5 w-5" />
+                  Loan Amount Distribution
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <ResponsiveContainer width="100%" height={300}>
+                  <BarChart data={[
+                    { range: '$0-100K', count: pendingReviews.filter(app => (app.loan_amount || 0) <= 100000).length },
+                    { range: '$100K-250K', count: pendingReviews.filter(app => (app.loan_amount || 0) > 100000 && (app.loan_amount || 0) <= 250000).length },
+                    { range: '$250K-500K', count: pendingReviews.filter(app => (app.loan_amount || 0) > 250000 && (app.loan_amount || 0) <= 500000).length },
+                    { range: '$500K+', count: pendingReviews.filter(app => (app.loan_amount || 0) > 500000).length }
+                  ]}>
+                    <CartesianGrid strokeDasharray="3 3" />
+                    <XAxis dataKey="range" />
+                    <YAxis />
+                    <Tooltip />
+                    <Bar dataKey="count" fill="#3b82f6" />
+                  </BarChart>
+                </ResponsiveContainer>
+              </CardContent>
+            </Card>
+
+            {/* Monthly Approval Trend */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <TrendingUp className="h-5 w-5" />
+                  Monthly Approval Trends
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <ResponsiveContainer width="100%" height={300}>
+                  <LineChart data={[
+                    { month: 'Jan', approved: 45, rejected: 12 },
+                    { month: 'Feb', approved: 52, rejected: 8 },
+                    { month: 'Mar', approved: 48, rejected: 15 },
+                    { month: 'Apr', approved: 61, rejected: 9 },
+                    { month: 'May', approved: 55, rejected: 11 },
+                    { month: 'Jun', approved: 67, rejected: 7 }
+                  ]}>
+                    <CartesianGrid strokeDasharray="3 3" />
+                    <XAxis dataKey="month" />
+                    <YAxis />
+                    <Tooltip />
+                    <Legend />
+                    <Line type="monotone" dataKey="approved" stroke="#22c55e" strokeWidth={2} />
+                    <Line type="monotone" dataKey="rejected" stroke="#ef4444" strokeWidth={2} />
+                  </LineChart>
+                </ResponsiveContainer>
+              </CardContent>
+            </Card>
+
+            {/* Credit Score Distribution */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <AreaChart className="h-5 w-5" />
+                  Credit Score Distribution
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <ResponsiveContainer width="100%" height={300}>
+                  <AreaChart data={[
+                    { score: '300-579', count: pendingReviews.filter(app => (app.credit_score || 0) >= 300 && (app.credit_score || 0) < 580).length },
+                    { score: '580-669', count: pendingReviews.filter(app => (app.credit_score || 0) >= 580 && (app.credit_score || 0) < 670).length },
+                    { score: '670-739', count: pendingReviews.filter(app => (app.credit_score || 0) >= 670 && (app.credit_score || 0) < 740).length },
+                    { score: '740-799', count: pendingReviews.filter(app => (app.credit_score || 0) >= 740 && (app.credit_score || 0) < 800).length },
+                    { score: '800+', count: pendingReviews.filter(app => (app.credit_score || 0) >= 800).length }
+                  ]}>
+                    <CartesianGrid strokeDasharray="3 3" />
+                    <XAxis dataKey="score" />
+                    <YAxis />
+                    <Tooltip />
+                    <Area type="monotone" dataKey="count" stroke="#8884d8" fill="#8884d8" fillOpacity={0.6} />
+                  </AreaChart>
+                </ResponsiveContainer>
+              </CardContent>
+            </Card>
+          </div>
         </TabsContent>
 
         <TabsContent value="advanced-analytics" className="space-y-4">

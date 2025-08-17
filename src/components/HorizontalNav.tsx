@@ -28,7 +28,8 @@ import {
   Calendar,
   Download,
   RefreshCw,
-  Camera
+  Camera,
+  Shield
 } from "lucide-react"
 import { useAuth } from "@/components/auth/AuthProvider"
 import { ThemeToggle } from "@/components/ThemeToggle"
@@ -38,6 +39,7 @@ const navigationItems = [
   { name: "Leads", path: "/leads", icon: Users },
   { name: "Existing Borrowers", path: "/existing-borrowers", icon: Building2 },
   { name: "Pipeline", path: "/pipeline", icon: Target },
+  { name: "Underwriter", path: "/underwriter", icon: Shield },
   { name: "Documents", path: "/documents", icon: FileText },
   { name: "Activities", path: "/activities", icon: Activity },
   { name: "Security", path: "/security", icon: Settings },
