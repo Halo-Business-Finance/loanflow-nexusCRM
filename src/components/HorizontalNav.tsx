@@ -34,15 +34,53 @@ import {
 import { useAuth } from "@/components/auth/AuthProvider"
 import { ThemeToggle } from "@/components/ThemeToggle"
 
-const navigationItems = [
-  { name: "Home", path: "/", icon: Home },
-  { name: "Leads", path: "/leads", icon: Users },
-  { name: "Existing Borrowers", path: "/existing-borrowers", icon: Building2 },
-  { name: "Pipeline", path: "/pipeline", icon: Target },
-  { name: "Underwriter", path: "/underwriter", icon: Shield },
-  { name: "Documents", path: "/documents", icon: FileText },
-  { name: "Activities", path: "/activities", icon: Activity },
-  { name: "Settings", path: "/settings", icon: Settings },
+const homeItems = [
+  { name: "Dashboard", path: "/", icon: Home },
+  { name: "Overview", path: "/dashboard", icon: BarChart3 },
+  { name: "Quick Actions", path: "/quick-actions", icon: Activity },
+]
+
+const leadsItems = [
+  { name: "All Leads", path: "/leads", icon: Users },
+  { name: "New Lead", path: "/leads/new", icon: User },
+  { name: "Lead Stats", path: "/leads/stats", icon: BarChart3 },
+  { name: "Lead Assignment", path: "/leads/assignment", icon: Target },
+]
+
+const borrowersItems = [
+  { name: "All Borrowers", path: "/existing-borrowers", icon: Building2 },
+  { name: "Borrower Details", path: "/existing-borrowers/details", icon: User },
+  { name: "Loan History", path: "/existing-borrowers/history", icon: FileText },
+]
+
+const pipelineItems = [
+  { name: "Pipeline View", path: "/pipeline", icon: Target },
+  { name: "Pipeline Analytics", path: "/pipeline/analytics", icon: BarChart3 },
+  { name: "Stage Management", path: "/pipeline/stages", icon: Settings },
+]
+
+const underwriterItems = [
+  { name: "Underwriter Dashboard", path: "/underwriter", icon: Shield },
+  { name: "Document Review", path: "/underwriter/documents", icon: FileText },
+  { name: "Risk Assessment", path: "/underwriter/risk", icon: Activity },
+]
+
+const documentsItems = [
+  { name: "All Documents", path: "/documents", icon: FileText },
+  { name: "Upload Document", path: "/documents/upload", icon: Download },
+  { name: "Document Templates", path: "/documents/templates", icon: FileText },
+]
+
+const activitiesItems = [
+  { name: "All Activities", path: "/activities", icon: Activity },
+  { name: "Calendar", path: "/activities/calendar", icon: Calendar },
+  { name: "Tasks", path: "/activities/tasks", icon: FileText },
+]
+
+const settingsItems = [
+  { name: "General Settings", path: "/settings", icon: Settings },
+  { name: "User Management", path: "/settings/users", icon: User },
+  { name: "System Config", path: "/settings/system", icon: Settings },
 ]
 
 const securityItems = [
@@ -196,24 +234,230 @@ export function HorizontalNav() {
       {/* Navigation Bar */}
       <div className="px-6">
         <nav className="flex items-center justify-center space-x-6">
-          {navigationItems.map((item) => {
-            const isActive = isActivePath(item.path)
-            return (
-              <Link
-                key={item.name}
-                to={item.path}
-                className={`relative flex items-center gap-1 px-4 py-3 text-sm font-medium transition-colors hover:text-blue-600 hover:bg-blue-50 rounded-md ${
-                  isActive 
-                    ? 'text-primary border-b-2 border-primary' 
+          {/* Home Dropdown */}
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button 
+                variant="ghost" 
+                className={`flex items-center gap-1 px-4 py-3 text-sm font-medium transition-colors hover:text-blue-600 hover:bg-blue-50 rounded-md ${
+                  homeItems.some(item => isActivePath(item.path))
+                    ? 'text-primary border-b-2 border-primary'
                     : 'text-foreground/70 hover:text-blue-600'
                 }`}
               >
-                <item.icon className="h-3 w-3" />
-                {item.name}
-              </Link>
-            )
-          })}
+                <Home className="h-3 w-3" />
+                Home
+                <ChevronDown className="h-2 w-2" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="start" className="w-48 bg-background border border-border shadow-lg z-50">
+              {homeItems.map((item) => (
+                <DropdownMenuItem key={item.name} asChild>
+                  <Link to={item.path} className="flex items-center gap-2 w-full px-2 py-2 text-sm hover:bg-blue-50 hover:text-blue-700 rounded-sm">
+                    <item.icon className="h-4 w-4" />
+                    {item.name}
+                  </Link>
+                </DropdownMenuItem>
+              ))}
+            </DropdownMenuContent>
+          </DropdownMenu>
+
+          {/* Leads Dropdown */}
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button 
+                variant="ghost" 
+                className={`flex items-center gap-1 px-4 py-3 text-sm font-medium transition-colors hover:text-blue-600 hover:bg-blue-50 rounded-md ${
+                  leadsItems.some(item => isActivePath(item.path))
+                    ? 'text-primary border-b-2 border-primary'
+                    : 'text-foreground/70 hover:text-blue-600'
+                }`}
+              >
+                <Users className="h-3 w-3" />
+                Leads
+                <ChevronDown className="h-2 w-2" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="start" className="w-48 bg-background border border-border shadow-lg z-50">
+              {leadsItems.map((item) => (
+                <DropdownMenuItem key={item.name} asChild>
+                  <Link to={item.path} className="flex items-center gap-2 w-full px-2 py-2 text-sm hover:bg-blue-50 hover:text-blue-700 rounded-sm">
+                    <item.icon className="h-4 w-4" />
+                    {item.name}
+                  </Link>
+                </DropdownMenuItem>
+              ))}
+            </DropdownMenuContent>
+          </DropdownMenu>
+
+          {/* Existing Borrowers Dropdown */}
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button 
+                variant="ghost" 
+                className={`flex items-center gap-1 px-4 py-3 text-sm font-medium transition-colors hover:text-blue-600 hover:bg-blue-50 rounded-md ${
+                  borrowersItems.some(item => isActivePath(item.path))
+                    ? 'text-primary border-b-2 border-primary'
+                    : 'text-foreground/70 hover:text-blue-600'
+                }`}
+              >
+                <Building2 className="h-3 w-3" />
+                Existing Borrowers
+                <ChevronDown className="h-2 w-2" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="start" className="w-48 bg-background border border-border shadow-lg z-50">
+              {borrowersItems.map((item) => (
+                <DropdownMenuItem key={item.name} asChild>
+                  <Link to={item.path} className="flex items-center gap-2 w-full px-2 py-2 text-sm hover:bg-blue-50 hover:text-blue-700 rounded-sm">
+                    <item.icon className="h-4 w-4" />
+                    {item.name}
+                  </Link>
+                </DropdownMenuItem>
+              ))}
+            </DropdownMenuContent>
+          </DropdownMenu>
+
+          {/* Pipeline Dropdown */}
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button 
+                variant="ghost" 
+                className={`flex items-center gap-1 px-4 py-3 text-sm font-medium transition-colors hover:text-blue-600 hover:bg-blue-50 rounded-md ${
+                  pipelineItems.some(item => isActivePath(item.path))
+                    ? 'text-primary border-b-2 border-primary'
+                    : 'text-foreground/70 hover:text-blue-600'
+                }`}
+              >
+                <Target className="h-3 w-3" />
+                Pipeline
+                <ChevronDown className="h-2 w-2" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="start" className="w-48 bg-background border border-border shadow-lg z-50">
+              {pipelineItems.map((item) => (
+                <DropdownMenuItem key={item.name} asChild>
+                  <Link to={item.path} className="flex items-center gap-2 w-full px-2 py-2 text-sm hover:bg-blue-50 hover:text-blue-700 rounded-sm">
+                    <item.icon className="h-4 w-4" />
+                    {item.name}
+                  </Link>
+                </DropdownMenuItem>
+              ))}
+            </DropdownMenuContent>
+          </DropdownMenu>
+
+          {/* Underwriter Dropdown */}
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button 
+                variant="ghost" 
+                className={`flex items-center gap-1 px-4 py-3 text-sm font-medium transition-colors hover:text-blue-600 hover:bg-blue-50 rounded-md ${
+                  underwriterItems.some(item => isActivePath(item.path))
+                    ? 'text-primary border-b-2 border-primary'
+                    : 'text-foreground/70 hover:text-blue-600'
+                }`}
+              >
+                <Shield className="h-3 w-3" />
+                Underwriter
+                <ChevronDown className="h-2 w-2" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="start" className="w-48 bg-background border border-border shadow-lg z-50">
+              {underwriterItems.map((item) => (
+                <DropdownMenuItem key={item.name} asChild>
+                  <Link to={item.path} className="flex items-center gap-2 w-full px-2 py-2 text-sm hover:bg-blue-50 hover:text-blue-700 rounded-sm">
+                    <item.icon className="h-4 w-4" />
+                    {item.name}
+                  </Link>
+                </DropdownMenuItem>
+              ))}
+            </DropdownMenuContent>
+          </DropdownMenu>
+
+          {/* Documents Dropdown */}
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button 
+                variant="ghost" 
+                className={`flex items-center gap-1 px-4 py-3 text-sm font-medium transition-colors hover:text-blue-600 hover:bg-blue-50 rounded-md ${
+                  documentsItems.some(item => isActivePath(item.path))
+                    ? 'text-primary border-b-2 border-primary'
+                    : 'text-foreground/70 hover:text-blue-600'
+                }`}
+              >
+                <FileText className="h-3 w-3" />
+                Documents
+                <ChevronDown className="h-2 w-2" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="start" className="w-48 bg-background border border-border shadow-lg z-50">
+              {documentsItems.map((item) => (
+                <DropdownMenuItem key={item.name} asChild>
+                  <Link to={item.path} className="flex items-center gap-2 w-full px-2 py-2 text-sm hover:bg-blue-50 hover:text-blue-700 rounded-sm">
+                    <item.icon className="h-4 w-4" />
+                    {item.name}
+                  </Link>
+                </DropdownMenuItem>
+              ))}
+            </DropdownMenuContent>
+          </DropdownMenu>
+
+          {/* Activities Dropdown */}
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button 
+                variant="ghost" 
+                className={`flex items-center gap-1 px-4 py-3 text-sm font-medium transition-colors hover:text-blue-600 hover:bg-blue-50 rounded-md ${
+                  activitiesItems.some(item => isActivePath(item.path))
+                    ? 'text-primary border-b-2 border-primary'
+                    : 'text-foreground/70 hover:text-blue-600'
+                }`}
+              >
+                <Activity className="h-3 w-3" />
+                Activities
+                <ChevronDown className="h-2 w-2" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="start" className="w-48 bg-background border border-border shadow-lg z-50">
+              {activitiesItems.map((item) => (
+                <DropdownMenuItem key={item.name} asChild>
+                  <Link to={item.path} className="flex items-center gap-2 w-full px-2 py-2 text-sm hover:bg-blue-50 hover:text-blue-700 rounded-sm">
+                    <item.icon className="h-4 w-4" />
+                    {item.name}
+                  </Link>
+                </DropdownMenuItem>
+              ))}
+            </DropdownMenuContent>
+          </DropdownMenu>
           
+          {/* Settings Dropdown */}
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button 
+                variant="ghost" 
+                className={`flex items-center gap-1 px-4 py-3 text-sm font-medium transition-colors hover:text-blue-600 hover:bg-blue-50 rounded-md ${
+                  settingsItems.some(item => isActivePath(item.path))
+                    ? 'text-primary border-b-2 border-primary'
+                    : 'text-foreground/70 hover:text-blue-600'
+                }`}
+              >
+                <Settings className="h-3 w-3" />
+                Settings
+                <ChevronDown className="h-2 w-2" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="start" className="w-48 bg-background border border-border shadow-lg z-50">
+              {settingsItems.map((item) => (
+                <DropdownMenuItem key={item.name} asChild>
+                  <Link to={item.path} className="flex items-center gap-2 w-full px-2 py-2 text-sm hover:bg-blue-50 hover:text-blue-700 rounded-sm">
+                    <item.icon className="h-4 w-4" />
+                    {item.name}
+                  </Link>
+                </DropdownMenuItem>
+              ))}
+            </DropdownMenuContent>
+          </DropdownMenu>
+
           {/* Security Dropdown */}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
