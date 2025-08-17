@@ -945,17 +945,18 @@ export default function Clients() {
             </Card>
           )}
         </div>
-      </div>
 
-    {/* Action Reminder Dialog */}
-    {selectedClientForReminder && (
-      <ActionReminder
-        entityId={selectedClientForReminder.id}
-        entityName={selectedClientForReminder.name}
-        entityType="client"
-        isOpen={!!selectedClientForReminder}
-        onClose={() => setSelectedClientForReminder(null)}
-      />
-    )}
+        {/* Action Reminder Dialog */}
+        {selectedClientForReminder && (
+          <ActionReminder
+            entityId={selectedClientForReminder.id}
+            entityName={selectedClientForReminder.name}
+            entityType="client"
+            isOpen={!!selectedClientForReminder}
+            onClose={() => setSelectedClientForReminder(null)}
+          />
+        )}
+      </div>
+    </div>
   )
 }
