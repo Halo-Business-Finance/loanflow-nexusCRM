@@ -42,8 +42,17 @@ const navigationItems = [
   { name: "Reports", path: "/reports", icon: BarChart3 },
   { name: "Users", path: "/users", icon: User },
   { name: "Security", path: "/security", icon: Settings },
-  { name: "Enterprise", path: "/enterprise", icon: Building2 },
   { name: "Settings", path: "/settings", icon: Settings },
+]
+
+const enterpriseItems = [
+  { name: "Overview", path: "/enterprise", icon: Building2 },
+  { name: "Custom Objects", path: "/enterprise#custom-objects", icon: Home },
+  { name: "Workflow Builder", path: "/enterprise#workflows", icon: RefreshCw },
+  { name: "Approval Processes", path: "/enterprise#approvals", icon: Calendar },
+  { name: "Territory Management", path: "/enterprise#territories", icon: Target },
+  { name: "Sales Forecasting", path: "/enterprise#forecasting", icon: BarChart3 },
+  { name: "Opportunity Splits", path: "/enterprise#opportunities", icon: Download },
 ]
 
 const moreItems = [
@@ -189,6 +198,34 @@ export function HorizontalNav() {
               </Link>
             )
           })}
+          
+          {/* Enterprise Dropdown */}
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button 
+                variant="ghost" 
+                className={`flex items-center gap-1 px-3 py-2 text-sm font-medium transition-colors hover:text-blue-600 hover:bg-blue-50 rounded-md ${
+                  enterpriseItems.some(item => isActivePath(item.path.split('#')[0]))
+                    ? 'text-primary border-b-2 border-primary'
+                    : 'text-foreground/70 hover:text-blue-600'
+                }`}
+              >
+                <Building2 className="h-3 w-3" />
+                Enterprise
+                <ChevronDown className="h-2 w-2" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="start" className="w-48 bg-background border border-border shadow-lg z-50">
+              {enterpriseItems.map((item) => (
+                <DropdownMenuItem key={item.name} asChild>
+                  <Link to={item.path} className="flex items-center gap-2 w-full px-2 py-2 text-sm hover:bg-blue-50 hover:text-blue-700 rounded-sm">
+                    <item.icon className="h-4 w-4" />
+                    {item.name}
+                  </Link>
+                </DropdownMenuItem>
+              ))}
+            </DropdownMenuContent>
+          </DropdownMenu>
           
         </nav>
       </div>
