@@ -39,6 +39,7 @@ import Integrations from "./pages/Integrations";
 import AITools from "./pages/AITools";
 import APIDocs from "./pages/APIDocs";
 import Screenshots from "./pages/Screenshots";
+import Security from "./pages/Security";
 import EmergencyMaintenance from "./pages/EmergencyMaintenance";
 import NotFound from "./pages/NotFound";
 import { useKeyboardShortcuts } from "@/hooks/useKeyboardShortcuts";
@@ -96,7 +97,7 @@ function AuthenticatedApp() {
             <Route path="/users" element={<HorizontalLayout><Users /></HorizontalLayout>} errorElement={<RouteErrorBoundary />} />
             {/* Debug route */}
             <Route path="/users-debug" element={<div>Users route test</div>} errorElement={<RouteErrorBoundary />} />
-            <Route path="/security" element={<Layout><MasterSecurityDashboard /></Layout>} errorElement={<RouteErrorBoundary />} />
+            <Route path="/security" element={<HorizontalLayout><Security /></HorizontalLayout>} errorElement={<RouteErrorBoundary />} />
             <Route path="/security/military" element={<Layout><MilitaryGradeSecurityDashboard /></Layout>} errorElement={<RouteErrorBoundary />} />
             <Route path="/enterprise" element={<HorizontalLayout><Enterprise /></HorizontalLayout>} errorElement={<RouteErrorBoundary />} />
             <Route path="/integrations" element={<HorizontalLayout><Integrations /></HorizontalLayout>} errorElement={<RouteErrorBoundary />} />
