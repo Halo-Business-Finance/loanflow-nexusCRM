@@ -349,25 +349,30 @@ export default function Dashboard() {
         <AppSidebar />
         <div className="flex-1">
           <div className="min-h-screen bg-background">
-            {/* Header */}
-            <div className="border-b bg-card">
-              <div className="container mx-auto px-6 py-4">
+            {/* Modern Header */}
+            <div className="bg-card border-b border-border sticky top-0 z-10">
+              <div className="px-6 py-4">
                 <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-3">
+                  <div className="flex items-center gap-4">
                     <SidebarTrigger />
-                    <div className="flex items-center justify-center w-10 h-10 rounded-lg bg-primary/10">
-                      <BarChart3 className="h-5 w-5 text-primary" />
-                    </div>
                     <div>
-                      <h1 className="text-xl font-semibold">Executive Dashboard</h1>
-                      <p className="text-sm text-muted-foreground">
+                      <div className="flex items-center gap-3">
+                        <h1 className="text-xl font-semibold text-foreground">
+                          Executive Dashboard
+                        </h1>
+                        <Badge variant="default" className="text-xs font-medium px-2 py-1">
+                          Real-time
+                        </Badge>
+                      </div>
+                      <p className="text-sm text-muted-foreground mt-1">
                         Enterprise-grade business intelligence and performance analytics
                       </p>
                     </div>
                   </div>
+                  
                   <div className="flex items-center gap-2">
-                    <Button variant="outline" size="sm" onClick={() => navigate('/settings')}>
-                      <Settings className="h-4 w-4 mr-2" />
+                    <Button variant="outline" size="sm" onClick={() => navigate('/settings')} className="h-8 text-xs font-medium">
+                      <Settings className="h-3 w-3 mr-2" />
                       Settings
                     </Button>
                     <Button 
@@ -375,8 +380,9 @@ export default function Dashboard() {
                       variant="outline" 
                       size="sm"
                       disabled={loading}
+                      className="h-8 text-xs font-medium"
                     >
-                      <RefreshCw className={`h-4 w-4 mr-2 ${loading ? 'animate-spin' : ''}`} />
+                      <RefreshCw className={`h-3 w-3 mr-2 ${loading ? 'animate-spin' : ''}`} />
                       Refresh
                     </Button>
                   </div>
@@ -384,8 +390,8 @@ export default function Dashboard() {
               </div>
             </div>
 
-            {/* Main Content */}
-            <div className="container mx-auto p-6 space-y-6">
+            {/* Content Area */}
+            <div className="p-6 space-y-6">
               {/* Key Performance Metrics */}
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                 {performanceMetrics.map((metric, index) => (

@@ -6,6 +6,7 @@ import { Badge } from '@/components/ui/badge';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import { 
   Users, 
   UserPlus, 
@@ -355,83 +356,123 @@ export default function Leads() {
     <SecurityWrapper>
       <SecureFormProvider>
         <Layout>
-      <div className="container mx-auto p-6 space-y-6">
-        <div className="flex items-center justify-between mb-6">
-          <div className="flex items-center gap-2">
-            <Users className="h-6 w-6" />
-            <h1 className="text-3xl font-bold">Lead Management Center</h1>
-          </div>
-          <Button onClick={() => setShowNewLeadForm(true)} className="gap-2">
-            <UserPlus className="h-4 w-4" />
-            Add New Lead
-          </Button>
-        </div>
-
-        {/* Leads Overview Metrics */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          <Card className="border-l-4 border-l-primary">
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm font-medium text-muted-foreground">Total Leads</p>
-                  <div className="flex items-center gap-2 mt-1">
-                    <Users className="w-5 h-5" />
-                    <p className="text-lg font-bold">{overview.totalLeads}</p>
+          <div className="min-h-screen bg-background">
+            {/* Modern Header */}
+            <div className="bg-card border-b border-border sticky top-0 z-10">
+              <div className="px-6 py-4">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-4">
+                    <div>
+                      <div className="flex items-center gap-3">
+                        <h1 className="text-xl font-semibold text-foreground">
+                          Lead Management
+                        </h1>
+                        <Badge variant="default" className="text-xs font-medium px-2 py-1">
+                          {overview.totalLeads} Leads
+                        </Badge>
+                      </div>
+                      <p className="text-sm text-muted-foreground mt-1">
+                        Manage and track your sales leads and prospects
+                      </p>
+                    </div>
+                  </div>
+                  
+                  <div className="flex items-center gap-2">
+                    <Button variant="outline" size="sm" className="h-8 text-xs font-medium">
+                      <Filter className="h-3 w-3 mr-2" />
+                      Filter
+                    </Button>
+                    <Button onClick={() => setShowNewLeadForm(true)} size="sm" className="h-8 text-xs font-medium">
+                      <UserPlus className="h-3 w-3 mr-2" />
+                      Add Lead
+                    </Button>
                   </div>
                 </div>
-                <Badge variant="default">
-                  MANAGED
-                </Badge>
               </div>
-            </CardContent>
-          </Card>
+            </div>
 
-          <Card>
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm font-medium text-muted-foreground">New Leads</p>
-                  <p className="text-2xl font-bold text-primary">{overview.newLeads}</p>
-                </div>
-                <UserPlus className="w-8 h-8 text-primary" />
+            {/* Content Area */}
+            <div className="p-6 space-y-6">
+              {/* Key Metrics Cards */}
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <Card className="border-0 shadow-sm bg-card">
+                  <CardContent className="pt-6">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <Label className="text-xs font-medium text-muted-foreground">Total Leads</Label>
+                        <div className="flex items-center gap-2 mt-1">
+                          <Users className="h-4 w-4 text-muted-foreground" />
+                          <p className="text-2xl font-bold">{overview.totalLeads}</p>
+                        </div>
+                      </div>
+                      <Badge variant="default" className="text-xs">
+                        ACTIVE
+                      </Badge>
+                    </div>
+                  </CardContent>
+                </Card>
+
+                <Card className="border-0 shadow-sm bg-card">
+                  <CardContent className="pt-6">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <Label className="text-xs font-medium text-muted-foreground">New Leads</Label>
+                        <div className="flex items-center gap-2 mt-1">
+                          <UserPlus className="h-4 w-4 text-muted-foreground" />
+                          <p className="text-2xl font-bold">{overview.newLeads}</p>
+                        </div>
+                      </div>
+                      <Badge variant="secondary" className="text-xs">
+                        THIS WEEK
+                      </Badge>
+                    </div>
+                  </CardContent>
+                </Card>
+
+                <Card className="border-0 shadow-sm bg-card">
+                  <CardContent className="pt-6">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <Label className="text-xs font-medium text-muted-foreground">Hot Prospects</Label>
+                        <div className="flex items-center gap-2 mt-1">
+                          <Target className="h-4 w-4 text-muted-foreground" />
+                          <p className="text-2xl font-bold">{overview.hotLeads}</p>
+                        </div>
+                      </div>
+                      <Badge variant="destructive" className="text-xs">
+                        HIGH PRIORITY
+                      </Badge>
+                    </div>
+                  </CardContent>
+                </Card>
+
+                <Card className="border-0 shadow-sm bg-card">
+                  <CardContent className="pt-6">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <Label className="text-xs font-medium text-muted-foreground">Pipeline Value</Label>
+                        <div className="flex items-center gap-2 mt-1">
+                          <DollarSign className="h-4 w-4 text-muted-foreground" />
+                          <p className="text-2xl font-bold">{formatCurrency(overview.totalValue)}</p>
+                        </div>
+                      </div>
+                      <Badge variant="outline" className="text-xs">
+                        TOTAL
+                      </Badge>
+                    </div>
+                  </CardContent>
+                </Card>
               </div>
-            </CardContent>
-          </Card>
 
-          <Card>
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm font-medium text-muted-foreground">Hot Prospects</p>
-                  <p className="text-2xl font-bold text-primary">{overview.hotLeads}</p>
-                </div>
-                <Target className="w-8 h-8 text-primary" />
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm font-medium text-muted-foreground">Pipeline Value</p>
-                  <p className="text-2xl font-bold text-primary">{formatCurrency(overview.totalValue)}</p>
-                </div>
-                <DollarSign className="w-8 h-8 text-primary" />
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-
-        {/* Performance Alerts */}
-        {overview.followUpsDue > 0 && (
-          <Alert className="border-secondary">
-            <AlertTriangle className="h-4 w-4" />
-            <AlertDescription>
-              You have {overview.followUpsDue} leads requiring follow-up attention.
-            </AlertDescription>
-          </Alert>
-        )}
+              {/* Performance Alerts */}
+              {overview.followUpsDue > 0 && (
+                <Alert className="border-orange-200 bg-orange-50">
+                  <AlertTriangle className="h-4 w-4 text-orange-600" />
+                  <AlertDescription className="text-orange-800">
+                    You have {overview.followUpsDue} leads requiring follow-up attention.
+                  </AlertDescription>
+                </Alert>
+              )}
 
         <Tabs defaultValue="active" className="space-y-6">
           <TabsList className="grid w-full grid-cols-4">
@@ -640,7 +681,8 @@ export default function Leads() {
             />
           </DialogContent>
         </Dialog>
-      </div>
+            </div>
+          </div>
         </Layout>
       </SecureFormProvider>
     </SecurityWrapper>

@@ -455,33 +455,61 @@ export default function Clients() {
 
   return (
     <Layout>
-      <div className="container mx-auto p-6 space-y-6">
-        {/* Header Section */}
-        <div className="flex items-center gap-2 mb-6">
-          <Users className="h-6 w-6" />
-          <h1 className="text-3xl font-bold">Client Management Hub</h1>
-          <p className="text-muted-foreground ml-4">
-            Comprehensive client relationship management and tracking
-          </p>
-        </div>
-        {/* Client Metrics Overview */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          <Card className="border-l-4 border-l-primary">
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between">
+      <div className="min-h-screen bg-background">
+        {/* Modern Header */}
+        <div className="bg-card border-b border-border sticky top-0 z-10">
+          <div className="px-6 py-4">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-4">
                 <div>
-                  <p className="text-sm font-medium text-muted-foreground">Total Clients</p>
-                  <div className="flex items-center gap-2 mt-1">
-                    <Users className="w-5 h-5" />
-                    <p className="text-lg font-bold">{clients.length}</p>
+                  <div className="flex items-center gap-3">
+                    <h1 className="text-xl font-semibold text-foreground">
+                      Client Management
+                    </h1>
+                    <Badge variant="default" className="text-xs font-medium px-2 py-1">
+                      {clients.length} Clients
+                    </Badge>
                   </div>
+                  <p className="text-sm text-muted-foreground mt-1">
+                    Manage and track your client relationships and portfolios
+                  </p>
                 </div>
-                <Badge variant="default">
-                  ACTIVE
-                </Badge>
               </div>
-            </CardContent>
-          </Card>
+              
+              <div className="flex items-center gap-2">
+                <Button variant="outline" size="sm" className="h-8 text-xs font-medium">
+                  <Filter className="h-3 w-3 mr-2" />
+                  Filter
+                </Button>
+                <Button onClick={() => setShowAddDialog(true)} size="sm" className="h-8 text-xs font-medium">
+                  <Plus className="h-3 w-3 mr-2" />
+                  Add Client
+                </Button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Content Area */}
+        <div className="p-6 space-y-6">
+          {/* Client Metrics Overview */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <Card className="border-0 shadow-sm bg-card">
+              <CardContent className="pt-6">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <Label className="text-xs font-medium text-muted-foreground">Total Clients</Label>
+                    <div className="flex items-center gap-2 mt-1">
+                      <Users className="h-4 w-4 text-muted-foreground" />
+                      <p className="text-2xl font-bold">{clients.length}</p>
+                    </div>
+                  </div>
+                  <Badge variant="default" className="text-xs">
+                    ACTIVE
+                  </Badge>
+                </div>
+              </CardContent>
+            </Card>
 
           <Card>
             <CardContent className="p-6">
@@ -922,17 +950,18 @@ export default function Clients() {
           )}
         </div>
       </div>
+    </div>
 
-      {/* Action Reminder Dialog */}
-      {selectedClientForReminder && (
-        <ActionReminder
-          entityId={selectedClientForReminder.id}
-          entityName={selectedClientForReminder.name}
-          entityType="client"
-          isOpen={!!selectedClientForReminder}
-          onClose={() => setSelectedClientForReminder(null)}
-        />
-      )}
+    {/* Action Reminder Dialog */}
+    {selectedClientForReminder && (
+      <ActionReminder
+        entityId={selectedClientForReminder.id}
+        entityName={selectedClientForReminder.name}
+        entityType="client"
+        isOpen={!!selectedClientForReminder}
+        onClose={() => setSelectedClientForReminder(null)}
+      />
+    )}
     </Layout>
   )
 }
