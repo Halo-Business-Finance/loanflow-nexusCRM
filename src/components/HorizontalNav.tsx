@@ -27,7 +27,8 @@ import {
   LogOut,
   Calendar,
   Download,
-  RefreshCw
+  RefreshCw,
+  Camera
 } from "lucide-react"
 import { useAuth } from "@/components/auth/AuthProvider"
 import { ThemeToggle } from "@/components/ThemeToggle"
@@ -50,6 +51,7 @@ const enterpriseItems = [
   { name: "Integrations", path: "/integrations", icon: RefreshCw },
   { name: "AI Tools", path: "/ai-tools", icon: Settings },
   { name: "API Docs", path: "/api-docs", icon: FileText },
+  { name: "Screenshots", path: "/screenshots", icon: Camera },
   { name: "Custom Objects", path: "/enterprise#custom-objects", icon: Home },
   { name: "Workflow Builder", path: "/enterprise#workflows", icon: RefreshCw },
   { name: "Approval Processes", path: "/enterprise#approvals", icon: Calendar },
