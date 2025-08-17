@@ -450,7 +450,14 @@ export default function LeadDetail() {
         .insert({
           user_id: user.id,
           name: 'Additional Borrower',
-          email: `borrower_${Date.now()}@placeholder.com` // Provide a unique placeholder email
+          first_name: 'Additional',
+          last_name: 'Borrower',
+          email: `borrower_${Date.now()}@placeholder.com`,
+          personal_email: `borrower_${Date.now()}@placeholder.com`,
+          mobile_phone: '',
+          phone: '',
+          credit_score: null,
+          ownership_percentage: null
         })
         .select()
         .maybeSingle()
