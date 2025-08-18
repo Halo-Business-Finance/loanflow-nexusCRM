@@ -30,7 +30,9 @@ import {
   RefreshCw,
   Camera,
   Shield,
-  LayoutDashboard
+  LayoutDashboard,
+  ArrowLeft,
+  ArrowRight
 } from "lucide-react"
 import { useAuth } from "@/components/auth/AuthProvider"
 import { ThemeToggle } from "@/components/ThemeToggle"
@@ -208,6 +210,26 @@ export function HorizontalNav() {
                 minute: '2-digit' 
               })}
             </p>
+          </div>
+          
+          {/* Navigation Buttons */}
+          <div className="flex items-center gap-2 mr-4">
+            <Button 
+              variant="ghost" 
+              size="sm"
+              onClick={() => window.history.back()}
+              className="h-8 w-8 p-0 hover:bg-muted"
+            >
+              <ArrowLeft className="h-4 w-4" />
+            </Button>
+            <Button 
+              variant="ghost" 
+              size="sm"
+              onClick={() => window.history.forward()}
+              className="h-8 w-8 p-0 hover:bg-muted"
+            >
+              <ArrowRight className="h-4 w-4" />
+            </Button>
           </div>
           
           {/* Search Bar */}
