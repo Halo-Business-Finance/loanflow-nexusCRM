@@ -230,29 +230,8 @@ export function HorizontalNav() {
         </div>
       </div>
       
-      {/* Search and Navigation Bar */}
       <div className="px-6 py-2 border-b border-border/50">
         <div className="flex items-center justify-between">
-          {/* Navigation Buttons */}
-          <div className="flex items-center gap-2 mr-4">
-            <Button 
-              variant="ghost" 
-              size="sm"
-              onClick={() => window.history.back()}
-              className="h-8 w-8 p-0 hover:bg-muted"
-            >
-              <ArrowLeft className="h-4 w-4" />
-            </Button>
-            <Button 
-              variant="ghost" 
-              size="sm"
-              onClick={() => window.history.forward()}
-              className="h-8 w-8 p-0 hover:bg-muted"
-            >
-              <ArrowRight className="h-4 w-4" />
-            </Button>
-          </div>
-          
           {/* Search Bar */}
           <div className="flex-1 max-w-sm mx-8">
             <div className="relative">
@@ -272,6 +251,25 @@ export function HorizontalNav() {
       {/* Navigation Bar */}
       <div className="px-6">
         <nav className="flex items-center justify-center space-x-6">
+          {/* Navigation Buttons */}
+          <div className="flex items-center gap-2 mr-4">
+            <Button 
+              variant="ghost" 
+              size="sm"
+              onClick={() => window.history.back()}
+              className="h-8 w-8 p-0 hover:bg-muted"
+            >
+              <ArrowLeft className="h-4 w-4" />
+            </Button>
+            <Button 
+              variant="ghost" 
+              size="sm"
+              onClick={() => window.history.forward()}
+              className="h-8 w-8 p-0 hover:bg-muted"
+            >
+              <ArrowRight className="h-4 w-4" />
+            </Button>
+          </div>
           {/* Dashboard Button */}
           <Button 
             asChild
