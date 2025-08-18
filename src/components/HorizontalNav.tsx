@@ -76,7 +76,6 @@ const activitiesItems = [
 
 const settingsItems = [
   { name: "General Settings", path: "/settings", icon: Settings },
-  { name: "User Management", path: "/settings/users", icon: User },
   { name: "System Config", path: "/settings/system", icon: Settings },
 ]
 
@@ -92,6 +91,7 @@ const enterpriseItems = [
   { name: "Overview", path: "/enterprise", icon: Building2 },
   { name: "Reports", path: "/reports", icon: BarChart3 },
   { name: "Users", path: "/users", icon: User },
+  { name: "User Management", path: "/settings/users", icon: User },
   { name: "Integrations", path: "/integrations", icon: RefreshCw },
   { name: "AI Tools", path: "/ai-tools", icon: Settings },
   { name: "API Docs", path: "/api-docs", icon: FileText },
