@@ -190,93 +190,93 @@ export default function Dashboard() {
             <TabsContent value="overview" className="space-y-6">
               {/* KPI Cards */}
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                <Card className="bg-card border-0 shadow-lg hover:shadow-xl transition-shadow duration-200">
+                <Card className="bg-card border-2 border-border/60 hover:border-border hover:shadow-lg transition-all duration-200 hover:scale-[1.02]">
                   <CardContent className="p-6">
                     <div className="flex items-center justify-between">
                       <div className="space-y-2">
                         <p className="text-sm font-medium text-muted-foreground">Total Revenue</p>
                         <div className="flex items-center gap-2">
-                          <span className="text-3xl font-bold text-foreground">{formatCurrency(totalRevenue)}</span>
+                          <span className="text-2xl font-bold text-primary">{formatCurrency(totalRevenue)}</span>
                         </div>
                         <div className="flex items-center gap-2">
-                          <Badge variant="secondary" className="bg-green-100 text-green-700 border-green-200">
+                          <Badge variant="secondary" className="bg-secondary/20 text-secondary-foreground border-secondary/30">
                             <ArrowUpRight className="h-3 w-3 mr-1" />
                             +12.5%
                           </Badge>
                           <span className="text-xs text-muted-foreground">vs last month</span>
                         </div>
                       </div>
-                      <div className="h-12 w-12 bg-blue-100 rounded-full flex items-center justify-center">
-                        <DollarSign className="h-6 w-6 text-blue-600" />
+                      <div className="flex h-12 w-12 items-center justify-center rounded-full bg-primary/10">
+                        <DollarSign className="h-6 w-6 text-primary" />
                       </div>
                     </div>
                   </CardContent>
                 </Card>
 
-                <Card className="bg-card border-0 shadow-lg hover:shadow-xl transition-shadow duration-200">
+                <Card className="bg-card border-2 border-border/60 hover:border-border hover:shadow-lg transition-all duration-200 hover:scale-[1.02]">
                   <CardContent className="p-6">
                     <div className="flex items-center justify-between">
                       <div className="space-y-2">
                         <p className="text-sm font-medium text-muted-foreground">Active Leads</p>
                         <div className="flex items-center gap-2">
-                          <span className="text-3xl font-bold text-foreground">1,247</span>
+                          <span className="text-2xl font-bold text-primary">1,247</span>
                         </div>
                         <div className="flex items-center gap-2">
-                          <Badge variant="secondary" className="bg-green-100 text-green-700 border-green-200">
+                          <Badge variant="secondary" className="bg-secondary/20 text-secondary-foreground border-secondary/30">
                             <ArrowUpRight className="h-3 w-3 mr-1" />
                             +8.2%
                           </Badge>
                           <span className="text-xs text-muted-foreground">vs last month</span>
                         </div>
                       </div>
-                      <div className="h-12 w-12 bg-purple-100 rounded-full flex items-center justify-center">
-                        <Users className="h-6 w-6 text-purple-600" />
+                      <div className="flex h-12 w-12 items-center justify-center rounded-full bg-accent/20">
+                        <Users className="h-6 w-6 text-accent-foreground" />
                       </div>
                     </div>
                   </CardContent>
                 </Card>
 
-                <Card className="bg-card border-0 shadow-lg hover:shadow-xl transition-shadow duration-200">
+                <Card className="bg-card border-2 border-border/60 hover:border-border hover:shadow-lg transition-all duration-200 hover:scale-[1.02]">
                   <CardContent className="p-6">
                     <div className="flex items-center justify-between">
                       <div className="space-y-2">
                         <p className="text-sm font-medium text-muted-foreground">Pipeline Value</p>
                         <div className="flex items-center gap-2">
-                          <span className="text-3xl font-bold text-foreground">{formatCurrency(pipelineValue)}</span>
+                          <span className="text-2xl font-bold text-primary">{formatCurrency(pipelineValue)}</span>
                         </div>
                         <div className="flex items-center gap-2">
-                          <Badge variant="secondary" className="bg-red-100 text-red-700 border-red-200">
+                          <Badge variant="secondary" className="bg-destructive/20 text-destructive border-destructive/30">
                             <ArrowDownRight className="h-3 w-3 mr-1" />
                             -2.1%
                           </Badge>
                           <span className="text-xs text-muted-foreground">vs last month</span>
                         </div>
                       </div>
-                      <div className="h-12 w-12 bg-green-100 rounded-full flex items-center justify-center">
-                        <Target className="h-6 w-6 text-green-600" />
+                      <div className="flex h-12 w-12 items-center justify-center rounded-full bg-secondary/20">
+                        <Target className="h-6 w-6 text-secondary-foreground" />
                       </div>
                     </div>
                   </CardContent>
                 </Card>
 
-                <Card className="bg-card border-0 shadow-lg hover:shadow-xl transition-shadow duration-200">
+                <Card className="bg-card border-2 border-border/60 hover:border-border hover:shadow-lg transition-all duration-200 hover:scale-[1.02]">
                   <CardContent className="p-6">
                     <div className="flex items-center justify-between">
                       <div className="space-y-2">
                         <p className="text-sm font-medium text-muted-foreground">Conversion Rate</p>
                         <div className="flex items-center gap-2">
-                          <span className="text-3xl font-bold text-foreground">24.8%</span>
+                          <span className="text-2xl font-bold text-primary">24.8%</span>
                         </div>
                         <div className="flex items-center gap-2">
-                          <Badge variant="secondary" className="bg-green-100 text-green-700 border-green-200">
+                          <Badge variant="secondary" className="bg-secondary/20 text-secondary-foreground border-secondary/30">
                             <ArrowUpRight className="h-3 w-3 mr-1" />
                             +5.4%
                           </Badge>
                           <span className="text-xs text-muted-foreground">vs last month</span>
                         </div>
                       </div>
-                      <div className="h-12 w-12 bg-orange-100 rounded-full flex items-center justify-center">
-                        <Activity className="h-6 w-6 text-orange-600" />
+                      <div className="flex h-12 w-12 items-center justify-center rounded-full bg-accent/20">
+                        <Activity className="h-6 w-6 text-accent-foreground" />
                       </div>
                     </div>
                   </CardContent>
