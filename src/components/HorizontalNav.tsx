@@ -76,7 +76,6 @@ const activitiesItems = [
 
 const settingsItems = [
   { name: "General Settings", path: "/settings", icon: Settings },
-  { name: "System Config", path: "/settings/system", icon: Settings },
 ]
 
 const securityItems = [
@@ -85,6 +84,7 @@ const securityItems = [
   { name: "Audit Logs", path: "/security/audit", icon: FileText },
   { name: "Threat Detection", path: "/security/threats", icon: Activity },
   { name: "Compliance", path: "/security/compliance", icon: Settings },
+  { name: "System Config", path: "/settings/system", icon: Settings },
 ]
 
 const enterpriseItems = [
