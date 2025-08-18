@@ -75,7 +75,6 @@ const activitiesItems = [
 ]
 
 const settingsItems = [
-  { name: "General Settings", path: "/settings", icon: Settings },
 ]
 
 const securityItems = [
@@ -179,8 +178,29 @@ export function HorizontalNav() {
               <HelpCircle className="h-4 w-4" />
             </Button>
             
-            {/* Theme Toggle */}
-            <ThemeToggle />
+            {/* Theme & Settings Dropdown */}
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" size="sm" className="h-9 w-9 p-0">
+                  <Settings className="h-4 w-4" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-56 bg-background border border-border shadow-lg z-50">
+                <DropdownMenuItem asChild>
+                  <Link to="/settings" className="flex items-center gap-2 w-full px-2 py-2 text-sm hover:bg-blue-50 hover:text-blue-700 rounded-sm">
+                    <Settings className="h-4 w-4" />
+                    General Settings
+                  </Link>
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem asChild>
+                  <div className="flex items-center justify-between w-full px-2 py-2">
+                    <span className="text-sm">Theme</span>
+                    <ThemeToggle />
+                  </div>
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
             
             {/* Profile Dropdown */}
             <DropdownMenu>
@@ -409,33 +429,6 @@ export function HorizontalNav() {
             </DropdownMenuContent>
           </DropdownMenu>
           
-          {/* Settings Dropdown */}
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button 
-                variant="ghost" 
-                className={`flex items-center gap-1 px-4 py-3 text-sm font-medium transition-colors hover:text-blue-600 hover:bg-blue-50 rounded-md ${
-                  settingsItems.some(item => isActivePath(item.path))
-                    ? 'text-primary border-b-2 border-primary'
-                    : 'text-foreground/70 hover:text-blue-600'
-                }`}
-              >
-                <Settings className="h-3 w-3" />
-                Settings
-                <ChevronDown className="h-2 w-2" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="start" className="w-48 bg-background border border-border shadow-lg z-50">
-              {settingsItems.map((item) => (
-                <DropdownMenuItem key={item.name} asChild>
-                  <Link to={item.path} className="flex items-center gap-2 w-full px-2 py-2 text-sm hover:bg-blue-50 hover:text-blue-700 rounded-sm">
-                    <item.icon className="h-4 w-4" />
-                    {item.name}
-                  </Link>
-                </DropdownMenuItem>
-              ))}
-            </DropdownMenuContent>
-          </DropdownMenu>
 
           {/* Security Dropdown */}
           <DropdownMenu>
