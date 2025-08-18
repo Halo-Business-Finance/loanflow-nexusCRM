@@ -152,6 +152,24 @@ export function HorizontalNav() {
             </div>
           </div>
 
+          {/* Center - Welcome Message */}
+          <div className="text-center">
+            <h2 className="text-lg font-medium text-foreground">
+              Welcome back, {getUserDisplayName()}
+            </h2>
+            <p className="text-sm text-muted-foreground">
+              {new Date().toLocaleDateString('en-US', { 
+                weekday: 'long', 
+                year: 'numeric', 
+                month: 'long', 
+                day: 'numeric' 
+              })} at {new Date().toLocaleTimeString('en-US', { 
+                hour: '2-digit', 
+                minute: '2-digit' 
+              })}
+            </p>
+          </div>
+
           {/* Right Side - Actions and Profile */}
           <div className="flex items-center gap-3">
             <Button variant="ghost" size="sm" className="h-9 w-9 p-0">
@@ -192,26 +210,9 @@ export function HorizontalNav() {
         </div>
       </div>
       
-      {/* Welcome Message */}
+      {/* Search and Navigation Bar */}
       <div className="px-6 py-2 border-b border-border/50">
         <div className="flex items-center justify-between">
-          <div>
-            <h2 className="text-lg font-medium text-foreground">
-              Welcome back, {getUserDisplayName()}
-            </h2>
-            <p className="text-sm text-muted-foreground">
-              {new Date().toLocaleDateString('en-US', { 
-                weekday: 'long', 
-                year: 'numeric', 
-                month: 'long', 
-                day: 'numeric' 
-              })} at {new Date().toLocaleTimeString('en-US', { 
-                hour: '2-digit', 
-                minute: '2-digit' 
-              })}
-            </p>
-          </div>
-          
           {/* Navigation Buttons */}
           <div className="flex items-center gap-2 mr-4">
             <Button 
