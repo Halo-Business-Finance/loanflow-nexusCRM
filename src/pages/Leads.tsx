@@ -393,70 +393,58 @@ export default function Leads() {
             <div className="p-6 space-y-6">
               {/* Key Metrics Cards */}
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                <Card className="border border-border shadow-sm bg-white">
-                  <CardContent className="pt-6">
+                <Card className="bg-card border-2 border-border/60 hover:border-border hover:shadow-lg transition-all duration-200 hover:scale-[1.02]">
+                  <CardContent className="p-6">
                     <div className="flex items-center justify-between">
-                      <div>
-                        <Label className="text-xs font-medium text-muted-foreground">Total Leads</Label>
-                        <div className="flex items-center gap-2 mt-1">
-                          <Users className="h-4 w-4 text-muted-foreground" />
-                          <p className="text-2xl font-bold">{overview.totalLeads}</p>
-                        </div>
+                      <div className="space-y-2">
+                        <p className="text-sm font-medium text-muted-foreground">Total Leads</p>
+                        <p className="text-2xl font-bold text-primary">{overview.totalLeads}</p>
                       </div>
-                      <Badge variant="default" className="text-xs">
-                        ACTIVE
-                      </Badge>
+                      <div className="flex h-12 w-12 items-center justify-center rounded-full bg-primary/10">
+                        <Users className="h-6 w-6 text-primary" />
+                      </div>
                     </div>
                   </CardContent>
                 </Card>
 
-                <Card className="border border-border shadow-sm bg-white">
-                  <CardContent className="pt-6">
+                <Card className="bg-card border-2 border-border/60 hover:border-border hover:shadow-lg transition-all duration-200 hover:scale-[1.02]">
+                  <CardContent className="p-6">
                     <div className="flex items-center justify-between">
-                      <div>
-                        <Label className="text-xs font-medium text-muted-foreground">New Leads</Label>
-                        <div className="flex items-center gap-2 mt-1">
-                          <UserPlus className="h-4 w-4 text-muted-foreground" />
-                          <p className="text-2xl font-bold">{overview.newLeads}</p>
-                        </div>
+                      <div className="space-y-2">
+                        <p className="text-sm font-medium text-muted-foreground">New Leads</p>
+                        <p className="text-2xl font-bold text-primary">{overview.newLeads}</p>
                       </div>
-                      <Badge variant="secondary" className="text-xs">
-                        THIS WEEK
-                      </Badge>
+                      <div className="flex h-12 w-12 items-center justify-center rounded-full bg-secondary/20">
+                        <UserPlus className="h-6 w-6 text-secondary-foreground" />
+                      </div>
                     </div>
                   </CardContent>
                 </Card>
 
-                <Card className="border border-border shadow-sm bg-white">
-                  <CardContent className="pt-6">
+                <Card className="bg-card border-2 border-border/60 hover:border-border hover:shadow-lg transition-all duration-200 hover:scale-[1.02]">
+                  <CardContent className="p-6">
                     <div className="flex items-center justify-between">
-                      <div>
-                        <Label className="text-xs font-medium text-muted-foreground">Hot Prospects</Label>
-                        <div className="flex items-center gap-2 mt-1">
-                          <Target className="h-4 w-4 text-muted-foreground" />
-                          <p className="text-2xl font-bold">{overview.hotLeads}</p>
-                        </div>
+                      <div className="space-y-2">
+                        <p className="text-sm font-medium text-muted-foreground">Hot Prospects</p>
+                        <p className="text-2xl font-bold text-primary">{overview.hotLeads}</p>
                       </div>
-                      <Badge variant="destructive" className="text-xs">
-                        HIGH PRIORITY
-                      </Badge>
+                      <div className="flex h-12 w-12 items-center justify-center rounded-full bg-destructive/20">
+                        <Target className="h-6 w-6 text-destructive" />
+                      </div>
                     </div>
                   </CardContent>
                 </Card>
 
-                <Card className="border border-border shadow-sm bg-white">
-                  <CardContent className="pt-6">
+                <Card className="bg-card border-2 border-border/60 hover:border-border hover:shadow-lg transition-all duration-200 hover:scale-[1.02]">
+                  <CardContent className="p-6">
                     <div className="flex items-center justify-between">
-                      <div>
-                        <Label className="text-xs font-medium text-muted-foreground">Pipeline Value</Label>
-                        <div className="flex items-center gap-2 mt-1">
-                          <DollarSign className="h-4 w-4 text-muted-foreground" />
-                          <p className="text-2xl font-bold">{formatCurrency(overview.totalValue)}</p>
-                        </div>
+                      <div className="space-y-2">
+                        <p className="text-sm font-medium text-muted-foreground">Pipeline Value</p>
+                        <p className="text-2xl font-bold text-primary">{formatCurrency(overview.totalValue)}</p>
                       </div>
-                      <Badge variant="outline" className="text-xs">
-                        TOTAL
-                      </Badge>
+                      <div className="flex h-12 w-12 items-center justify-center rounded-full bg-accent/20">
+                        <DollarSign className="h-6 w-6 text-accent-foreground" />
+                      </div>
                     </div>
                   </CardContent>
                 </Card>
@@ -464,9 +452,9 @@ export default function Leads() {
 
               {/* Performance Alerts */}
               {overview.followUpsDue > 0 && (
-                <Alert className="border-orange-200 bg-orange-50">
-                  <AlertTriangle className="h-4 w-4 text-orange-600" />
-                  <AlertDescription className="text-orange-800">
+                <Alert className="border-l-4 border-l-destructive bg-destructive/10">
+                  <AlertTriangle className="h-4 w-4 text-destructive" />
+                  <AlertDescription className="text-destructive">
                     You have {overview.followUpsDue} leads requiring follow-up attention.
                   </AlertDescription>
                 </Alert>
