@@ -29,7 +29,8 @@ import {
   Download,
   RefreshCw,
   Camera,
-  Shield
+  Shield,
+  LayoutDashboard
 } from "lucide-react"
 import { useAuth } from "@/components/auth/AuthProvider"
 import { ThemeToggle } from "@/components/ThemeToggle"
@@ -239,8 +240,8 @@ export function HorizontalNav() {
                     : 'text-foreground/70 hover:text-blue-600'
                 }`}
               >
-                <Home className="h-3 w-3" />
-                Home
+                <LayoutDashboard className="h-3 w-3" />
+                Dashboard
                 <ChevronDown className="h-2 w-2" />
               </Button>
             </DropdownMenuTrigger>
