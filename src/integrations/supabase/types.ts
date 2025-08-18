@@ -3383,6 +3383,113 @@ export type Database = {
         }
         Relationships: []
       }
+      sensitive_data_access_logs: {
+        Row: {
+          access_reason: string | null
+          admin_user_id: string
+          created_at: string
+          data_type: string
+          fields_accessed: string[] | null
+          id: string
+          ip_address: unknown | null
+          permission_id: string | null
+          session_id: string | null
+          target_user_id: string
+          user_agent: string | null
+        }
+        Insert: {
+          access_reason?: string | null
+          admin_user_id: string
+          created_at?: string
+          data_type: string
+          fields_accessed?: string[] | null
+          id?: string
+          ip_address?: unknown | null
+          permission_id?: string | null
+          session_id?: string | null
+          target_user_id: string
+          user_agent?: string | null
+        }
+        Update: {
+          access_reason?: string | null
+          admin_user_id?: string
+          created_at?: string
+          data_type?: string
+          fields_accessed?: string[] | null
+          id?: string
+          ip_address?: unknown | null
+          permission_id?: string | null
+          session_id?: string | null
+          target_user_id?: string
+          user_agent?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "sensitive_data_access_logs_permission_id_fkey"
+            columns: ["permission_id"]
+            isOneToOne: false
+            referencedRelation: "sensitive_data_permissions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      sensitive_data_permissions: {
+        Row: {
+          access_count: number | null
+          admin_user_id: string
+          business_justification: string
+          created_at: string
+          expires_at: string | null
+          granted_at: string
+          granted_by: string
+          id: string
+          is_active: boolean
+          last_accessed: string | null
+          permission_type: string
+          revoke_reason: string | null
+          revoked_at: string | null
+          revoked_by: string | null
+          target_user_id: string
+          updated_at: string
+        }
+        Insert: {
+          access_count?: number | null
+          admin_user_id: string
+          business_justification: string
+          created_at?: string
+          expires_at?: string | null
+          granted_at?: string
+          granted_by: string
+          id?: string
+          is_active?: boolean
+          last_accessed?: string | null
+          permission_type: string
+          revoke_reason?: string | null
+          revoked_at?: string | null
+          revoked_by?: string | null
+          target_user_id: string
+          updated_at?: string
+        }
+        Update: {
+          access_count?: number | null
+          admin_user_id?: string
+          business_justification?: string
+          created_at?: string
+          expires_at?: string | null
+          granted_at?: string
+          granted_by?: string
+          id?: string
+          is_active?: boolean
+          last_accessed?: string | null
+          permission_type?: string
+          revoke_reason?: string | null
+          revoked_at?: string | null
+          revoked_by?: string | null
+          target_user_id?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       session_activity_log: {
         Row: {
           action_type: string | null
@@ -4325,6 +4432,16 @@ export type Database = {
           verified_at: string
         }[]
       }
+      grant_sensitive_data_permission: {
+        Args: {
+          p_admin_user_id: string
+          p_business_justification: string
+          p_expires_hours?: number
+          p_permission_type: string
+          p_target_user_id: string
+        }
+        Returns: string
+      }
       has_role: {
         Args:
           | {
@@ -4332,6 +4449,14 @@ export type Database = {
               user_id?: string
             }
           | { required_role: string; user_id?: string }
+        Returns: boolean
+      }
+      has_sensitive_data_permission: {
+        Args: {
+          p_admin_user_id: string
+          p_permission_type: string
+          p_target_user_id: string
+        }
         Returns: boolean
       }
       initiate_gdpr_data_deletion: {
@@ -4375,6 +4500,16 @@ export type Database = {
           p_severity?: string
           p_user_agent?: string
           p_user_id?: string
+        }
+        Returns: string
+      }
+      log_sensitive_data_access: {
+        Args: {
+          p_access_reason?: string
+          p_admin_user_id: string
+          p_data_type: string
+          p_fields_accessed: string[]
+          p_target_user_id: string
         }
         Returns: string
       }
