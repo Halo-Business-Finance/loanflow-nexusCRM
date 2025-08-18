@@ -153,90 +153,104 @@ export default function Pipeline() {
       </div>
 
       {/* Pipeline Overview Metrics */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-6">
-        <Card className="bg-card border-0 shadow-lg hover-scale">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        <Card className="bg-card border hover:shadow-lg transition-all duration-200 hover:scale-[1.02]">
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
-              <div>
+              <div className="space-y-2">
                 <p className="text-sm font-medium text-muted-foreground">Total Opportunities</p>
-                <p className="text-2xl font-bold text-foreground">{overview.totalOpportunities}</p>
+                <p className="text-3xl font-bold text-primary">{overview.totalOpportunities}</p>
               </div>
-              <Target className="w-8 h-8 text-blue-600" />
+              <div className="flex h-12 w-12 items-center justify-center rounded-full bg-primary/10">
+                <Target className="h-6 w-6 text-primary" />
+              </div>
             </div>
           </CardContent>
         </Card>
 
-        <Card className="bg-card border-0 shadow-lg hover-scale">
+        <Card className="bg-card border hover:shadow-lg transition-all duration-200 hover:scale-[1.02]">
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
-              <div>
+              <div className="space-y-2">
                 <p className="text-sm font-medium text-muted-foreground">Active Deals</p>
-                <p className="text-2xl font-bold text-foreground">{overview.activeDeals}</p>
+                <p className="text-3xl font-bold text-primary">{overview.activeDeals}</p>
               </div>
-              <Activity className="w-8 h-8 text-green-600" />
+              <div className="flex h-12 w-12 items-center justify-center rounded-full bg-secondary/20">
+                <Activity className="h-6 w-6 text-secondary-foreground" />
+              </div>
             </div>
           </CardContent>
         </Card>
 
-        <Card className="bg-card border-0 shadow-lg hover-scale">
+        <Card className="bg-card border hover:shadow-lg transition-all duration-200 hover:scale-[1.02]">
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
-              <div>
+              <div className="space-y-2">
                 <p className="text-sm font-medium text-muted-foreground">Pipeline Value</p>
-                <p className="text-2xl font-bold text-foreground">{formatCurrency(overview.totalValue)}</p>
+                <p className="text-3xl font-bold text-primary">{formatCurrency(overview.totalValue)}</p>
               </div>
-              <DollarSign className="w-8 h-8 text-purple-600" />
+              <div className="flex h-12 w-12 items-center justify-center rounded-full bg-accent/20">
+                <DollarSign className="h-6 w-6 text-accent-foreground" />
+              </div>
             </div>
           </CardContent>
         </Card>
 
-        <Card className="bg-card border-0 shadow-lg hover-scale">
+        <Card className="bg-card border hover:shadow-lg transition-all duration-200 hover:scale-[1.02]">
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
-              <div>
+              <div className="space-y-2">
                 <p className="text-sm font-medium text-muted-foreground">Avg Cycle Time</p>
-                <p className="text-2xl font-bold text-foreground">{overview.avgCycleTime}d</p>
+                <p className="text-3xl font-bold text-primary">{overview.avgCycleTime}d</p>
               </div>
-              <Timer className="w-8 h-8 text-orange-600" />
+              <div className="flex h-12 w-12 items-center justify-center rounded-full bg-muted/20">
+                <Timer className="h-6 w-6 text-muted-foreground" />
+              </div>
             </div>
           </CardContent>
         </Card>
       </div>
 
       {/* Additional Metrics Row */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
-        <Card className="bg-card border-0 shadow-lg hover-scale">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+        <Card className="bg-card border hover:shadow-lg transition-all duration-200 hover:scale-[1.02]">
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
-              <div>
+              <div className="space-y-2">
                 <p className="text-sm font-medium text-muted-foreground">Conversion Rate</p>
-                <p className="text-2xl font-bold text-foreground">{overview.conversionRate.toFixed(1)}%</p>
+                <p className="text-3xl font-bold text-primary">{overview.conversionRate.toFixed(1)}%</p>
               </div>
-              <TrendingUp className="w-8 h-8 text-green-600" />
+              <div className="flex h-12 w-12 items-center justify-center rounded-full bg-primary/10">
+                <TrendingUp className="h-6 w-6 text-primary" />
+              </div>
             </div>
           </CardContent>
         </Card>
 
-        <Card className="bg-card border-0 shadow-lg hover-scale">
+        <Card className="bg-card border hover:shadow-lg transition-all duration-200 hover:scale-[1.02]">
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
-              <div>
+              <div className="space-y-2">
                 <p className="text-sm font-medium text-muted-foreground">Avg Deal Size</p>
-                <p className="text-2xl font-bold text-foreground">{formatCurrency(overview.avgDealSize)}</p>
+                <p className="text-3xl font-bold text-primary">{formatCurrency(overview.avgDealSize)}</p>
               </div>
-              <BarChart3 className="w-8 h-8 text-blue-600" />
+              <div className="flex h-12 w-12 items-center justify-center rounded-full bg-secondary/20">
+                <BarChart3 className="h-6 w-6 text-secondary-foreground" />
+              </div>
             </div>
           </CardContent>
         </Card>
 
-        <Card className="bg-card border-0 shadow-lg hover-scale">
+        <Card className="bg-card border hover:shadow-lg transition-all duration-200 hover:scale-[1.02]">
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
-              <div>
+              <div className="space-y-2">
                 <p className="text-sm font-medium text-muted-foreground">Closed Deals</p>
-                <p className="text-2xl font-bold text-foreground">{overview.closedDeals}</p>
+                <p className="text-3xl font-bold text-primary">{overview.closedDeals}</p>
               </div>
-              <CheckCircle className="w-8 h-8 text-purple-600" />
+              <div className="flex h-12 w-12 items-center justify-center rounded-full bg-accent/20">
+                <CheckCircle className="h-6 w-6 text-accent-foreground" />
+              </div>
             </div>
           </CardContent>
         </Card>
@@ -244,9 +258,9 @@ export default function Pipeline() {
 
       {/* Performance Alerts */}
       {overview.conversionRate < 20 && (
-        <Alert className="border-l-4 border-l-yellow-500 bg-yellow-50 dark:bg-yellow-900/20">
-          <AlertTriangle className="h-4 w-4 text-yellow-600" />
-          <AlertDescription className="text-yellow-800 dark:text-yellow-200">
+        <Alert className="border-l-4 border-l-destructive bg-destructive/10 mb-6">
+          <AlertTriangle className="h-4 w-4 text-destructive" />
+          <AlertDescription className="text-destructive">
             Pipeline conversion rate is below target ({overview.conversionRate.toFixed(1)}%). Consider reviewing qualification criteria and follow-up processes.
           </AlertDescription>
         </Alert>
@@ -272,10 +286,10 @@ export default function Pipeline() {
         </TabsList>
 
         <TabsContent value="visual" className="space-y-6">
-          <Card className="bg-card border-0 shadow-lg">
+          <Card className="bg-card border">
             <CardHeader className="pb-4">
               <CardTitle className="flex items-center gap-2 text-lg font-semibold text-foreground">
-                <GitBranch className="h-5 w-5 text-blue-600" />
+                <GitBranch className="h-5 w-5 text-primary" />
                 Interactive Pipeline View
               </CardTitle>
               <CardDescription className="text-muted-foreground">
@@ -290,10 +304,10 @@ export default function Pipeline() {
 
         <TabsContent value="analytics" className="space-y-6">
           <div className="grid gap-6 md:grid-cols-2">
-            <Card className="bg-card border-0 shadow-lg">
+            <Card className="bg-card border">
               <CardHeader className="pb-4">
                 <CardTitle className="flex items-center gap-2 text-lg font-semibold text-foreground">
-                  <TrendingUp className="h-5 w-5 text-green-600" />
+                  <TrendingUp className="h-5 w-5 text-primary" />
                   Conversion Metrics
                 </CardTitle>
                 <CardDescription className="text-muted-foreground">
@@ -302,26 +316,26 @@ export default function Pipeline() {
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
-                  <div className="flex justify-between items-center p-3 rounded-lg bg-muted/30">
+                  <div className="flex justify-between items-center p-4 rounded-lg bg-muted/20 border">
                     <span className="text-sm font-medium text-muted-foreground">Overall Conversion</span>
-                    <span className="font-semibold text-foreground">{overview.conversionRate.toFixed(1)}%</span>
+                    <span className="font-bold text-primary">{overview.conversionRate.toFixed(1)}%</span>
                   </div>
-                  <div className="flex justify-between items-center p-3 rounded-lg bg-muted/30">
+                  <div className="flex justify-between items-center p-4 rounded-lg bg-muted/20 border">
                     <span className="text-sm font-medium text-muted-foreground">Average Deal Size</span>
-                    <span className="font-semibold text-foreground">{formatCurrency(overview.avgDealSize)}</span>
+                    <span className="font-bold text-primary">{formatCurrency(overview.avgDealSize)}</span>
                   </div>
-                  <div className="flex justify-between items-center p-3 rounded-lg bg-muted/30">
+                  <div className="flex justify-between items-center p-4 rounded-lg bg-muted/20 border">
                     <span className="text-sm font-medium text-muted-foreground">Win Rate</span>
-                    <span className="font-semibold text-green-600">68%</span>
+                    <span className="font-bold text-secondary-foreground">68%</span>
                   </div>
                 </div>
               </CardContent>
             </Card>
 
-            <Card className="bg-card border-0 shadow-lg">
+            <Card className="bg-card border">
               <CardHeader className="pb-4">
                 <CardTitle className="flex items-center gap-2 text-lg font-semibold text-foreground">
-                  <Clock className="h-5 w-5 text-orange-600" />
+                  <Clock className="h-5 w-5 text-accent-foreground" />
                   Velocity Metrics
                 </CardTitle>
                 <CardDescription className="text-muted-foreground">
@@ -330,17 +344,17 @@ export default function Pipeline() {
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
-                  <div className="flex justify-between items-center p-3 rounded-lg bg-muted/30">
+                  <div className="flex justify-between items-center p-4 rounded-lg bg-muted/20 border">
                     <span className="text-sm font-medium text-muted-foreground">Avg Sales Cycle</span>
-                    <span className="font-semibold text-foreground">{overview.avgCycleTime} days</span>
+                    <span className="font-bold text-primary">{overview.avgCycleTime} days</span>
                   </div>
-                  <div className="flex justify-between items-center p-3 rounded-lg bg-muted/30">
+                  <div className="flex justify-between items-center p-4 rounded-lg bg-muted/20 border">
                     <span className="text-sm font-medium text-muted-foreground">Stage Progression Rate</span>
-                    <span className="font-semibold text-foreground">85%</span>
+                    <span className="font-bold text-primary">85%</span>
                   </div>
-                  <div className="flex justify-between items-center p-3 rounded-lg bg-muted/30">
+                  <div className="flex justify-between items-center p-4 rounded-lg bg-muted/20 border">
                     <span className="text-sm font-medium text-muted-foreground">Time to Close</span>
-                    <span className="font-semibold text-blue-600">32 days</span>
+                    <span className="font-bold text-accent-foreground">32 days</span>
                   </div>
                 </div>
               </CardContent>
