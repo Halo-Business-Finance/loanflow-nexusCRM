@@ -21,7 +21,7 @@ import { SecurityProvider as EnhancedSecurityProvider } from "@/components/secur
 import { RouteErrorBoundary } from "@/components/RouteErrorBoundary";
 import Index from "./pages/Index";
 import Overview from "./pages/Overview";
-import QuickActions from "./pages/QuickActions";
+
 import Leads from "./pages/Leads";
 import NewLead from "./pages/NewLead";
 import LeadStats from "./pages/LeadStats";
@@ -107,7 +107,7 @@ function AuthenticatedApp() {
           <>
             <Route path="/" element={<HorizontalLayout><Index /></HorizontalLayout>} errorElement={<RouteErrorBoundary />} />
             <Route path="/overview" element={<HorizontalLayout><Overview /></HorizontalLayout>} errorElement={<RouteErrorBoundary />} />
-            <Route path="/quick-actions" element={<HorizontalLayout><QuickActions /></HorizontalLayout>} errorElement={<RouteErrorBoundary />} />
+            
             
             <Route path="/leads" element={<HorizontalLayout><Leads /></HorizontalLayout>} errorElement={<RouteErrorBoundary />} />
             <Route path="/leads/new" element={<HorizontalLayout><NewLead /></HorizontalLayout>} errorElement={<RouteErrorBoundary />} />
