@@ -36,7 +36,6 @@ import { ThemeToggle } from "@/components/ThemeToggle"
 
 const homeItems = [
   { name: "Dashboard", path: "/", icon: Home },
-  { name: "Overview", path: "/overview", icon: BarChart3 },
 ]
 
 const leadsItems = [
