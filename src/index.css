@@ -12,8 +12,8 @@ All colors MUST be HSL.
     --background: 0 0% 100%;
     --foreground: 0 0% 0%;
 
-    --card: 0 0% 100%;
-    --card-foreground: 0 0% 0%;
+    --card: 212 90% 95%;
+    --card-foreground: 220 91% 15%;
 
     --popover: 0 0% 100%;
     --popover-foreground: 0 0% 0%;
@@ -82,8 +82,8 @@ All colors MUST be HSL.
     --background: 220 25% 8%;
     --foreground: 220 10% 95%;
 
-    --card: 220 23% 12%;
-    --card-foreground: 220 10% 95%;
+    --card: 212 80% 25%;
+    --card-foreground: 0 0% 100%;
 
     --popover: 220 23% 12%;
     --popover-foreground: 220 10% 95%;
@@ -229,14 +229,14 @@ All colors MUST be HSL.
     @apply text-sm cursor-default;
   }
 
-  /* Enhanced card visibility */
+  /* Enhanced card visibility with blue background */
   .card, [data-card="true"], .bg-card {
-    @apply border border-border shadow-sm bg-white;
+    @apply border border-border shadow-sm bg-card;
   }
 
-  /* Widget visibility fixes */
+  /* Widget visibility fixes with blue background */
   .widget, .metric-card, .stats-card {
-    @apply border border-border shadow-sm bg-white rounded-lg;
+    @apply border border-border shadow-sm bg-card rounded-lg;
   }
 
   /* Dropdown menu styling for proper visibility */
