@@ -9,6 +9,7 @@ import { Loader2 } from "lucide-react"
 import { Lead, ContactEntity, LOAN_TYPES } from "@/types/lead"
 import { useRoleBasedAccess } from "@/hooks/useRoleBasedAccess"
 import { useSecureForm } from "@/hooks/useSecureForm"
+import { toast } from "sonner"
 
 interface LeadFormProps {
   lead?: Lead | null
@@ -44,13 +45,31 @@ export function LeadForm({ lead, onSubmit, onCancel, isSubmitting = false }: Lea
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     
-    // Basic client-side validation for required fields
-    if (!formData.name || !formData.email) {
-      console.warn('Name and email are required')
-      return
+    try {
+      // Use secure form validation
+      const validationResult = await validateFormData(formData)
+      
+      if (!validationResult.isValid) {
+        // Display validation errors securely
+        const errorMessages = Object.entries(validationResult.errors)
+          .map(([field, errors]) => `${field}: ${errors.join(', ')}`)
+          .join('\n')
+        
+        toast.error('Form validation failed', {
+          description: 'Please check your input and try again.'
+        })
+        console.warn('Validation errors:', errorMessages)
+        return
+      }
+      
+      // Submit sanitized data with proper typing
+      await onSubmit(validationResult.sanitizedData as ContactEntity)
+    } catch (error) {
+      console.error('Form submission error:', error)
+      toast.error('Submission failed', {
+        description: 'Please try again or contact support.'
+      })
     }
-    
-    await onSubmit(formData)
   }
 
   const handleInputChange = (field: keyof ContactEntity, value: any) => {

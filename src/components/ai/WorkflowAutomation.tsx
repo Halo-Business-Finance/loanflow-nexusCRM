@@ -66,38 +66,39 @@ const defaultAutomations: Automation[] = [
 ]
 
 export function WorkflowAutomation() {
-  // Load webhook URL from localStorage
+  // Load webhook URL from secure storage
   const [webhookUrl, setWebhookUrl] = useState(() => {
     try {
-      return localStorage.getItem(WEBHOOK_STORAGE_KEY) || ""
+      // Use session storage for temporary data, not localStorage for security
+      return sessionStorage.getItem(WEBHOOK_STORAGE_KEY) || ""
     } catch {
       return ""
     }
   })
 
-  // Load automations from localStorage
+  // Load automations from secure storage (session only)
   const [automations, setAutomations] = useState<Automation[]>(() => {
     try {
-      const stored = localStorage.getItem(AUTOMATION_STORAGE_KEY)
+      const stored = sessionStorage.getItem(AUTOMATION_STORAGE_KEY)
       return stored ? JSON.parse(stored) : defaultAutomations
     } catch {
       return defaultAutomations
     }
   })
 
-  // Save webhook URL to localStorage when it changes
+  // Save webhook URL to session storage when it changes
   useEffect(() => {
     try {
-      localStorage.setItem(WEBHOOK_STORAGE_KEY, webhookUrl)
+      sessionStorage.setItem(WEBHOOK_STORAGE_KEY, webhookUrl)
     } catch (error) {
       console.error("Error saving webhook URL:", error)
     }
   }, [webhookUrl])
 
-  // Save automations to localStorage when they change
+  // Save automations to session storage when they change
   useEffect(() => {
     try {
-      localStorage.setItem(AUTOMATION_STORAGE_KEY, JSON.stringify(automations))
+      sessionStorage.setItem(AUTOMATION_STORAGE_KEY, JSON.stringify(automations))
     } catch (error) {
       console.error("Error saving automation rules:", error)
     }

@@ -1,253 +1,234 @@
 /**
- * Error message sanitizer to prevent information leakage in production
+ * Error message sanitization utility to prevent sensitive information leakage
+ * and ensure consistent, secure error handling across the application
  */
 
-export interface SanitizedError {
-  message: string;
-  code?: string;
-  details?: any;
-  timestamp: string;
-}
-
-export interface ErrorSanitizationConfig {
-  isDevelopment?: boolean;
-  logOriginalErrors?: boolean;
-  includeStackTrace?: boolean;
-  customMessages?: Record<string, string>;
+interface SanitizedError {
+  userMessage: string;
+  logMessage: string;
+  errorCode: string;
+  severity: 'low' | 'medium' | 'high' | 'critical';
 }
 
 class ErrorSanitizer {
-  private config: ErrorSanitizationConfig;
-  private genericMessages = {
-    auth: 'Authentication failed. Please try again.',
-    database: 'A data operation failed. Please try again.',
-    network: 'Network error occurred. Please check your connection.',
-    validation: 'Invalid input provided. Please check your data.',
-    permission: 'You do not have permission to perform this action.',
-    rate_limit: 'Too many requests. Please wait before trying again.',
-    session: 'Session expired. Please log in again.',
-    server: 'An unexpected error occurred. Please try again later.',
-    unknown: 'An error occurred. Please try again.'
+  private static instance: ErrorSanitizer;
+  
+  // Patterns that indicate sensitive information
+  private sensitivePatterns = [
+    /password/gi,
+    /token/gi,
+    /secret/gi,
+    /key/gi,
+    /credential/gi,
+    /session/gi,
+    /auth/gi,
+    /api[_-]?key/gi,
+    /bearer/gi,
+    /jwt/gi,
+    /\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b/g, // Email addresses
+    /\b\d{3}[.-]?\d{3}[.-]?\d{4}\b/g, // Phone numbers
+    /\b\d{4}[.-]?\d{4}[.-]?\d{4}[.-]?\d{4}\b/g, // Credit card numbers
+    /\b\d{3}-\d{2}-\d{4}\b/g, // SSN
+  ];
+
+  // Common error messages that should be sanitized
+  private errorMappings: Record<string, { userMessage: string; severity: SanitizedError['severity'] }> = {
+    'authentication failed': {
+      userMessage: 'Authentication failed. Please check your credentials and try again.',
+      severity: 'medium'
+    },
+    'access denied': {
+      userMessage: 'You do not have permission to perform this action.',
+      severity: 'medium'
+    },
+    'database connection': {
+      userMessage: 'Service temporarily unavailable. Please try again later.',
+      severity: 'high'
+    },
+    'rate limit': {
+      userMessage: 'Too many requests. Please wait a moment and try again.',
+      severity: 'low'
+    },
+    'validation failed': {
+      userMessage: 'Please check your input and try again.',
+      severity: 'low'
+    },
+    'network error': {
+      userMessage: 'Connection error. Please check your internet connection.',
+      severity: 'medium'
+    },
+    'unauthorized': {
+      userMessage: 'Session expired. Please sign in again.',
+      severity: 'medium'
+    },
+    'forbidden': {
+      userMessage: 'Access to this resource is not allowed.',
+      severity: 'medium'
+    },
+    'not found': {
+      userMessage: 'The requested resource was not found.',
+      severity: 'low'
+    },
+    'server error': {
+      userMessage: 'An unexpected error occurred. Please try again later.',
+      severity: 'high'
+    }
   };
 
-  constructor(config: ErrorSanitizationConfig = {}) {
-    this.config = {
-      isDevelopment: !import.meta.env.PROD,
-      logOriginalErrors: true,
-      includeStackTrace: false,
-      ...config
-    };
+  private constructor() {}
+
+  static getInstance(): ErrorSanitizer {
+    if (!ErrorSanitizer.instance) {
+      ErrorSanitizer.instance = new ErrorSanitizer();
+    }
+    return ErrorSanitizer.instance;
   }
 
   /**
-   * Sanitize error for client consumption
+   * Sanitize an error for safe display to users
    */
-  sanitizeError(error: any, context?: string): SanitizedError {
-    const timestamp = new Date().toISOString();
+  sanitizeError(error: Error | string | unknown): SanitizedError {
+    const errorString = this.extractErrorString(error);
+    const lowercaseError = errorString.toLowerCase();
     
-    // Log original error for debugging (in development or if enabled)
-    if (this.config.isDevelopment || this.config.logOriginalErrors) {
-      console.error(`[${context || 'Unknown'}] Original error:`, error);
-    }
-
-    // In production, return generic messages
-    if (!this.config.isDevelopment) {
-      return {
-        message: this.getGenericMessage(error),
-        code: this.extractSafeErrorCode(error),
-        timestamp
-      };
-    }
-
-    // In development, return more detailed information
-    return {
-      message: error?.message || 'Unknown error',
-      code: error?.code || error?.status || 'UNKNOWN',
-      details: this.config.includeStackTrace ? {
-        stack: error?.stack,
-        context
-      } : undefined,
-      timestamp
-    };
-  }
-
-  /**
-   * Get appropriate generic message based on error type
-   */
-  private getGenericMessage(error: any): string {
-    const errorString = (error?.message || error?.toString() || '').toLowerCase();
-    const errorCode = (error?.code || error?.status || '').toString().toLowerCase();
-
-    // Custom messages from config
-    if (this.config.customMessages) {
-      for (const [key, message] of Object.entries(this.config.customMessages)) {
-        if (errorString.includes(key.toLowerCase()) || errorCode.includes(key.toLowerCase())) {
-          return message;
-        }
+    // Check for known error patterns
+    for (const [pattern, mapping] of Object.entries(this.errorMappings)) {
+      if (lowercaseError.includes(pattern)) {
+        return {
+          userMessage: mapping.userMessage,
+          logMessage: this.sanitizeForLogging(errorString),
+          errorCode: this.generateErrorCode(pattern),
+          severity: mapping.severity
+        };
       }
     }
 
-    // Authentication errors
-    if (
-      errorString.includes('auth') || 
-      errorString.includes('unauthorized') ||
-      errorString.includes('forbidden') ||
-      errorCode.includes('401') ||
-      errorCode.includes('403')
-    ) {
-      return this.genericMessages.auth;
-    }
-
-    // Database errors
-    if (
-      errorString.includes('database') ||
-      errorString.includes('sql') ||
-      errorString.includes('constraint') ||
-      errorString.includes('duplicate') ||
-      errorCode.includes('23')
-    ) {
-      return this.genericMessages.database;
-    }
-
-    // Network errors
-    if (
-      errorString.includes('network') ||
-      errorString.includes('connection') ||
-      errorString.includes('timeout') ||
-      errorCode.includes('500') ||
-      errorCode.includes('502') ||
-      errorCode.includes('503')
-    ) {
-      return this.genericMessages.network;
-    }
-
-    // Validation errors
-    if (
-      errorString.includes('validation') ||
-      errorString.includes('invalid') ||
-      errorString.includes('required') ||
-      errorCode.includes('400') ||
-      errorCode.includes('422')
-    ) {
-      return this.genericMessages.validation;
-    }
-
-    // Permission errors
-    if (
-      errorString.includes('permission') ||
-      errorString.includes('access denied') ||
-      errorString.includes('not allowed')
-    ) {
-      return this.genericMessages.permission;
-    }
-
-    // Rate limiting
-    if (
-      errorString.includes('rate limit') ||
-      errorString.includes('too many') ||
-      errorCode.includes('429')
-    ) {
-      return this.genericMessages.rate_limit;
-    }
-
-    // Session errors
-    if (
-      errorString.includes('session') ||
-      errorString.includes('expired') ||
-      errorString.includes('invalid token')
-    ) {
-      return this.genericMessages.session;
-    }
-
-    // Server errors
-    if (
-      errorCode.includes('5') ||
-      errorString.includes('server') ||
-      errorString.includes('internal')
-    ) {
-      return this.genericMessages.server;
-    }
-
-    return this.genericMessages.unknown;
+    // Default sanitization for unknown errors
+    return {
+      userMessage: 'An unexpected error occurred. Please try again later.',
+      logMessage: this.sanitizeForLogging(errorString),
+      errorCode: this.generateErrorCode('unknown'),
+      severity: 'medium'
+    };
   }
 
   /**
-   * Extract safe error codes that don't expose sensitive information
+   * Sanitize error message for safe logging (removes sensitive data but keeps context)
    */
-  private extractSafeErrorCode(error: any): string | undefined {
-    const code = error?.code || error?.status;
-    if (!code) return undefined;
-
-    const codeString = code.toString();
-
-    // Only return standard HTTP status codes or predefined safe codes
-    const safeCodePatterns = [
-      /^[1-5]\d{2}$/, // HTTP status codes
-      /^[A-Z_]+$/, // All caps error codes
-      /^E\d+$/ // Error codes starting with E
-    ];
-
-    if (safeCodePatterns.some(pattern => pattern.test(codeString))) {
-      return codeString;
-    }
-
-    return undefined;
-  }
-
-  /**
-   * Sanitize multiple errors
-   */
-  sanitizeErrors(errors: any[], context?: string): SanitizedError[] {
-    return errors.map(error => this.sanitizeError(error, context));
-  }
-
-  /**
-   * Check if error should be logged for security monitoring
-   */
-  shouldLogForSecurity(error: any): boolean {
-    const errorString = (error?.message || error?.toString() || '').toLowerCase();
+  private sanitizeForLogging(errorString: string): string {
+    let sanitized = errorString;
     
-    const securityPatterns = [
-      'injection', 'xss', 'csrf', 'unauthorized access',
-      'privilege escalation', 'malicious', 'attack',
-      'brute force', 'suspicious activity'
-    ];
+    // Replace sensitive patterns with placeholders
+    this.sensitivePatterns.forEach((pattern) => {
+      sanitized = sanitized.replace(pattern, '[REDACTED]');
+    });
 
-    return securityPatterns.some(pattern => 
-      errorString.includes(pattern.toLowerCase())
-    );
+    // Truncate very long messages
+    if (sanitized.length > 500) {
+      sanitized = sanitized.substring(0, 500) + '...[TRUNCATED]';
+    }
+
+    return sanitized;
+  }
+
+  /**
+   * Extract error string from various error types
+   */
+  private extractErrorString(error: unknown): string {
+    if (error instanceof Error) {
+      return error.message || error.toString();
+    }
+    
+    if (typeof error === 'string') {
+      return error;
+    }
+    
+    if (error && typeof error === 'object') {
+      // Handle common error object structures
+      const errorObj = error as any;
+      return errorObj.message || errorObj.error || errorObj.details || JSON.stringify(error);
+    }
+    
+    return String(error);
+  }
+
+  /**
+   * Generate a consistent error code for tracking
+   */
+  private generateErrorCode(pattern: string): string {
+    const timestamp = Math.floor(Date.now() / 1000);
+    const hash = this.simpleHash(pattern);
+    return `ERR_${hash}_${timestamp}`;
+  }
+
+  /**
+   * Simple hash function for error codes
+   */
+  private simpleHash(str: string): string {
+    let hash = 0;
+    for (let i = 0; i < str.length; i++) {
+      const char = str.charCodeAt(i);
+      hash = ((hash << 5) - hash) + char;
+      hash = hash & hash; // Convert to 32-bit integer
+    }
+    return Math.abs(hash).toString(16).substring(0, 6).toUpperCase();
+  }
+
+  /**
+   * Check if an error message contains sensitive information
+   */
+  containsSensitiveInfo(message: string): boolean {
+    return this.sensitivePatterns.some(pattern => pattern.test(message));
+  }
+
+  /**
+   * Create a safe error for API responses
+   */
+  createSafeApiError(error: unknown, defaultMessage = 'An error occurred'): {
+    error: string;
+    code: string;
+  } {
+    const sanitized = this.sanitizeError(error);
+    return {
+      error: sanitized.userMessage || defaultMessage,
+      code: sanitized.errorCode
+    };
   }
 }
 
-// Global error sanitizer instance
-export const errorSanitizer = new ErrorSanitizer();
+// Export singleton instance
+export const errorSanitizer = ErrorSanitizer.getInstance();
 
-/**
- * Convenience function for sanitizing errors
- */
-export const sanitizeError = (error: any, context?: string): SanitizedError => {
-  return errorSanitizer.sanitizeError(error, context);
+// Utility function for common use cases
+export const sanitizeError = (error: unknown): SanitizedError => {
+  return errorSanitizer.sanitizeError(error);
 };
 
-/**
- * Handle and sanitize errors with optional toast notification
- */
+// Helper function for handling sanitized errors with callback
 export const handleSanitizedError = (
-  error: any, 
-  context?: string,
-  showToast?: (message: string) => void
+  error: unknown, 
+  context?: string, 
+  callback?: (message: string) => void
 ): SanitizedError => {
-  const sanitized = errorSanitizer.sanitizeError(error, context);
+  const sanitized = errorSanitizer.sanitizeError(error);
   
-  // Log security-relevant errors
-  if (errorSanitizer.shouldLogForSecurity(error)) {
-    console.warn(`[SECURITY] ${context || 'Unknown'}: Potential security-related error detected`);
+  // Log full error details for debugging (sanitized)
+  console.error(`Error in ${context || 'unknown context'}:`, sanitized.logMessage);
+  
+  // Call callback with user-safe message if provided
+  if (callback) {
+    callback(sanitized.userMessage);
   }
-
-  // Show toast if provided
-  if (showToast) {
-    showToast(sanitized.message);
-  }
-
+  
   return sanitized;
+};
+
+// Hook for React components
+export const useErrorSanitizer = () => {
+  return {
+    sanitizeError: errorSanitizer.sanitizeError.bind(errorSanitizer),
+    containsSensitiveInfo: errorSanitizer.containsSensitiveInfo.bind(errorSanitizer),
+    createSafeApiError: errorSanitizer.createSafeApiError.bind(errorSanitizer),
+    handleSanitizedError
+  };
 };
