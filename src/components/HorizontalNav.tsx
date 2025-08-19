@@ -169,8 +169,21 @@ export function HorizontalNav() {
             </p>
           </div>
 
-          {/* Right Side - Actions and Profile */}
+          {/* Right Side - Search, Actions and Profile */}
           <div className="flex items-center gap-3">
+            {/* Search Bar */}
+            <div className="w-64">
+              <div className="relative">
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                <Input
+                  type="text"
+                  placeholder="Search..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="w-full pl-10 pr-4 py-2 bg-muted/50 border-border rounded-md text-sm focus:bg-background focus:border-primary focus:ring-1 focus:ring-primary"
+                />
+              </div>
+            </div>
             <Button variant="ghost" size="sm" className="h-9 w-9 p-0">
               <Bell className="h-4 w-4" />
             </Button>
@@ -226,24 +239,6 @@ export function HorizontalNav() {
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
-          </div>
-        </div>
-      </div>
-      
-      <div className="px-6 py-2 border-b border-border/50">
-        <div className="flex items-center justify-between">
-          {/* Search Bar */}
-          <div className="flex-1 max-w-sm mx-8">
-            <div className="relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-              <Input
-                type="text"
-                placeholder="Search..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-10 pr-4 py-2 bg-muted/50 border-border rounded-md text-sm focus:bg-background focus:border-primary focus:ring-1 focus:ring-primary"
-              />
-            </div>
           </div>
         </div>
       </div>
