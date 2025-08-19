@@ -91,23 +91,23 @@ export function AppSidebar() {
 
   return (
     <TooltipProvider delayDuration={300}>
-      <Sidebar className={state === "collapsed" ? "w-16" : "w-64"} collapsible="icon">
-        <SidebarContent className="bg-card border-r">
+      <Sidebar className={state === "collapsed" ? "w-14" : "w-48 sm:w-56 lg:w-64"} collapsible="icon">
+        <SidebarContent className="bg-card border-r">{/* Make content scrollable on small devices */}
           {/* LoanFlow Branding and User Info */}
-          <div className="p-4 border-b space-y-4">
+          <div className="p-2 sm:p-4 border-b space-y-2 sm:space-y-4">
             <div className="flex items-center gap-2">
               <Tooltip>
                 <TooltipTrigger asChild>
                   <Button
                     variant="ghost"
                     size="sm"
-                    className="w-9 h-9 p-0 bg-gradient-primary rounded-lg hover:bg-gradient-primary/80"
+                    className="w-8 h-8 sm:w-9 sm:h-9 p-0 bg-gradient-primary rounded-lg hover:bg-gradient-primary/80 flex-shrink-0"
                     onClick={handleUserIconClick}
                   >
                     {user ? (
-                      <UserCheck className="w-4 h-4 text-white" />
+                      <UserCheck className="w-3 h-3 sm:w-4 sm:h-4 text-white" />
                     ) : (
-                      <User className="w-4 h-4 text-white" />
+                      <User className="w-3 h-3 sm:w-4 sm:h-4 text-white" />
                     )}
                   </Button>
                 </TooltipTrigger>
@@ -116,10 +116,10 @@ export function AppSidebar() {
                 </TooltipContent>
               </Tooltip>
               {state !== "collapsed" && (
-                <div className="flex flex-col">
-                  <span className="font-bold text-lg text-sidebar-foreground">LoanFlow CRM</span>
+                <div className="flex flex-col min-w-0 flex-1">
+                  <span className="font-bold text-sm sm:text-lg text-sidebar-foreground truncate">LoanFlow CRM</span>
                   {user && (
-                    <span className="text-xs text-muted-foreground truncate max-w-[140px]">
+                    <span className="text-xs text-muted-foreground truncate">
                       {userProfile?.first_name || user.user_metadata?.first_name || user.email}
                     </span>
                   )}
@@ -128,10 +128,10 @@ export function AppSidebar() {
             </div>
           </div>
 
-          <SidebarGroup>
-            <SidebarGroupLabel className="text-sidebar-foreground font-semibold underline">Navigation</SidebarGroupLabel>
+          <SidebarGroup className="px-2">
+            <SidebarGroupLabel className="text-sidebar-foreground font-semibold underline text-xs sm:text-sm">Navigation</SidebarGroupLabel>
             <SidebarGroupContent>
-              <SidebarMenu>
+              <SidebarMenu className="space-y-1">{/* Reduce spacing on mobile */}
                 {navigationItems.map((item) => (
                   <SidebarMenuItem key={item.title}>
                     {state === "collapsed" ? (

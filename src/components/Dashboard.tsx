@@ -140,129 +140,128 @@ function Dashboard() {
 
   return (
     <div className="bg-muted/20 min-h-screen">
-
       {/* Main Content */}
-      <div className="p-6">
-        <Tabs defaultValue="overview" className="space-y-6">
-          <TabsList className="bg-muted/50">
-            <TabsTrigger value="overview" className="text-sm">Overview</TabsTrigger>
-            <TabsTrigger value="performance" className="text-sm">Performance</TabsTrigger>
-            <TabsTrigger value="analytics" className="text-sm">Analytics</TabsTrigger>
-            <TabsTrigger value="reports" className="text-sm">Reports</TabsTrigger>
+      <div className="space-y-4 lg:space-y-6">
+        <Tabs defaultValue="overview" className="space-y-4 lg:space-y-6">
+          <TabsList className="bg-muted/50 w-full sm:w-auto overflow-x-auto">
+            <TabsTrigger value="overview" className="text-xs sm:text-sm px-3 sm:px-4">Overview</TabsTrigger>
+            <TabsTrigger value="performance" className="text-xs sm:text-sm px-3 sm:px-4">Performance</TabsTrigger>
+            <TabsTrigger value="analytics" className="text-xs sm:text-sm px-3 sm:px-4">Analytics</TabsTrigger>
+            <TabsTrigger value="reports" className="text-xs sm:text-sm px-3 sm:px-4">Reports</TabsTrigger>
           </TabsList>
           
-          <TabsContent value="overview" className="space-y-6">
-            {/* KPI Cards */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <TabsContent value="overview" className="space-y-4 lg:space-y-6">
+            {/* KPI Cards - Responsive Grid */}
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 lg:gap-6">
               <Card className="bg-card border-0 shadow-lg hover:shadow-xl transition-shadow duration-200">
-                <CardContent className="p-6">
+                <CardContent className="p-3 sm:p-4 lg:p-6">
                   <div className="flex items-center justify-between">
-                    <div className="space-y-2">
-                      <p className="text-sm font-medium text-muted-foreground">Total Revenue</p>
-                      <div className="flex items-center gap-2">
-                        <span className="text-3xl font-bold text-foreground">{formatCurrency(totalRevenue)}</span>
+                    <div className="space-y-1 sm:space-y-2 min-w-0 flex-1">
+                      <p className="text-xs sm:text-sm font-medium text-muted-foreground">Total Revenue</p>
+                      <div className="flex items-center gap-1 sm:gap-2">
+                        <span className="text-lg sm:text-2xl lg:text-3xl font-bold text-foreground truncate">{formatCurrency(totalRevenue)}</span>
                       </div>
-                      <div className="flex items-center gap-2">
-                        <Badge variant="secondary" className="bg-green-100 text-green-700 border-green-200">
-                          <ArrowUpRight className="h-3 w-3 mr-1" />
-                          +12.5%
+                      <div className="flex items-center gap-1 sm:gap-2">
+                        <Badge variant="secondary" className="bg-green-100 text-green-700 border-green-200 text-xs">
+                          <ArrowUpRight className="h-2 w-2 sm:h-3 sm:w-3 mr-1" />
+                          <span className="hidden sm:inline">+</span>12.5%
                         </Badge>
-                        <span className="text-xs text-muted-foreground">vs last month</span>
+                        <span className="text-xs text-muted-foreground hidden sm:inline">vs last month</span>
                       </div>
                     </div>
-                    <div className="h-12 w-12 bg-blue-100 rounded-full flex items-center justify-center">
-                      <DollarSign className="h-6 w-6 text-blue-600" />
+                    <div className="h-8 w-8 sm:h-10 sm:w-10 lg:h-12 lg:w-12 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0">
+                      <DollarSign className="h-4 w-4 sm:h-5 sm:w-5 lg:h-6 lg:w-6 text-blue-600" />
                     </div>
                   </div>
                 </CardContent>
               </Card>
 
               <Card className="bg-card border-0 shadow-lg hover:shadow-xl transition-shadow duration-200">
-                <CardContent className="p-6">
+                <CardContent className="p-3 sm:p-4 lg:p-6">
                   <div className="flex items-center justify-between">
-                    <div className="space-y-2">
-                      <p className="text-sm font-medium text-muted-foreground">Active Leads</p>
-                      <div className="flex items-center gap-2">
-                        <span className="text-3xl font-bold text-foreground">1,247</span>
+                    <div className="space-y-1 sm:space-y-2 min-w-0 flex-1">
+                      <p className="text-xs sm:text-sm font-medium text-muted-foreground">Active Leads</p>
+                      <div className="flex items-center gap-1 sm:gap-2">
+                        <span className="text-lg sm:text-2xl lg:text-3xl font-bold text-foreground">1,247</span>
                       </div>
-                      <div className="flex items-center gap-2">
-                        <Badge variant="secondary" className="bg-green-100 text-green-700 border-green-200">
-                          <ArrowUpRight className="h-3 w-3 mr-1" />
-                          +8.2%
+                      <div className="flex items-center gap-1 sm:gap-2">
+                        <Badge variant="secondary" className="bg-green-100 text-green-700 border-green-200 text-xs">
+                          <ArrowUpRight className="h-2 w-2 sm:h-3 sm:w-3 mr-1" />
+                          <span className="hidden sm:inline">+</span>8.2%
                         </Badge>
-                        <span className="text-xs text-muted-foreground">vs last month</span>
+                        <span className="text-xs text-muted-foreground hidden sm:inline">vs last month</span>
                       </div>
                     </div>
-                    <div className="h-12 w-12 bg-purple-100 rounded-full flex items-center justify-center">
-                      <Users className="h-6 w-6 text-purple-600" />
+                    <div className="h-8 w-8 sm:h-10 sm:w-10 lg:h-12 lg:w-12 bg-purple-100 rounded-full flex items-center justify-center flex-shrink-0">
+                      <Users className="h-4 w-4 sm:h-5 sm:w-5 lg:h-6 lg:w-6 text-purple-600" />
                     </div>
                   </div>
                 </CardContent>
               </Card>
 
               <Card className="bg-card border-0 shadow-lg hover:shadow-xl transition-shadow duration-200">
-                <CardContent className="p-6">
+                <CardContent className="p-3 sm:p-4 lg:p-6">
                   <div className="flex items-center justify-between">
-                    <div className="space-y-2">
-                      <p className="text-sm font-medium text-muted-foreground">Pipeline Value</p>
-                      <div className="flex items-center gap-2">
-                        <span className="text-3xl font-bold text-foreground">{formatCurrency(pipelineValue)}</span>
+                    <div className="space-y-1 sm:space-y-2 min-w-0 flex-1">
+                      <p className="text-xs sm:text-sm font-medium text-muted-foreground">Pipeline Value</p>
+                      <div className="flex items-center gap-1 sm:gap-2">
+                        <span className="text-lg sm:text-2xl lg:text-3xl font-bold text-foreground truncate">{formatCurrency(pipelineValue)}</span>
                       </div>
-                      <div className="flex items-center gap-2">
-                        <Badge variant="secondary" className="bg-red-100 text-red-700 border-red-200">
-                          <ArrowDownRight className="h-3 w-3 mr-1" />
+                      <div className="flex items-center gap-1 sm:gap-2">
+                        <Badge variant="secondary" className="bg-red-100 text-red-700 border-red-200 text-xs">
+                          <ArrowDownRight className="h-2 w-2 sm:h-3 sm:w-3 mr-1" />
                           -2.1%
                         </Badge>
-                        <span className="text-xs text-muted-foreground">vs last month</span>
+                        <span className="text-xs text-muted-foreground hidden sm:inline">vs last month</span>
                       </div>
                     </div>
-                    <div className="h-12 w-12 bg-green-100 rounded-full flex items-center justify-center">
-                      <Target className="h-6 w-6 text-green-600" />
+                    <div className="h-8 w-8 sm:h-10 sm:w-10 lg:h-12 lg:w-12 bg-green-100 rounded-full flex items-center justify-center flex-shrink-0">
+                      <Target className="h-4 w-4 sm:h-5 sm:w-5 lg:h-6 lg:w-6 text-green-600" />
                     </div>
                   </div>
                 </CardContent>
               </Card>
 
               <Card className="bg-card border-0 shadow-lg hover:shadow-xl transition-shadow duration-200">
-                <CardContent className="p-6">
+                <CardContent className="p-3 sm:p-4 lg:p-6">
                   <div className="flex items-center justify-between">
-                    <div className="space-y-2">
-                      <p className="text-sm font-medium text-muted-foreground">Conversion Rate</p>
-                      <div className="flex items-center gap-2">
-                        <span className="text-3xl font-bold text-foreground">24.8%</span>
+                    <div className="space-y-1 sm:space-y-2 min-w-0 flex-1">
+                      <p className="text-xs sm:text-sm font-medium text-muted-foreground">Conversion Rate</p>
+                      <div className="flex items-center gap-1 sm:gap-2">
+                        <span className="text-lg sm:text-2xl lg:text-3xl font-bold text-foreground">24.8%</span>
                       </div>
-                      <div className="flex items-center gap-2">
-                        <Badge variant="secondary" className="bg-green-100 text-green-700 border-green-200">
-                          <ArrowUpRight className="h-3 w-3 mr-1" />
-                          +5.4%
+                      <div className="flex items-center gap-1 sm:gap-2">
+                        <Badge variant="secondary" className="bg-green-100 text-green-700 border-green-200 text-xs">
+                          <ArrowUpRight className="h-2 w-2 sm:h-3 sm:w-3 mr-1" />
+                          <span className="hidden sm:inline">+</span>5.4%
                         </Badge>
-                        <span className="text-xs text-muted-foreground">vs last month</span>
+                        <span className="text-xs text-muted-foreground hidden sm:inline">vs last month</span>
                       </div>
                     </div>
-                    <div className="h-12 w-12 bg-orange-100 rounded-full flex items-center justify-center">
-                      <Activity className="h-6 w-6 text-orange-600" />
+                    <div className="h-8 w-8 sm:h-10 sm:w-10 lg:h-12 lg:w-12 bg-orange-100 rounded-full flex items-center justify-center flex-shrink-0">
+                      <Activity className="h-4 w-4 sm:h-5 sm:w-5 lg:h-6 lg:w-6 text-orange-600" />
                     </div>
                   </div>
                 </CardContent>
               </Card>
             </div>
 
-            {/* Charts Section */}
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            {/* Charts Section - Responsive Grid */}
+            <div className="grid grid-cols-1 xl:grid-cols-3 gap-4 lg:gap-6">
               
               {/* Performance Metrics Bar Chart */}
-              <Card className="bg-card border-0 shadow-lg">
-                <CardHeader className="pb-4">
-                  <CardTitle className="flex items-center gap-2 text-lg font-semibold text-foreground">
-                    <BarChart3 className="h-5 w-5 text-blue-600" />
-                    Performance Metrics
+              <Card className="bg-card border-0 shadow-lg col-span-1">
+                <CardHeader className="pb-2 sm:pb-4 p-3 sm:p-6">
+                  <CardTitle className="flex items-center gap-2 text-base sm:text-lg font-semibold text-foreground">
+                    <BarChart3 className="h-4 w-4 sm:h-5 sm:w-5 text-blue-600" />
+                    <span className="truncate">Performance Metrics</span>
                   </CardTitle>
-                  <CardDescription className="text-muted-foreground">
+                  <CardDescription className="text-xs sm:text-sm text-muted-foreground">
                     Key performance indicators across departments
                   </CardDescription>
                 </CardHeader>
-                <CardContent>
-                  <div className="h-72">
+                <CardContent className="p-3 sm:p-6 pt-0">
+                  <div className="h-64 sm:h-72">
                     <ResponsiveContainer width="100%" height="100%">
                       <BarChart data={performanceData} layout="horizontal">
                         <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
@@ -271,15 +270,15 @@ function Dashboard() {
                           domain={[0, 100]}
                           axisLine={false}
                           tickLine={false}
-                          tick={{ fontSize: 12, fill: '#6b7280' }}
+                          tick={{ fontSize: 10, fill: '#6b7280' }}
                         />
                         <YAxis 
                           type="category" 
                           dataKey="name" 
                           axisLine={false}
                           tickLine={false}
-                          tick={{ fontSize: 11, fill: '#6b7280' }}
-                          width={100}
+                          tick={{ fontSize: 9, fill: '#6b7280' }}
+                          width={80}
                         />
                         <Tooltip 
                           formatter={(value) => [`${value}%`, 'Performance']}
@@ -287,7 +286,7 @@ function Dashboard() {
                             backgroundColor: 'white',
                             border: '1px solid #e5e7eb',
                             borderRadius: '8px',
-                            fontSize: '12px',
+                            fontSize: '11px',
                             boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)'
                           }}
                         />

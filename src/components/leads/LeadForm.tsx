@@ -79,7 +79,7 @@ export function LeadForm({ lead, onSubmit, onCancel, isSubmitting = false }: Lea
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">{/* Make responsive grid */}
         <div className="space-y-2">
           <Label htmlFor="name">Name *</Label>
           <Input
@@ -119,8 +119,8 @@ export function LeadForm({ lead, onSubmit, onCancel, isSubmitting = false }: Lea
           />
         </div>
         
-        
-        <div className="space-y-2">
+        {/* Company Address - Full width on mobile */}
+        <div className="space-y-2 sm:col-span-2">
           <Label htmlFor="business_address">Company Address</Label>
           <div className="space-y-2">
             <Input
@@ -129,7 +129,7 @@ export function LeadForm({ lead, onSubmit, onCancel, isSubmitting = false }: Lea
               onChange={(e) => handleInputChange("business_address", e.target.value)}
               placeholder="Street Address"
             />
-            <div className="grid grid-cols-2 gap-2">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
               <Input
                 value={formData.business_city || ""}
                 onChange={(e) => handleInputChange("business_city", e.target.value)}
@@ -145,6 +145,7 @@ export function LeadForm({ lead, onSubmit, onCancel, isSubmitting = false }: Lea
               value={formData.business_zip_code || ""}
               onChange={(e) => handleInputChange("business_zip_code", e.target.value)}
               placeholder="ZIP Code"
+              className="max-w-xs"
             />
           </div>
         </div>
@@ -248,6 +249,7 @@ export function LeadForm({ lead, onSubmit, onCancel, isSubmitting = false }: Lea
         </div>
       </div>
       
+      {/* Notes section - Full width */}
       <div className="space-y-2">
         <Label htmlFor="notes">Notes</Label>
         <Textarea
@@ -255,14 +257,16 @@ export function LeadForm({ lead, onSubmit, onCancel, isSubmitting = false }: Lea
           value={formData.notes || ""}
           onChange={(e) => handleInputChange("notes", e.target.value)}
           rows={3}
+          className="resize-none"
         />
       </div>
       
-      <DialogFooter>
-        <Button type="button" variant="outline" onClick={onCancel}>
+      {/* Footer buttons - Responsive */}
+      <DialogFooter className="flex-col sm:flex-row gap-2">
+        <Button type="button" variant="outline" onClick={onCancel} className="w-full sm:w-auto">
           Cancel
         </Button>
-        <Button type="submit" disabled={isSubmitting}>
+        <Button type="submit" disabled={isSubmitting} className="w-full sm:w-auto">
           {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
           {lead ? "Update Lead" : "Create Lead"}
         </Button>
