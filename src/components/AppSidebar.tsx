@@ -192,7 +192,7 @@ export function AppSidebar() {
                           <ChevronDown className="w-4 h-4 text-muted-foreground" />
                         </SidebarMenuButton>
                       </DropdownMenuTrigger>
-                      <DropdownMenuContent side="right" className="w-56 bg-white dark:bg-gray-800 border border-border shadow-lg z-50 rounded-lg">
+                      <DropdownMenuContent side="right" className="w-56 bg-card border border-border shadow-lg z-50 rounded-lg">
                         {underwriterItems.map((item) => (
                           <DropdownMenuItem key={item.title} asChild>
                             <NavLink to={item.url} className="flex items-center gap-2 w-full px-3 py-2 text-sm hover:bg-accent hover:text-accent-foreground rounded-sm cursor-pointer">
@@ -211,10 +211,10 @@ export function AppSidebar() {
 
         <Separator className="my-2" />
 
-        <SidebarGroup>
-          <SidebarGroupLabel className="text-sidebar-foreground font-semibold underline">System Settings</SidebarGroupLabel>
+        <SidebarGroup className="px-4">
+          <SidebarGroupLabel className="text-sidebar-foreground font-semibold underline pl-0">System Settings</SidebarGroupLabel>
           <SidebarGroupContent>
-            <SidebarMenu>
+            <SidebarMenu className="pl-0">
               {settingsItems.map((item) => {
                 // Only show Security, Users, and Enterprise to admins and super_admins
                 if ((item.title === "Security" || item.title === "Users" || item.title === "Enterprise")) {
@@ -259,10 +259,10 @@ export function AppSidebar() {
         </SidebarGroup>
 
         {/* Quick Actions */}
-        <SidebarGroup>
-          <SidebarGroupLabel className="text-sidebar-foreground font-semibold underline">Quick Actions</SidebarGroupLabel>
+        <SidebarGroup className="px-4">
+          <SidebarGroupLabel className="text-sidebar-foreground font-semibold underline pl-0">Quick Actions</SidebarGroupLabel>
           <SidebarGroupContent>
-            <div className="space-y-2 px-2">
+            <div className="space-y-2 pl-0">
               <Tooltip>
                 <TooltipTrigger asChild>
                   <div>
