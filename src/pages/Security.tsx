@@ -6,6 +6,7 @@ import { AdvancedThreatDetection } from '@/components/security/AdvancedThreatDet
 import { ThreatDetectionMonitor } from '@/components/security/ThreatDetectionMonitor';
 import { SensitiveDataPermissionManager } from '@/components/security/SensitiveDataPermissionManager';
 import { MicrosoftAuthenticatorSetup } from '@/components/auth/MicrosoftAuthenticatorSetup';
+import { EnhancedSecurityMonitor } from '@/components/security/EnhancedSecurityMonitor';
 import { SecurityWrapper } from '@/components/SecurityWrapper';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -113,6 +114,7 @@ const SecurityPage: React.FC = () => {
             </TabsList>
 
             <TabsContent value="monitoring" className="space-y-6">
+              <EnhancedSecurityMonitor />
               <div className="grid gap-6 md:grid-cols-2">
                 <Card className="bg-card border-0 shadow-lg hover-scale">
                   <CardHeader className="pb-4">

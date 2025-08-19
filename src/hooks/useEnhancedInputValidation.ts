@@ -1,3 +1,7 @@
+/**
+ * ENHANCED INPUT VALIDATION - Comprehensive client/server validation
+ * Implements XSS protection, length limits, and security monitoring
+ */
 import { useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 
@@ -6,6 +10,14 @@ export interface ValidationResult {
   sanitizedValue?: string;
   errors: string[];
   securityFlags: string[];
+  lengthCheck?: boolean;
+}
+
+export interface ValidationConfig {
+  maxLength?: number;
+  minLength?: number;
+  allowedChars?: RegExp;
+  securityLevel?: 'basic' | 'enhanced' | 'strict';
 }
 
 export const useEnhancedInputValidation = () => {
