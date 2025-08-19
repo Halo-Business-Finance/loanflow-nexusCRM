@@ -53,8 +53,8 @@ export default function Layout({ children }: LayoutProps) {
         <AppSidebar />
         <div className="flex-1 flex flex-col min-w-0">
           {/* Responsive Header */}
-          <header className="h-16 lg:h-20 border-b bg-card shadow-soft">
-            <div className="max-w-6xl mx-auto flex items-center justify-between px-4 sm:px-6 lg:px-8 h-full">
+          <header className="h-16 lg:h-20 bg-card shadow-soft">
+            <div className="max-w-6xl mx-auto flex items-center justify-between px-4 sm:px-6 lg:px-8 h-full border-b">
               <div className="flex items-center gap-2 min-w-0">
                 <SidebarTrigger className="flex-shrink-0" />
                 
