@@ -104,8 +104,10 @@ export default function Layout({ children }: LayoutProps) {
           </header>
           
           {/* Main Content Area */}
-          <main className="flex-1 p-3 sm:p-4 lg:p-6 bg-muted/30 overflow-x-hidden">
-            {children}
+          <main className="flex-1 bg-muted/30 overflow-x-hidden">
+            <div className="max-w-6xl mx-auto p-4 sm:p-6 lg:p-8">
+              {children}
+            </div>
           </main>
         </div>
       </div>
