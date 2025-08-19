@@ -53,53 +53,55 @@ export default function Layout({ children }: LayoutProps) {
         <AppSidebar />
         <div className="flex-1 flex flex-col min-w-0">
           {/* Responsive Header */}
-          <header className="h-16 lg:h-20 border-b bg-card shadow-soft flex items-center justify-between px-2 lg:px-4">
-            <div className="flex items-center gap-2 min-w-0">
-              <SidebarTrigger className="flex-shrink-0" />
-              
-              {/* Navigation Buttons - Hidden on mobile */}
-              <div className="hidden sm:flex items-center gap-2">
-                <Button 
-                  variant="default" 
-                  size="sm" 
-                  onClick={handleGoBack}
-                  className="text-primary-foreground hover:bg-primary/90"
-                >
-                  <ArrowLeft className="w-4 h-4" />
-                </Button>
-                <Button 
-                  variant="default" 
-                  size="sm" 
-                  onClick={handleGoForward}
-                  className="text-primary-foreground hover:bg-primary/90"
-                >
-                  <ArrowRight className="w-4 h-4" />
-                </Button>
+          <header className="h-16 lg:h-20 border-b bg-card shadow-soft">
+            <div className="max-w-6xl mx-auto flex items-center justify-between px-4 sm:px-6 lg:px-8 h-full">
+              <div className="flex items-center gap-2 min-w-0">
+                <SidebarTrigger className="flex-shrink-0" />
+                
+                {/* Navigation Buttons - Hidden on mobile */}
+                <div className="hidden sm:flex items-center gap-2">
+                  <Button 
+                    variant="default" 
+                    size="sm" 
+                    onClick={handleGoBack}
+                    className="text-primary-foreground hover:bg-primary/90"
+                  >
+                    <ArrowLeft className="w-4 h-4" />
+                  </Button>
+                  <Button 
+                    variant="default" 
+                    size="sm" 
+                    onClick={handleGoForward}
+                    className="text-primary-foreground hover:bg-primary/90"
+                  >
+                    <ArrowRight className="w-4 h-4" />
+                  </Button>
+                </div>
+                
+                {/* App Title - Responsive */}
+                <div className="flex items-center gap-2 ml-2 min-w-0">
+                  <h1 className="text-lg lg:text-xl font-semibold text-primary dark:text-white no-underline truncate">
+                    <span className="hidden sm:inline">Halo Business Finance</span>
+                    <span className="sm:hidden">HBF</span>
+                  </h1>
+                </div>
               </div>
               
-              {/* App Title - Responsive */}
-              <div className="flex items-center gap-2 ml-2 min-w-0">
-                <h1 className="text-lg lg:text-xl font-semibold text-primary dark:text-white no-underline truncate">
-                  <span className="hidden sm:inline">Halo Business Finance</span>
-                  <span className="sm:hidden">HBF</span>
-                </h1>
+              {/* Right Side Actions - Responsive */}
+              <div className="flex items-center gap-2 lg:gap-4">
+                {/* Search - Hidden on small screens */}
+                <div className="hidden lg:block w-60 xl:w-80">
+                  <GlobalSearch />
+                </div>
+                
+                {/* Theme Toggle - Hidden on mobile */}
+                <div className="hidden sm:block">
+                  <ThemeToggle />
+                </div>
+                
+                {/* Notification Bell */}
+                <NotificationBell />
               </div>
-            </div>
-            
-            {/* Right Side Actions - Responsive */}
-            <div className="flex items-center gap-2 lg:gap-4">
-              {/* Search - Hidden on small screens */}
-              <div className="hidden lg:block w-60 xl:w-80">
-                <GlobalSearch />
-              </div>
-              
-              {/* Theme Toggle - Hidden on mobile */}
-              <div className="hidden sm:block">
-                <ThemeToggle />
-              </div>
-              
-              {/* Notification Bell */}
-              <NotificationBell />
             </div>
           </header>
           
