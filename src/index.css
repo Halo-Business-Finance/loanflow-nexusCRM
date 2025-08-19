@@ -231,7 +231,8 @@ All colors MUST be HSL.
 
   /* Enhanced card visibility with blue background */
   .card, [data-card="true"], .bg-card {
-    @apply border border-border shadow-sm bg-card;
+    @apply border border-border shadow-sm;
+    background-color: hsl(var(--card));
   }
 
   /* Widget visibility fixes with blue background */
