@@ -141,7 +141,7 @@ export function HorizontalNav() {
       {/* Top Bar */}
       <div className="px-6 py-6">
         <div className="flex items-center justify-between">
-          {/* Left Side - Logo and App Switcher */}
+          {/* Left Side - Logo, App Name and Welcome Message */}
           <div className="flex items-center gap-4">
             <div className="flex items-center gap-2">
               <div className="w-12 h-12 bg-primary rounded flex items-center justify-center">
@@ -149,25 +149,28 @@ export function HorizontalNav() {
               </div>
               <span className="font-semibold text-foreground">LoanFlow CRM</span>
             </div>
+            
+            {/* Welcome Message */}
+            <div className="ml-6">
+              <h2 className="text-lg font-medium text-foreground">
+                Welcome back, {getUserDisplayName()}
+              </h2>
+              <p className="text-sm text-muted-foreground">
+                {new Date().toLocaleDateString('en-US', { 
+                  weekday: 'long', 
+                  year: 'numeric', 
+                  month: 'long', 
+                  day: 'numeric' 
+                })} at {new Date().toLocaleTimeString('en-US', { 
+                  hour: '2-digit', 
+                  minute: '2-digit' 
+                })}
+              </p>
+            </div>
           </div>
 
-          {/* Center - Welcome Message */}
-          <div className="text-center">
-            <h2 className="text-lg font-medium text-foreground">
-              Welcome back, {getUserDisplayName()}
-            </h2>
-            <p className="text-sm text-muted-foreground">
-              {new Date().toLocaleDateString('en-US', { 
-                weekday: 'long', 
-                year: 'numeric', 
-                month: 'long', 
-                day: 'numeric' 
-              })} at {new Date().toLocaleTimeString('en-US', { 
-                hour: '2-digit', 
-                minute: '2-digit' 
-              })}
-            </p>
-          </div>
+          {/* Center - Empty space for balance */}
+          <div></div>
 
           {/* Right Side - Search, Actions and Profile */}
           <div className="flex items-center gap-3">
