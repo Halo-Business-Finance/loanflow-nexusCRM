@@ -24,6 +24,8 @@ import {
 } from "lucide-react"
 import { RingCentralSetup } from "@/components/RingCentralSetup"
 import { EmailSetup } from "@/components/EmailSetup"
+import { SystemHealthMonitor } from "@/components/SystemHealthMonitor"
+import { WebhookManager } from "@/components/webhooks/WebhookManager"
 
 export default function Settings() {
   const { user } = useAuth()
@@ -256,6 +258,14 @@ export default function Settings() {
             <TabsTrigger value="notifications" className="flex items-center space-x-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
               <Bell className="w-4 h-4" />
               <span>Notifications</span>
+            </TabsTrigger>
+            <TabsTrigger value="system" className="flex items-center space-x-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
+              <RefreshCw className="w-4 h-4" />
+              <span>System Health</span>
+            </TabsTrigger>
+            <TabsTrigger value="integrations" className="flex items-center space-x-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
+              <Lock className="w-4 h-4" />
+              <span>Integrations</span>
             </TabsTrigger>
           </TabsList>
 
@@ -495,6 +505,14 @@ export default function Settings() {
                 </Button>
               </CardContent>
             </Card>
+          </TabsContent>
+
+          <TabsContent value="system">
+            <SystemHealthMonitor />
+          </TabsContent>
+
+          <TabsContent value="integrations">
+            <WebhookManager />
           </TabsContent>
         </Tabs>
       </div>

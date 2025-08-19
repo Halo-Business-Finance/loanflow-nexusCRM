@@ -89,11 +89,11 @@ export function TeamCollaboration() {
 
   // Mock data - would be replaced with real data
   const [teamMembers] = useState<TeamMember[]>([
-    { id: '1', name: 'Sarah Johnson', role: 'Senior Loan Officer', email: 'sarah@company.com', status: 'online', avatar: '/api/placeholder/32/32' },
-    { id: '2', name: 'Mike Chen', role: 'Underwriter', email: 'mike@company.com', status: 'busy', avatar: '/api/placeholder/32/32' },
-    { id: '3', name: 'Emily Rodriguez', role: 'Loan Processor', email: 'emily@company.com', status: 'online', avatar: '/api/placeholder/32/32' },
-    { id: '4', name: 'David Kim', role: 'Closer', email: 'david@company.com', status: 'away', lastSeen: '2024-01-15T10:30:00Z' },
-    { id: '5', name: 'Lisa Wong', role: 'Business Development', email: 'lisa@company.com', status: 'offline', lastSeen: '2024-01-15T09:15:00Z' }
+    { id: '1', name: 'Sarah Johnson', role: 'Senior Loan Officer', email: 'sarah@company.com', status: 'online', avatar: `https://api.dicebear.com/7.x/avataaars/svg?seed=sarah&size=32` },
+    { id: '2', name: 'Mike Chen', role: 'Underwriter', email: 'mike@company.com', status: 'busy', avatar: `https://api.dicebear.com/7.x/avataaars/svg?seed=mike&size=32` },
+    { id: '3', name: 'Emily Rodriguez', role: 'Loan Processor', email: 'emily@company.com', status: 'online', avatar: `https://api.dicebear.com/7.x/avataaars/svg?seed=emily&size=32` },
+    { id: '4', name: 'David Kim', role: 'Closer', email: 'david@company.com', status: 'away', lastSeen: '2024-01-15T10:30:00Z', avatar: `https://api.dicebear.com/7.x/avataaars/svg?seed=david&size=32` },
+    { id: '5', name: 'Lisa Wong', role: 'Business Development', email: 'lisa@company.com', status: 'offline', lastSeen: '2024-01-15T09:15:00Z', avatar: `https://api.dicebear.com/7.x/avataaars/svg?seed=lisa&size=32` }
   ]);
 
   const [chatMessages, setChatMessages] = useState<ChatMessage[]>([

@@ -229,7 +229,7 @@ export function SecureVoiceAIIntegration() {
             <Label htmlFor="webhook">Zapier Webhook URL</Label>
             <Input
               id="webhook"
-              placeholder="https://hooks.zapier.com/hooks/catch/..."
+              placeholder="https://your-automation-service.com/webhook"
               value={zapierWebhook}
               onChange={(e) => setZapierWebhook(e.target.value)}
             />

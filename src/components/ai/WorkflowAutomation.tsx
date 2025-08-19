@@ -171,7 +171,7 @@ export function WorkflowAutomation() {
             <Label htmlFor="webhook">Zapier Webhook URL</Label>
             <Input
               id="webhook"
-              placeholder="https://hooks.zapier.com/hooks/catch/..."
+              placeholder="https://your-automation-service.com/webhook"
               value={webhookUrl}
               onChange={(e) => setWebhookUrl(e.target.value)}
             />
