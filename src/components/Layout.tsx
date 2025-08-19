@@ -53,9 +53,9 @@ export default function Layout({ children }: LayoutProps) {
         <AppSidebar />
         <div className="flex-1 flex flex-col min-w-0">
           {/* Responsive Header */}
-          <header className="h-16 lg:h-20 border-b bg-card shadow-soft flex items-center justify-between px-4 lg:px-6">
+          <header className="h-16 lg:h-20 border-b bg-card shadow-soft flex items-center justify-between px-2 lg:px-4">
             <div className="flex items-center gap-2 min-w-0">
-              <SidebarTrigger className="mr-2 flex-shrink-0" />
+              <SidebarTrigger className="flex-shrink-0" />
               
               {/* Navigation Buttons - Hidden on mobile */}
               <div className="hidden sm:flex items-center gap-2">

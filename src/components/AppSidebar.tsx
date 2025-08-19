@@ -91,7 +91,7 @@ export function AppSidebar() {
 
   return (
     <TooltipProvider delayDuration={300}>
-      <Sidebar className={state === "collapsed" ? "w-14" : "w-48 sm:w-56 lg:w-64"} collapsible="icon">
+      <Sidebar className={state === "collapsed" ? "w-12" : "w-48 sm:w-56 lg:w-64"} collapsible="icon">
         <SidebarContent className="bg-card border-r">{/* Make content scrollable on small devices */}
           {/* LoanFlow Branding and User Info */}
           <div className="p-2 sm:p-4 border-b space-y-2 sm:space-y-4">
