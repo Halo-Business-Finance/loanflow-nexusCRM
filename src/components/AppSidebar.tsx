@@ -92,9 +92,9 @@ export function AppSidebar() {
   return (
     <TooltipProvider delayDuration={300}>
       <Sidebar className={state === "collapsed" ? "w-12" : "w-48 sm:w-56 lg:w-64"} collapsible="icon">
-        <SidebarContent className="bg-card border-r">{/* Make content scrollable on small devices */}
+        <SidebarContent className="bg-card border-r">
           {/* LoanFlow Branding and User Info */}
-          <div className="p-2 sm:p-4 border-b space-y-2 sm:space-y-4">
+          <div className="p-4 border-b space-y-4">
             <div className="flex items-center gap-2">
               <Tooltip>
                 <TooltipTrigger asChild>
@@ -128,10 +128,10 @@ export function AppSidebar() {
             </div>
           </div>
 
-          <SidebarGroup className="px-2">
-            <SidebarGroupLabel className="text-sidebar-foreground font-semibold underline text-xs sm:text-sm">Navigation</SidebarGroupLabel>
+          <SidebarGroup className="px-4">
+            <SidebarGroupLabel className="text-sidebar-foreground font-semibold underline text-xs sm:text-sm pl-0">Navigation</SidebarGroupLabel>
             <SidebarGroupContent>
-              <SidebarMenu className="space-y-1">{/* Reduce spacing on mobile */}
+              <SidebarMenu className="space-y-1 pl-0">
                 {navigationItems.map((item) => (
                   <SidebarMenuItem key={item.title}>
                     {state === "collapsed" ? (
