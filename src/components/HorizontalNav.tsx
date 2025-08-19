@@ -145,13 +145,6 @@ export function HorizontalNav() {
           {/* Left Side - Logo, App Name and Welcome Message */}
           <div className="flex items-center gap-4">
             <div className="flex items-center gap-2">
-              <div className="w-12 h-12 rounded flex items-center justify-center overflow-hidden">
-                <img 
-                  src={loanflowIcon} 
-                  alt="LoanFlow CRM Logo" 
-                  className="w-full h-full object-contain"
-                />
-              </div>
               <span className="font-semibold text-foreground">LoanFlow CRM</span>
             </div>
             
