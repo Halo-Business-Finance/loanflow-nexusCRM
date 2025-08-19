@@ -29,6 +29,7 @@ import { SecurityWrapper } from '@/components/SecurityWrapper';
 import { SecureFormProvider } from '@/components/security/SecureFormValidator';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Lead, ContactEntity } from '@/types/lead';
+import { useRealtimeLeads } from '@/hooks/useRealtimeLeads';
 import { useRoleBasedAccess } from '@/hooks/useRoleBasedAccess';
 
 interface LeadsOverview {
@@ -45,6 +46,10 @@ interface LeadsOverview {
 export default function Leads() {
   const { user } = useAuth();
   const { toast } = useToast();
+  
+  // Use real-time leads hook
+  const { leads: realtimeLeads, loading: realtimeLoading, refetch: realtimeRefetch } = useRealtimeLeads();
+  
   const [overview, setOverview] = useState<LeadsOverview>({
     totalLeads: 0,
     newLeads: 0,
@@ -57,103 +62,48 @@ export default function Leads() {
   });
   const [searchTerm, setSearchTerm] = useState('');
   const [showNewLeadForm, setShowNewLeadForm] = useState(false);
-  const [loading, setLoading] = useState(true);
-  const [leads, setLeads] = useState<Lead[]>([]);
   const [viewMode, setViewMode] = useState<'grid' | 'table'>('grid');
   const [editingLead, setEditingLead] = useState<Lead | null>(null);
   const [isFormOpen, setIsFormOpen] = useState(false);
   const { hasRole } = useRoleBasedAccess();
   const hasAdminRole = hasRole('admin');
 
-  useEffect(() => {
-    fetchLeadsOverview();
-  }, [user]);
+  // Function to update overview based on leads data
+  const updateOverview = (leads: Lead[]) => {
+    const totalLeads = leads.length;
+    const newLeads = leads.filter(lead => 
+      lead.stage === 'Initial Contact'
+    ).length;
+    const qualifiedLeads = leads.filter(lead => 
+      lead.stage === 'Pre-Approved' || lead.stage === 'Term Sheet Signed'
+    ).length;
+    const hotLeads = leads.filter(lead => 
+      lead.priority === 'High'
+    ).length;
+    const totalValue = leads.reduce((sum, lead) => 
+      sum + (lead.loan_amount || 0), 0
+    );
+    const convertedLeads = leads.filter(lead => 
+      lead.stage === 'Loan Funded'
+    ).length;
+    const conversionRate = totalLeads > 0 ? (convertedLeads / totalLeads) * 100 : 0;
 
-  const fetchLeadsOverview = async () => {
-    try {
-      setLoading(true);
-      
-      const { data: leadsData, error: leadsError } = await supabase
-        .from('leads')
-        .select(`
-          *,
-          contact_entities(*)
-        `)
-        .eq('user_id', user?.id);
-
-      console.log('Leads data fetched:', leadsData);
-      console.log('Leads error:', leadsError);
-
-      if (!leadsError && leadsData) {
-        // Transform the data to match Lead interface
-        const transformedLeads: Lead[] = leadsData.map(lead => {
-          console.log('Processing lead:', lead.id, 'contact:', lead.contact_entities);
-          return {
-            id: lead.id,
-            name: lead.contact_entities?.name || '',
-            email: lead.contact_entities?.email === '[SECURED]' ? '***@***.com' : (lead.contact_entities?.email || ''),
-            phone: lead.contact_entities?.phone === '[SECURED]' ? '***-***-****' : (lead.contact_entities?.phone || ''),
-            business_name: lead.contact_entities?.business_name || '',
-            location: lead.contact_entities?.location || '',
-            loan_amount: lead.contact_entities?.loan_amount || 0,
-            loan_type: lead.contact_entities?.loan_type || '',
-            credit_score: lead.contact_entities?.credit_score || 0,
-            stage: lead.contact_entities?.stage || 'New Lead',
-            priority: lead.contact_entities?.priority || 'medium',
-            net_operating_income: lead.contact_entities?.net_operating_income || 0,
-            naics_code: lead.contact_entities?.naics_code || '',
-            ownership_structure: lead.contact_entities?.ownership_structure || '',
-            created_at: lead.created_at,
-            updated_at: lead.updated_at,
-            user_id: lead.user_id,
-            contact_entity_id: lead.contact_entity_id,
-            last_contact: lead.updated_at, // Use updated_at as last contact
-            is_converted_to_client: false // Default to false
-          };
-        });
-
-        setLeads(transformedLeads);
-
-        const totalLeads = transformedLeads.length;
-        const newLeads = transformedLeads.filter(lead => 
-          lead.stage === 'New Lead'
-        ).length;
-        const qualifiedLeads = transformedLeads.filter(lead => 
-          lead.stage === 'Qualified'
-        ).length;
-        const hotLeads = transformedLeads.filter(lead => 
-          lead.priority === 'high'
-        ).length;
-        const totalValue = transformedLeads.reduce((sum, lead) => 
-          sum + (lead.loan_amount || 0), 0
-        );
-        const convertedLeads = transformedLeads.filter(lead => 
-          lead.stage === 'Loan Funded'
-        ).length;
-        const conversionRate = totalLeads > 0 ? (convertedLeads / totalLeads) * 100 : 0;
-
-        setOverview(prev => ({
-          ...prev,
-          totalLeads,
-          newLeads,
-          qualifiedLeads,
-          hotLeads,
-          totalValue,
-          conversionRate,
-          followUpsDue: Math.floor(totalLeads * 0.15)
-        }));
-      }
-    } catch (error) {
-      console.error('Error fetching leads overview:', error);
-      toast({
-        title: "Error",
-        description: "Failed to fetch leads data",
-        variant: "destructive"
-      });
-    } finally {
-      setLoading(false);
-    }
+    setOverview(prev => ({
+      ...prev,
+      totalLeads,
+      newLeads,
+      qualifiedLeads,
+      hotLeads,
+      totalValue,
+      conversionRate,
+      followUpsDue: Math.floor(totalLeads * 0.15)
+    }));
   };
+
+  // Update overview when real-time leads change
+  useEffect(() => {
+    updateOverview(realtimeLeads);
+  }, [realtimeLeads]);
 
   const handleEdit = (lead: Lead) => {
     setEditingLead(lead);
@@ -174,7 +124,7 @@ export default function Leads() {
         description: `Lead ${leadName} has been deleted`,
       });
 
-      fetchLeadsOverview();
+      realtimeRefetch();
     } catch (error) {
       console.error('Error deleting lead:', error);
       toast({
@@ -199,7 +149,7 @@ export default function Leads() {
         description: `Lead ${lead.name} has been converted`,
       });
 
-      fetchLeadsOverview();
+      realtimeRefetch();
     } catch (error) {
       console.error('Error converting lead:', error);
       toast({
@@ -322,7 +272,7 @@ export default function Leads() {
       setIsFormOpen(false);
       setShowNewLeadForm(false);
       setEditingLead(null);
-      fetchLeadsOverview();
+      realtimeRefetch();
     } catch (error: any) {
       console.error('Error saving lead:', error);
       const errorMessage = error?.message || "Failed to save lead";
@@ -334,13 +284,11 @@ export default function Leads() {
     }
   };
 
-  const filteredLeads = leads.filter(lead =>
-    lead.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    lead.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
+  const filteredLeads = realtimeLeads.filter(lead =>
+    lead.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    lead.email?.toLowerCase().includes(searchTerm.toLowerCase()) ||
     (lead.business_name && lead.business_name.toLowerCase().includes(searchTerm.toLowerCase()))
   );
-
-  const refetch = fetchLeadsOverview;
 
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat('en-US', {
@@ -491,7 +439,7 @@ export default function Leads() {
               onEdit={handleEdit}
               onDelete={handleDelete}
               onConvert={handleConvert}
-              onRefresh={refetch}
+              onRefresh={realtimeRefetch}
               hasAdminRole={hasAdminRole}
               currentUserId={user?.id}
             />
