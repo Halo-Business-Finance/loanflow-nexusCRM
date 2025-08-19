@@ -77,7 +77,7 @@ const regionData = [
   { name: 'South', value: 15, fill: '#dc2626' }
 ];
 
-export default function Dashboard() {
+function Dashboard() {
   const { user } = useAuth();
   const { toast } = useToast();
   const navigate = useNavigate();
@@ -748,3 +748,5 @@ export default function Dashboard() {
     </div>
   );
 }
+
+export default Dashboard;

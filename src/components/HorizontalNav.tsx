@@ -245,10 +245,10 @@ export function HorizontalNav() {
       </div>
 
       {/* Navigation Bar */}
-      <div className="px-6">
-        <nav className="flex items-center justify-center space-x-6">
+      <div className="px-6 pb-4">
+        <nav className="flex items-center justify-center">
           {/* Navigation Buttons */}
-          <div className="flex items-center gap-2 mr-4">
+          <div className="flex items-center gap-2 mr-6">
             <Button 
               variant="ghost" 
               size="sm"
@@ -266,6 +266,8 @@ export function HorizontalNav() {
               <ArrowRight className="h-4 w-4" />
             </Button>
           </div>
+          
+          <div className="flex items-center space-x-6">
           {/* Dashboard Button */}
           <Button 
             asChild
@@ -479,7 +481,7 @@ export function HorizontalNav() {
               ))}
             </DropdownMenuContent>
           </DropdownMenu>
-          
+          </div>
         </nav>
       </div>
     </div>
