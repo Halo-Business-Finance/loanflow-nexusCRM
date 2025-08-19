@@ -4,6 +4,7 @@ import { PersistentAISecurityMonitor } from '@/components/security/PersistentAIS
 import { DarkWebSecurityBot } from '@/components/security/DarkWebSecurityBot';
 import { AdvancedThreatDetection } from '@/components/security/AdvancedThreatDetection';
 import { ThreatDetectionMonitor } from '@/components/security/ThreatDetectionMonitor';
+import { SensitiveDataPermissionManager } from '@/components/security/SensitiveDataPermissionManager';
 import { MicrosoftAuthenticatorSetup } from '@/components/auth/MicrosoftAuthenticatorSetup';
 import { SecurityWrapper } from '@/components/SecurityWrapper';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -96,9 +97,12 @@ const SecurityPage: React.FC = () => {
           </div>
 
           <Tabs defaultValue="monitoring" className="space-y-6">
-            <TabsList className="grid w-full grid-cols-3 bg-card border-0 shadow-sm">
+            <TabsList className="grid w-full grid-cols-4 bg-card border-0 shadow-sm">
               <TabsTrigger value="monitoring" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
                 Live Security Monitoring
+              </TabsTrigger>
+              <TabsTrigger value="access-control" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
+                Data Access Control
               </TabsTrigger>
               <TabsTrigger value="mfa" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
                 Microsoft Authenticator MFA
@@ -170,6 +174,10 @@ const SecurityPage: React.FC = () => {
                   </CardContent>
                 </Card>
               </div>
+            </TabsContent>
+
+            <TabsContent value="access-control" className="space-y-6">
+              <SensitiveDataPermissionManager />
             </TabsContent>
 
             <TabsContent value="mfa" className="space-y-6">
