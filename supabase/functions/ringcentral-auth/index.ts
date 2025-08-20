@@ -1,15 +1,11 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
-
-const corsHeaders = {
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
-}
+import { getSecurityHeaders, handleSecureOptions, validatePhoneNumber, sanitizeString } from "../_shared/security-headers.ts";
 
 serve(async (req) => {
   // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {
-    return new Response(null, { headers: corsHeaders })
+    return handleSecureOptions()
   }
 
   try {
@@ -31,10 +27,19 @@ serve(async (req) => {
 
     const { action, phoneNumber } = await req.json()
 
+    // Validate inputs
+    if (action && !['call', 'status'].includes(action)) {
+      throw new Error('Invalid action parameter')
+    }
+    
+    if (phoneNumber && !validatePhoneNumber(phoneNumber)) {
+      throw new Error('Invalid phone number format')
+    }
+
     // Get user's RingCentral account
     const { data: rcAccount, error: rcError } = await supabaseClient
       .from('ringcentral_accounts')
-      .select('*')
+      .select('client_id, client_secret, server_url, username, extension, password')
       .eq('user_id', user.id)
       .eq('is_active', true)
       .single()
@@ -43,7 +48,12 @@ serve(async (req) => {
       throw new Error('RingCentral account not configured')
     }
 
-    // Authenticate with RingCentral
+    // Validate required fields
+    if (!rcAccount.client_id || !rcAccount.client_secret || !rcAccount.username || !rcAccount.password) {
+      throw new Error('RingCentral account incomplete - missing required credentials')
+    }
+
+    // Authenticate with RingCentral using proper password field
     const authResponse = await fetch(`${rcAccount.server_url}/restapi/oauth/token`, {
       method: 'POST',
       headers: {
@@ -53,7 +63,7 @@ serve(async (req) => {
       body: new URLSearchParams({
         grant_type: 'password',
         username: rcAccount.username,
-        password: rcAccount.client_secret, // This should be the actual password
+        password: rcAccount.password, // Use the actual password field, not client_secret
         extension: rcAccount.extension || ''
       })
     })
@@ -70,6 +80,9 @@ serve(async (req) => {
     let result = {}
 
     if (action === 'call' && phoneNumber) {
+      // Sanitize phone number
+      const sanitizedPhoneNumber = sanitizeString(phoneNumber, 20);
+      
       // Make a RingOut call
       const callResponse = await fetch(`${rcAccount.server_url}/restapi/v1.0/account/~/extension/~/ring-out`, {
         method: 'POST',
@@ -79,7 +92,7 @@ serve(async (req) => {
         },
         body: JSON.stringify({
           from: { phoneNumber: rcAccount.username },
-          to: { phoneNumber: phoneNumber },
+          to: { phoneNumber: sanitizedPhoneNumber },
           playPrompt: false
         })
       })
@@ -110,14 +123,16 @@ serve(async (req) => {
     }
 
     return new Response(JSON.stringify(result), {
-      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      headers: getSecurityHeaders({ 'Content-Type': 'application/json' }),
     })
 
   } catch (error) {
     console.error('Error in ringcentral-auth function:', error)
-    return new Response(JSON.stringify({ error: error.message }), {
+    return new Response(JSON.stringify({ 
+      error: error instanceof Error ? error.message : 'Internal server error' 
+    }), {
       status: 500,
-      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      headers: getSecurityHeaders({ 'Content-Type': 'application/json' }),
     })
   }
 })
