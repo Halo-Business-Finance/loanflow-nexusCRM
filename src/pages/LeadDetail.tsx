@@ -16,6 +16,7 @@ import { ActionReminder } from "@/components/ActionReminder"
 import { PhoneDialer } from "@/components/PhoneDialer"
 import { EmailComposer } from "@/components/EmailComposer"
 import { ClickablePhone } from "@/components/ui/clickable-phone"
+import { useRoleBasedAccess } from "@/hooks/useRoleBasedAccess"
 
 import { formatNumber, formatCurrency, formatPhoneNumber } from "@/lib/utils"
 import { useNotifications } from "@/hooks/useNotifications"
@@ -57,6 +58,7 @@ export default function LeadDetail() {
   const { user } = useAuth()
   const { toast } = useToast()
   const { createNotification } = useNotifications()
+  const { canDeleteLeads } = useRoleBasedAccess()
 
   const [lead, setLead] = useState<Lead | null>(null)
   const [client, setClient] = useState<ClientType | null>(null)
@@ -453,6 +455,38 @@ export default function LeadDetail() {
                   <Edit className="h-3 w-3 mr-2" />
                   {isEditing ? 'Save Changes' : 'Edit'}
                 </Button>
+                
+                {canDeleteLeads && (
+                  <AlertDialog>
+                    <AlertDialogTrigger asChild>
+                      <Button 
+                        variant="destructive"
+                        size="sm"
+                        className="h-8 text-xs font-medium"
+                      >
+                        <Trash2 className="h-3 w-3 mr-2" />
+                        Delete
+                      </Button>
+                    </AlertDialogTrigger>
+                    <AlertDialogContent>
+                      <AlertDialogHeader>
+                        <AlertDialogTitle>Delete Lead</AlertDialogTitle>
+                        <AlertDialogDescription>
+                          Are you sure you want to delete <strong>{lead?.name || 'this lead'}</strong>? This action cannot be undone.
+                        </AlertDialogDescription>
+                      </AlertDialogHeader>
+                      <AlertDialogFooter>
+                        <AlertDialogCancel>Cancel</AlertDialogCancel>
+                        <AlertDialogAction
+                          onClick={deleteLead}
+                          className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                        >
+                          Delete Lead
+                        </AlertDialogAction>
+                      </AlertDialogFooter>
+                    </AlertDialogContent>
+                  </AlertDialog>
+                )}
                 
                 {isEditing && (
                   <Button
@@ -1084,37 +1118,6 @@ export default function LeadDetail() {
         </div>
 
         {/* Future: Action Reminder Dialog can be added here */}
-
-        {/* Delete Lead Dialog */}
-        <AlertDialog>
-          <AlertDialogTrigger asChild>
-            <Button 
-              variant="destructive"
-              size="sm"
-              className="fixed bottom-6 right-6 h-10 px-4 shadow-lg"
-            >
-              <Trash2 className="h-4 w-4 mr-2" />
-              Delete Lead
-            </Button>
-          </AlertDialogTrigger>
-          <AlertDialogContent>
-            <AlertDialogHeader>
-              <AlertDialogTitle>Delete Lead</AlertDialogTitle>
-              <AlertDialogDescription>
-                Are you sure you want to delete <strong>{lead?.name || 'this lead'}</strong>? This action cannot be undone.
-              </AlertDialogDescription>
-            </AlertDialogHeader>
-            <AlertDialogFooter>
-              <AlertDialogCancel>Cancel</AlertDialogCancel>
-              <AlertDialogAction
-                onClick={deleteLead}
-                className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-              >
-                Delete Lead
-              </AlertDialogAction>
-            </AlertDialogFooter>
-          </AlertDialogContent>
-        </AlertDialog>
       </div>
     </div>
   )
