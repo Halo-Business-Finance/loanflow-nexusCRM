@@ -70,6 +70,37 @@ export default function Leads() {
   const { hasRole } = useRoleBasedAccess();
   const hasAdminRole = hasRole('admin') || hasRole('super_admin');
 
+  // Refresh leads when component mounts or user navigates back
+  useEffect(() => {
+    const handleFocus = () => {
+      console.log('Window focused, refreshing leads...');
+      realtimeRefetch();
+    };
+
+    const handleVisibilityChange = () => {
+      if (!document.hidden) {
+        console.log('Tab became visible, refreshing leads...');
+        realtimeRefetch();
+      }
+    };
+
+    window.addEventListener('focus', handleFocus);
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    
+    return () => {
+      window.removeEventListener('focus', handleFocus);
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+    };
+  }, [realtimeRefetch]);
+
+  // Refresh leads when component mounts or user changes
+  useEffect(() => {
+    if (user) {
+      console.log('User changed, refreshing leads...');
+      realtimeRefetch();
+    }
+  }, [user, realtimeRefetch]);
+
   // Function to update overview based on leads data
   const updateOverview = (leads: Lead[]) => {
     const totalLeads = leads.length;

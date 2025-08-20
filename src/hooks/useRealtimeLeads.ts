@@ -65,7 +65,7 @@ export function useRealtimeLeads() {
   useRealtimeSubscription({
     table: 'leads',
     onInsert: (payload) => {
-      console.log('New lead added:', payload.new)
+      console.log('Real-time: New lead added:', payload.new)
       setLeads(prev => [payload.new, ...prev])
       toast({
         title: "New Lead Added",
@@ -74,7 +74,7 @@ export function useRealtimeLeads() {
       })
     },
     onUpdate: (payload) => {
-      console.log('Lead updated:', payload.new)
+      console.log('Real-time: Lead updated:', payload.new)
       setLeads(prev => prev.map(lead => 
         lead.id === payload.new.id ? { ...lead, ...payload.new } : lead
       ))
@@ -85,11 +85,15 @@ export function useRealtimeLeads() {
       })
     },
     onDelete: (payload) => {
-      console.log('Lead deleted:', payload.old)
-      setLeads(prev => prev.filter(lead => lead.id !== payload.old.id))
+      console.log('Real-time: Lead deleted:', payload.old)
+      setLeads(prev => {
+        const filtered = prev.filter(lead => lead.id !== payload.old.id)
+        console.log('Leads before filter:', prev.length, 'after filter:', filtered.length)
+        return filtered
+      })
       toast({
         title: "Lead Deleted",
-        description: `Lead ${payload.old.id} has been removed`,
+        description: `Lead has been removed`,
         variant: "destructive"
       })
     }
