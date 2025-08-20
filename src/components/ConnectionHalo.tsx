@@ -8,13 +8,20 @@ import { RingCentralSetup } from "@/components/RingCentralSetup"
 
 export function ConnectionHalo() {
   const [isOpen, setIsOpen] = useState(false)
+  
+  console.log('ConnectionHalo component rendered', { isOpen })
 
-  const HaloButton = () => (
-    <button
-      onClick={() => setIsOpen(true)}
-      className="relative w-12 h-12 rounded-full bg-gradient-to-r from-primary/20 to-accent/20 border-2 border-primary/30 backdrop-blur-sm hover:border-primary/50 transition-all duration-300 group"
-      aria-label="Open connections"
-    >
+  const HaloButton = () => {
+    console.log('HaloButton rendering')
+    return (
+      <button
+        onClick={() => {
+          console.log('Halo button clicked!')
+          setIsOpen(true)
+        }}
+        className="relative w-12 h-12 rounded-full bg-gradient-to-r from-primary/20 to-accent/20 border-2 border-primary/30 backdrop-blur-sm hover:border-primary/50 transition-all duration-300 group"
+        aria-label="Open connections"
+      >
       {/* Outer glow ring */}
       <div className="absolute inset-0 rounded-full bg-gradient-to-r from-primary/10 to-accent/10 animate-pulse group-hover:from-primary/20 group-hover:to-accent/20 transition-all duration-300" />
       
