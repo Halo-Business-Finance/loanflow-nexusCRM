@@ -19,18 +19,18 @@ export function ConnectionHalo() {
           console.log('Halo button clicked!')
           setIsOpen(true)
         }}
-        className="relative w-12 h-12 rounded-full bg-blue-500 border-2 border-blue-600 backdrop-blur-sm hover:border-blue-700 hover:bg-blue-600 transition-all duration-300 group"
+        className="relative w-12 h-12 rounded-full bg-blue-500 border-2 border-blue-600 backdrop-blur-sm hover:border-blue-700 hover:bg-blue-600 group"
         aria-label="Open connections"
       >
         {/* Outer glow ring */}
-        <div className="absolute inset-0 rounded-full bg-blue-400/20 group-hover:bg-blue-400/30 transition-all duration-300" />
+        <div className="absolute inset-0 rounded-full bg-blue-400/20 group-hover:bg-blue-400/30" />
         
         {/* Inner halo ring */}
-        <div className="absolute inset-1 rounded-full border border-primary/40 group-hover:border-primary/60 transition-all duration-300" />
+        <div className="absolute inset-1 rounded-full border border-primary/40 group-hover:border-primary/60" />
         
         {/* Center icon */}
         <div className="absolute inset-0 flex items-center justify-center">
-          <Cloud className="w-5 h-5 text-white group-hover:text-white/90 transition-colors" />
+          <Cloud className="w-5 h-5 text-white group-hover:text-white/90" />
         </div>
         
         {/* Floating particles */}
