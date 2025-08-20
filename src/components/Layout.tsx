@@ -2,13 +2,14 @@ import React from "react"
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar"
 import { AppSidebar } from "@/components/AppSidebar"
 import { ReactNode, useState, useEffect } from "react"
-import { Clock, ArrowLeft, ArrowRight } from "lucide-react"
+import { Clock } from "lucide-react"
 // Using the uploaded LoanFlow CRM logo
 import { useNavigate } from "react-router-dom"
 import { Button } from "@/components/ui/button"
 import { NotificationBell } from "@/components/NotificationBell"
 import { GlobalSearch } from "@/components/GlobalSearch"
 import { ThemeToggle } from "@/components/ThemeToggle"
+import { ConnectionHalo } from "@/components/ConnectionHalo"
 
 
 interface LayoutProps {
@@ -58,24 +59,9 @@ export default function Layout({ children }: LayoutProps) {
               <div className="flex items-center gap-2 min-w-0">
                 <SidebarTrigger className="flex-shrink-0" />
                 
-                {/* Navigation Buttons - Hidden on mobile */}
-                <div className="hidden sm:flex items-center gap-2">
-                  <Button 
-                    variant="default" 
-                    size="sm" 
-                    onClick={handleGoBack}
-                    className="text-primary-foreground hover:bg-primary/90"
-                  >
-                    <ArrowLeft className="w-4 h-4" />
-                  </Button>
-                  <Button 
-                    variant="default" 
-                    size="sm" 
-                    onClick={handleGoForward}
-                    className="text-primary-foreground hover:bg-primary/90"
-                  >
-                    <ArrowRight className="w-4 h-4" />
-                  </Button>
+                {/* Connection Halo Button */}
+                <div className="hidden sm:flex items-center gap-2 ml-2">
+                  <ConnectionHalo />
                 </div>
                 
                 {/* App Title - Responsive */}
