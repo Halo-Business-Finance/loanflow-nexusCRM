@@ -19,15 +19,15 @@ export function ConnectionHalo() {
           console.log('Halo button clicked!')
           setIsOpen(true)
         }}
-        className="relative w-12 h-12 group"
+        className="relative w-12 h-12 rounded-full bg-blue-500 backdrop-blur-sm hover:bg-blue-600 group"
         aria-label="Open connections"
       >
-        {/* 4 equal pieces in a 2x2 grid with gaps */}
-        <div className="grid grid-cols-2 gap-1 w-full h-full">
-          <div className="bg-blue-500 group-hover:bg-blue-600 rounded-sm transition-colors" />
-          <div className="bg-blue-500 group-hover:bg-blue-600 rounded-sm transition-colors" />
-          <div className="bg-blue-500 group-hover:bg-blue-600 rounded-sm transition-colors" />
-          <div className="bg-blue-500 group-hover:bg-blue-600 rounded-sm transition-colors" />
+        {/* Outer glow ring */}
+        <div className="absolute inset-0 rounded-full bg-blue-400/20 group-hover:bg-blue-400/30" />
+        
+        {/* Center icon */}
+        <div className="absolute inset-0 flex items-center justify-center">
+          <Cloud className="w-7 h-7 text-white group-hover:text-white/90" fill="white" />
         </div>
       </button>
     )
