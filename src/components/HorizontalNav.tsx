@@ -30,12 +30,11 @@ import {
   RefreshCw,
   Camera,
   Shield,
-  LayoutDashboard,
-  ArrowLeft,
-  ArrowRight
+  LayoutDashboard
 } from "lucide-react"
 import { useAuth } from "@/components/auth/AuthProvider"
 import { ThemeToggle } from "@/components/ThemeToggle"
+import { ConnectionHalo } from "@/components/ConnectionHalo"
 import loanflowIcon from "@/assets/loanflow-icon.png"
 
 const homeItems = [
@@ -247,24 +246,9 @@ export function HorizontalNav() {
       {/* Navigation Bar */}
       <div className="px-6 pb-4">
         <nav className="flex items-center justify-center">
-          {/* Navigation Buttons */}
+          {/* Connection Halo Button */}
           <div className="flex items-center gap-2 mr-6">
-            <Button 
-              variant="ghost" 
-              size="sm"
-              onClick={() => window.history.back()}
-              className="h-8 w-8 p-0 hover:bg-muted"
-            >
-              <ArrowLeft className="h-4 w-4" />
-            </Button>
-            <Button 
-              variant="ghost" 
-              size="sm"
-              onClick={() => window.history.forward()}
-              className="h-8 w-8 p-0 hover:bg-muted"
-            >
-              <ArrowRight className="h-4 w-4" />
-            </Button>
+            <ConnectionHalo />
           </div>
           
           <div className="flex items-center space-x-6">
