@@ -23,7 +23,7 @@ export function ConnectionHalo() {
         aria-label="Open connections"
       >
         {/* Outer glow ring */}
-        <div className="absolute inset-0 rounded-full bg-gradient-to-r from-primary/10 to-accent/10 animate-pulse group-hover:from-primary/20 group-hover:to-accent/20 transition-all duration-300" />
+        <div className="absolute inset-0 rounded-full bg-blue-400/20 group-hover:bg-blue-400/30 transition-all duration-300" />
         
         {/* Inner halo ring */}
         <div className="absolute inset-1 rounded-full border border-primary/40 group-hover:border-primary/60 transition-all duration-300" />
@@ -34,8 +34,8 @@ export function ConnectionHalo() {
         </div>
         
         {/* Floating particles */}
-        <div className="absolute -top-1 -right-1 w-2 h-2 rounded-full bg-primary/60 animate-ping" />
-        <div className="absolute -bottom-1 -left-1 w-1.5 h-1.5 rounded-full bg-accent/60 animate-ping" style={{ animationDelay: '0.5s' }} />
+        <div className="absolute -top-1 -right-1 w-2 h-2 rounded-full bg-blue-300" />
+        <div className="absolute -bottom-1 -left-1 w-1.5 h-1.5 rounded-full bg-blue-400" />
       </button>
     )
   }
