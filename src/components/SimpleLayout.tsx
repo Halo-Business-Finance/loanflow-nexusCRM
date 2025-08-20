@@ -38,10 +38,10 @@ export default function SimpleLayout({ children }: SimpleLayoutProps) {
   return (
     <div className="min-h-screen flex flex-col w-full bg-background">
       <header className="h-20 border-b bg-card shadow-soft flex items-center justify-between px-6">
-        <div className="flex items-center gap-2">
-          <ConnectionHalo />
-          <div className="flex items-center gap-2 ml-2">
-            <h1 className="text-xl font-semibold text-primary dark:text-white no-underline">Halo Business Finance</h1>
+        <div className="flex flex-col items-start gap-1">
+          <h1 className="text-xl font-semibold text-primary dark:text-white no-underline">Halo Business Finance</h1>
+          <div className="ml-2">
+            <ConnectionHalo />
           </div>
         </div>
         <div className="flex items-center gap-4">
