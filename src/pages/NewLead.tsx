@@ -1,4 +1,5 @@
 import { useState } from "react"
+import { useNavigate } from "react-router-dom"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -7,9 +8,13 @@ import { Textarea } from "@/components/ui/textarea"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { LOAN_TYPES, STAGES, PRIORITIES } from "@/types/lead"
 import { useToast } from "@/hooks/use-toast"
+import { supabase } from "@/integrations/supabase/client"
+import { useAuth } from "@/components/auth/AuthProvider"
 
 export default function NewLead() {
   const { toast } = useToast()
+  const navigate = useNavigate()
+  const { user } = useAuth()
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
@@ -46,11 +51,78 @@ export default function NewLead() {
       return
     }
 
-    // TODO: Implement actual lead creation logic
-    toast({
-      title: "Lead Created",
-      description: "New lead has been added to your pipeline",
-    })
+    if (!user) {
+      toast({
+        title: "Authentication Error",
+        description: "You must be logged in to create a lead",
+        variant: "destructive"
+      })
+      return
+    }
+
+    try {
+      // Create contact entity first
+      const contactData = {
+        name: `${formData.firstName} ${formData.lastName}`,
+        email: formData.email,
+        phone: formData.phone,
+        business_name: formData.businessName,
+        business_address: formData.businessAddress,
+        business_city: formData.businessCity,
+        business_state: formData.businessState,
+        business_zip_code: formData.businessZipCode,
+        annual_revenue: formData.annualRevenue ? Number(formData.annualRevenue) : undefined,
+        loan_amount: formData.loanAmount ? Number(formData.loanAmount) : undefined,
+        loan_type: formData.loanType,
+        credit_score: formData.creditScore ? Number(formData.creditScore) : undefined,
+        priority: formData.priority.toLowerCase(),
+        stage: formData.stage,
+        notes: formData.notes,
+        naics_code: formData.naicsCode,
+        ownership_structure: formData.ownershipStructure,
+        user_id: user.id
+      }
+
+      const { data: contactEntity, error: contactError } = await supabase
+        .from('contact_entities')
+        .insert(contactData)
+        .select()
+        .single()
+
+      if (contactError) {
+        throw new Error(`Failed to create contact: ${contactError.message}`)
+      }
+
+      // Create lead record
+      const { data: leadData, error: leadError } = await supabase
+        .from('leads')
+        .insert({
+          user_id: user.id,
+          contact_entity_id: contactEntity.id
+        })
+        .select()
+        .single()
+
+      if (leadError) {
+        throw new Error(`Failed to create lead: ${leadError.message}`)
+      }
+
+      toast({
+        title: "Lead Created",
+        description: "New lead has been added to your pipeline",
+      })
+
+      // Navigate to the lead detail page
+      navigate(`/leads/${leadData.id}`)
+
+    } catch (error: any) {
+      console.error('Error creating lead:', error)
+      toast({
+        title: "Error",
+        description: error.message || "Failed to create lead",
+        variant: "destructive"
+      })
+    }
   }
 
   return (

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
@@ -46,6 +47,7 @@ interface LeadsOverview {
 export default function Leads() {
   const { user } = useAuth();
   const { toast } = useToast();
+  const navigate = useNavigate();
   
   // Use real-time leads hook
   const { leads: realtimeLeads, loading: realtimeLoading, refetch: realtimeRefetch } = useRealtimeLeads();
@@ -251,12 +253,14 @@ export default function Leads() {
 
         console.log('Created contact entity:', contactEntity);
 
-        const { error: leadError } = await supabase
+        const { data: leadData, error: leadError } = await supabase
           .from('leads')
           .insert({
             user_id: user.id,
             contact_entity_id: contactEntity.id
-          });
+          })
+          .select()
+          .single();
 
         if (leadError) {
           console.error('Lead creation error:', leadError);
@@ -267,6 +271,9 @@ export default function Leads() {
           title: "Success",
           description: "Lead created successfully",
         });
+
+        // Navigate to the lead detail page
+        navigate(`/leads/${leadData.id}`);
       }
 
       setIsFormOpen(false);
