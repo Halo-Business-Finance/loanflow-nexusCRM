@@ -3,9 +3,6 @@ import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar"
 import { AppSidebar } from "@/components/AppSidebar"
 import { ReactNode, useState, useEffect } from "react"
 import { Clock } from "lucide-react"
-// Using the uploaded LoanFlow CRM logo
-import { useNavigate } from "react-router-dom"
-import { Button } from "@/components/ui/button"
 import { NotificationBell } from "@/components/NotificationBell"
 import { GlobalSearch } from "@/components/GlobalSearch"
 import { ThemeToggle } from "@/components/ThemeToggle"
@@ -17,16 +14,7 @@ interface LayoutProps {
 }
 
 export default function Layout({ children }: LayoutProps) {
-  const navigate = useNavigate()
   const [currentDateTime, setCurrentDateTime] = useState(new Date())
-
-  const handleGoBack = () => {
-    navigate(-1)
-  }
-
-  const handleGoForward = () => {
-    navigate(1)
-  }
 
   useEffect(() => {
     const timer = setInterval(() => {
