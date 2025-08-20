@@ -143,8 +143,13 @@ export function HorizontalNav() {
         <div className="flex items-center justify-between">
           {/* Left Side - Logo, App Name and Welcome Message */}
           <div className="flex items-center gap-4">
-            <div className="flex items-center gap-2">
-              <span className="font-semibold text-foreground">LoanFlow CRM</span>
+            <div className="flex flex-col items-start gap-1">
+              <div className="flex items-center gap-2">
+                <span className="font-semibold text-foreground">LoanFlow CRM</span>
+              </div>
+              <div className="ml-2">
+                <ConnectionHalo />
+              </div>
             </div>
             
             {/* Welcome Message */}
@@ -246,11 +251,6 @@ export function HorizontalNav() {
       {/* Navigation Bar */}
       <div className="px-6 pb-4">
         <nav className="flex items-center justify-center">
-          {/* Connection Halo Button */}
-          <div className="flex items-center gap-2 mr-6">
-            <ConnectionHalo />
-          </div>
-          
           <div className="flex items-center space-x-6">
           {/* Dashboard Button */}
           <Button 
