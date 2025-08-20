@@ -282,24 +282,39 @@ export default function LeadDetail() {
     if (!lead) return
 
     try {
+      console.log('Attempting to delete lead:', lead.id, 'User ID:', user?.id)
+      
       const { error } = await supabase
         .from('leads')
         .delete()
         .eq('id', lead.id)
 
-      if (error) throw error
+      if (error) {
+        console.error('Delete error details:', error)
+        throw error
+      }
       
+      console.log('Lead deleted successfully')
       toast({
         title: "Success!",
         description: `${lead.name || 'Lead'} has been deleted successfully.`,
       })
 
       navigate('/leads')
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error deleting lead:', error)
+      
+      // More detailed error handling
+      let errorMessage = "Failed to delete lead"
+      if (error.message?.includes('row-level security')) {
+        errorMessage = "You don't have permission to delete this lead. Only admins or the lead owner can delete leads."
+      } else if (error.message) {
+        errorMessage = `Failed to delete lead: ${error.message}`
+      }
+      
       toast({
         title: "Error",
-        description: "Failed to delete lead",
+        description: errorMessage,
         variant: "destructive",
       })
     }
@@ -456,7 +471,7 @@ export default function LeadDetail() {
                   {isEditing ? 'Save Changes' : 'Edit'}
                 </Button>
                 
-                {canDeleteLeads && (
+                {(canDeleteLeads || (lead.user_id === user?.id)) && (
                   <AlertDialog>
                     <AlertDialogTrigger asChild>
                       <Button 
