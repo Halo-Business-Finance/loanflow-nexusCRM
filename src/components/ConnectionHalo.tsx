@@ -22,22 +22,23 @@ export function ConnectionHalo() {
         className="relative w-12 h-12 rounded-full bg-gradient-to-r from-primary/20 to-accent/20 border-2 border-primary/30 backdrop-blur-sm hover:border-primary/50 transition-all duration-300 group"
         aria-label="Open connections"
       >
-      {/* Outer glow ring */}
-      <div className="absolute inset-0 rounded-full bg-gradient-to-r from-primary/10 to-accent/10 animate-pulse group-hover:from-primary/20 group-hover:to-accent/20 transition-all duration-300" />
-      
-      {/* Inner halo ring */}
-      <div className="absolute inset-1 rounded-full border border-primary/40 group-hover:border-primary/60 transition-all duration-300" />
-      
-      {/* Center icon */}
-      <div className="absolute inset-0 flex items-center justify-center">
-        <Cloud className="w-5 h-5 text-primary group-hover:text-primary/80 transition-colors" />
-      </div>
-      
-      {/* Floating particles */}
-      <div className="absolute -top-1 -right-1 w-2 h-2 rounded-full bg-primary/60 animate-ping" />
-      <div className="absolute -bottom-1 -left-1 w-1.5 h-1.5 rounded-full bg-accent/60 animate-ping" style={{ animationDelay: '0.5s' }} />
-    </button>
-  )
+        {/* Outer glow ring */}
+        <div className="absolute inset-0 rounded-full bg-gradient-to-r from-primary/10 to-accent/10 animate-pulse group-hover:from-primary/20 group-hover:to-accent/20 transition-all duration-300" />
+        
+        {/* Inner halo ring */}
+        <div className="absolute inset-1 rounded-full border border-primary/40 group-hover:border-primary/60 transition-all duration-300" />
+        
+        {/* Center icon */}
+        <div className="absolute inset-0 flex items-center justify-center">
+          <Cloud className="w-5 h-5 text-primary group-hover:text-primary/80 transition-colors" />
+        </div>
+        
+        {/* Floating particles */}
+        <div className="absolute -top-1 -right-1 w-2 h-2 rounded-full bg-primary/60 animate-ping" />
+        <div className="absolute -bottom-1 -left-1 w-1.5 h-1.5 rounded-full bg-accent/60 animate-ping" style={{ animationDelay: '0.5s' }} />
+      </button>
+    )
+  }
 
   return (
     <>
