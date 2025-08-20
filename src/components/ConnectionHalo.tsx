@@ -19,7 +19,7 @@ export function ConnectionHalo() {
           console.log('Halo button clicked!')
           setIsOpen(true)
         }}
-        className="relative w-12 h-12 rounded-full bg-gradient-to-r from-primary/20 to-accent/20 border-2 border-primary/30 backdrop-blur-sm hover:border-primary/50 transition-all duration-300 group"
+        className="relative w-12 h-12 rounded-full bg-blue-500 border-2 border-blue-600 backdrop-blur-sm hover:border-blue-700 hover:bg-blue-600 transition-all duration-300 group"
         aria-label="Open connections"
       >
         {/* Outer glow ring */}
