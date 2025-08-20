@@ -85,8 +85,8 @@ export function LeadCard({ lead, onEdit, onDelete, onConvert, hasAdminRole, curr
     ? Math.floor((Date.now() - new Date(lead.last_contact).getTime()) / (1000 * 60 * 60 * 24))
     : 0
 
-  // Check if user can delete this lead (admin/manager roles or own lead)
-  const canDelete = hasAdminRole || (currentUserId && lead.user_id === currentUserId)
+  // Check if user can delete this lead (only admin and super_admin)
+  const canDelete = hasAdminRole
 
   return (
     <Card className="group relative overflow-hidden bg-gradient-to-br from-card/95 to-card border border-border/50 hover:border-primary/30 transition-all duration-300 hover:shadow-xl hover:shadow-primary/5 hover:-translate-y-1">

@@ -51,7 +51,7 @@ export const useRoleBasedAccess = () => {
   }, [hasMinimumRole]);
 
   const canDeleteLeads = useCallback((): boolean => {
-    return hasMinimumRole('manager');
+    return hasMinimumRole('admin'); // Only admin and super_admin can delete leads
   }, [hasMinimumRole]);
 
   const canViewReports = useCallback((): boolean => {

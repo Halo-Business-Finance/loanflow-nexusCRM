@@ -70,8 +70,8 @@ export function LeadTableRow({ lead, onEdit, onDelete, onConvert, hasAdminRole, 
     ? Math.floor((Date.now() - new Date(lead.last_contact).getTime()) / (1000 * 60 * 60 * 24))
     : 0
 
-  // Check if user can delete this lead (admin/manager roles or own lead)
-  const canDelete = hasAdminRole || (currentUserId && lead.user_id === currentUserId)
+  // Check if user can delete this lead (only admin and super_admin)
+  const canDelete = hasAdminRole
 
   return (
     <TooltipProvider delayDuration={300}>

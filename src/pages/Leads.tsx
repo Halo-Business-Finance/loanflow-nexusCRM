@@ -68,7 +68,7 @@ export default function Leads() {
   const [editingLead, setEditingLead] = useState<Lead | null>(null);
   const [isFormOpen, setIsFormOpen] = useState(false);
   const { hasRole } = useRoleBasedAccess();
-  const hasAdminRole = hasRole('admin');
+  const hasAdminRole = hasRole('admin') || hasRole('super_admin');
 
   // Function to update overview based on leads data
   const updateOverview = (leads: Lead[]) => {
