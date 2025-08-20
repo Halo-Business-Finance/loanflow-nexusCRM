@@ -259,7 +259,7 @@ export function HorizontalNav() {
             className={`flex items-center gap-1 px-4 py-3 text-sm font-medium transition-colors hover:text-navy hover:bg-navy/10 rounded-md ${
               isActivePath("/")
                 ? 'text-primary border-b-2 border-primary'
-                : 'text-foreground/70 hover:text-blue-600'
+                : 'text-foreground/70 hover:text-navy'
             }`}
           >
             <Link to="/" className="flex items-center gap-1">
@@ -276,7 +276,7 @@ export function HorizontalNav() {
                 className={`flex items-center gap-1 px-4 py-3 text-sm font-medium transition-colors hover:text-navy hover:bg-navy/10 rounded-md ${
                   leadsItems.some(item => isActivePath(item.path))
                     ? 'text-primary border-b-2 border-primary'
-                    : 'text-foreground/70 hover:text-blue-600'
+                    : 'text-foreground/70 hover:text-navy'
                 }`}
               >
                 <Users className="h-3 w-3" />
@@ -304,7 +304,7 @@ export function HorizontalNav() {
                 className={`flex items-center gap-1 px-4 py-3 text-sm font-medium transition-colors hover:text-navy hover:bg-navy/10 rounded-md ${
                   borrowersItems.some(item => isActivePath(item.path))
                     ? 'text-primary border-b-2 border-primary'
-                    : 'text-foreground/70 hover:text-blue-600'
+                    : 'text-foreground/70 hover:text-navy'
                 }`}
               >
                 <Building2 className="h-3 w-3" />
@@ -332,7 +332,7 @@ export function HorizontalNav() {
                 className={`flex items-center gap-1 px-4 py-3 text-sm font-medium transition-colors hover:text-navy hover:bg-navy/10 rounded-md ${
                   pipelineItems.some(item => isActivePath(item.path))
                     ? 'text-primary border-b-2 border-primary'
-                    : 'text-foreground/70 hover:text-blue-600'
+                    : 'text-foreground/70 hover:text-navy'
                 }`}
               >
                 <Target className="h-3 w-3" />
@@ -360,7 +360,7 @@ export function HorizontalNav() {
                 className={`flex items-center gap-1 px-4 py-3 text-sm font-medium transition-colors hover:text-navy hover:bg-navy/10 rounded-md ${
                   underwriterItems.some(item => isActivePath(item.path))
                     ? 'text-primary border-b-2 border-primary'
-                    : 'text-foreground/70 hover:text-blue-600'
+                    : 'text-foreground/70 hover:text-navy'
                 }`}
               >
                 <Shield className="h-3 w-3" />
@@ -389,7 +389,7 @@ export function HorizontalNav() {
                 className={`flex items-center gap-1 px-4 py-3 text-sm font-medium transition-colors hover:text-navy hover:bg-navy/10 rounded-md ${
                   activitiesItems.some(item => isActivePath(item.path))
                     ? 'text-primary border-b-2 border-primary'
-                    : 'text-foreground/70 hover:text-blue-600'
+                    : 'text-foreground/70 hover:text-navy'
                 }`}
               >
                 <Activity className="h-3 w-3" />
@@ -418,7 +418,7 @@ export function HorizontalNav() {
                 className={`flex items-center gap-1 px-4 py-3 text-sm font-medium transition-colors hover:text-navy hover:bg-navy/10 rounded-md ${
                   securityItems.some(item => isActivePath(item.path))
                     ? 'text-primary border-b-2 border-primary'
-                    : 'text-foreground/70 hover:text-blue-600'
+                    : 'text-foreground/70 hover:text-navy'
                 }`}
               >
                 <Shield className="h-3 w-3" />
@@ -446,7 +446,7 @@ export function HorizontalNav() {
                 className={`flex items-center gap-1 px-4 py-3 text-sm font-medium transition-colors hover:text-navy hover:bg-navy/10 rounded-md ${
                   enterpriseItems.some(item => isActivePath(item.path.split('#')[0]))
                     ? 'text-primary border-b-2 border-primary'
-                    : 'text-foreground/70 hover:text-blue-600'
+                    : 'text-foreground/70 hover:text-navy'
                 }`}
               >
                 <Building2 className="h-3 w-3" />

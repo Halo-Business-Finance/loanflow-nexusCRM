@@ -57,7 +57,7 @@ export function ConnectionHalo() {
                 <CardHeader className="pb-4">
                   <div className="flex items-center gap-3">
                     <div className="p-2 rounded-lg bg-navy/10 dark:bg-navy/20">
-                      <Building className="w-5 h-5 text-blue-600 dark:text-blue-400" />
+                      <Building className="w-5 h-5 text-navy dark:text-navy-light" />
                     </div>
                     <div>
                       <CardTitle className="text-lg">Microsoft 365</CardTitle>

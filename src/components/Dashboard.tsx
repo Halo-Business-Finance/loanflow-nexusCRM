@@ -47,11 +47,11 @@ const performanceData = [
 ];
 
 const funnelData = [
-  { name: 'Prospects', value: 1000, fill: '#1e40af' },
-  { name: 'Qualified Leads', value: 750, fill: '#3b82f6' },
-  { name: 'Proposals', value: 500, fill: '#60a5fa' },
-  { name: 'Negotiations', value: 250, fill: '#93c5fd' },
-  { name: 'Closed Deals', value: 100, fill: '#dbeafe' }
+  { name: 'Prospects', value: 1000, fill: 'hsl(var(--navy))' },
+  { name: 'Qualified Leads', value: 750, fill: 'hsl(var(--navy-light))' },
+  { name: 'Proposals', value: 500, fill: 'hsl(var(--navy-600))' },
+  { name: 'Negotiations', value: 250, fill: 'hsl(var(--navy-light))' },
+  { name: 'Closed Deals', value: 100, fill: 'hsl(var(--navy))' }
 ];
 
 const monthlyData = [
@@ -64,14 +64,14 @@ const monthlyData = [
 ];
 
 const distributionData = [
-  { name: 'SBA Loans', value: 45, fill: '#1e40af' },
+  { name: 'SBA Loans', value: 45, fill: 'hsl(var(--navy))' },
   { name: 'Commercial', value: 30, fill: '#7c3aed' },
   { name: 'Real Estate', value: 20, fill: '#059669' },
   { name: 'Equipment', value: 5, fill: '#dc2626' }
 ];
 
 const regionData = [
-  { name: 'West Coast', value: 35, fill: '#2563eb' },
+  { name: 'West Coast', value: 35, fill: 'hsl(var(--navy))' },
   { name: 'East Coast', value: 28, fill: '#7c3aed' },
   { name: 'Midwest', value: 22, fill: '#059669' },
   { name: 'South', value: 15, fill: '#dc2626' }
@@ -170,7 +170,7 @@ function Dashboard() {
                       </div>
                     </div>
                     <div className="h-8 w-8 sm:h-10 sm:w-10 lg:h-12 lg:w-12 bg-navy/10 rounded-full flex items-center justify-center flex-shrink-0">
-                      <DollarSign className="h-4 w-4 sm:h-5 sm:w-5 lg:h-6 lg:w-6 text-blue-600" />
+                      <DollarSign className="h-4 w-4 sm:h-5 sm:w-5 lg:h-6 lg:w-6 text-navy" />
                     </div>
                   </div>
                 </CardContent>
@@ -253,7 +253,7 @@ function Dashboard() {
               <Card className="bg-card border-0 shadow-lg col-span-1">
                 <CardHeader className="pb-2 sm:pb-4 p-3 sm:p-6">
                   <CardTitle className="flex items-center gap-2 text-base sm:text-lg font-semibold text-foreground">
-                    <BarChart3 className="h-4 w-4 sm:h-5 sm:w-5 text-blue-600" />
+                    <BarChart3 className="h-4 w-4 sm:h-5 sm:w-5 text-navy" />
                     <span className="truncate">Performance Metrics</span>
                   </CardTitle>
                   <CardDescription className="text-xs sm:text-sm text-muted-foreground">
@@ -290,7 +290,7 @@ function Dashboard() {
                             boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)'
                           }}
                         />
-                        <Bar dataKey="value" fill="#2563eb" radius={[0, 4, 4, 0]} />
+                        <Bar dataKey="value" fill="hsl(var(--navy))" radius={[0, 4, 4, 0]} />
                       </BarChart>
                     </ResponsiveContainer>
                   </div>
@@ -506,7 +506,7 @@ function Dashboard() {
                     </div>
                     <div className="flex justify-between items-center p-3 rounded-lg bg-muted/30">
                       <span className="text-sm font-medium text-muted-foreground">Customer Retention</span>
-                      <span className="font-semibold text-blue-600">91%</span>
+                      <span className="font-semibold text-navy">91%</span>
                     </div>
                     <div className="flex justify-between items-center p-3 rounded-lg bg-muted/30">
                       <span className="text-sm font-medium text-muted-foreground">Average Deal Size</span>
@@ -567,7 +567,7 @@ function Dashboard() {
               <Card className="bg-card border-0 shadow-lg hover:shadow-xl transition-shadow duration-200">
                 <CardHeader className="pb-4">
                   <CardTitle className="flex items-center gap-2 text-lg font-semibold text-foreground">
-                    <BarChart3 className="h-5 w-5 text-blue-600" />
+                    <BarChart3 className="h-5 w-5 text-navy" />
                     Advanced Analytics
                   </CardTitle>
                   <CardDescription className="text-muted-foreground">
@@ -577,7 +577,7 @@ function Dashboard() {
                 <CardContent>
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                     <div className="text-center p-4 border rounded-lg">
-                      <div className="text-2xl font-bold text-blue-600">{formatCurrency(totalRevenue)}</div>
+                      <div className="text-2xl font-bold text-navy">{formatCurrency(totalRevenue)}</div>
                       <div className="text-sm text-muted-foreground">Total Revenue</div>
                       <div className="text-xs text-green-600 mt-1">↗ +12.5% vs last month</div>
                     </div>
@@ -679,7 +679,7 @@ function Dashboard() {
                   <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
                     <div className="p-4 border rounded-lg hover:bg-muted/50 transition-colors cursor-pointer">
                       <div className="flex items-center gap-3 mb-2">
-                        <BarChart3 className="h-5 w-5 text-blue-600" />
+                        <BarChart3 className="h-5 w-5 text-navy" />
                         <h3 className="font-medium">Monthly Performance</h3>
                       </div>
                       <p className="text-sm text-muted-foreground">Revenue, leads, and conversion metrics</p>

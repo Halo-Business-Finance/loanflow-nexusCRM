@@ -38,7 +38,7 @@ const getNotificationIcon = (type: string) => {
   switch (type) {
     case 'lead_status_change':
     case 'lead_created':
-      return <Target className="w-4 h-4 text-blue-500" />
+      return <Target className="w-4 h-4 text-navy" />
     case 'client_created':
     case 'client_updated':
       return <Users className="w-4 h-4 text-green-500" />
@@ -51,7 +51,7 @@ const getNotificationIcon = (type: string) => {
     case 'error':
       return <AlertCircle className="w-4 h-4 text-red-500" />
     default:
-      return <Info className="w-4 h-4 text-blue-500" />
+      return <Info className="w-4 h-4 text-navy" />
   }
 }
 
