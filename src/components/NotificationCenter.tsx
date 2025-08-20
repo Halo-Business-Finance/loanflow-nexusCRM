@@ -128,7 +128,7 @@ export function NotificationCenter({
                 <div
                   className={cn(
                     "p-4 cursor-pointer transition-colors hover:bg-muted/50",
-                    !notification.is_read && "bg-blue-50/50 border-l-4 border-l-blue-500"
+                    !notification.is_read && "bg-navy/5 border-l-4 border-l-navy"
                   )}
                   onClick={() => handleNotificationClick(notification)}
                 >
@@ -158,7 +158,7 @@ export function NotificationCenter({
                         {notification.message}
                       </p>
                       {!notification.is_read && (
-                        <div className="w-2 h-2 bg-blue-500 rounded-full mt-2"></div>
+                        <div className="w-2 h-2 bg-navy rounded-full mt-2"></div>
                       )}
                     </div>
                   </div>

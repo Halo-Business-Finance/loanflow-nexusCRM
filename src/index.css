@@ -18,9 +18,9 @@ All colors MUST be HSL.
     --popover: 0 0% 100%;
     --popover-foreground: 0 0% 0%;
 
-    --primary: 220 91% 18%;
+    --primary: 220 100% 20%;
     --primary-foreground: 0 0% 100%;
-    --primary-glow: 220 80% 35%;
+    --primary-glow: 220 90% 35%;
 
     --secondary: 0 0% 96%;
     --secondary-foreground: 0 0% 0%;
@@ -46,10 +46,11 @@ All colors MUST be HSL.
     --input-border-hover: 0 0% 65%;
     --input-border-focus: 220 91% 25%;
 
-    --gradient-primary: linear-gradient(135deg, hsl(220 91% 25%), hsl(220 80% 35%));
+    --gradient-primary: linear-gradient(135deg, hsl(220 100% 20%), hsl(220 90% 35%));
     --gradient-card: linear-gradient(145deg, hsl(0 0% 100%), hsl(0 0% 98%));
     --gradient-accent: linear-gradient(135deg, hsl(142 76% 36%), hsl(142 60% 45%));
-    --gradient-blue: linear-gradient(135deg, hsl(212 90% 60%), hsl(212 80% 70%));
+    --gradient-blue: linear-gradient(135deg, hsl(220 100% 20%), hsl(220 90% 35%));
+    --gradient-navy: linear-gradient(135deg, hsl(220 100% 20%), hsl(220 90% 35%));
     --gradient-green: linear-gradient(135deg, hsl(142 76% 50%), hsl(142 65% 60%));
     --gradient-orange: linear-gradient(135deg, hsl(24 95% 53%), hsl(24 85% 63%));
     --gradient-purple: linear-gradient(135deg, hsl(262 90% 55%), hsl(262 80% 65%));
@@ -64,9 +65,13 @@ All colors MUST be HSL.
     /* Field styling */
     --field-accent: 212 90% 70%;
 
-    /* Navy blue for navigation */
-    --navy: 220 91% 15%;
+    /* Navy blue for navigation and widgets */
+    --navy: 220 100% 20%;
     --navy-foreground: 0 0% 100%;
+    
+    /* Navy variants for widgets and CRM */
+    --navy-light: 220 80% 35%;
+    --navy-dark: 220 100% 15%;
 
     --sidebar-background: 0 0% 100%;
     --sidebar-foreground: 0 0% 0%;
@@ -88,9 +93,14 @@ All colors MUST be HSL.
     --popover: 220 23% 12%;
     --popover-foreground: 220 10% 95%;
 
-    --primary: 220 91% 60%;
+    --primary: 220 100% 25%;
     --primary-foreground: 0 0% 100%;
-    --primary-glow: 220 80% 70%;
+    --primary-glow: 220 90% 40%;
+    
+    /* Navy blue for dark mode */
+    --navy: 220 100% 25%;
+    --navy-light: 220 80% 40%;
+    --navy-dark: 220 100% 20%;
 
     --secondary: 220 25% 18%;
     --secondary-foreground: 220 10% 95%;
@@ -111,8 +121,9 @@ All colors MUST be HSL.
     --input: 220 25% 20%;
     --ring: 220 91% 60%;
 
-    --gradient-primary: linear-gradient(135deg, hsl(220 91% 60%), hsl(220 80% 70%));
-    --gradient-blue: linear-gradient(135deg, hsl(212 90% 70%), hsl(212 80% 80%));
+    --gradient-primary: linear-gradient(135deg, hsl(220 100% 25%), hsl(220 90% 40%));
+    --gradient-blue: linear-gradient(135deg, hsl(220 100% 25%), hsl(220 90% 40%));
+    --gradient-navy: linear-gradient(135deg, hsl(220 100% 25%), hsl(220 90% 40%));
     --gradient-green: linear-gradient(135deg, hsl(142 76% 60%), hsl(142 65% 70%));
     --gradient-orange: linear-gradient(135deg, hsl(24 95% 65%), hsl(24 85% 75%));
     --gradient-purple: linear-gradient(135deg, hsl(262 90% 65%), hsl(262 80% 75%));

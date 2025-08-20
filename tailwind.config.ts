@@ -39,6 +39,7 @@ export default {
 			backgroundImage: {
 				'gradient-primary': 'var(--gradient-primary)',
 				'gradient-card': 'var(--gradient-card)',
+				'gradient-navy': 'var(--gradient-navy)',
 			},
 			boxShadow: {
 				'soft': 'var(--shadow-soft)',
@@ -100,6 +101,8 @@ export default {
 				navy: {
 					DEFAULT: 'hsl(var(--navy))',
 					foreground: 'hsl(var(--navy-foreground))',
+					light: 'hsl(var(--navy-light))',
+					dark: 'hsl(var(--navy-dark))',
 					600: 'hsl(220 80% 45%)'
 				},
 				'field-accent': {

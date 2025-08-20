@@ -59,7 +59,7 @@ export function ActionReminder({ entityId, entityName, entityType, isOpen, onClo
       label: 'Call Reminder',
       icon: Phone,
       description: 'Schedule a phone call',
-      color: 'bg-blue-500'
+      color: 'bg-navy'
     },
     {
       id: 'email' as const,

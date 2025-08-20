@@ -47,7 +47,7 @@ export function QuickActionsImproved() {
       icon: User,
       route: '/leads',
       category: 'create',
-      color: 'bg-blue-500',
+      color: 'bg-navy',
       priority: 1
     },
     {

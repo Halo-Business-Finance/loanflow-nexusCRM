@@ -19,11 +19,11 @@ export function ConnectionHalo() {
           console.log('Halo button clicked!')
           setIsOpen(true)
         }}
-        className="relative w-12 h-12 rounded-full bg-blue-500 backdrop-blur-sm hover:bg-blue-600 group"
+        className="relative w-12 h-12 rounded-full bg-navy backdrop-blur-sm hover:bg-navy-light group"
         aria-label="Open connections"
       >
         {/* Outer glow ring */}
-        <div className="absolute inset-0 rounded-full bg-blue-400/20 group-hover:bg-blue-400/30" />
+        <div className="absolute inset-0 rounded-full bg-navy/20 group-hover:bg-navy/30" />
         
         {/* Center icon */}
         <div className="absolute inset-0 flex items-center justify-center">
@@ -56,7 +56,7 @@ export function ConnectionHalo() {
               <Card className="group hover:shadow-lg transition-all duration-300 border-border hover:border-primary/20">
                 <CardHeader className="pb-4">
                   <div className="flex items-center gap-3">
-                    <div className="p-2 rounded-lg bg-blue-100 dark:bg-blue-900/20">
+                    <div className="p-2 rounded-lg bg-navy/10 dark:bg-navy/20">
                       <Building className="w-5 h-5 text-blue-600 dark:text-blue-400" />
                     </div>
                     <div>
@@ -85,7 +85,7 @@ export function ConnectionHalo() {
                   </ul>
                   <EmailSetup 
                     trigger={
-                      <Button className="w-full bg-blue-600 hover:bg-blue-700 text-white">
+                      <Button className="w-full bg-navy hover:bg-navy-light text-white">
                         Connect Microsoft 365
                       </Button>
                     }

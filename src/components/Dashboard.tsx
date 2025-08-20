@@ -169,7 +169,7 @@ function Dashboard() {
                         <span className="text-xs text-muted-foreground hidden sm:inline">vs last month</span>
                       </div>
                     </div>
-                    <div className="h-8 w-8 sm:h-10 sm:w-10 lg:h-12 lg:w-12 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0">
+                    <div className="h-8 w-8 sm:h-10 sm:w-10 lg:h-12 lg:w-12 bg-navy/10 rounded-full flex items-center justify-center flex-shrink-0">
                       <DollarSign className="h-4 w-4 sm:h-5 sm:w-5 lg:h-6 lg:w-6 text-blue-600" />
                     </div>
                   </div>
@@ -534,7 +534,7 @@ function Dashboard() {
                         <span className="font-medium">85%</span>
                       </div>
                       <div className="w-full bg-gray-200 rounded-full h-2">
-                        <div className="bg-blue-600 h-2 rounded-full" style={{ width: '85%' }}></div>
+                        <div className="bg-navy h-2 rounded-full" style={{ width: '85%' }}></div>
                       </div>
                     </div>
                     <div className="space-y-2">
@@ -606,7 +606,7 @@ function Dashboard() {
                         <span className="text-sm">Website</span>
                         <div className="flex items-center gap-2">
                           <div className="w-20 bg-gray-200 rounded-full h-2">
-                            <div className="bg-blue-600 h-2 rounded-full" style={{ width: '45%' }}></div>
+                            <div className="bg-navy h-2 rounded-full" style={{ width: '45%' }}></div>
                           </div>
                           <span className="text-sm font-medium">45%</span>
                         </div>
@@ -644,7 +644,7 @@ function Dashboard() {
                         <span>New lead: John Smith submitted application</span>
                       </div>
                       <div className="flex items-center gap-3">
-                        <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
+                        <div className="w-2 h-2 bg-navy rounded-full"></div>
                         <span>Deal closed: $150k SBA loan approved</span>
                       </div>
                       <div className="flex items-center gap-3">

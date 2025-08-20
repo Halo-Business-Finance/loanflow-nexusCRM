@@ -205,7 +205,7 @@ export function HorizontalNav() {
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="w-56 bg-background border border-border shadow-lg z-50">
                 <DropdownMenuItem asChild>
-                  <Link to="/settings" className="flex items-center gap-2 w-full px-2 py-2 text-sm hover:bg-blue-50 hover:text-blue-700 rounded-sm">
+                  <Link to="/settings" className="flex items-center gap-2 w-full px-2 py-2 text-sm hover:bg-navy/10 hover:text-navy rounded-sm">
                     <Settings className="h-4 w-4" />
                     General Settings
                   </Link>
@@ -256,7 +256,7 @@ export function HorizontalNav() {
           <Button 
             asChild
             variant="ghost" 
-            className={`flex items-center gap-1 px-4 py-3 text-sm font-medium transition-colors hover:text-blue-600 hover:bg-blue-50 rounded-md ${
+            className={`flex items-center gap-1 px-4 py-3 text-sm font-medium transition-colors hover:text-navy hover:bg-navy/10 rounded-md ${
               isActivePath("/")
                 ? 'text-primary border-b-2 border-primary'
                 : 'text-foreground/70 hover:text-blue-600'
@@ -273,7 +273,7 @@ export function HorizontalNav() {
             <DropdownMenuTrigger asChild>
               <Button 
                 variant="ghost" 
-                className={`flex items-center gap-1 px-4 py-3 text-sm font-medium transition-colors hover:text-blue-600 hover:bg-blue-50 rounded-md ${
+                className={`flex items-center gap-1 px-4 py-3 text-sm font-medium transition-colors hover:text-navy hover:bg-navy/10 rounded-md ${
                   leadsItems.some(item => isActivePath(item.path))
                     ? 'text-primary border-b-2 border-primary'
                     : 'text-foreground/70 hover:text-blue-600'
@@ -287,7 +287,7 @@ export function HorizontalNav() {
             <DropdownMenuContent align="start" className="w-48 bg-background border border-border shadow-lg z-50">
               {leadsItems.map((item) => (
                 <DropdownMenuItem key={item.name} asChild>
-                  <Link to={item.path} className="flex items-center gap-2 w-full px-2 py-2 text-sm hover:bg-blue-50 hover:text-blue-700 rounded-sm">
+                  <Link to={item.path} className="flex items-center gap-2 w-full px-2 py-2 text-sm hover:bg-navy/10 hover:text-navy rounded-sm">
                     <item.icon className="h-4 w-4" />
                     {item.name}
                   </Link>
@@ -301,7 +301,7 @@ export function HorizontalNav() {
             <DropdownMenuTrigger asChild>
               <Button 
                 variant="ghost" 
-                className={`flex items-center gap-1 px-4 py-3 text-sm font-medium transition-colors hover:text-blue-600 hover:bg-blue-50 rounded-md ${
+                className={`flex items-center gap-1 px-4 py-3 text-sm font-medium transition-colors hover:text-navy hover:bg-navy/10 rounded-md ${
                   borrowersItems.some(item => isActivePath(item.path))
                     ? 'text-primary border-b-2 border-primary'
                     : 'text-foreground/70 hover:text-blue-600'
@@ -315,7 +315,7 @@ export function HorizontalNav() {
             <DropdownMenuContent align="start" className="w-48 bg-background border border-border shadow-lg z-50">
               {borrowersItems.map((item) => (
                 <DropdownMenuItem key={item.name} asChild>
-                  <Link to={item.path} className="flex items-center gap-2 w-full px-2 py-2 text-sm hover:bg-blue-50 hover:text-blue-700 rounded-sm">
+                  <Link to={item.path} className="flex items-center gap-2 w-full px-2 py-2 text-sm hover:bg-navy/10 hover:text-navy rounded-sm">
                     <item.icon className="h-4 w-4" />
                     {item.name}
                   </Link>
@@ -329,7 +329,7 @@ export function HorizontalNav() {
             <DropdownMenuTrigger asChild>
               <Button 
                 variant="ghost" 
-                className={`flex items-center gap-1 px-4 py-3 text-sm font-medium transition-colors hover:text-blue-600 hover:bg-blue-50 rounded-md ${
+                className={`flex items-center gap-1 px-4 py-3 text-sm font-medium transition-colors hover:text-navy hover:bg-navy/10 rounded-md ${
                   pipelineItems.some(item => isActivePath(item.path))
                     ? 'text-primary border-b-2 border-primary'
                     : 'text-foreground/70 hover:text-blue-600'
@@ -343,7 +343,7 @@ export function HorizontalNav() {
             <DropdownMenuContent align="start" className="w-48 bg-background border border-border shadow-lg z-50">
               {pipelineItems.map((item) => (
                 <DropdownMenuItem key={item.name} asChild>
-                  <Link to={item.path} className="flex items-center gap-2 w-full px-2 py-2 text-sm hover:bg-blue-50 hover:text-blue-700 rounded-sm">
+                  <Link to={item.path} className="flex items-center gap-2 w-full px-2 py-2 text-sm hover:bg-navy/10 hover:text-navy rounded-sm">
                     <item.icon className="h-4 w-4" />
                     {item.name}
                   </Link>
@@ -357,7 +357,7 @@ export function HorizontalNav() {
             <DropdownMenuTrigger asChild>
               <Button 
                 variant="ghost" 
-                className={`flex items-center gap-1 px-4 py-3 text-sm font-medium transition-colors hover:text-blue-600 hover:bg-blue-50 rounded-md ${
+                className={`flex items-center gap-1 px-4 py-3 text-sm font-medium transition-colors hover:text-navy hover:bg-navy/10 rounded-md ${
                   underwriterItems.some(item => isActivePath(item.path))
                     ? 'text-primary border-b-2 border-primary'
                     : 'text-foreground/70 hover:text-blue-600'
@@ -371,7 +371,7 @@ export function HorizontalNav() {
             <DropdownMenuContent align="start" className="w-48 bg-background border border-border shadow-lg z-50">
               {underwriterItems.map((item) => (
                 <DropdownMenuItem key={item.name} asChild>
-                  <Link to={item.path} className="flex items-center gap-2 w-full px-2 py-2 text-sm hover:bg-blue-50 hover:text-blue-700 rounded-sm">
+                  <Link to={item.path} className="flex items-center gap-2 w-full px-2 py-2 text-sm hover:bg-navy/10 hover:text-navy rounded-sm">
                     <item.icon className="h-4 w-4" />
                     {item.name}
                   </Link>
@@ -386,7 +386,7 @@ export function HorizontalNav() {
             <DropdownMenuTrigger asChild>
               <Button 
                 variant="ghost" 
-                className={`flex items-center gap-1 px-4 py-3 text-sm font-medium transition-colors hover:text-blue-600 hover:bg-blue-50 rounded-md ${
+                className={`flex items-center gap-1 px-4 py-3 text-sm font-medium transition-colors hover:text-navy hover:bg-navy/10 rounded-md ${
                   activitiesItems.some(item => isActivePath(item.path))
                     ? 'text-primary border-b-2 border-primary'
                     : 'text-foreground/70 hover:text-blue-600'
@@ -400,7 +400,7 @@ export function HorizontalNav() {
             <DropdownMenuContent align="start" className="w-48 bg-background border border-border shadow-lg z-50">
               {activitiesItems.map((item) => (
                 <DropdownMenuItem key={item.name} asChild>
-                  <Link to={item.path} className="flex items-center gap-2 w-full px-2 py-2 text-sm hover:bg-blue-50 hover:text-blue-700 rounded-sm">
+                  <Link to={item.path} className="flex items-center gap-2 w-full px-2 py-2 text-sm hover:bg-navy/10 hover:text-navy rounded-sm">
                     <item.icon className="h-4 w-4" />
                     {item.name}
                   </Link>
@@ -415,7 +415,7 @@ export function HorizontalNav() {
             <DropdownMenuTrigger asChild>
               <Button 
                 variant="ghost" 
-                className={`flex items-center gap-1 px-4 py-3 text-sm font-medium transition-colors hover:text-blue-600 hover:bg-blue-50 rounded-md ${
+                className={`flex items-center gap-1 px-4 py-3 text-sm font-medium transition-colors hover:text-navy hover:bg-navy/10 rounded-md ${
                   securityItems.some(item => isActivePath(item.path))
                     ? 'text-primary border-b-2 border-primary'
                     : 'text-foreground/70 hover:text-blue-600'
@@ -429,7 +429,7 @@ export function HorizontalNav() {
             <DropdownMenuContent align="start" className="w-48 bg-background border border-border shadow-lg z-50">
               {securityItems.map((item) => (
                 <DropdownMenuItem key={item.name} asChild>
-                  <Link to={item.path} className="flex items-center gap-2 w-full px-2 py-2 text-sm hover:bg-blue-50 hover:text-blue-700 rounded-sm">
+                  <Link to={item.path} className="flex items-center gap-2 w-full px-2 py-2 text-sm hover:bg-navy/10 hover:text-navy rounded-sm">
                     <item.icon className="h-4 w-4" />
                     {item.name}
                   </Link>
@@ -443,7 +443,7 @@ export function HorizontalNav() {
             <DropdownMenuTrigger asChild>
               <Button 
                 variant="ghost" 
-                className={`flex items-center gap-1 px-4 py-3 text-sm font-medium transition-colors hover:text-blue-600 hover:bg-blue-50 rounded-md ${
+                className={`flex items-center gap-1 px-4 py-3 text-sm font-medium transition-colors hover:text-navy hover:bg-navy/10 rounded-md ${
                   enterpriseItems.some(item => isActivePath(item.path.split('#')[0]))
                     ? 'text-primary border-b-2 border-primary'
                     : 'text-foreground/70 hover:text-blue-600'
@@ -457,7 +457,7 @@ export function HorizontalNav() {
             <DropdownMenuContent align="start" className="w-48 bg-background border border-border shadow-lg z-50">
               {enterpriseItems.map((item) => (
                 <DropdownMenuItem key={item.name} asChild>
-                  <Link to={item.path} className="flex items-center gap-2 w-full px-2 py-2 text-sm hover:bg-blue-50 hover:text-blue-700 rounded-sm">
+                  <Link to={item.path} className="flex items-center gap-2 w-full px-2 py-2 text-sm hover:bg-navy/10 hover:text-navy rounded-sm">
                     <item.icon className="h-4 w-4" />
                     {item.name}
                   </Link>
