@@ -4094,7 +4094,7 @@ export type Database = {
       }
       cleanup_expired_sessions: {
         Args: Record<PropertyKey, never>
-        Returns: number
+        Returns: undefined
       }
       cleanup_expired_sessions_optimized: {
         Args: Record<PropertyKey, never>
@@ -4643,6 +4643,10 @@ export type Database = {
       }
       validate_password_strength: {
         Args: { password: string }
+        Returns: Json
+      }
+      validate_secure_input: {
+        Args: { field_rules?: Json; input_data: Json }
         Returns: Json
       }
       validate_secure_session_token: {

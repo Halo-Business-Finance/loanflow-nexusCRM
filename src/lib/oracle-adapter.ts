@@ -196,12 +196,25 @@ export class OracleAdapter {
   }
 }
 
-// Factory function for Oracle client
+// Factory function for Oracle client - SECURE VERSION
 export function createOracleAdapter(): OracleAdapter {
+  // SECURITY FIX: Remove hardcoded fallback credentials
+  const user = process.env.ORACLE_DB_USER;
+  const password = process.env.ORACLE_DB_PASSWORD;
+  const connectString = process.env.ORACLE_DB_CONNECT_STRING;
+  
+  // Validate that all required credentials are provided
+  if (!user || !password || !connectString) {
+    throw new Error(
+      'SECURITY ERROR: Oracle database credentials must be provided via environment variables. ' +
+      'Required: ORACLE_DB_USER, ORACLE_DB_PASSWORD, ORACLE_DB_CONNECT_STRING'
+    );
+  }
+  
   const config: OracleConnectionConfig = {
-    user: process.env.ORACLE_DB_USER || 'CRM_USER',
-    password: process.env.ORACLE_DB_PASSWORD || '',
-    connectString: process.env.ORACLE_DB_CONNECT_STRING || 'autonomous-db-endpoint:1521/service_name',
+    user,
+    password,
+    connectString,
     poolMin: 2,
     poolMax: 10,
     poolIncrement: 1
