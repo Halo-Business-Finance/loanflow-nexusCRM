@@ -30,7 +30,7 @@ export function ConnectionHalo() {
         
         {/* Center icon */}
         <div className="absolute inset-0 flex items-center justify-center">
-          <Cloud className="w-5 h-5 text-white group-hover:text-white/90" />
+          <Cloud className="w-5 h-5 text-white group-hover:text-white/90" fill="white" />
         </div>
         
         {/* Floating particles */}
