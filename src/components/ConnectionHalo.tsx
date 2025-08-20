@@ -29,10 +29,6 @@ export function ConnectionHalo() {
         <div className="absolute inset-0 flex items-center justify-center">
           <Cloud className="w-7 h-7 text-white group-hover:text-white/90" fill="white" />
         </div>
-        
-        {/* Floating particles */}
-        <div className="absolute -top-1 -right-1 w-2 h-2 rounded-full bg-blue-300" />
-        <div className="absolute -bottom-1 -left-1 w-1.5 h-1.5 rounded-full bg-blue-400" />
       </button>
     )
   }
