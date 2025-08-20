@@ -25,9 +25,6 @@ export function ConnectionHalo() {
         {/* Outer glow ring */}
         <div className="absolute inset-0 rounded-full bg-blue-400/20 group-hover:bg-blue-400/30" />
         
-        {/* Inner halo ring */}
-        <div className="absolute inset-1 rounded-full border border-primary/40 group-hover:border-primary/60" />
-        
         {/* Center icon */}
         <div className="absolute inset-0 flex items-center justify-center">
           <Cloud className="w-5 h-5 text-white group-hover:text-white/90" fill="white" />
