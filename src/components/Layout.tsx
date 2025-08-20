@@ -60,7 +60,7 @@ export default function Layout({ children }: LayoutProps) {
                 <SidebarTrigger className="flex-shrink-0" />
                 
                 {/* Connection Halo Button */}
-                <div className="hidden sm:flex items-center gap-2 ml-2">
+                <div className="flex items-center gap-2 ml-2">
                   <ConnectionHalo />
                 </div>
                 
