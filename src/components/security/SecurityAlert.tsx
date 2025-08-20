@@ -21,7 +21,7 @@ interface SecurityEvent {
   severity: string;
   details: any;
   created_at: string;
-  acknowledged: boolean;
+  acknowledged?: boolean;
 }
 
 export const SecurityAlert: React.FC<SecurityAlertProps> = ({

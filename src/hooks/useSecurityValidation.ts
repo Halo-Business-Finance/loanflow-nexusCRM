@@ -42,9 +42,9 @@ export const useSecurityValidation = () => {
       }
 
       return {
-        isValid: data?.valid || false,
-        errors: data?.errors || [],
-        riskScore: data?.errors?.length * 25 || 0
+        isValid: (data as any)?.valid || false,
+        errors: (data as any)?.errors || [],
+        riskScore: ((data as any)?.errors?.length || 0) * 25
       };
     } catch (error) {
       console.error('Input validation error:', error);
@@ -88,9 +88,9 @@ export const useSecurityValidation = () => {
       }
 
       return {
-        sessionValid: data.valid || false,
-        requiresReauth: data.requires_reauth || false,
-        riskFactors: data.risk_factors || []
+        sessionValid: (data as any)?.valid || false,
+        requiresReauth: (data as any)?.requires_reauth || false,
+        riskFactors: (data as any)?.risk_factors || []
       };
     } catch (error) {
       console.error('Session validation error:', error);
