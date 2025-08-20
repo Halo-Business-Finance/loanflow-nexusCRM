@@ -80,7 +80,7 @@ export const AdvancedThreatDetection: React.FC = () => {
       // Simulate IP reputation analysis
       if (suspiciousIPs && suspiciousIPs.length > 0) {
         const mockReputations: IPReputation[] = suspiciousIPs.slice(0, 5).map((session, index) => ({
-          ip_address: session.ip_address || '192.168.1.1',
+          ip_address: (session.ip_address as string) || '192.168.1.1',
           reputation_score: Math.floor(Math.random() * 100),
           threat_categories: index % 2 === 0 ? ['malware', 'botnet'] : ['spam', 'phishing'],
           country: ['US', 'CN', 'RU', 'DE', 'FR'][index % 5],

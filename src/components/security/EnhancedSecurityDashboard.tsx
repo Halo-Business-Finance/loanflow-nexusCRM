@@ -126,7 +126,7 @@ export const EnhancedSecurityDashboard: React.FC = () => {
         type: event.event_type,
         severity: event.severity as SecurityAlert['severity'],
         title: formatEventTitle(event.event_type),
-        description: event.details?.message || `${event.event_type} detected`,
+        description: (event.details as any)?.message || `${event.event_type} detected`,
         timestamp: event.created_at,
         acknowledged: false,
         auto_resolved: false
