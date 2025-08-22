@@ -35,7 +35,7 @@ import {
 import { useAuth } from "@/components/auth/AuthProvider"
 import { ThemeToggle } from "@/components/ThemeToggle"
 import { ConnectionHalo } from "@/components/ConnectionHalo"
-import loanflowIcon from "@/assets/loanflow-icon.png"
+
 
 const homeItems = [
   { name: "Dashboard", path: "/", icon: Home },
@@ -144,7 +144,8 @@ export function HorizontalNav() {
           {/* Left Side - Logo, App Name and Welcome Message */}
           <div className="flex items-center gap-4">
             <div className="flex flex-col items-start gap-1">
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-3">
+                <img src="/lovable-uploads/e43cc6c0-ece4-497a-a3c6-e2e46d114c45.png" alt="LoanFlow CRM" className="h-8 w-auto" />
                 <span className="font-semibold text-foreground">LoanFlow CRM</span>
               </div>
               <div className="ml-2">
