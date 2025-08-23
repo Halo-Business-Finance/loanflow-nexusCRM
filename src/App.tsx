@@ -111,7 +111,7 @@ function AuthenticatedApp() {
             <Route path="/leads/new" element={<HorizontalLayout><NewLead /></HorizontalLayout>} errorElement={<RouteErrorBoundary />} />
             <Route path="/leads/stats" element={<HorizontalLayout><LeadStats /></HorizontalLayout>} errorElement={<RouteErrorBoundary />} />
             <Route path="/leads/assignment" element={<HorizontalLayout><LeadAssignment /></HorizontalLayout>} errorElement={<RouteErrorBoundary />} />
-            <Route path="/leads/:id" element={<LeadDetail />} errorElement={<RouteErrorBoundary />} />
+            <Route path="/leads/:id" element={<HorizontalLayout><LeadDetail /></HorizontalLayout>} errorElement={<RouteErrorBoundary />} />
             <Route path="/leads/:leadId/documents" element={<HorizontalLayout><LeadDocuments /></HorizontalLayout>} errorElement={<RouteErrorBoundary />} />
             
             <Route path="/existing-borrowers" element={<HorizontalLayout><Clients /></HorizontalLayout>} errorElement={<RouteErrorBoundary />} />
@@ -153,7 +153,7 @@ function AuthenticatedApp() {
             <Route path="/security/audit" element={<HorizontalLayout><SecurityAudit /></HorizontalLayout>} errorElement={<RouteErrorBoundary />} />
             <Route path="/security/threats" element={<HorizontalLayout><SecurityThreats /></HorizontalLayout>} errorElement={<RouteErrorBoundary />} />
             <Route path="/security/compliance" element={<HorizontalLayout><SecurityCompliance /></HorizontalLayout>} errorElement={<RouteErrorBoundary />} />
-            <Route path="/security/military" element={<Layout><MilitaryGradeSecurityDashboard /></Layout>} errorElement={<RouteErrorBoundary />} />
+            <Route path="/security/military" element={<HorizontalLayout><MilitaryGradeSecurityDashboard /></HorizontalLayout>} errorElement={<RouteErrorBoundary />} />
             
             <Route path="/enterprise" element={<HorizontalLayout><Enterprise /></HorizontalLayout>} errorElement={<RouteErrorBoundary />} />
             <Route path="/integrations" element={<HorizontalLayout><Integrations /></HorizontalLayout>} errorElement={<RouteErrorBoundary />} />
