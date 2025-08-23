@@ -19,11 +19,11 @@ export function ConnectionHalo() {
           console.log('Halo button clicked!')
           setIsOpen(true)
         }}
-        className="relative w-12 h-12 rounded-full bg-navy backdrop-blur-sm hover:bg-navy-light group"
+        className="relative w-12 h-12 rounded-full bg-blue-700 backdrop-blur-sm hover:bg-blue-600 group"
         aria-label="Open connections"
       >
         {/* Outer glow ring */}
-        <div className="absolute inset-0 rounded-full bg-navy/20 group-hover:bg-navy/30" />
+        <div className="absolute inset-0 rounded-full bg-blue-700/20 group-hover:bg-blue-600/30" />
         
         {/* Center icon */}
         <div className="absolute inset-0 flex items-center justify-center">
