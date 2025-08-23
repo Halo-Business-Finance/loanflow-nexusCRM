@@ -175,12 +175,9 @@ export function HorizontalNav({ onFolderClick, sidebarOpen = false, activeFolder
             <img src="/lovable-uploads/e43cc6c0-ece4-497a-a3c6-e2e46d114c45.png" alt="Logo" className="h-60 w-auto" />
           </div>
 
-          {/* Center - Welcome Message */}
+          {/* Center - Connection Status */}
           <div className="flex-1 flex justify-center items-center">
             <div className="text-center">
-              <h2 className="text-lg font-medium text-foreground">
-                Welcome back, {getUserDisplayName()}
-              </h2>
               <ConnectionHalo />
             </div>
           </div>
