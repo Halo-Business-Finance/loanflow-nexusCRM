@@ -249,7 +249,10 @@ export default function SettingsUsers() {
               </div>
             )}
 
-            {!loading && filteredUsers.map((user) => (
+            {!loading && (
+              <div>
+                <p>Number of filtered users: {filteredUsers.length}</p>
+                {filteredUsers.map((user) => (
               <div key={user.id} className="grid grid-cols-6 gap-4 text-sm p-3 border rounded-lg">
                 <div className="flex items-center gap-2">
                   <Avatar className="h-6 w-6">
@@ -273,11 +276,24 @@ export default function SettingsUsers() {
                 <Button 
                   size="sm" 
                   variant="outline"
-                  onClick={() => {
-                    console.log('Edit button clicked for user:', user.id);
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    console.log('=== EDIT BUTTON CLICKED ===');
+                    console.log('User object:', user);
+                    console.log('User ID:', user.id);
+                    console.log('Button clicked successfully!');
+                    
                     try {
-                      navigate(`/settings/users?edit=${user.id}`);
-                      console.log('Navigation attempted to:', `/settings/users?edit=${user.id}`);
+                      const targetUrl = `/settings/users?edit=${user.id}`;
+                      console.log('Attempting navigation to:', targetUrl);
+                      navigate(targetUrl);
+                      console.log('Navigation call completed');
+                      
+                      toast({
+                        title: "Navigation Test",
+                        description: `Attempting to edit user: ${user.email}`,
+                      });
                     } catch (error) {
                       console.error('Navigation error:', error);
                       toast({
@@ -287,11 +303,14 @@ export default function SettingsUsers() {
                       });
                     }
                   }}
+                  style={{ minWidth: '60px', minHeight: '32px' }}
                 >
                   Edit
                 </Button>
               </div>
             ))}
+              </div>
+            )}
           </div>
         </CardContent>
       </Card>
