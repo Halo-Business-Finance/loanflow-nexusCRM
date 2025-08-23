@@ -125,6 +125,25 @@ class ProductionLogger {
   setEnabled(enabled: boolean) {
     this.isEnabled = enabled && isDevelopment; // Never enable in production
   }
+
+  // Production-safe performance logging
+  performance(operation: string, startTime: number, context?: LogContext) {
+    const duration = performance.now() - startTime;
+    
+    // Only log slow operations in production
+    if (!this.isEnabled && duration > 1000) {
+      console.warn(`[PERFORMANCE][${new Date().toISOString()}] Slow operation: ${operation} took ${duration.toFixed(2)}ms`);
+    } else if (this.isEnabled) {
+      this.log(`Performance: ${operation} completed in ${duration.toFixed(2)}ms`, context);
+    }
+  }
+
+  // Security event logging for production
+  securityProduction(event: string, severity: 'low' | 'medium' | 'high' | 'critical', details?: any) {
+    // Always log security events, but sanitize in production
+    const sanitizedDetails = this.isEnabled ? details : this.sanitizeContext(details);
+    console.log(`[SECURITY][${severity.toUpperCase()}][${new Date().toISOString()}] ${event}`, sanitizedDetails);
+  }
 }
 
 // Export singleton instance
