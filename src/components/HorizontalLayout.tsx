@@ -28,19 +28,25 @@ export default function HorizontalLayout({ children }: HorizontalLayoutProps) {
         activeFolder={activeFolder}
       />
       
-      {/* Content area with sidebar layout */}
-      <div className="flex">
-        {/* Folder Sidebar */}
-        <FolderSidebar 
-          isOpen={sidebarOpen}
-          onClose={handleCloseSidebar}
-          activeFolder={activeFolder}
-        />
-        
-        {/* Main Content */}
-        <main className={`flex-1 min-h-screen pt-8 pb-8 px-6 transition-all duration-300 ${sidebarOpen ? '' : ''}`}>
-          {children}
-        </main>
+      {/* Content area with proper sticky layout */}
+      <div className="relative">
+        <div className="flex min-h-screen">
+          {/* Folder Sidebar - Always present in DOM when open */}
+          {sidebarOpen && (
+            <div className="w-80 flex-shrink-0">
+              <FolderSidebar 
+                isOpen={sidebarOpen}
+                onClose={handleCloseSidebar}
+                activeFolder={activeFolder}
+              />
+            </div>
+          )}
+          
+          {/* Main Content - Scrollable */}
+          <main className="flex-1 pt-8 pb-8 px-6 overflow-y-auto max-h-screen">
+            {children}
+          </main>
+        </div>
       </div>
     </div>
   )

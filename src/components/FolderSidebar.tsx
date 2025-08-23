@@ -274,13 +274,7 @@ export function FolderSidebar({ isOpen, onClose, activeFolder }: FolderSidebarPr
   if (!isOpen || !activeFolder) return null
 
   return (
-    <div 
-      className={cn(
-        "w-80 bg-background border-r border-border shadow-lg transition-all duration-300 ease-in-out sticky top-0 self-start",
-        "h-screen overflow-hidden flex flex-col",
-        isOpen ? "translate-x-0 opacity-100" : "-translate-x-full opacity-0 w-0"
-      )}
-    >
+    <div className="w-80 bg-background border-r border-border shadow-lg sticky top-0 h-screen overflow-hidden flex flex-col">
       {/* Header - Fixed at top */}
       <div className="flex items-center justify-between p-4 border-b border-border bg-gradient-to-r from-blue-600 to-blue-700 flex-shrink-0">
         <h2 className="text-lg font-semibold text-white capitalize">
