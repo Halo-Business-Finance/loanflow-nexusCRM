@@ -105,14 +105,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const signIn = async (email: string, password: string) => {
     try {
-      // Check geo-restrictions first
-      console.log('Checking geo-restrictions...')
-      const geoCheck = await supabase.functions.invoke('geo-security')
-      
-      if (geoCheck.error || !geoCheck.data?.allowed) {
-        throw new Error(geoCheck.data?.reason || 'Access restricted to US locations only')
-      }
-
       console.log('Attempting to sign in with email:', email)
       const { error, data } = await supabase.auth.signInWithPassword({
         email,
@@ -123,18 +115,22 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       if (error) {
         // Check for common auth errors and provide better messages
         if (error.message === 'Invalid login credentials') {
-          throw new Error('Invalid email or password. If you just signed up, please check your email and confirm your account first.')
+          throw new Error('Invalid email or password. Please check your credentials and try again.')
         }
         throw error
       }
 
-      // Log successful login
-      await supabase.functions.invoke('audit-log', {
-        body: {
-          action: 'user_login',
-          table_name: 'auth.users',
-        }
-      })
+      // Log successful login (optional - can be done in background)
+      try {
+        await supabase.functions.invoke('audit-log', {
+          body: {
+            action: 'user_login',
+            table_name: 'auth.users',
+          }
+        })
+      } catch (auditError) {
+        console.log('Audit logging failed (non-critical):', auditError)
+      }
 
       toast({
         title: "Welcome back!",
@@ -152,44 +148,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const signUp = async (email: string, password: string, firstName: string, lastName: string) => {
     try {
-      // Validate password strength first
-      const passwordValidation = await SecurityManager.validatePassword(password);
-      if (!passwordValidation.valid) {
-        throw new Error(`Password does not meet security requirements: ${passwordValidation.errors.join(', ')}`);
-      }
-
-      // Get client information for security logging
-      const deviceFingerprint = SecurityManager.generateDeviceFingerprint();
-      const locationData = await SecurityManager.getLocationData();
-
-      // Check rate limiting for signups
-      const rateLimitResult = await SecurityManager.checkRateLimit(email, 'signup');
-      if (!rateLimitResult.allowed) {
-        throw new Error('You have reached the maximum of 5 sign-up attempts. Please try again later.');
-      }
-
-      // Check geo-restrictions
-      console.log('Checking geo-restrictions for signup...')
-      const geoCheck = await supabase.functions.invoke('geo-security')
-      
-      if (geoCheck.error || !geoCheck.data?.allowed) {
-        // Log suspicious geo activity
-        await SecurityManager.logSecurityEvent({
-          event_type: 'geo_restriction_violation',
-          severity: 'high',
-          details: {
-            email,
-            attempted_location: geoCheck.data?.country_code || 'unknown',
-            reason: geoCheck.data?.reason || 'Geographic restriction',
-            action: 'signup'
-          },
-          device_fingerprint: deviceFingerprint,
-          location: locationData
-        });
-        
-        throw new Error(geoCheck.data?.reason || 'Account creation restricted to US locations only')
-      }
-
       const { error } = await supabase.auth.signUp({
         email,
         password,
@@ -203,33 +161,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       })
 
       if (error) {
-        // Log failed signup
-        await SecurityManager.logSecurityEvent({
-          event_type: 'signup_failed',
-          severity: 'medium',
-          details: {
-            email,
-            error: error.message
-          },
-          device_fingerprint: deviceFingerprint,
-          location: locationData
-        });
-        
         throw error;
       }
-
-      // Log successful signup
-      await SecurityManager.logSecurityEvent({
-        event_type: 'signup_success',
-        severity: 'low',
-        details: {
-          email,
-          first_name: firstName,
-          last_name: lastName
-        },
-        device_fingerprint: deviceFingerprint,
-        location: locationData
-      });
 
       toast({
         title: "Account created!",
