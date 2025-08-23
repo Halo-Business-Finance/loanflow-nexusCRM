@@ -143,18 +143,11 @@ export function HorizontalNav() {
         <div className="flex items-center justify-between">
           {/* Left Side - Logo */}
           <div className="flex items-center">
-            <div className="flex flex-col items-start gap-1">
-              <div className="flex items-center gap-3">
-                <img src="/lovable-uploads/e43cc6c0-ece4-497a-a3c6-e2e46d114c45.png" alt="Logo" className="h-48 w-auto" />
-              </div>
-              <div className="ml-2">
-                <ConnectionHalo />
-              </div>
-            </div>
+            <img src="/lovable-uploads/e43cc6c0-ece4-497a-a3c6-e2e46d114c45.png" alt="Logo" className="h-48 w-auto" />
           </div>
 
           {/* Center - Welcome Message */}
-          <div className="flex-1 flex justify-center">
+          <div className="flex-1 flex justify-center items-center">
             <div className="text-center">
               <h2 className="text-lg font-medium text-foreground">
                 Welcome back, {getUserDisplayName()}
@@ -170,6 +163,7 @@ export function HorizontalNav() {
                   minute: '2-digit' 
                 })}
               </p>
+              <ConnectionHalo />
             </div>
           </div>
 
