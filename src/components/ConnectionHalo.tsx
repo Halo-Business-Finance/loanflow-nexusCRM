@@ -32,9 +32,9 @@ export function ConnectionHalo() {
           </div>
         </button>
         
-        {/* Applications text */}
+        {/* Cloud Applications text */}
         <span className="text-xs font-medium text-blue-700 hover:text-blue-600 cursor-pointer" onClick={() => setIsOpen(true)}>
-          Applications
+          Cloud Applications
         </span>
       </div>
     )
