@@ -181,6 +181,14 @@ export function HorizontalNav({ onFolderClick, sidebarOpen = false, activeFolder
               <h2 className="text-lg font-medium text-foreground">
                 Welcome back, {getUserDisplayName()}
               </h2>
+              <ConnectionHalo />
+            </div>
+          </div>
+
+          {/* Right Side - Date/Time, Search, Actions and Profile */}
+          <div className="flex flex-col items-end gap-2">
+            {/* Date and Time */}
+            <div className="text-right">
               <p className="text-sm text-muted-foreground">
                 {new Date().toLocaleDateString('en-US', { 
                   weekday: 'long', 
@@ -192,12 +200,10 @@ export function HorizontalNav({ onFolderClick, sidebarOpen = false, activeFolder
                   minute: '2-digit' 
                 })}
               </p>
-              <ConnectionHalo />
             </div>
-          </div>
-
-          {/* Right Side - Search, Actions and Profile */}
-          <div className="flex items-center gap-3">
+            
+            {/* Actions Row */}
+            <div className="flex items-center gap-3">
             {/* Search Bar */}
             <div className="w-64">
               <div className="relative">
@@ -266,6 +272,7 @@ export function HorizontalNav({ onFolderClick, sidebarOpen = false, activeFolder
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
+            </div>
           </div>
         </div>
       </div>
