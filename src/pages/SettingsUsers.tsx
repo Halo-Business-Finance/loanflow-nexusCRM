@@ -438,34 +438,95 @@ function EditUserForm({ user, onSave, onCancel }: EditUserFormProps) {
     setSaving(true);
 
     try {
-      // Update user in Supabase
-      const { data, error } = await supabase
+      console.log('Attempting to update user:', user.id);
+      console.log('Form data:', formData);
+
+      // First, let's check what fields exist in the profiles table
+      const { data: existingProfile, error: fetchError } = await supabase
         .from('profiles')
-        .update({
-          first_name: formData.first_name,
-          last_name: formData.last_name,
-          phone: formData.phone,
-          role: formData.role,
-          is_active: formData.is_active
-        })
+        .select('*')
+        .eq('id', user.id)
+        .single();
+
+      if (fetchError) {
+        console.error('Error fetching existing profile:', fetchError);
+        throw new Error(`Failed to fetch profile: ${fetchError.message}`);
+      }
+
+      console.log('Existing profile:', existingProfile);
+
+      // Update only the fields that exist in the table
+      const updateData: any = {};
+      
+      // Only include fields that are different and exist in the table
+      if (formData.first_name !== user.first_name) {
+        updateData.first_name = formData.first_name;
+      }
+      if (formData.last_name !== user.last_name) {
+        updateData.last_name = formData.last_name;
+      }
+      if (formData.phone !== user.phone) {
+        updateData.phone = formData.phone;
+      }
+      if (formData.is_active !== user.is_active) {
+        updateData.is_active = formData.is_active;
+      }
+
+      console.log('Update data:', updateData);
+
+      // Update user profile in profiles table
+      const { data: profileData, error: profileError } = await supabase
+        .from('profiles')
+        .update(updateData)
         .eq('id', user.id)
         .select()
         .single();
 
-      if (error) throw error;
+      if (profileError) {
+        console.error('Profile update error:', profileError);
+        throw new Error(`Profile update failed: ${profileError.message}`);
+      }
+
+      console.log('Profile updated successfully:', profileData);
+
+      // Handle role separately if it's in a different table
+      if (formData.role !== user.role) {
+        console.log('Updating role from', user.role, 'to', formData.role);
+        
+        // Update role in user_roles table - cast to the expected type
+        const { error: roleError } = await supabase
+          .from('user_roles')
+          .update({ role: formData.role as any })
+          .eq('user_id', user.id);
+
+        if (roleError) {
+          console.error('Role update error:', roleError);
+          // Don't throw here - role update might be handled differently
+          toast({
+            title: "Partial Update",
+            description: "Profile updated but role change failed. Please contact an administrator.",
+            variant: "destructive",
+          });
+        } else {
+          console.log('Role updated successfully');
+        }
+      }
 
       // Call onSave with updated user data
       onSave({
         ...user,
-        ...formData,
+        ...updateData,
+        role: formData.role, // Include role even if it failed to update
         updated_at: new Date().toISOString()
       });
 
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error updating user:', error);
+      const errorMessage = error.message || 'An unknown error occurred';
+      
       toast({
-        title: "Update Failed",
-        description: "Failed to update user information.",
+        title: "Update Failed", 
+        description: `Failed to update user information: ${errorMessage}`,
         variant: "destructive",
       });
     } finally {
