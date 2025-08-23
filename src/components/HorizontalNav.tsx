@@ -145,8 +145,7 @@ export function HorizontalNav() {
           <div className="flex items-center gap-4">
             <div className="flex flex-col items-start gap-1">
               <div className="flex items-center gap-3">
-                <img src="/lovable-uploads/e43cc6c0-ece4-497a-a3c6-e2e46d114c45.png" alt="LoanFlow CRM" className="h-8 w-auto" />
-                <span className="font-semibold text-foreground">LoanFlow CRM</span>
+                <img src="/lovable-uploads/e43cc6c0-ece4-497a-a3c6-e2e46d114c45.png" alt="Logo" className="h-8 w-auto" />
               </div>
               <div className="ml-2">
                 <ConnectionHalo />
