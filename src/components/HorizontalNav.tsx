@@ -35,6 +35,7 @@ import {
 import { useAuth } from "@/components/auth/AuthProvider"
 import { ThemeToggle } from "@/components/ThemeToggle"
 import { ConnectionHalo } from "@/components/ConnectionHalo"
+import { FolderSidebar } from "@/components/FolderSidebar"
 
 
 const homeItems = [
@@ -111,6 +112,8 @@ export function HorizontalNav() {
   const location = useLocation()
   const { user, signOut } = useAuth()
   const [searchQuery, setSearchQuery] = useState("")
+  const [sidebarOpen, setSidebarOpen] = useState(false)
+  const [activeFolder, setActiveFolder] = useState<string | null>(null)
 
   const capitalizeFirstLetter = (str: string) => {
     return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase()
@@ -134,6 +137,16 @@ export function HorizontalNav() {
     } catch (error) {
       console.error('Error logging out:', error)
     }
+  }
+
+  const handleFolderClick = (folderName: string) => {
+    setActiveFolder(folderName)
+    setSidebarOpen(true)
+  }
+
+  const handleCloseSidebar = () => {
+    setSidebarOpen(false)
+    setTimeout(() => setActiveFolder(null), 300)
   }
 
   return (
@@ -249,258 +262,165 @@ export function HorizontalNav() {
           <div className="flex items-center space-x-1">
           {/* Dashboard Button */}
           <Button 
-            asChild
             variant="ghost" 
+            onClick={() => handleFolderClick('home')}
             className={`group relative flex items-center gap-2 px-6 py-4 text-sm font-medium transition-all duration-300 text-white bg-gradient-to-b from-blue-600 to-blue-700 border-x border-t border-blue-500 rounded-t-xl border-b-transparent shadow-lg ${
               isActivePath("/")
                 ? 'shadow-blue-500/30 -mb-px z-20 before:absolute before:inset-x-0 before:-bottom-px before:h-px before:bg-gradient-to-r before:from-blue-300/0 before:via-blue-200 before:to-blue-300/0'
                 : 'shadow-blue-500/20 hover:from-blue-500 hover:to-blue-600 hover:shadow-blue-500/30'
             }`}
           >
-            <Link to="/" className="flex items-center gap-2">
-              <LayoutDashboard className="h-4 w-4 transition-transform duration-200 group-hover:scale-110" />
-              <span className="relative">
-                Dashboard
-                {isActivePath("/") && (
-                  <div className="absolute -bottom-1 left-0 right-0 h-0.5 bg-gradient-to-r from-blue-300/0 via-blue-200 to-blue-300/0 rounded-full"></div>
-                )}
-              </span>
-            </Link>
+            <LayoutDashboard className="h-4 w-4 transition-transform duration-200 group-hover:scale-110" />
+            <span className="relative">
+              Dashboard
+              {isActivePath("/") && (
+                <div className="absolute -bottom-1 left-0 right-0 h-0.5 bg-gradient-to-r from-blue-300/0 via-blue-200 to-blue-300/0 rounded-full"></div>
+              )}
+            </span>
           </Button>
 
-          {/* Leads Dropdown */}
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button 
-                variant="ghost" 
-                className={`group relative flex items-center gap-2 px-6 py-4 text-sm font-medium transition-all duration-300 text-white bg-gradient-to-b from-blue-600 to-blue-700 border-x border-t border-blue-500 rounded-t-xl border-b-transparent shadow-lg ${
-                  leadsItems.some(item => isActivePath(item.path))
-                    ? 'shadow-blue-500/30 -mb-px z-20 before:absolute before:inset-x-0 before:-bottom-px before:h-px before:bg-gradient-to-r before:from-blue-300/0 before:via-blue-200 before:to-blue-300/0'
-                    : 'shadow-blue-500/20 hover:from-blue-500 hover:to-blue-600 hover:shadow-blue-500/30'
-                }`}
-              >
-                <Users className="h-4 w-4 transition-transform duration-200 group-hover:scale-110" />
-                <span className="relative">
-                  Leads
-                  {leadsItems.some(item => isActivePath(item.path)) && (
-                    <div className="absolute -bottom-1 left-0 right-0 h-0.5 bg-gradient-to-r from-blue-300/0 via-blue-200 to-blue-300/0 rounded-full"></div>
-                  )}
-                </span>
-                <ChevronDown className="h-3 w-3 ml-1 transition-transform duration-200 group-hover:rotate-180" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="start" className="w-56 bg-background/95 backdrop-blur-sm border border-border shadow-xl z-50 rounded-lg">
-              {leadsItems.map((item) => (
-                <DropdownMenuItem key={item.name} asChild>
-                  <Link to={item.path} className="flex items-center gap-3 w-full px-3 py-2.5 text-sm hover:bg-muted/50 rounded-md transition-colors duration-200">
-                    <item.icon className="h-4 w-4 text-muted-foreground" />
-                    <span>{item.name}</span>
-                  </Link>
-                </DropdownMenuItem>
-              ))}
-            </DropdownMenuContent>
-          </DropdownMenu>
+          {/* Leads Button */}
+          <Button 
+            variant="ghost" 
+            onClick={() => handleFolderClick('leads')}
+            className={`group relative flex items-center gap-2 px-6 py-4 text-sm font-medium transition-all duration-300 text-white bg-gradient-to-b from-blue-600 to-blue-700 border-x border-t border-blue-500 rounded-t-xl border-b-transparent shadow-lg ${
+              leadsItems.some(item => isActivePath(item.path))
+                ? 'shadow-blue-500/30 -mb-px z-20 before:absolute before:inset-x-0 before:-bottom-px before:h-px before:bg-gradient-to-r before:from-blue-300/0 before:via-blue-200 before:to-blue-300/0'
+                : 'shadow-blue-500/20 hover:from-blue-500 hover:to-blue-600 hover:shadow-blue-500/30'
+            }`}
+          >
+            <Users className="h-4 w-4 transition-transform duration-200 group-hover:scale-110" />
+            <span className="relative">
+              Leads
+              {leadsItems.some(item => isActivePath(item.path)) && (
+                <div className="absolute -bottom-1 left-0 right-0 h-0.5 bg-gradient-to-r from-blue-300/0 via-blue-200 to-blue-300/0 rounded-full"></div>
+              )}
+            </span>
+          </Button>
 
-          {/* Existing Borrowers Dropdown */}
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button 
-                variant="ghost" 
-                className={`group relative flex items-center gap-2 px-6 py-4 text-sm font-medium transition-all duration-300 text-white bg-gradient-to-b from-blue-600 to-blue-700 border-x border-t border-blue-500 rounded-t-xl border-b-transparent shadow-lg ${
-                  borrowersItems.some(item => isActivePath(item.path))
-                    ? 'shadow-blue-500/30 -mb-px z-20 before:absolute before:inset-x-0 before:-bottom-px before:h-px before:bg-gradient-to-r before:from-blue-300/0 before:via-blue-200 before:to-blue-300/0'
-                    : 'shadow-blue-500/20 hover:from-blue-500 hover:to-blue-600 hover:shadow-blue-500/30'
-                }`}
-              >
-                <Building2 className="h-4 w-4 transition-transform duration-200 group-hover:scale-110" />
-                <span className="relative">
-                  Existing Borrowers
-                  {borrowersItems.some(item => isActivePath(item.path)) && (
-                    <div className="absolute -bottom-1 left-0 right-0 h-0.5 bg-gradient-to-r from-blue-300/0 via-blue-200 to-blue-300/0 rounded-full"></div>
-                  )}
-                </span>
-                <ChevronDown className="h-3 w-3 ml-1 transition-transform duration-200 group-hover:rotate-180" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="start" className="w-56 bg-background/95 backdrop-blur-sm border border-border shadow-xl z-50 rounded-lg">
-              {borrowersItems.map((item) => (
-                <DropdownMenuItem key={item.name} asChild>
-                  <Link to={item.path} className="flex items-center gap-3 w-full px-3 py-2.5 text-sm hover:bg-muted/50 rounded-md transition-colors duration-200">
-                    <item.icon className="h-4 w-4 text-muted-foreground" />
-                    <span>{item.name}</span>
-                  </Link>
-                </DropdownMenuItem>
-              ))}
-            </DropdownMenuContent>
-          </DropdownMenu>
+          {/* Existing Borrowers Button */}
+          <Button 
+            variant="ghost" 
+            onClick={() => handleFolderClick('borrowers')}
+            className={`group relative flex items-center gap-2 px-6 py-4 text-sm font-medium transition-all duration-300 text-white bg-gradient-to-b from-blue-600 to-blue-700 border-x border-t border-blue-500 rounded-t-xl border-b-transparent shadow-lg ${
+              borrowersItems.some(item => isActivePath(item.path))
+                ? 'shadow-blue-500/30 -mb-px z-20 before:absolute before:inset-x-0 before:-bottom-px before:h-px before:bg-gradient-to-r before:from-blue-300/0 before:via-blue-200 before:to-blue-300/0'
+                : 'shadow-blue-500/20 hover:from-blue-500 hover:to-blue-600 hover:shadow-blue-500/30'
+            }`}
+          >
+            <Building2 className="h-4 w-4 transition-transform duration-200 group-hover:scale-110" />
+            <span className="relative">
+              Existing Borrowers
+              {borrowersItems.some(item => isActivePath(item.path)) && (
+                <div className="absolute -bottom-1 left-0 right-0 h-0.5 bg-gradient-to-r from-blue-300/0 via-blue-200 to-blue-300/0 rounded-full"></div>
+              )}
+            </span>
+          </Button>
 
-          {/* Pipeline Dropdown */}
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button 
-                variant="ghost" 
-                className={`group relative flex items-center gap-2 px-6 py-4 text-sm font-medium transition-all duration-300 text-white bg-gradient-to-b from-blue-600 to-blue-700 border-x border-t border-blue-500 rounded-t-xl border-b-transparent shadow-lg ${
-                  pipelineItems.some(item => isActivePath(item.path))
-                    ? 'shadow-blue-500/30 -mb-px z-20 before:absolute before:inset-x-0 before:-bottom-px before:h-px before:bg-gradient-to-r before:from-blue-300/0 before:via-blue-200 before:to-blue-300/0'
-                    : 'shadow-blue-500/20 hover:from-blue-500 hover:to-blue-600 hover:shadow-blue-500/30'
-                }`}
-              >
-                <Target className="h-4 w-4 transition-transform duration-200 group-hover:scale-110" />
-                <span className="relative">
-                  Pipeline
-                  {pipelineItems.some(item => isActivePath(item.path)) && (
-                    <div className="absolute -bottom-1 left-0 right-0 h-0.5 bg-gradient-to-r from-blue-300/0 via-blue-200 to-blue-300/0 rounded-full"></div>
-                  )}
-                </span>
-                <ChevronDown className="h-3 w-3 ml-1 transition-transform duration-200 group-hover:rotate-180" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="start" className="w-56 bg-background/95 backdrop-blur-sm border border-border shadow-xl z-50 rounded-lg">
-              {pipelineItems.map((item) => (
-                <DropdownMenuItem key={item.name} asChild>
-                  <Link to={item.path} className="flex items-center gap-3 w-full px-3 py-2.5 text-sm hover:bg-muted/50 rounded-md transition-colors duration-200">
-                    <item.icon className="h-4 w-4 text-muted-foreground" />
-                    <span>{item.name}</span>
-                  </Link>
-                </DropdownMenuItem>
-              ))}
-            </DropdownMenuContent>
-          </DropdownMenu>
+          {/* Pipeline Button */}
+          <Button 
+            variant="ghost" 
+            onClick={() => handleFolderClick('pipeline')}
+            className={`group relative flex items-center gap-2 px-6 py-4 text-sm font-medium transition-all duration-300 text-white bg-gradient-to-b from-blue-600 to-blue-700 border-x border-t border-blue-500 rounded-t-xl border-b-transparent shadow-lg ${
+              pipelineItems.some(item => isActivePath(item.path))
+                ? 'shadow-blue-500/30 -mb-px z-20 before:absolute before:inset-x-0 before:-bottom-px before:h-px before:bg-gradient-to-r before:from-blue-300/0 before:via-blue-200 before:to-blue-300/0'
+                : 'shadow-blue-500/20 hover:from-blue-500 hover:to-blue-600 hover:shadow-blue-500/30'
+            }`}
+          >
+            <Target className="h-4 w-4 transition-transform duration-200 group-hover:scale-110" />
+            <span className="relative">
+              Pipeline
+              {pipelineItems.some(item => isActivePath(item.path)) && (
+                <div className="absolute -bottom-1 left-0 right-0 h-0.5 bg-gradient-to-r from-blue-300/0 via-blue-200 to-blue-300/0 rounded-full"></div>
+              )}
+            </span>
+          </Button>
 
-          {/* Underwriter Dropdown */}
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button 
-                variant="ghost" 
-                className={`group relative flex items-center gap-2 px-6 py-4 text-sm font-medium transition-all duration-300 text-white bg-gradient-to-b from-blue-600 to-blue-700 border-x border-t border-blue-500 rounded-t-xl border-b-transparent shadow-lg ${
-                  underwriterItems.some(item => isActivePath(item.path))
-                    ? 'shadow-blue-500/30 -mb-px z-20 before:absolute before:inset-x-0 before:-bottom-px before:h-px before:bg-gradient-to-r before:from-blue-300/0 before:via-blue-200 before:to-blue-300/0'
-                    : 'shadow-blue-500/20 hover:from-blue-500 hover:to-blue-600 hover:shadow-blue-500/30'
-                }`}
-              >
-                <Shield className="h-4 w-4 transition-transform duration-200 group-hover:scale-110" />
-                <span className="relative">
-                  Underwriter
-                  {underwriterItems.some(item => isActivePath(item.path)) && (
-                    <div className="absolute -bottom-1 left-0 right-0 h-0.5 bg-gradient-to-r from-blue-300/0 via-blue-200 to-blue-300/0 rounded-full"></div>
-                  )}
-                </span>
-                <ChevronDown className="h-3 w-3 ml-1 transition-transform duration-200 group-hover:rotate-180" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="start" className="w-56 bg-background/95 backdrop-blur-sm border border-border shadow-xl z-50 rounded-lg">
-              {underwriterItems.map((item) => (
-                <DropdownMenuItem key={item.name} asChild>
-                  <Link to={item.path} className="flex items-center gap-3 w-full px-3 py-2.5 text-sm hover:bg-muted/50 rounded-md transition-colors duration-200">
-                    <item.icon className="h-4 w-4 text-muted-foreground" />
-                    <span>{item.name}</span>
-                  </Link>
-                </DropdownMenuItem>
-              ))}
-            </DropdownMenuContent>
-          </DropdownMenu>
+          {/* Underwriter Button */}
+          <Button 
+            variant="ghost" 
+            onClick={() => handleFolderClick('underwriter')}
+            className={`group relative flex items-center gap-2 px-6 py-4 text-sm font-medium transition-all duration-300 text-white bg-gradient-to-b from-blue-600 to-blue-700 border-x border-t border-blue-500 rounded-t-xl border-b-transparent shadow-lg ${
+              underwriterItems.some(item => isActivePath(item.path))
+                ? 'shadow-blue-500/30 -mb-px z-20 before:absolute before:inset-x-0 before:-bottom-px before:h-px before:bg-gradient-to-r before:from-blue-300/0 before:via-blue-200 before:to-blue-300/0'
+                : 'shadow-blue-500/20 hover:from-blue-500 hover:to-blue-600 hover:shadow-blue-500/30'
+            }`}
+          >
+            <Shield className="h-4 w-4 transition-transform duration-200 group-hover:scale-110" />
+            <span className="relative">
+              Underwriter
+              {underwriterItems.some(item => isActivePath(item.path)) && (
+                <div className="absolute -bottom-1 left-0 right-0 h-0.5 bg-gradient-to-r from-blue-300/0 via-blue-200 to-blue-300/0 rounded-full"></div>
+              )}
+            </span>
+          </Button>
 
-          {/* Activities Dropdown */}
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button 
-                variant="ghost" 
-                className={`group relative flex items-center gap-2 px-6 py-4 text-sm font-medium transition-all duration-300 text-white bg-gradient-to-b from-blue-600 to-blue-700 border-x border-t border-blue-500 rounded-t-xl border-b-transparent shadow-lg ${
-                  activitiesItems.some(item => isActivePath(item.path))
-                    ? 'shadow-blue-500/30 -mb-px z-20 before:absolute before:inset-x-0 before:-bottom-px before:h-px before:bg-gradient-to-r before:from-blue-300/0 before:via-blue-200 before:to-blue-300/0'
-                    : 'shadow-blue-500/20 hover:from-blue-500 hover:to-blue-600 hover:shadow-blue-500/30'
-                }`}
-              >
-                <Activity className="h-4 w-4 transition-transform duration-200 group-hover:scale-110" />
-                <span className="relative">
-                  Activities
-                  {activitiesItems.some(item => isActivePath(item.path)) && (
-                    <div className="absolute -bottom-1 left-0 right-0 h-0.5 bg-gradient-to-r from-blue-300/0 via-blue-200 to-blue-300/0 rounded-full"></div>
-                  )}
-                </span>
-                <ChevronDown className="h-3 w-3 ml-1 transition-transform duration-200 group-hover:rotate-180" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="start" className="w-56 bg-background/95 backdrop-blur-sm border border-border shadow-xl z-50 rounded-lg">
-              {activitiesItems.map((item) => (
-                <DropdownMenuItem key={item.name} asChild>
-                  <Link to={item.path} className="flex items-center gap-3 w-full px-3 py-2.5 text-sm hover:bg-muted/50 rounded-md transition-colors duration-200">
-                    <item.icon className="h-4 w-4 text-muted-foreground" />
-                    <span>{item.name}</span>
-                  </Link>
-                </DropdownMenuItem>
-              ))}
-            </DropdownMenuContent>
-          </DropdownMenu>
+          {/* Activities Button */}
+          <Button 
+            variant="ghost" 
+            onClick={() => handleFolderClick('activities')}
+            className={`group relative flex items-center gap-2 px-6 py-4 text-sm font-medium transition-all duration-300 text-white bg-gradient-to-b from-blue-600 to-blue-700 border-x border-t border-blue-500 rounded-t-xl border-b-transparent shadow-lg ${
+              activitiesItems.some(item => isActivePath(item.path))
+                ? 'shadow-blue-500/30 -mb-px z-20 before:absolute before:inset-x-0 before:-bottom-px before:h-px before:bg-gradient-to-r before:from-blue-300/0 before:via-blue-200 before:to-blue-300/0'
+                : 'shadow-blue-500/20 hover:from-blue-500 hover:to-blue-600 hover:shadow-blue-500/30'
+            }`}
+          >
+            <Activity className="h-4 w-4 transition-transform duration-200 group-hover:scale-110" />
+            <span className="relative">
+              Activities
+              {activitiesItems.some(item => isActivePath(item.path)) && (
+                <div className="absolute -bottom-1 left-0 right-0 h-0.5 bg-gradient-to-r from-blue-300/0 via-blue-200 to-blue-300/0 rounded-full"></div>
+              )}
+            </span>
+          </Button>
           
-          {/* Security Dropdown */}
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button 
-                variant="ghost" 
-                className={`group relative flex items-center gap-2 px-6 py-4 text-sm font-medium transition-all duration-300 text-white bg-gradient-to-b from-blue-600 to-blue-700 border-x border-t border-blue-500 rounded-t-xl border-b-transparent shadow-lg ${
-                  securityItems.some(item => isActivePath(item.path))
-                    ? 'shadow-blue-500/30 -mb-px z-20 before:absolute before:inset-x-0 before:-bottom-px before:h-px before:bg-gradient-to-r before:from-blue-300/0 before:via-blue-200 before:to-blue-300/0'
-                    : 'shadow-blue-500/20 hover:from-blue-500 hover:to-blue-600 hover:shadow-blue-500/30'
-                }`}
-              >
-                <Shield className="h-4 w-4 transition-transform duration-200 group-hover:scale-110" />
-                <span className="relative">
-                  Security
-                  {securityItems.some(item => isActivePath(item.path)) && (
-                    <div className="absolute -bottom-1 left-0 right-0 h-0.5 bg-gradient-to-r from-blue-300/0 via-blue-200 to-blue-300/0 rounded-full"></div>
-                  )}
-                </span>
-                <ChevronDown className="h-3 w-3 ml-1 transition-transform duration-200 group-hover:rotate-180" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="start" className="w-56 bg-background/95 backdrop-blur-sm border border-border shadow-xl z-50 rounded-lg">
-              {securityItems.map((item) => (
-                <DropdownMenuItem key={item.name} asChild>
-                  <Link to={item.path} className="flex items-center gap-3 w-full px-3 py-2.5 text-sm hover:bg-muted/50 rounded-md transition-colors duration-200">
-                    <item.icon className="h-4 w-4 text-muted-foreground" />
-                    <span>{item.name}</span>
-                  </Link>
-                </DropdownMenuItem>
-              ))}
-            </DropdownMenuContent>
-          </DropdownMenu>
+          {/* Security Button */}
+          <Button 
+            variant="ghost" 
+            onClick={() => handleFolderClick('security')}
+            className={`group relative flex items-center gap-2 px-6 py-4 text-sm font-medium transition-all duration-300 text-white bg-gradient-to-b from-blue-600 to-blue-700 border-x border-t border-blue-500 rounded-t-xl border-b-transparent shadow-lg ${
+              securityItems.some(item => isActivePath(item.path))
+                ? 'shadow-blue-500/30 -mb-px z-20 before:absolute before:inset-x-0 before:-bottom-px before:h-px before:bg-gradient-to-r before:from-blue-300/0 before:via-blue-200 before:to-blue-300/0'
+                : 'shadow-blue-500/20 hover:from-blue-500 hover:to-blue-600 hover:shadow-blue-500/30'
+            }`}
+          >
+            <Shield className="h-4 w-4 transition-transform duration-200 group-hover:scale-110" />
+            <span className="relative">
+              Security
+              {securityItems.some(item => isActivePath(item.path)) && (
+                <div className="absolute -bottom-1 left-0 right-0 h-0.5 bg-gradient-to-r from-blue-300/0 via-blue-200 to-blue-300/0 rounded-full"></div>
+              )}
+            </span>
+          </Button>
 
-          {/* Enterprise Dropdown */}
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button 
-                variant="ghost" 
-                className={`group relative flex items-center gap-2 px-6 py-4 text-sm font-medium transition-all duration-300 text-white bg-gradient-to-b from-blue-600 to-blue-700 border-x border-t border-blue-500 rounded-t-xl border-b-transparent shadow-lg ${
-                  enterpriseItems.some(item => isActivePath(item.path.split('#')[0]))
-                    ? 'shadow-blue-500/30 -mb-px z-20 before:absolute before:inset-x-0 before:-bottom-px before:h-px before:bg-gradient-to-r before:from-blue-300/0 before:via-blue-200 before:to-blue-300/0'
-                    : 'shadow-blue-500/20 hover:from-blue-500 hover:to-blue-600 hover:shadow-blue-500/30'
-                }`}
-              >
-                <Building2 className="h-4 w-4 transition-transform duration-200 group-hover:scale-110" />
-                <span className="relative">
-                  Enterprise
-                  {enterpriseItems.some(item => isActivePath(item.path.split('#')[0])) && (
-                    <div className="absolute -bottom-1 left-0 right-0 h-0.5 bg-gradient-to-r from-blue-300/0 via-blue-200 to-blue-300/0 rounded-full"></div>
-                  )}
-                </span>
-                <ChevronDown className="h-3 w-3 ml-1 transition-transform duration-200 group-hover:rotate-180" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="start" className="w-56 bg-background/95 backdrop-blur-sm border border-border shadow-xl z-50 rounded-lg">
-              {enterpriseItems.map((item) => (
-                <DropdownMenuItem key={item.name} asChild>
-                  <Link to={item.path} className="flex items-center gap-3 w-full px-3 py-2.5 text-sm hover:bg-muted/50 rounded-md transition-colors duration-200">
-                    <item.icon className="h-4 w-4 text-muted-foreground" />
-                    <span>{item.name}</span>
-                  </Link>
-                </DropdownMenuItem>
-              ))}
-            </DropdownMenuContent>
-          </DropdownMenu>
+          {/* Enterprise Button */}
+          <Button 
+            variant="ghost" 
+            onClick={() => handleFolderClick('enterprise')}
+            className={`group relative flex items-center gap-2 px-6 py-4 text-sm font-medium transition-all duration-300 text-white bg-gradient-to-b from-blue-600 to-blue-700 border-x border-t border-blue-500 rounded-t-xl border-b-transparent shadow-lg ${
+              enterpriseItems.some(item => isActivePath(item.path.split('#')[0]))
+                ? 'shadow-blue-500/30 -mb-px z-20 before:absolute before:inset-x-0 before:-bottom-px before:h-px before:bg-gradient-to-r before:from-blue-300/0 before:via-blue-200 before:to-blue-300/0'
+                : 'shadow-blue-500/20 hover:from-blue-500 hover:to-blue-600 hover:shadow-blue-500/30'
+            }`}
+          >
+            <Building2 className="h-4 w-4 transition-transform duration-200 group-hover:scale-110" />
+            <span className="relative">
+              Enterprise
+              {enterpriseItems.some(item => isActivePath(item.path.split('#')[0])) && (
+                <div className="absolute -bottom-1 left-0 right-0 h-0.5 bg-gradient-to-r from-blue-300/0 via-blue-200 to-blue-300/0 rounded-full"></div>
+              )}
+            </span>
+          </Button>
           </div>
         </nav>
       </div>
+
+      {/* Folder Sidebar */}
+      <FolderSidebar 
+        isOpen={sidebarOpen}
+        onClose={handleCloseSidebar}
+        activeFolder={activeFolder}
+      />
     </div>
   )
 }
