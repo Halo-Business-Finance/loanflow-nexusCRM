@@ -273,7 +273,20 @@ export default function SettingsUsers() {
                 <Button 
                   size="sm" 
                   variant="outline"
-                  onClick={() => navigate(`/settings/users?edit=${user.id}`)}
+                  onClick={() => {
+                    console.log('Edit button clicked for user:', user.id);
+                    try {
+                      navigate(`/settings/users?edit=${user.id}`);
+                      console.log('Navigation attempted to:', `/settings/users?edit=${user.id}`);
+                    } catch (error) {
+                      console.error('Navigation error:', error);
+                      toast({
+                        title: "Navigation Error",
+                        description: "Failed to navigate to edit page",
+                        variant: "destructive",
+                      });
+                    }
+                  }}
                 >
                   Edit
                 </Button>
