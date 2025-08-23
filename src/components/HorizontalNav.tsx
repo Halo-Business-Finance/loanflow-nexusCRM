@@ -195,7 +195,10 @@ export function HorizontalNav({ onFolderClick, sidebarOpen = false, activeFolder
                   year: 'numeric', 
                   month: 'long', 
                   day: 'numeric' 
-                })} at {new Date().toLocaleTimeString('en-US', { 
+                })}
+              </p>
+              <p className="text-sm text-muted-foreground">
+                {new Date().toLocaleTimeString('en-US', { 
                   hour: '2-digit', 
                   minute: '2-digit' 
                 })}
