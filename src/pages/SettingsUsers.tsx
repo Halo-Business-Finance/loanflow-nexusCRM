@@ -430,8 +430,81 @@ function EditUserForm({ user, onSave, onCancel }: EditUserFormProps) {
     role: user.role || '',
     is_active: user.is_active
   });
+  const [newPassword, setNewPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
   const [saving, setSaving] = useState(false);
+  const [resettingPassword, setResettingPassword] = useState(false);
   const { toast } = useToast();
+
+  const handlePasswordReset = async () => {
+    if (!newPassword || !confirmPassword) {
+      toast({
+        title: "Error",
+        description: "Please fill in both password fields.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    if (newPassword !== confirmPassword) {
+      toast({
+        title: "Error", 
+        description: "Passwords don't match.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    if (newPassword.length < 6) {
+      toast({
+        title: "Error",
+        description: "Password must be at least 6 characters long.", 
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setResettingPassword(true);
+    try {
+      // Use Supabase Admin API to reset user password
+      const { data: session } = await supabase.auth.getSession();
+      if (!session?.session?.access_token) {
+        throw new Error('No access token available');
+      }
+
+      // Call edge function to reset password as admin
+      const { error } = await supabase.functions.invoke('admin-reset-password', {
+        body: { 
+          user_id: user.user_id,
+          new_password: newPassword 
+        },
+        headers: {
+          'Authorization': `Bearer ${session.session.access_token}`
+        }
+      });
+
+      if (error) {
+        throw error;
+      }
+
+      setNewPassword('');
+      setConfirmPassword('');
+      
+      toast({
+        title: "Password Reset",
+        description: "User password has been successfully reset.",
+      });
+    } catch (error: any) {
+      console.error('Password reset error:', error);
+      toast({
+        title: "Password Reset Failed",
+        description: error.message || "Failed to reset password.",
+        variant: "destructive",
+      });
+    } finally {
+      setResettingPassword(false);
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -609,6 +682,47 @@ function EditUserForm({ user, onSave, onCancel }: EditUserFormProps) {
             <SelectItem value="inactive">Inactive</SelectItem>
           </SelectContent>
         </Select>
+      </div>
+
+      {/* Password Reset Section */}
+      <div className="border-t pt-4 space-y-4">
+        <div>
+          <Label className="text-base font-medium">Reset Password</Label>
+          <p className="text-sm text-muted-foreground">Set a new password for this user</p>
+        </div>
+        
+        <div className="grid grid-cols-2 gap-4">
+          <div>
+            <Label htmlFor="new_password">New Password</Label>
+            <Input
+              id="new_password"
+              type="password"
+              value={newPassword}
+              onChange={(e) => setNewPassword(e.target.value)}
+              placeholder="Enter new password"
+            />
+          </div>
+          <div>
+            <Label htmlFor="confirm_password">Confirm Password</Label>
+            <Input
+              id="confirm_password"
+              type="password"
+              value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
+              placeholder="Confirm new password"
+            />
+          </div>
+        </div>
+        
+        <Button 
+          type="button"
+          variant="secondary"
+          onClick={handlePasswordReset}
+          disabled={resettingPassword || !newPassword || !confirmPassword}
+          className="w-full"
+        >
+          {resettingPassword ? "Resetting Password..." : "Reset Password"}
+        </Button>
       </div>
 
       <div className="flex justify-end space-x-2 pt-4">
