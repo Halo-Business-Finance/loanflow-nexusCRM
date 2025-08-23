@@ -242,21 +242,22 @@ export function HorizontalNav() {
       </div>
 
       {/* Navigation Bar */}
-      <div className="px-6 pb-4">
-        <nav className="flex items-center justify-center">
-          <div className="flex items-center space-x-6">
+      <div className="px-6 pb-0 relative">
+        <div className="border-b border-border absolute bottom-0 left-0 right-0 z-0"></div>
+        <nav className="flex items-center justify-center relative z-10">
+          <div className="flex items-center space-x-0">
           {/* Dashboard Button */}
           <Button 
             asChild
             variant="ghost" 
-            className={`flex items-center gap-1 px-4 py-3 text-sm font-medium transition-colors hover:text-navy hover:bg-navy/10 rounded-md ${
+            className={`relative flex items-center gap-2 px-5 py-3 text-sm font-medium transition-all duration-200 ${
               isActivePath("/")
-                ? 'text-primary border-b-2 border-primary'
-                : 'text-foreground/70 hover:text-navy'
+                ? 'text-primary bg-background border border-border rounded-t-lg border-b-transparent shadow-sm -mb-px z-20'
+                : 'text-muted-foreground hover:text-foreground hover:bg-muted/50 rounded-t-lg border-b border-transparent hover:border-border/50'
             }`}
           >
-            <Link to="/" className="flex items-center gap-1">
-              <LayoutDashboard className="h-3 w-3" />
+            <Link to="/" className="flex items-center gap-2">
+              <LayoutDashboard className="h-4 w-4" />
               Dashboard
             </Link>
           </Button>
@@ -266,21 +267,21 @@ export function HorizontalNav() {
             <DropdownMenuTrigger asChild>
               <Button 
                 variant="ghost" 
-                className={`flex items-center gap-1 px-4 py-3 text-sm font-medium transition-colors hover:text-navy hover:bg-navy/10 rounded-md ${
+                className={`relative flex items-center gap-2 px-5 py-3 text-sm font-medium transition-all duration-200 ${
                   leadsItems.some(item => isActivePath(item.path))
-                    ? 'text-primary border-b-2 border-primary'
-                    : 'text-foreground/70 hover:text-navy'
+                    ? 'text-primary bg-background border border-border rounded-t-lg border-b-transparent shadow-sm -mb-px z-20'
+                    : 'text-muted-foreground hover:text-foreground hover:bg-muted/50 rounded-t-lg border-b border-transparent hover:border-border/50'
                 }`}
               >
-                <Users className="h-3 w-3" />
+                <Users className="h-4 w-4" />
                 Leads
-                <ChevronDown className="h-2 w-2" />
+                <ChevronDown className="h-3 w-3 ml-1" />
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="start" className="w-48 bg-background border border-border shadow-lg z-50">
               {leadsItems.map((item) => (
                 <DropdownMenuItem key={item.name} asChild>
-                  <Link to={item.path} className="flex items-center gap-2 w-full px-2 py-2 text-sm hover:bg-navy/10 hover:text-navy rounded-sm">
+                  <Link to={item.path} className="flex items-center gap-2 w-full px-2 py-2 text-sm hover:bg-muted rounded-sm">
                     <item.icon className="h-4 w-4" />
                     {item.name}
                   </Link>
@@ -294,21 +295,21 @@ export function HorizontalNav() {
             <DropdownMenuTrigger asChild>
               <Button 
                 variant="ghost" 
-                className={`flex items-center gap-1 px-4 py-3 text-sm font-medium transition-colors hover:text-navy hover:bg-navy/10 rounded-md ${
+                className={`relative flex items-center gap-2 px-5 py-3 text-sm font-medium transition-all duration-200 ${
                   borrowersItems.some(item => isActivePath(item.path))
-                    ? 'text-primary border-b-2 border-primary'
-                    : 'text-foreground/70 hover:text-navy'
+                    ? 'text-primary bg-background border border-border rounded-t-lg border-b-transparent shadow-sm -mb-px z-20'
+                    : 'text-muted-foreground hover:text-foreground hover:bg-muted/50 rounded-t-lg border-b border-transparent hover:border-border/50'
                 }`}
               >
-                <Building2 className="h-3 w-3" />
+                <Building2 className="h-4 w-4" />
                 Existing Borrowers
-                <ChevronDown className="h-2 w-2" />
+                <ChevronDown className="h-3 w-3 ml-1" />
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="start" className="w-48 bg-background border border-border shadow-lg z-50">
               {borrowersItems.map((item) => (
                 <DropdownMenuItem key={item.name} asChild>
-                  <Link to={item.path} className="flex items-center gap-2 w-full px-2 py-2 text-sm hover:bg-navy/10 hover:text-navy rounded-sm">
+                  <Link to={item.path} className="flex items-center gap-2 w-full px-2 py-2 text-sm hover:bg-muted rounded-sm">
                     <item.icon className="h-4 w-4" />
                     {item.name}
                   </Link>
@@ -322,21 +323,21 @@ export function HorizontalNav() {
             <DropdownMenuTrigger asChild>
               <Button 
                 variant="ghost" 
-                className={`flex items-center gap-1 px-4 py-3 text-sm font-medium transition-colors hover:text-navy hover:bg-navy/10 rounded-md ${
+                className={`relative flex items-center gap-2 px-5 py-3 text-sm font-medium transition-all duration-200 ${
                   pipelineItems.some(item => isActivePath(item.path))
-                    ? 'text-primary border-b-2 border-primary'
-                    : 'text-foreground/70 hover:text-navy'
+                    ? 'text-primary bg-background border border-border rounded-t-lg border-b-transparent shadow-sm -mb-px z-20'
+                    : 'text-muted-foreground hover:text-foreground hover:bg-muted/50 rounded-t-lg border-b border-transparent hover:border-border/50'
                 }`}
               >
-                <Target className="h-3 w-3" />
+                <Target className="h-4 w-4" />
                 Pipeline
-                <ChevronDown className="h-2 w-2" />
+                <ChevronDown className="h-3 w-3 ml-1" />
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="start" className="w-48 bg-background border border-border shadow-lg z-50">
               {pipelineItems.map((item) => (
                 <DropdownMenuItem key={item.name} asChild>
-                  <Link to={item.path} className="flex items-center gap-2 w-full px-2 py-2 text-sm hover:bg-navy/10 hover:text-navy rounded-sm">
+                  <Link to={item.path} className="flex items-center gap-2 w-full px-2 py-2 text-sm hover:bg-muted rounded-sm">
                     <item.icon className="h-4 w-4" />
                     {item.name}
                   </Link>
@@ -350,21 +351,21 @@ export function HorizontalNav() {
             <DropdownMenuTrigger asChild>
               <Button 
                 variant="ghost" 
-                className={`flex items-center gap-1 px-4 py-3 text-sm font-medium transition-colors hover:text-navy hover:bg-navy/10 rounded-md ${
+                className={`relative flex items-center gap-2 px-5 py-3 text-sm font-medium transition-all duration-200 ${
                   underwriterItems.some(item => isActivePath(item.path))
-                    ? 'text-primary border-b-2 border-primary'
-                    : 'text-foreground/70 hover:text-navy'
+                    ? 'text-primary bg-background border border-border rounded-t-lg border-b-transparent shadow-sm -mb-px z-20'
+                    : 'text-muted-foreground hover:text-foreground hover:bg-muted/50 rounded-t-lg border-b border-transparent hover:border-border/50'
                 }`}
               >
-                <Shield className="h-3 w-3" />
+                <Shield className="h-4 w-4" />
                 Underwriter
-                <ChevronDown className="h-2 w-2" />
+                <ChevronDown className="h-3 w-3 ml-1" />
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="start" className="w-48 bg-background border border-border shadow-lg z-50">
               {underwriterItems.map((item) => (
                 <DropdownMenuItem key={item.name} asChild>
-                  <Link to={item.path} className="flex items-center gap-2 w-full px-2 py-2 text-sm hover:bg-navy/10 hover:text-navy rounded-sm">
+                  <Link to={item.path} className="flex items-center gap-2 w-full px-2 py-2 text-sm hover:bg-muted rounded-sm">
                     <item.icon className="h-4 w-4" />
                     {item.name}
                   </Link>
@@ -373,27 +374,26 @@ export function HorizontalNav() {
             </DropdownMenuContent>
           </DropdownMenu>
 
-
           {/* Activities Dropdown */}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button 
                 variant="ghost" 
-                className={`flex items-center gap-1 px-4 py-3 text-sm font-medium transition-colors hover:text-navy hover:bg-navy/10 rounded-md ${
+                className={`relative flex items-center gap-2 px-5 py-3 text-sm font-medium transition-all duration-200 ${
                   activitiesItems.some(item => isActivePath(item.path))
-                    ? 'text-primary border-b-2 border-primary'
-                    : 'text-foreground/70 hover:text-navy'
+                    ? 'text-primary bg-background border border-border rounded-t-lg border-b-transparent shadow-sm -mb-px z-20'
+                    : 'text-muted-foreground hover:text-foreground hover:bg-muted/50 rounded-t-lg border-b border-transparent hover:border-border/50'
                 }`}
               >
-                <Activity className="h-3 w-3" />
+                <Activity className="h-4 w-4" />
                 Activities
-                <ChevronDown className="h-2 w-2" />
+                <ChevronDown className="h-3 w-3 ml-1" />
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="start" className="w-48 bg-background border border-border shadow-lg z-50">
               {activitiesItems.map((item) => (
                 <DropdownMenuItem key={item.name} asChild>
-                  <Link to={item.path} className="flex items-center gap-2 w-full px-2 py-2 text-sm hover:bg-navy/10 hover:text-navy rounded-sm">
+                  <Link to={item.path} className="flex items-center gap-2 w-full px-2 py-2 text-sm hover:bg-muted rounded-sm">
                     <item.icon className="h-4 w-4" />
                     {item.name}
                   </Link>
@@ -402,27 +402,26 @@ export function HorizontalNav() {
             </DropdownMenuContent>
           </DropdownMenu>
           
-
           {/* Security Dropdown */}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button 
                 variant="ghost" 
-                className={`flex items-center gap-1 px-4 py-3 text-sm font-medium transition-colors hover:text-navy hover:bg-navy/10 rounded-md ${
+                className={`relative flex items-center gap-2 px-5 py-3 text-sm font-medium transition-all duration-200 ${
                   securityItems.some(item => isActivePath(item.path))
-                    ? 'text-primary border-b-2 border-primary'
-                    : 'text-foreground/70 hover:text-navy'
+                    ? 'text-primary bg-background border border-border rounded-t-lg border-b-transparent shadow-sm -mb-px z-20'
+                    : 'text-muted-foreground hover:text-foreground hover:bg-muted/50 rounded-t-lg border-b border-transparent hover:border-border/50'
                 }`}
               >
-                <Shield className="h-3 w-3" />
+                <Shield className="h-4 w-4" />
                 Security
-                <ChevronDown className="h-2 w-2" />
+                <ChevronDown className="h-3 w-3 ml-1" />
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="start" className="w-48 bg-background border border-border shadow-lg z-50">
               {securityItems.map((item) => (
                 <DropdownMenuItem key={item.name} asChild>
-                  <Link to={item.path} className="flex items-center gap-2 w-full px-2 py-2 text-sm hover:bg-navy/10 hover:text-navy rounded-sm">
+                  <Link to={item.path} className="flex items-center gap-2 w-full px-2 py-2 text-sm hover:bg-muted rounded-sm">
                     <item.icon className="h-4 w-4" />
                     {item.name}
                   </Link>
@@ -436,21 +435,21 @@ export function HorizontalNav() {
             <DropdownMenuTrigger asChild>
               <Button 
                 variant="ghost" 
-                className={`flex items-center gap-1 px-4 py-3 text-sm font-medium transition-colors hover:text-navy hover:bg-navy/10 rounded-md ${
+                className={`relative flex items-center gap-2 px-5 py-3 text-sm font-medium transition-all duration-200 ${
                   enterpriseItems.some(item => isActivePath(item.path.split('#')[0]))
-                    ? 'text-primary border-b-2 border-primary'
-                    : 'text-foreground/70 hover:text-navy'
+                    ? 'text-primary bg-background border border-border rounded-t-lg border-b-transparent shadow-sm -mb-px z-20'
+                    : 'text-muted-foreground hover:text-foreground hover:bg-muted/50 rounded-t-lg border-b border-transparent hover:border-border/50'
                 }`}
               >
-                <Building2 className="h-3 w-3" />
+                <Building2 className="h-4 w-4" />
                 Enterprise
-                <ChevronDown className="h-2 w-2" />
+                <ChevronDown className="h-3 w-3 ml-1" />
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="start" className="w-48 bg-background border border-border shadow-lg z-50">
               {enterpriseItems.map((item) => (
                 <DropdownMenuItem key={item.name} asChild>
-                  <Link to={item.path} className="flex items-center gap-2 w-full px-2 py-2 text-sm hover:bg-navy/10 hover:text-navy rounded-sm">
+                  <Link to={item.path} className="flex items-center gap-2 w-full px-2 py-2 text-sm hover:bg-muted rounded-sm">
                     <item.icon className="h-4 w-4" />
                     {item.name}
                   </Link>
