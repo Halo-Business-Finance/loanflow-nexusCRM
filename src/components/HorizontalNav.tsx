@@ -35,7 +35,6 @@ import {
 import { useAuth } from "@/components/auth/AuthProvider"
 import { ThemeToggle } from "@/components/ThemeToggle"
 import { ConnectionHalo } from "@/components/ConnectionHalo"
-import { FolderSidebar } from "@/components/FolderSidebar"
 
 
 const homeItems = [
@@ -108,12 +107,23 @@ const enterpriseItems = [
 const moreItems = [
 ]
 
-export function HorizontalNav() {
+interface HorizontalNavProps {
+  onFolderClick?: (folderName: string) => void
+  sidebarOpen?: boolean
+  activeFolder?: string | null
+}
+
+export function HorizontalNav({ onFolderClick, sidebarOpen = false, activeFolder = null }: HorizontalNavProps = {}) {
   const location = useLocation()
   const { user, signOut } = useAuth()
   const [searchQuery, setSearchQuery] = useState("")
-  const [sidebarOpen, setSidebarOpen] = useState(false)
-  const [activeFolder, setActiveFolder] = useState<string | null>(null)
+  const [localSidebarOpen, setLocalSidebarOpen] = useState(false)
+  const [localActiveFolder, setLocalActiveFolder] = useState<string | null>(null)
+
+  // Use local state if no props are provided (backward compatibility)
+  const isControlled = onFolderClick !== undefined
+  const currentSidebarOpen = isControlled ? sidebarOpen : localSidebarOpen
+  const currentActiveFolder = isControlled ? activeFolder : localActiveFolder
 
   const capitalizeFirstLetter = (str: string) => {
     return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase()
@@ -140,13 +150,19 @@ export function HorizontalNav() {
   }
 
   const handleFolderClick = (folderName: string) => {
-    setActiveFolder(folderName)
-    setSidebarOpen(true)
+    if (isControlled && onFolderClick) {
+      onFolderClick(folderName)
+    } else {
+      setLocalActiveFolder(folderName)
+      setLocalSidebarOpen(true)
+    }
   }
 
   const handleCloseSidebar = () => {
-    setSidebarOpen(false)
-    setTimeout(() => setActiveFolder(null), 300)
+    if (!isControlled) {
+      setLocalSidebarOpen(false)
+      setTimeout(() => setLocalActiveFolder(null), 300)
+    }
   }
 
   return (
@@ -414,13 +430,6 @@ export function HorizontalNav() {
           </div>
         </nav>
       </div>
-
-      {/* Folder Sidebar */}
-      <FolderSidebar 
-        isOpen={sidebarOpen}
-        onClose={handleCloseSidebar}
-        activeFolder={activeFolder}
-      />
     </div>
   )
 }

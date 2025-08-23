@@ -69,16 +69,6 @@ const folderMenuItems = {
 
 export function FolderSidebar({ isOpen, onClose, activeFolder }: FolderSidebarProps) {
   const location = useLocation()
-  const [isVisible, setIsVisible] = useState(false)
-
-  useEffect(() => {
-    if (isOpen) {
-      setIsVisible(true)
-    } else {
-      const timer = setTimeout(() => setIsVisible(false), 300)
-      return () => clearTimeout(timer)
-    }
-  }, [isOpen])
 
   const menuItems = activeFolder ? folderMenuItems[activeFolder as keyof typeof folderMenuItems] || [] : []
 
@@ -91,68 +81,49 @@ export function FolderSidebar({ isOpen, onClose, activeFolder }: FolderSidebarPr
     onClose()
   }
 
-  if (!isVisible) return null
+  if (!isOpen || !activeFolder) return null
 
   return (
-    <>
-      {/* Backdrop */}
-      <div 
-        className={cn(
-          "fixed inset-0 bg-black/50 backdrop-blur-sm z-40 transition-opacity duration-300",
-          isOpen ? "opacity-100" : "opacity-0"
-        )}
-        onClick={onClose}
-      />
-      
-      {/* Sidebar */}
-      <div 
-        className={cn(
-          "fixed left-0 top-0 h-full w-80 bg-background border-r border-border shadow-xl z-50 transform transition-transform duration-300 ease-in-out",
-          isOpen ? "translate-x-0" : "-translate-x-full"
-        )}
-      >
-        {/* Header */}
-        <div className="flex items-center justify-between p-6 border-b border-border bg-gradient-to-r from-blue-600 to-blue-700">
-          <h2 className="text-lg font-semibold text-white capitalize">
-            {activeFolder} Menu
-          </h2>
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={onClose}
-            className="h-8 w-8 p-0 text-white hover:bg-white/20"
-          >
-            <X className="h-4 w-4" />
-          </Button>
-        </div>
-
-        {/* Menu Items */}
-        <div className="p-4 space-y-2">
-          {menuItems.map((item) => (
-            <Link
-              key={item.name}
-              to={item.path}
-              onClick={handleItemClick}
-              className={cn(
-                "flex items-center gap-3 w-full px-4 py-3 text-sm font-medium rounded-lg transition-all duration-200",
-                isActivePath(item.path)
-                  ? "bg-blue-600 text-white shadow-lg"
-                  : "text-foreground hover:bg-muted hover:text-blue-600"
-              )}
-            >
-              <item.icon className="h-5 w-5" />
-              <span>{item.name}</span>
-            </Link>
-          ))}
-        </div>
-
-        {/* Footer */}
-        <div className="absolute bottom-0 left-0 right-0 p-4 border-t border-border bg-muted/50">
-          <p className="text-xs text-muted-foreground text-center">
-            Click outside to close
-          </p>
-        </div>
+    <div 
+      className={cn(
+        "w-80 bg-background border-r border-border shadow-lg transition-all duration-300 ease-in-out",
+        isOpen ? "translate-x-0 opacity-100" : "-translate-x-full opacity-0"
+      )}
+    >
+      {/* Header */}
+      <div className="flex items-center justify-between p-4 border-b border-border bg-gradient-to-r from-blue-600 to-blue-700">
+        <h2 className="text-lg font-semibold text-white capitalize">
+          {activeFolder} Menu
+        </h2>
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={onClose}
+          className="h-8 w-8 p-0 text-white hover:bg-white/20"
+        >
+          <X className="h-4 w-4" />
+        </Button>
       </div>
-    </>
+
+      {/* Menu Items */}
+      <div className="p-4 space-y-2 max-h-[calc(100vh-200px)] overflow-y-auto">
+        {menuItems.map((item) => (
+          <Link
+            key={item.name}
+            to={item.path}
+            onClick={handleItemClick}
+            className={cn(
+              "flex items-center gap-3 w-full px-4 py-3 text-sm font-medium rounded-lg transition-all duration-200",
+              isActivePath(item.path)
+                ? "bg-blue-600 text-white shadow-lg"
+                : "text-foreground hover:bg-muted hover:text-blue-600"
+            )}
+          >
+            <item.icon className="h-5 w-5" />
+            <span>{item.name}</span>
+          </Link>
+        ))}
+      </div>
+    </div>
   )
 }
