@@ -21,13 +21,19 @@ export function LoginForm({ onToggleMode }: LoginFormProps) {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    if (!email || !password) return
+    if (!email || !password) {
+      toast.error('Please enter both email and password')
+      return
+    }
 
     setIsLoading(true)
     try {
+      console.log('🔐 Attempting login for:', email)
       await signIn(email, password)
-    } catch (error) {
-      // Error handling is done in the AuthProvider
+      console.log('✅ Login successful!')
+    } catch (error: any) {
+      console.error('❌ Login failed:', error)
+      toast.error(error.message || 'Login failed')
     } finally {
       setIsLoading(false)
     }
