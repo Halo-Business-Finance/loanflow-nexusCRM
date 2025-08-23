@@ -251,10 +251,10 @@ export function HorizontalNav() {
           <Button 
             asChild
             variant="ghost" 
-            className={`group relative flex items-center gap-2 px-6 py-4 text-sm font-medium transition-all duration-300 ${
+            className={`group relative flex items-center gap-2 px-6 py-4 text-sm font-medium transition-all duration-300 text-white bg-gradient-to-b from-blue-600 to-blue-700 border-x border-t border-blue-500 rounded-t-xl border-b-transparent shadow-lg ${
               isActivePath("/")
-                ? 'text-white bg-gradient-to-b from-blue-600 to-blue-700 border-x border-t border-blue-500 rounded-t-xl border-b-transparent shadow-lg shadow-blue-500/20 -mb-px z-20 before:absolute before:inset-x-0 before:-bottom-px before:h-px before:bg-gradient-to-r before:from-blue-400/0 before:via-blue-300/50 before:to-blue-400/0'
-                : 'text-muted-foreground hover:text-white hover:bg-gradient-to-b hover:from-blue-500/80 hover:to-blue-600/80 rounded-t-xl border border-transparent hover:border-blue-400/50 hover:border-b-transparent hover:shadow-sm'
+                ? 'shadow-blue-500/30 -mb-px z-20 before:absolute before:inset-x-0 before:-bottom-px before:h-px before:bg-gradient-to-r before:from-blue-300/0 before:via-blue-200 before:to-blue-300/0'
+                : 'shadow-blue-500/20 hover:from-blue-500 hover:to-blue-600 hover:shadow-blue-500/30'
             }`}
           >
             <Link to="/" className="flex items-center gap-2">
@@ -273,10 +273,10 @@ export function HorizontalNav() {
             <DropdownMenuTrigger asChild>
               <Button 
                 variant="ghost" 
-                className={`group relative flex items-center gap-2 px-6 py-4 text-sm font-medium transition-all duration-300 ${
+                className={`group relative flex items-center gap-2 px-6 py-4 text-sm font-medium transition-all duration-300 text-white bg-gradient-to-b from-blue-600 to-blue-700 border-x border-t border-blue-500 rounded-t-xl border-b-transparent shadow-lg ${
                   leadsItems.some(item => isActivePath(item.path))
-                    ? 'text-white bg-gradient-to-b from-blue-600 to-blue-700 border-x border-t border-blue-500 rounded-t-xl border-b-transparent shadow-lg shadow-blue-500/20 -mb-px z-20 before:absolute before:inset-x-0 before:-bottom-px before:h-px before:bg-gradient-to-r before:from-blue-400/0 before:via-blue-300/50 before:to-blue-400/0'
-                    : 'text-muted-foreground hover:text-white hover:bg-gradient-to-b hover:from-blue-500/80 hover:to-blue-600/80 rounded-t-xl border border-transparent hover:border-blue-400/50 hover:border-b-transparent hover:shadow-sm'
+                    ? 'shadow-blue-500/30 -mb-px z-20 before:absolute before:inset-x-0 before:-bottom-px before:h-px before:bg-gradient-to-r before:from-blue-300/0 before:via-blue-200 before:to-blue-300/0'
+                    : 'shadow-blue-500/20 hover:from-blue-500 hover:to-blue-600 hover:shadow-blue-500/30'
                 }`}
               >
                 <Users className="h-4 w-4 transition-transform duration-200 group-hover:scale-110" />
@@ -306,10 +306,10 @@ export function HorizontalNav() {
             <DropdownMenuTrigger asChild>
               <Button 
                 variant="ghost" 
-                className={`group relative flex items-center gap-2 px-6 py-4 text-sm font-medium transition-all duration-300 ${
+                className={`group relative flex items-center gap-2 px-6 py-4 text-sm font-medium transition-all duration-300 text-white bg-gradient-to-b from-blue-600 to-blue-700 border-x border-t border-blue-500 rounded-t-xl border-b-transparent shadow-lg ${
                   borrowersItems.some(item => isActivePath(item.path))
-                    ? 'text-white bg-gradient-to-b from-blue-600 to-blue-700 border-x border-t border-blue-500 rounded-t-xl border-b-transparent shadow-lg shadow-blue-500/20 -mb-px z-20 before:absolute before:inset-x-0 before:-bottom-px before:h-px before:bg-gradient-to-r before:from-blue-400/0 before:via-blue-300/50 before:to-blue-400/0'
-                    : 'text-muted-foreground hover:text-white hover:bg-gradient-to-b hover:from-blue-500/80 hover:to-blue-600/80 rounded-t-xl border border-transparent hover:border-blue-400/50 hover:border-b-transparent hover:shadow-sm'
+                    ? 'shadow-blue-500/30 -mb-px z-20 before:absolute before:inset-x-0 before:-bottom-px before:h-px before:bg-gradient-to-r before:from-blue-300/0 before:via-blue-200 before:to-blue-300/0'
+                    : 'shadow-blue-500/20 hover:from-blue-500 hover:to-blue-600 hover:shadow-blue-500/30'
                 }`}
               >
                 <Building2 className="h-4 w-4 transition-transform duration-200 group-hover:scale-110" />
@@ -339,10 +339,10 @@ export function HorizontalNav() {
             <DropdownMenuTrigger asChild>
               <Button 
                 variant="ghost" 
-                className={`group relative flex items-center gap-2 px-6 py-4 text-sm font-medium transition-all duration-300 ${
+                className={`group relative flex items-center gap-2 px-6 py-4 text-sm font-medium transition-all duration-300 text-white bg-gradient-to-b from-blue-600 to-blue-700 border-x border-t border-blue-500 rounded-t-xl border-b-transparent shadow-lg ${
                   pipelineItems.some(item => isActivePath(item.path))
-                    ? 'text-white bg-gradient-to-b from-blue-600 to-blue-700 border-x border-t border-blue-500 rounded-t-xl border-b-transparent shadow-lg shadow-blue-500/20 -mb-px z-20 before:absolute before:inset-x-0 before:-bottom-px before:h-px before:bg-gradient-to-r before:from-blue-400/0 before:via-blue-300/50 before:to-blue-400/0'
-                    : 'text-muted-foreground hover:text-white hover:bg-gradient-to-b hover:from-blue-500/80 hover:to-blue-600/80 rounded-t-xl border border-transparent hover:border-blue-400/50 hover:border-b-transparent hover:shadow-sm'
+                    ? 'shadow-blue-500/30 -mb-px z-20 before:absolute before:inset-x-0 before:-bottom-px before:h-px before:bg-gradient-to-r before:from-blue-300/0 before:via-blue-200 before:to-blue-300/0'
+                    : 'shadow-blue-500/20 hover:from-blue-500 hover:to-blue-600 hover:shadow-blue-500/30'
                 }`}
               >
                 <Target className="h-4 w-4 transition-transform duration-200 group-hover:scale-110" />
@@ -372,10 +372,10 @@ export function HorizontalNav() {
             <DropdownMenuTrigger asChild>
               <Button 
                 variant="ghost" 
-                className={`group relative flex items-center gap-2 px-6 py-4 text-sm font-medium transition-all duration-300 ${
+                className={`group relative flex items-center gap-2 px-6 py-4 text-sm font-medium transition-all duration-300 text-white bg-gradient-to-b from-blue-600 to-blue-700 border-x border-t border-blue-500 rounded-t-xl border-b-transparent shadow-lg ${
                   underwriterItems.some(item => isActivePath(item.path))
-                    ? 'text-white bg-gradient-to-b from-blue-600 to-blue-700 border-x border-t border-blue-500 rounded-t-xl border-b-transparent shadow-lg shadow-blue-500/20 -mb-px z-20 before:absolute before:inset-x-0 before:-bottom-px before:h-px before:bg-gradient-to-r before:from-blue-400/0 before:via-blue-300/50 before:to-blue-400/0'
-                    : 'text-muted-foreground hover:text-white hover:bg-gradient-to-b hover:from-blue-500/80 hover:to-blue-600/80 rounded-t-xl border border-transparent hover:border-blue-400/50 hover:border-b-transparent hover:shadow-sm'
+                    ? 'shadow-blue-500/30 -mb-px z-20 before:absolute before:inset-x-0 before:-bottom-px before:h-px before:bg-gradient-to-r before:from-blue-300/0 before:via-blue-200 before:to-blue-300/0'
+                    : 'shadow-blue-500/20 hover:from-blue-500 hover:to-blue-600 hover:shadow-blue-500/30'
                 }`}
               >
                 <Shield className="h-4 w-4 transition-transform duration-200 group-hover:scale-110" />
@@ -405,10 +405,10 @@ export function HorizontalNav() {
             <DropdownMenuTrigger asChild>
               <Button 
                 variant="ghost" 
-                className={`group relative flex items-center gap-2 px-6 py-4 text-sm font-medium transition-all duration-300 ${
+                className={`group relative flex items-center gap-2 px-6 py-4 text-sm font-medium transition-all duration-300 text-white bg-gradient-to-b from-blue-600 to-blue-700 border-x border-t border-blue-500 rounded-t-xl border-b-transparent shadow-lg ${
                   activitiesItems.some(item => isActivePath(item.path))
-                    ? 'text-white bg-gradient-to-b from-blue-600 to-blue-700 border-x border-t border-blue-500 rounded-t-xl border-b-transparent shadow-lg shadow-blue-500/20 -mb-px z-20 before:absolute before:inset-x-0 before:-bottom-px before:h-px before:bg-gradient-to-r before:from-blue-400/0 before:via-blue-300/50 before:to-blue-400/0'
-                    : 'text-muted-foreground hover:text-white hover:bg-gradient-to-b hover:from-blue-500/80 hover:to-blue-600/80 rounded-t-xl border border-transparent hover:border-blue-400/50 hover:border-b-transparent hover:shadow-sm'
+                    ? 'shadow-blue-500/30 -mb-px z-20 before:absolute before:inset-x-0 before:-bottom-px before:h-px before:bg-gradient-to-r before:from-blue-300/0 before:via-blue-200 before:to-blue-300/0'
+                    : 'shadow-blue-500/20 hover:from-blue-500 hover:to-blue-600 hover:shadow-blue-500/30'
                 }`}
               >
                 <Activity className="h-4 w-4 transition-transform duration-200 group-hover:scale-110" />
@@ -438,10 +438,10 @@ export function HorizontalNav() {
             <DropdownMenuTrigger asChild>
               <Button 
                 variant="ghost" 
-                className={`group relative flex items-center gap-2 px-6 py-4 text-sm font-medium transition-all duration-300 ${
+                className={`group relative flex items-center gap-2 px-6 py-4 text-sm font-medium transition-all duration-300 text-white bg-gradient-to-b from-blue-600 to-blue-700 border-x border-t border-blue-500 rounded-t-xl border-b-transparent shadow-lg ${
                   securityItems.some(item => isActivePath(item.path))
-                    ? 'text-white bg-gradient-to-b from-blue-600 to-blue-700 border-x border-t border-blue-500 rounded-t-xl border-b-transparent shadow-lg shadow-blue-500/20 -mb-px z-20 before:absolute before:inset-x-0 before:-bottom-px before:h-px before:bg-gradient-to-r before:from-blue-400/0 before:via-blue-300/50 before:to-blue-400/0'
-                    : 'text-muted-foreground hover:text-white hover:bg-gradient-to-b hover:from-blue-500/80 hover:to-blue-600/80 rounded-t-xl border border-transparent hover:border-blue-400/50 hover:border-b-transparent hover:shadow-sm'
+                    ? 'shadow-blue-500/30 -mb-px z-20 before:absolute before:inset-x-0 before:-bottom-px before:h-px before:bg-gradient-to-r before:from-blue-300/0 before:via-blue-200 before:to-blue-300/0'
+                    : 'shadow-blue-500/20 hover:from-blue-500 hover:to-blue-600 hover:shadow-blue-500/30'
                 }`}
               >
                 <Shield className="h-4 w-4 transition-transform duration-200 group-hover:scale-110" />
@@ -471,10 +471,10 @@ export function HorizontalNav() {
             <DropdownMenuTrigger asChild>
               <Button 
                 variant="ghost" 
-                className={`group relative flex items-center gap-2 px-6 py-4 text-sm font-medium transition-all duration-300 ${
+                className={`group relative flex items-center gap-2 px-6 py-4 text-sm font-medium transition-all duration-300 text-white bg-gradient-to-b from-blue-600 to-blue-700 border-x border-t border-blue-500 rounded-t-xl border-b-transparent shadow-lg ${
                   enterpriseItems.some(item => isActivePath(item.path.split('#')[0]))
-                    ? 'text-white bg-gradient-to-b from-blue-600 to-blue-700 border-x border-t border-blue-500 rounded-t-xl border-b-transparent shadow-lg shadow-blue-500/20 -mb-px z-20 before:absolute before:inset-x-0 before:-bottom-px before:h-px before:bg-gradient-to-r before:from-blue-400/0 before:via-blue-300/50 before:to-blue-400/0'
-                    : 'text-muted-foreground hover:text-white hover:bg-gradient-to-b hover:from-blue-500/80 hover:to-blue-600/80 rounded-t-xl border border-transparent hover:border-blue-400/50 hover:border-b-transparent hover:shadow-sm'
+                    ? 'shadow-blue-500/30 -mb-px z-20 before:absolute before:inset-x-0 before:-bottom-px before:h-px before:bg-gradient-to-r before:from-blue-300/0 before:via-blue-200 before:to-blue-300/0'
+                    : 'shadow-blue-500/20 hover:from-blue-500 hover:to-blue-600 hover:shadow-blue-500/30'
                 }`}
               >
                 <Building2 className="h-4 w-4 transition-transform duration-200 group-hover:scale-110" />
