@@ -14,7 +14,7 @@ import { AsyncErrorBoundary } from "@/components/AsyncErrorBoundary";
 import { CSPHeaders } from "@/components/security/CSPHeaders";
 import { MasterSecurityDashboard } from "@/components/security/MasterSecurityDashboard";
 import { MilitaryGradeSecurityDashboard } from "@/components/security/MilitaryGradeSecurityDashboard";
-import Layout from "@/components/Layout";
+
 import HorizontalLayout from "@/components/HorizontalLayout";
 import { SecurityEnhancementProvider } from "@/components/security/SecurityEnhancementProvider";
 import { SecurityProvider as EnhancedSecurityProvider } from "@/components/security/SecurityProvider";
