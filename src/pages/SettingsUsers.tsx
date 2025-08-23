@@ -146,7 +146,7 @@ export default function SettingsUsers() {
             <RotateCcw className={`h-4 w-4 mr-2 ${loading ? 'animate-spin' : ''}`} />
             Refresh
           </Button>
-          <Button onClick={() => navigate('/users')}>
+          <Button onClick={() => navigate('/settings/users')}>
             <UserCheck className="h-4 w-4 mr-2" />
             Full User Management
           </Button>
@@ -273,7 +273,7 @@ export default function SettingsUsers() {
                 <Button 
                   size="sm" 
                   variant="outline"
-                  onClick={() => navigate('/users')}
+                  onClick={() => navigate(`/settings/users?edit=${user.id}`)}
                 >
                   Edit
                 </Button>
