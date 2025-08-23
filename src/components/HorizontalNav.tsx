@@ -253,8 +253,8 @@ export function HorizontalNav() {
             variant="ghost" 
             className={`group relative flex items-center gap-2 px-6 py-4 text-sm font-medium transition-all duration-300 ${
               isActivePath("/")
-                ? 'text-primary bg-gradient-to-b from-background to-background/95 border-x border-t border-border rounded-t-xl border-b-transparent shadow-lg shadow-primary/5 -mb-px z-20 before:absolute before:inset-x-0 before:-bottom-px before:h-px before:bg-gradient-to-r before:from-primary/0 before:via-primary/30 before:to-primary/0'
-                : 'text-muted-foreground hover:text-foreground hover:bg-gradient-to-b hover:from-muted/30 hover:to-muted/10 rounded-t-xl border border-transparent hover:border-border/30 hover:border-b-transparent hover:shadow-sm'
+                ? 'text-white bg-gradient-to-b from-blue-600 to-blue-700 border-x border-t border-blue-500 rounded-t-xl border-b-transparent shadow-lg shadow-blue-500/20 -mb-px z-20 before:absolute before:inset-x-0 before:-bottom-px before:h-px before:bg-gradient-to-r before:from-blue-400/0 before:via-blue-300/50 before:to-blue-400/0'
+                : 'text-muted-foreground hover:text-white hover:bg-gradient-to-b hover:from-blue-500/80 hover:to-blue-600/80 rounded-t-xl border border-transparent hover:border-blue-400/50 hover:border-b-transparent hover:shadow-sm'
             }`}
           >
             <Link to="/" className="flex items-center gap-2">
@@ -262,7 +262,7 @@ export function HorizontalNav() {
               <span className="relative">
                 Dashboard
                 {isActivePath("/") && (
-                  <div className="absolute -bottom-1 left-0 right-0 h-0.5 bg-gradient-to-r from-primary/0 via-primary to-primary/0 rounded-full"></div>
+                  <div className="absolute -bottom-1 left-0 right-0 h-0.5 bg-gradient-to-r from-blue-300/0 via-blue-200 to-blue-300/0 rounded-full"></div>
                 )}
               </span>
             </Link>
@@ -275,15 +275,15 @@ export function HorizontalNav() {
                 variant="ghost" 
                 className={`group relative flex items-center gap-2 px-6 py-4 text-sm font-medium transition-all duration-300 ${
                   leadsItems.some(item => isActivePath(item.path))
-                    ? 'text-primary bg-gradient-to-b from-background to-background/95 border-x border-t border-border rounded-t-xl border-b-transparent shadow-lg shadow-primary/5 -mb-px z-20 before:absolute before:inset-x-0 before:-bottom-px before:h-px before:bg-gradient-to-r before:from-primary/0 before:via-primary/30 before:to-primary/0'
-                    : 'text-muted-foreground hover:text-foreground hover:bg-gradient-to-b hover:from-muted/30 hover:to-muted/10 rounded-t-xl border border-transparent hover:border-border/30 hover:border-b-transparent hover:shadow-sm'
+                    ? 'text-white bg-gradient-to-b from-blue-600 to-blue-700 border-x border-t border-blue-500 rounded-t-xl border-b-transparent shadow-lg shadow-blue-500/20 -mb-px z-20 before:absolute before:inset-x-0 before:-bottom-px before:h-px before:bg-gradient-to-r before:from-blue-400/0 before:via-blue-300/50 before:to-blue-400/0'
+                    : 'text-muted-foreground hover:text-white hover:bg-gradient-to-b hover:from-blue-500/80 hover:to-blue-600/80 rounded-t-xl border border-transparent hover:border-blue-400/50 hover:border-b-transparent hover:shadow-sm'
                 }`}
               >
                 <Users className="h-4 w-4 transition-transform duration-200 group-hover:scale-110" />
                 <span className="relative">
                   Leads
                   {leadsItems.some(item => isActivePath(item.path)) && (
-                    <div className="absolute -bottom-1 left-0 right-0 h-0.5 bg-gradient-to-r from-primary/0 via-primary to-primary/0 rounded-full"></div>
+                    <div className="absolute -bottom-1 left-0 right-0 h-0.5 bg-gradient-to-r from-blue-300/0 via-blue-200 to-blue-300/0 rounded-full"></div>
                   )}
                 </span>
                 <ChevronDown className="h-3 w-3 ml-1 transition-transform duration-200 group-hover:rotate-180" />
@@ -308,15 +308,15 @@ export function HorizontalNav() {
                 variant="ghost" 
                 className={`group relative flex items-center gap-2 px-6 py-4 text-sm font-medium transition-all duration-300 ${
                   borrowersItems.some(item => isActivePath(item.path))
-                    ? 'text-primary bg-gradient-to-b from-background to-background/95 border-x border-t border-border rounded-t-xl border-b-transparent shadow-lg shadow-primary/5 -mb-px z-20 before:absolute before:inset-x-0 before:-bottom-px before:h-px before:bg-gradient-to-r before:from-primary/0 before:via-primary/30 before:to-primary/0'
-                    : 'text-muted-foreground hover:text-foreground hover:bg-gradient-to-b hover:from-muted/30 hover:to-muted/10 rounded-t-xl border border-transparent hover:border-border/30 hover:border-b-transparent hover:shadow-sm'
+                    ? 'text-white bg-gradient-to-b from-blue-600 to-blue-700 border-x border-t border-blue-500 rounded-t-xl border-b-transparent shadow-lg shadow-blue-500/20 -mb-px z-20 before:absolute before:inset-x-0 before:-bottom-px before:h-px before:bg-gradient-to-r before:from-blue-400/0 before:via-blue-300/50 before:to-blue-400/0'
+                    : 'text-muted-foreground hover:text-white hover:bg-gradient-to-b hover:from-blue-500/80 hover:to-blue-600/80 rounded-t-xl border border-transparent hover:border-blue-400/50 hover:border-b-transparent hover:shadow-sm'
                 }`}
               >
                 <Building2 className="h-4 w-4 transition-transform duration-200 group-hover:scale-110" />
                 <span className="relative">
                   Existing Borrowers
                   {borrowersItems.some(item => isActivePath(item.path)) && (
-                    <div className="absolute -bottom-1 left-0 right-0 h-0.5 bg-gradient-to-r from-primary/0 via-primary to-primary/0 rounded-full"></div>
+                    <div className="absolute -bottom-1 left-0 right-0 h-0.5 bg-gradient-to-r from-blue-300/0 via-blue-200 to-blue-300/0 rounded-full"></div>
                   )}
                 </span>
                 <ChevronDown className="h-3 w-3 ml-1 transition-transform duration-200 group-hover:rotate-180" />
@@ -341,15 +341,15 @@ export function HorizontalNav() {
                 variant="ghost" 
                 className={`group relative flex items-center gap-2 px-6 py-4 text-sm font-medium transition-all duration-300 ${
                   pipelineItems.some(item => isActivePath(item.path))
-                    ? 'text-primary bg-gradient-to-b from-background to-background/95 border-x border-t border-border rounded-t-xl border-b-transparent shadow-lg shadow-primary/5 -mb-px z-20 before:absolute before:inset-x-0 before:-bottom-px before:h-px before:bg-gradient-to-r before:from-primary/0 before:via-primary/30 before:to-primary/0'
-                    : 'text-muted-foreground hover:text-foreground hover:bg-gradient-to-b hover:from-muted/30 hover:to-muted/10 rounded-t-xl border border-transparent hover:border-border/30 hover:border-b-transparent hover:shadow-sm'
+                    ? 'text-white bg-gradient-to-b from-blue-600 to-blue-700 border-x border-t border-blue-500 rounded-t-xl border-b-transparent shadow-lg shadow-blue-500/20 -mb-px z-20 before:absolute before:inset-x-0 before:-bottom-px before:h-px before:bg-gradient-to-r before:from-blue-400/0 before:via-blue-300/50 before:to-blue-400/0'
+                    : 'text-muted-foreground hover:text-white hover:bg-gradient-to-b hover:from-blue-500/80 hover:to-blue-600/80 rounded-t-xl border border-transparent hover:border-blue-400/50 hover:border-b-transparent hover:shadow-sm'
                 }`}
               >
                 <Target className="h-4 w-4 transition-transform duration-200 group-hover:scale-110" />
                 <span className="relative">
                   Pipeline
                   {pipelineItems.some(item => isActivePath(item.path)) && (
-                    <div className="absolute -bottom-1 left-0 right-0 h-0.5 bg-gradient-to-r from-primary/0 via-primary to-primary/0 rounded-full"></div>
+                    <div className="absolute -bottom-1 left-0 right-0 h-0.5 bg-gradient-to-r from-blue-300/0 via-blue-200 to-blue-300/0 rounded-full"></div>
                   )}
                 </span>
                 <ChevronDown className="h-3 w-3 ml-1 transition-transform duration-200 group-hover:rotate-180" />
@@ -374,15 +374,15 @@ export function HorizontalNav() {
                 variant="ghost" 
                 className={`group relative flex items-center gap-2 px-6 py-4 text-sm font-medium transition-all duration-300 ${
                   underwriterItems.some(item => isActivePath(item.path))
-                    ? 'text-primary bg-gradient-to-b from-background to-background/95 border-x border-t border-border rounded-t-xl border-b-transparent shadow-lg shadow-primary/5 -mb-px z-20 before:absolute before:inset-x-0 before:-bottom-px before:h-px before:bg-gradient-to-r before:from-primary/0 before:via-primary/30 before:to-primary/0'
-                    : 'text-muted-foreground hover:text-foreground hover:bg-gradient-to-b hover:from-muted/30 hover:to-muted/10 rounded-t-xl border border-transparent hover:border-border/30 hover:border-b-transparent hover:shadow-sm'
+                    ? 'text-white bg-gradient-to-b from-blue-600 to-blue-700 border-x border-t border-blue-500 rounded-t-xl border-b-transparent shadow-lg shadow-blue-500/20 -mb-px z-20 before:absolute before:inset-x-0 before:-bottom-px before:h-px before:bg-gradient-to-r before:from-blue-400/0 before:via-blue-300/50 before:to-blue-400/0'
+                    : 'text-muted-foreground hover:text-white hover:bg-gradient-to-b hover:from-blue-500/80 hover:to-blue-600/80 rounded-t-xl border border-transparent hover:border-blue-400/50 hover:border-b-transparent hover:shadow-sm'
                 }`}
               >
                 <Shield className="h-4 w-4 transition-transform duration-200 group-hover:scale-110" />
                 <span className="relative">
                   Underwriter
                   {underwriterItems.some(item => isActivePath(item.path)) && (
-                    <div className="absolute -bottom-1 left-0 right-0 h-0.5 bg-gradient-to-r from-primary/0 via-primary to-primary/0 rounded-full"></div>
+                    <div className="absolute -bottom-1 left-0 right-0 h-0.5 bg-gradient-to-r from-blue-300/0 via-blue-200 to-blue-300/0 rounded-full"></div>
                   )}
                 </span>
                 <ChevronDown className="h-3 w-3 ml-1 transition-transform duration-200 group-hover:rotate-180" />
@@ -407,15 +407,15 @@ export function HorizontalNav() {
                 variant="ghost" 
                 className={`group relative flex items-center gap-2 px-6 py-4 text-sm font-medium transition-all duration-300 ${
                   activitiesItems.some(item => isActivePath(item.path))
-                    ? 'text-primary bg-gradient-to-b from-background to-background/95 border-x border-t border-border rounded-t-xl border-b-transparent shadow-lg shadow-primary/5 -mb-px z-20 before:absolute before:inset-x-0 before:-bottom-px before:h-px before:bg-gradient-to-r before:from-primary/0 before:via-primary/30 before:to-primary/0'
-                    : 'text-muted-foreground hover:text-foreground hover:bg-gradient-to-b hover:from-muted/30 hover:to-muted/10 rounded-t-xl border border-transparent hover:border-border/30 hover:border-b-transparent hover:shadow-sm'
+                    ? 'text-white bg-gradient-to-b from-blue-600 to-blue-700 border-x border-t border-blue-500 rounded-t-xl border-b-transparent shadow-lg shadow-blue-500/20 -mb-px z-20 before:absolute before:inset-x-0 before:-bottom-px before:h-px before:bg-gradient-to-r before:from-blue-400/0 before:via-blue-300/50 before:to-blue-400/0'
+                    : 'text-muted-foreground hover:text-white hover:bg-gradient-to-b hover:from-blue-500/80 hover:to-blue-600/80 rounded-t-xl border border-transparent hover:border-blue-400/50 hover:border-b-transparent hover:shadow-sm'
                 }`}
               >
                 <Activity className="h-4 w-4 transition-transform duration-200 group-hover:scale-110" />
                 <span className="relative">
                   Activities
                   {activitiesItems.some(item => isActivePath(item.path)) && (
-                    <div className="absolute -bottom-1 left-0 right-0 h-0.5 bg-gradient-to-r from-primary/0 via-primary to-primary/0 rounded-full"></div>
+                    <div className="absolute -bottom-1 left-0 right-0 h-0.5 bg-gradient-to-r from-blue-300/0 via-blue-200 to-blue-300/0 rounded-full"></div>
                   )}
                 </span>
                 <ChevronDown className="h-3 w-3 ml-1 transition-transform duration-200 group-hover:rotate-180" />
@@ -440,15 +440,15 @@ export function HorizontalNav() {
                 variant="ghost" 
                 className={`group relative flex items-center gap-2 px-6 py-4 text-sm font-medium transition-all duration-300 ${
                   securityItems.some(item => isActivePath(item.path))
-                    ? 'text-primary bg-gradient-to-b from-background to-background/95 border-x border-t border-border rounded-t-xl border-b-transparent shadow-lg shadow-primary/5 -mb-px z-20 before:absolute before:inset-x-0 before:-bottom-px before:h-px before:bg-gradient-to-r before:from-primary/0 before:via-primary/30 before:to-primary/0'
-                    : 'text-muted-foreground hover:text-foreground hover:bg-gradient-to-b hover:from-muted/30 hover:to-muted/10 rounded-t-xl border border-transparent hover:border-border/30 hover:border-b-transparent hover:shadow-sm'
+                    ? 'text-white bg-gradient-to-b from-blue-600 to-blue-700 border-x border-t border-blue-500 rounded-t-xl border-b-transparent shadow-lg shadow-blue-500/20 -mb-px z-20 before:absolute before:inset-x-0 before:-bottom-px before:h-px before:bg-gradient-to-r before:from-blue-400/0 before:via-blue-300/50 before:to-blue-400/0'
+                    : 'text-muted-foreground hover:text-white hover:bg-gradient-to-b hover:from-blue-500/80 hover:to-blue-600/80 rounded-t-xl border border-transparent hover:border-blue-400/50 hover:border-b-transparent hover:shadow-sm'
                 }`}
               >
                 <Shield className="h-4 w-4 transition-transform duration-200 group-hover:scale-110" />
                 <span className="relative">
                   Security
                   {securityItems.some(item => isActivePath(item.path)) && (
-                    <div className="absolute -bottom-1 left-0 right-0 h-0.5 bg-gradient-to-r from-primary/0 via-primary to-primary/0 rounded-full"></div>
+                    <div className="absolute -bottom-1 left-0 right-0 h-0.5 bg-gradient-to-r from-blue-300/0 via-blue-200 to-blue-300/0 rounded-full"></div>
                   )}
                 </span>
                 <ChevronDown className="h-3 w-3 ml-1 transition-transform duration-200 group-hover:rotate-180" />
@@ -473,15 +473,15 @@ export function HorizontalNav() {
                 variant="ghost" 
                 className={`group relative flex items-center gap-2 px-6 py-4 text-sm font-medium transition-all duration-300 ${
                   enterpriseItems.some(item => isActivePath(item.path.split('#')[0]))
-                    ? 'text-primary bg-gradient-to-b from-background to-background/95 border-x border-t border-border rounded-t-xl border-b-transparent shadow-lg shadow-primary/5 -mb-px z-20 before:absolute before:inset-x-0 before:-bottom-px before:h-px before:bg-gradient-to-r before:from-primary/0 before:via-primary/30 before:to-primary/0'
-                    : 'text-muted-foreground hover:text-foreground hover:bg-gradient-to-b hover:from-muted/30 hover:to-muted/10 rounded-t-xl border border-transparent hover:border-border/30 hover:border-b-transparent hover:shadow-sm'
+                    ? 'text-white bg-gradient-to-b from-blue-600 to-blue-700 border-x border-t border-blue-500 rounded-t-xl border-b-transparent shadow-lg shadow-blue-500/20 -mb-px z-20 before:absolute before:inset-x-0 before:-bottom-px before:h-px before:bg-gradient-to-r before:from-blue-400/0 before:via-blue-300/50 before:to-blue-400/0'
+                    : 'text-muted-foreground hover:text-white hover:bg-gradient-to-b hover:from-blue-500/80 hover:to-blue-600/80 rounded-t-xl border border-transparent hover:border-blue-400/50 hover:border-b-transparent hover:shadow-sm'
                 }`}
               >
                 <Building2 className="h-4 w-4 transition-transform duration-200 group-hover:scale-110" />
                 <span className="relative">
                   Enterprise
                   {enterpriseItems.some(item => isActivePath(item.path.split('#')[0])) && (
-                    <div className="absolute -bottom-1 left-0 right-0 h-0.5 bg-gradient-to-r from-primary/0 via-primary to-primary/0 rounded-full"></div>
+                    <div className="absolute -bottom-1 left-0 right-0 h-0.5 bg-gradient-to-r from-blue-300/0 via-blue-200 to-blue-300/0 rounded-full"></div>
                   )}
                 </span>
                 <ChevronDown className="h-3 w-3 ml-1 transition-transform duration-200 group-hover:rotate-180" />
