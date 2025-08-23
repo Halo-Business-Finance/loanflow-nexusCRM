@@ -283,23 +283,25 @@ export function HorizontalNav({ onFolderClick, sidebarOpen = false, activeFolder
         <div className="absolute bottom-0 left-0 right-0 z-0 h-px bg-gradient-to-r from-transparent via-border to-transparent"></div>
         <nav className="flex items-center justify-center relative z-10">
           <div className="flex items-center space-x-1">
-          {/* Dashboard Button */}
+          {/* Dashboard Button - Simple Navigation */}
           <Button 
+            asChild
             variant="ghost" 
-            onClick={() => handleFolderClick('home')}
             className={`group relative flex items-center gap-2 px-6 py-4 text-sm font-medium transition-all duration-300 text-white bg-gradient-to-b from-blue-600 to-blue-700 border-x border-t border-blue-500 rounded-t-xl border-b-transparent shadow-lg ${
               isActivePath("/")
                 ? 'shadow-blue-500/30 -mb-px z-20 before:absolute before:inset-x-0 before:-bottom-px before:h-px before:bg-gradient-to-r before:from-blue-300/0 before:via-blue-200 before:to-blue-300/0'
                 : 'shadow-blue-500/20 hover:from-blue-500 hover:to-blue-600 hover:shadow-blue-500/30'
             }`}
           >
-            <LayoutDashboard className="h-4 w-4 transition-transform duration-200 group-hover:scale-110" />
-            <span className="relative">
-              Dashboard
-              {isActivePath("/") && (
-                <div className="absolute -bottom-1 left-0 right-0 h-0.5 bg-gradient-to-r from-blue-300/0 via-blue-200 to-blue-300/0 rounded-full"></div>
-              )}
-            </span>
+            <Link to="/" className="flex items-center gap-2">
+              <LayoutDashboard className="h-4 w-4 transition-transform duration-200 group-hover:scale-110" />
+              <span className="relative">
+                Dashboard
+                {isActivePath("/") && (
+                  <div className="absolute -bottom-1 left-0 right-0 h-0.5 bg-gradient-to-r from-blue-300/0 via-blue-200 to-blue-300/0 rounded-full"></div>
+                )}
+              </span>
+            </Link>
           </Button>
 
           {/* Leads Button */}
