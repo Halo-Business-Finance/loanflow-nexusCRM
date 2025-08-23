@@ -87,39 +87,50 @@ export function TeamCollaboration() {
   const [message, setMessage] = useState('');
   const [searchQuery, setSearchQuery] = useState('');
 
-  // Mock data - would be replaced with real data
-  const [teamMembers] = useState<TeamMember[]>([
-    { id: '1', name: 'Sarah Johnson', role: 'Senior Loan Officer', email: 'sarah@company.com', status: 'online', avatar: `https://api.dicebear.com/7.x/avataaars/svg?seed=sarah&size=32` },
-    { id: '2', name: 'Mike Chen', role: 'Underwriter', email: 'mike@company.com', status: 'busy', avatar: `https://api.dicebear.com/7.x/avataaars/svg?seed=mike&size=32` },
-    { id: '3', name: 'Emily Rodriguez', role: 'Loan Processor', email: 'emily@company.com', status: 'online', avatar: `https://api.dicebear.com/7.x/avataaars/svg?seed=emily&size=32` },
-    { id: '4', name: 'David Kim', role: 'Closer', email: 'david@company.com', status: 'away', lastSeen: '2024-01-15T10:30:00Z', avatar: `https://api.dicebear.com/7.x/avataaars/svg?seed=david&size=32` },
-    { id: '5', name: 'Lisa Wong', role: 'Business Development', email: 'lisa@company.com', status: 'offline', lastSeen: '2024-01-15T09:15:00Z', avatar: `https://api.dicebear.com/7.x/avataaars/svg?seed=lisa&size=32` }
-  ]);
+  // Fetch real team data from profiles and user_roles
+  const [teamMembers, setTeamMembers] = useState<TeamMember[]>([])
 
-  const [chatMessages, setChatMessages] = useState<ChatMessage[]>([
-    { id: '1', content: 'New lead from ABC Corp - $500K SBA loan request', senderId: '1', senderName: 'Sarah Johnson', timestamp: '2024-01-15T11:30:00Z', type: 'text' },
-    { id: '2', content: 'I can start the underwriting process today', senderId: '2', senderName: 'Mike Chen', timestamp: '2024-01-15T11:32:00Z', type: 'text' },
-    { id: '3', content: 'Great! I\'ll prepare the initial documentation', senderId: '3', senderName: 'Emily Rodriguez', timestamp: '2024-01-15T11:35:00Z', type: 'text' },
-    { id: '4', content: 'Credit report.pdf attached', senderId: '1', senderName: 'Sarah Johnson', timestamp: '2024-01-15T11:40:00Z', type: 'file', attachments: ['credit_report.pdf'] }
-  ]);
+  useEffect(() => {
+    fetchTeamMembers()
+  }, [])
 
-  const [sharedDocuments] = useState<SharedDocument[]>([
-    { id: '1', title: 'ABC Corp - SBA Application', type: 'document', sharedBy: 'Sarah Johnson', sharedWith: ['Mike Chen', 'Emily Rodriguez'], timestamp: '2024-01-15T11:40:00Z', permissions: 'edit' },
-    { id: '2', title: 'Q1 Pipeline Report', type: 'report', sharedBy: 'David Kim', sharedWith: ['All Team'], timestamp: '2024-01-15T10:15:00Z', permissions: 'view' },
-    { id: '3', title: 'XYZ Manufacturing Lead', type: 'lead', sharedBy: 'Lisa Wong', sharedWith: ['Sarah Johnson'], timestamp: '2024-01-15T09:30:00Z', permissions: 'full' }
-  ]);
+  const fetchTeamMembers = async () => {
+    try {
+      const { data: profiles, error } = await supabase
+        .from('profiles')
+        .select(`
+          id,
+          first_name,
+          last_name,
+          email,
+          phone_number
+        `)
+        .limit(20)
 
-  const [teamActivity] = useState<TeamActivity[]>([
-    { id: '1', type: 'deal', description: 'Deal closed: Tech Solutions Inc - $250K', user: 'Sarah Johnson', timestamp: '2024-01-15T11:45:00Z', priority: 'high' },
-    { id: '2', type: 'document', description: 'Updated loan application for ABC Corp', user: 'Emily Rodriguez', timestamp: '2024-01-15T11:30:00Z', priority: 'medium' },
-    { id: '3', type: 'meeting', description: 'Client meeting scheduled with XYZ Corp', user: 'Mike Chen', timestamp: '2024-01-15T11:15:00Z', priority: 'medium' },
-    { id: '4', type: 'task', description: 'Completed underwriting review', user: 'David Kim', timestamp: '2024-01-15T10:45:00Z', priority: 'low' }
-  ]);
+      if (error) throw error
+
+      const realTeamMembers: TeamMember[] = (profiles || []).map(profile => ({
+        id: profile.id,
+        name: profile.first_name && profile.last_name 
+          ? `${profile.first_name} ${profile.last_name}`
+          : profile.email,
+        role: 'Team Member', // Would need to join with user_roles table
+        email: profile.email,
+        status: 'online', // Placeholder
+        avatar: `https://api.dicebear.com/7.x/avataaars/svg?seed=${profile.email}&size=32`
+      }))
+
+      setTeamMembers(realTeamMembers)
+    } catch (error) {
+      console.error('Error fetching team members:', error)
+      setTeamMembers([])
+    }
+  }
 
   const channels = [
-    { id: 'general', name: 'General', unread: 2 },
+    { id: 'general', name: 'General', unread: 0 },
     { id: 'sales', name: 'Sales Team', unread: 0 },
-    { id: 'underwriting', name: 'Underwriting', unread: 1 },
+    { id: 'underwriting', name: 'Underwriting', unread: 0 },
     { id: 'processing', name: 'Processing', unread: 0 },
     { id: 'announcements', name: 'Announcements', unread: 0 }
   ];

@@ -136,73 +136,58 @@ export function SharedCustomerInfo({ customerId, onClose }: SharedCustomerInfoPr
         `)
         .eq('contact_entity_id', customerId);
 
-      // Mock interaction history (would be from actual tables)
-      const mockInteractions: Interaction[] = [
-        {
-          id: '1',
-          type: 'call',
-          description: 'Initial consultation call - discussed SBA loan options',
-          user_name: 'Sarah Johnson',
-          department: 'Sales',
-          timestamp: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString(),
-          outcome: 'Interested in $500K SBA loan'
-        },
-        {
-          id: '2',
-          type: 'document',
-          description: 'Financial statements uploaded and reviewed',
-          user_name: 'Emily Rodriguez',
-          department: 'Processing',
-          timestamp: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(),
-          outcome: 'Documents complete, moved to underwriting'
-        },
-        {
-          id: '3',
-          type: 'stage_change',
-          description: 'Application moved to underwriting review',
-          user_name: 'Mike Chen',
-          department: 'Underwriting',
-          timestamp: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString(),
-          outcome: 'Pending additional documentation'
-        }
-      ];
+      // Fetch real interaction history from audit logs
+      const { data: auditLogs, error: auditError } = await supabase
+        .from('audit_logs')
+        .select('*')
+        .eq('record_id', customerId)
+        .order('created_at', { ascending: false })
+        .limit(10)
 
-      // Mock documents (would be from actual documents table)
-      const mockDocuments: Document[] = [
-        {
-          id: '1',
-          name: 'Financial Statements 2023',
-          type: 'Financial',
-          uploaded_by: 'Customer',
-          uploaded_at: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString(),
+      if (!auditError && auditLogs) {
+        const realInteractions: Interaction[] = auditLogs.map(log => ({
+          id: log.id,
+          type: log.action.includes('email') ? 'email' : 
+                log.action.includes('call') ? 'call' : 
+                log.action.includes('meeting') ? 'meeting' : 'stage_change',
+          description: `${log.action}: ${JSON.stringify(log.new_values || {})}`,
+          user_name: log.user_id || 'System',
+          department: 'System',
+          timestamp: log.created_at,
+          outcome: 'Completed'
+        }))
+        setInteractions(realInteractions)
+      } else {
+        setInteractions([])
+      }
+
+      // Fetch real documents from lead_documents table
+      const { data: documents, error: docError } = await supabase
+        .from('lead_documents')
+        .select('*')
+        .order('created_at', { ascending: false })
+        .limit(10)
+
+      if (!docError && documents) {
+        const realDocuments: Document[] = documents.map(doc => ({
+          id: doc.id,
+          name: doc.document_name,
+          type: doc.document_type || 'Other',
+          uploaded_by: doc.user_id || 'Unknown',
+          uploaded_at: doc.created_at,
           status: 'approved',
           department: 'Processing'
-        },
-        {
-          id: '2',
-          name: 'Tax Returns 2022-2023',
-          type: 'Tax Documents',
-          uploaded_by: 'Customer',
-          uploaded_at: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(),
-          status: 'approved',
-          department: 'Processing'
-        },
-        {
-          id: '3',
-          name: 'Bank Statements (6 months)',
-          type: 'Banking',
-          uploaded_by: 'Customer',
-          uploaded_at: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString(),
-          status: 'pending',
-          department: 'Underwriting'
-        }
-      ];
+        }))
+        setDocuments(realDocuments)
+      } else {
+        setDocuments([])
+      }
 
       const transformedCustomer: CustomerInfo = {
         ...contactData,
         existing_loans: clientData?.[0]?.loans || [],
-        interaction_history: mockInteractions,
-        documents: mockDocuments
+        interaction_history: realInteractions,
+        documents: realDocuments
       };
 
       setCustomer(transformedCustomer);

@@ -56,33 +56,15 @@ export const WebhookManager: React.FC = () => {
 
   const loadWebhooks = async () => {
     try {
-      // In a real implementation, this would load from your database
-      const mockWebhooks: Webhook[] = [
-        {
-          id: '1',
-          name: 'Lead Processing Automation',
-          url: generateWebhookUrl('lead-processing'),
-          events: ['lead.created', 'lead.updated'],
-          isActive: true,
-          status: 'active',
-          lastTriggered: new Date(Date.now() - 2 * 60 * 60 * 1000) // 2 hours ago
-        },
-        {
-          id: '2',
-          name: 'Document Processing',
-          url: generateWebhookUrl('document-processing'),
-          events: ['document.uploaded'],
-          isActive: true,
-          status: 'active'
-        }
-      ];
-      setWebhooks(mockWebhooks);
+      // Real webhook data would come from a webhooks table
+      // For now, show empty state until webhooks are implemented
+      setWebhooks([])
     } catch (error) {
       toast({
         title: "Error Loading Webhooks",
         description: "Failed to load webhook configurations",
         variant: "destructive"
-      });
+      })
     }
   };
 

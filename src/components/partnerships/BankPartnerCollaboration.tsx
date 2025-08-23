@@ -117,65 +117,22 @@ export function BankPartnerCollaboration() {
   const [webhookUrl, setWebhookUrl] = useState('');
   const [isTestingWebhook, setIsTestingWebhook] = useState(false);
 
-  // Mock data - would be replaced with real data
-  const [bankPartners] = useState<BankPartner[]>([
-    {
-      id: '1',
-      name: 'First National SBA',
-      type: 'sba_lender',
-      status: 'active',
-      connectionStrength: 95,
-      totalFunded: 45000000,
-      avgFundingTime: 12,
-      preferredLoanTypes: ['SBA 7(a)', 'SBA 504', 'Working Capital'],
-      contactInfo: {
-        name: 'Sarah Mitchell',
-        email: 'sarah.mitchell@firstnationalsba.com',
-        phone: '(555) 123-4567',
-        title: 'VP Business Development'
-      },
-      apiIntegration: true,
-      webhookUrl: 'https://api.firstnationalsba.com/webhook',
-      lastActivity: '2024-01-15T10:30:00Z'
-    },
-    {
-      id: '2',
-      name: 'Capital Growth Bank',
-      type: 'commercial_bank',
-      status: 'active',
-      connectionStrength: 87,
-      totalFunded: 32000000,
-      avgFundingTime: 18,
-      preferredLoanTypes: ['Commercial Real Estate', 'Equipment Financing', 'LOC'],
-      contactInfo: {
-        name: 'Michael Chen',
-        email: 'mchen@capitalgrowth.com',
-        phone: '(555) 234-5678',
-        title: 'Senior Loan Officer'
-      },
-      apiIntegration: false,
-      lastActivity: '2024-01-15T09:15:00Z'
-    },
-    {
-      id: '3',
-      name: 'Community Business Credit Union',
-      type: 'credit_union',
-      status: 'active',
-      connectionStrength: 78,
-      totalFunded: 18500000,
-      avgFundingTime: 15,
-      preferredLoanTypes: ['Small Business', 'Microloans', 'Startup Funding'],
-      contactInfo: {
-        name: 'Lisa Rodriguez',
-        email: 'l.rodriguez@cbcu.org',
-        phone: '(555) 345-6789',
-        title: 'Business Lending Manager'
-      },
-      apiIntegration: true,
-      webhookUrl: 'https://api.cbcu.org/loan-requests',
-      lastActivity: '2024-01-15T11:45:00Z'
-    }
-  ]);
+  // Real bank partner data - would be from a bank_partners table
+  const [bankPartners, setBankPartners] = useState<BankPartner[]>([])
+  
+  useEffect(() => {
+    // For now, show empty state until bank partners table is created
+    setBankPartners([])
+    setLoading(false)
+  }, [])
+
+  const [loansRequiringFunding] = useState<LoanRequiringFunding[]>([])
+  const [fundingRequests] = useState<FundingRequest[]>([])
+  const [partnerActivity] = useState<PartnerActivity[]>([])
+
+  useEffect(() => {
+    setLoading(false)
+  }, [])
 
   const [loansRequiringFunding] = useState<LoanRequiringFunding[]>([
     {

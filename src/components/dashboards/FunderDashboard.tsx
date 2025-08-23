@@ -26,14 +26,62 @@ interface FunderMetrics {
 export const FunderDashboard = () => {
   const { toast } = useToast();
   const [metrics, setMetrics] = useState<FunderMetrics>({
-    availableFunds: 5000000, // Mock data
+    availableFunds: 0,
     pendingFunding: 0,
     fundedToday: 0,
-    avgFundingTime: 1.2,
+    avgFundingTime: 0,
     totalFundedThisMonth: 0
-  });
-  const [pendingFundings, setPendingFundings] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
+  })
+  const [pendingFundings, setPendingFundings] = useState<any[]>([])
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    fetchFunderData()
+  }, [])
+
+  const fetchFunderData = async () => {
+    try {
+      // Fetch real funding data from loans table
+      const { data: loans, error } = await supabase
+        .from('loans')
+        .select('loan_amount, status, created_at, funded_date')
+
+      if (error) throw error
+
+      const pendingLoans = loans?.filter(l => l.status === 'Pending Funding') || []
+      const fundedToday = loans?.filter(l => {
+        const fundedDate = l.funded_date ? new Date(l.funded_date) : null
+        const today = new Date()
+        return fundedDate && 
+               fundedDate.toDateString() === today.toDateString()
+      }) || []
+
+      const thisMonth = new Date()
+      thisMonth.setDate(1)
+      const fundedThisMonth = loans?.filter(l => {
+        const fundedDate = l.funded_date ? new Date(l.funded_date) : null
+        return fundedDate && fundedDate >= thisMonth
+      }) || []
+
+      const pendingFunding = pendingLoans.reduce((sum, loan) => sum + (loan.loan_amount || 0), 0)
+      const fundedTodayAmount = fundedToday.reduce((sum, loan) => sum + (loan.loan_amount || 0), 0)
+      const totalFundedThisMonth = fundedThisMonth.reduce((sum, loan) => sum + (loan.loan_amount || 0), 0)
+
+      setMetrics({
+        availableFunds: 5000000, // This would come from funding sources table
+        pendingFunding,
+        fundedToday: fundedTodayAmount,
+        avgFundingTime: 1.2, // Would be calculated from actual data
+        totalFundedThisMonth
+      })
+
+      setPendingFundings(pendingLoans)
+    } catch (error) {
+      console.error('Error fetching funder data:', error)
+    } finally {
+      setLoading(false)
+    }
+  }
 
   useEffect(() => {
     fetchFunderData();
