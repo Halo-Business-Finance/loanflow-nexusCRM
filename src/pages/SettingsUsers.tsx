@@ -4,6 +4,9 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Users, Plus, Settings, Shield, Search, Edit3, Trash2, RotateCcw, UserCheck } from "lucide-react"
 import { supabase } from "@/integrations/supabase/client"
@@ -27,6 +30,8 @@ export default function SettingsUsers() {
   const [users, setUsers] = useState<UserProfile[]>([])
   const [searchTerm, setSearchTerm] = useState("")
   const [loading, setLoading] = useState(true)
+  const [editingUser, setEditingUser] = useState<UserProfile | null>(null)
+  const [editDialogOpen, setEditDialogOpen] = useState(false)
   const { user, hasRole } = useAuth()
   const { toast } = useToast()
   const navigate = useNavigate()
@@ -276,34 +281,11 @@ export default function SettingsUsers() {
                 <Button 
                   size="sm" 
                   variant="outline"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    console.log('=== EDIT BUTTON CLICKED ===');
-                    console.log('User object:', user);
-                    console.log('User ID:', user.id);
-                    console.log('Button clicked successfully!');
-                    
-                    try {
-                      const targetUrl = `/settings/users?edit=${user.id}`;
-                      console.log('Attempting navigation to:', targetUrl);
-                      navigate(targetUrl);
-                      console.log('Navigation call completed');
-                      
-                      toast({
-                        title: "Navigation Test",
-                        description: `Attempting to edit user: ${user.email}`,
-                      });
-                    } catch (error) {
-                      console.error('Navigation error:', error);
-                      toast({
-                        title: "Navigation Error",
-                        description: "Failed to navigate to edit page",
-                        variant: "destructive",
-                      });
-                    }
+                  onClick={() => {
+                    console.log('Edit button clicked for user:', user.id);
+                    setEditingUser(user);
+                    setEditDialogOpen(true);
                   }}
-                  style={{ minWidth: '60px', minHeight: '32px' }}
                 >
                   Edit
                 </Button>
@@ -314,6 +296,33 @@ export default function SettingsUsers() {
           </div>
         </CardContent>
       </Card>
+
+      {/* Edit User Dialog */}
+      <Dialog open={editDialogOpen} onOpenChange={setEditDialogOpen}>
+        <DialogContent className="sm:max-w-[425px]">
+          <DialogHeader>
+            <DialogTitle>Edit User</DialogTitle>
+          </DialogHeader>
+          {editingUser && (
+            <EditUserForm 
+              user={editingUser}
+              onSave={(updatedUser) => {
+                setUsers(users.map(u => u.id === updatedUser.id ? updatedUser : u));
+                setEditDialogOpen(false);
+                setEditingUser(null);
+                toast({
+                  title: "User Updated",
+                  description: "User information has been updated successfully.",
+                });
+              }}
+              onCancel={() => {
+                setEditDialogOpen(false);
+                setEditingUser(null);
+              }}
+            />
+          )}
+        </DialogContent>
+      </Dialog>
 
       <div className="grid gap-6 md:grid-cols-2">
         <Card>
@@ -403,4 +412,152 @@ export default function SettingsUsers() {
       </div>
     </div>
   )
+}
+
+// Edit User Form Component
+interface EditUserFormProps {
+  user: UserProfile;
+  onSave: (user: UserProfile) => void;
+  onCancel: () => void;
+}
+
+function EditUserForm({ user, onSave, onCancel }: EditUserFormProps) {
+  const [formData, setFormData] = useState({
+    first_name: user.first_name || '',
+    last_name: user.last_name || '',
+    email: user.email || '',
+    phone: user.phone || '',
+    role: user.role || '',
+    is_active: user.is_active
+  });
+  const [saving, setSaving] = useState(false);
+  const { toast } = useToast();
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setSaving(true);
+
+    try {
+      // Update user in Supabase
+      const { data, error } = await supabase
+        .from('profiles')
+        .update({
+          first_name: formData.first_name,
+          last_name: formData.last_name,
+          phone: formData.phone,
+          role: formData.role,
+          is_active: formData.is_active
+        })
+        .eq('id', user.id)
+        .select()
+        .single();
+
+      if (error) throw error;
+
+      // Call onSave with updated user data
+      onSave({
+        ...user,
+        ...formData,
+        updated_at: new Date().toISOString()
+      });
+
+    } catch (error) {
+      console.error('Error updating user:', error);
+      toast({
+        title: "Update Failed",
+        description: "Failed to update user information.",
+        variant: "destructive",
+      });
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  return (
+    <form onSubmit={handleSubmit} className="space-y-4">
+      <div className="grid grid-cols-2 gap-4">
+        <div>
+          <Label htmlFor="first_name">First Name</Label>
+          <Input
+            id="first_name"
+            value={formData.first_name}
+            onChange={(e) => setFormData({ ...formData, first_name: e.target.value })}
+          />
+        </div>
+        <div>
+          <Label htmlFor="last_name">Last Name</Label>
+          <Input
+            id="last_name"
+            value={formData.last_name}
+            onChange={(e) => setFormData({ ...formData, last_name: e.target.value })}
+          />
+        </div>
+      </div>
+
+      <div>
+        <Label htmlFor="email">Email</Label>
+        <Input
+          id="email"
+          type="email"
+          value={formData.email}
+          onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+          disabled // Email usually shouldn't be editable
+        />
+      </div>
+
+      <div>
+        <Label htmlFor="phone">Phone</Label>
+        <Input
+          id="phone"
+          value={formData.phone}
+          onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+        />
+      </div>
+
+      <div>
+        <Label htmlFor="role">Role</Label>
+        <Select value={formData.role} onValueChange={(value) => setFormData({ ...formData, role: value })}>
+          <SelectTrigger>
+            <SelectValue placeholder="Select a role" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="super_admin">Super Admin</SelectItem>
+            <SelectItem value="admin">Admin</SelectItem>
+            <SelectItem value="manager">Manager</SelectItem>
+            <SelectItem value="loan_originator">Loan Originator</SelectItem>
+            <SelectItem value="loan_processor">Loan Processor</SelectItem>
+            <SelectItem value="underwriter">Underwriter</SelectItem>
+            <SelectItem value="funder">Funder</SelectItem>
+            <SelectItem value="closer">Closer</SelectItem>
+            <SelectItem value="agent">Agent</SelectItem>
+          </SelectContent>
+        </Select>
+      </div>
+
+      <div>
+        <Label htmlFor="status">Status</Label>
+        <Select 
+          value={formData.is_active ? "active" : "inactive"} 
+          onValueChange={(value) => setFormData({ ...formData, is_active: value === "active" })}
+        >
+          <SelectTrigger>
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="active">Active</SelectItem>
+            <SelectItem value="inactive">Inactive</SelectItem>
+          </SelectContent>
+        </Select>
+      </div>
+
+      <div className="flex justify-end space-x-2 pt-4">
+        <Button type="button" variant="outline" onClick={onCancel}>
+          Cancel
+        </Button>
+        <Button type="submit" disabled={saving}>
+          {saving ? "Saving..." : "Save Changes"}
+        </Button>
+      </div>
+    </form>
+  );
 }
