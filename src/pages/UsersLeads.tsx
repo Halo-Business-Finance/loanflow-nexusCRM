@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar"
-import { AppSidebar } from "@/components/AppSidebar"
+
 import { 
   Search, 
   Users, 
@@ -183,7 +183,7 @@ export default function UsersLeads() {
     return (
       <SidebarProvider>
         <div className="min-h-screen flex w-full">
-          <AppSidebar />
+          <div />
           <div className="flex-1">
             <div className="flex items-center justify-center h-64">
               <div className="text-center">
@@ -200,7 +200,7 @@ export default function UsersLeads() {
   return (
     <SidebarProvider>
       <div className="min-h-screen flex w-full">
-        <AppSidebar />
+        <div />
         <div className="flex-1">
           <div className="min-h-screen bg-background">
             {/* Header */}

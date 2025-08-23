@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import Layout from '@/components/Layout';
+import HorizontalLayout from '@/components/HorizontalLayout';
 import { SecurityWrapper } from '@/components/SecurityWrapper';
 import { useSessionSecurity } from '@/hooks/useSessionSecurity';
 import { useAuth } from '@/components/auth/AuthProvider';
@@ -50,9 +50,9 @@ export const SecureLayout: React.FC<SecureLayoutProps> = ({ children, requireRol
 
   return (
     <SecurityWrapper requireRole={requireRole}>
-      <Layout>
+      <HorizontalLayout>
         {children}
-      </Layout>
+      </HorizontalLayout>
     </SecurityWrapper>
   );
 };

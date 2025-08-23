@@ -17,7 +17,7 @@ import { DarkWebSecurityBot } from "./DarkWebSecurityBot";
 import { ThreatDetectionMonitor } from "./ThreatDetectionMonitor";
 import { DataIntegrityDashboard } from "@/components/DataIntegrityDashboard";
 import { EnhancedSecurityMonitor } from "./EnhancedSecurityMonitor";
-import Layout from "@/components/Layout";
+import HorizontalLayout from "@/components/HorizontalLayout";
 
 interface SecurityNotification {
   id: string;
@@ -308,7 +308,7 @@ export function SecurityManager() {
   }
 
   return (
-    <Layout>
+    <HorizontalLayout>
       <div className="container mx-auto space-y-6">
         <div className="flex items-center space-x-2">
           <Shield className="h-6 w-6" />
@@ -874,6 +874,6 @@ export function SecurityManager() {
 
       </Tabs>
       </div>
-    </Layout>
+    </HorizontalLayout>
   );
 }

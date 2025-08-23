@@ -135,7 +135,7 @@ export default function Settings() {
     if (newPassword !== confirmPassword) {
       toast({
         title: "Error",
-        description: "New passwords don't match.",
+        description: "New passwords don\'t match.",
         variant: "destructive",
       })
       return

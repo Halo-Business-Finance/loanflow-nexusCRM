@@ -449,7 +449,7 @@ function EditUserForm({ user, onSave, onCancel }: EditUserFormProps) {
     if (newPassword !== confirmPassword) {
       toast({
         title: "Error", 
-        description: "Passwords don't match.",
+        description: "Passwords don\'t match.",
         variant: "destructive",
       });
       return;
