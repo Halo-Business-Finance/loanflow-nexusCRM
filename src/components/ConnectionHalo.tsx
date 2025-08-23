@@ -20,26 +20,19 @@ export function ConnectionHalo() {
             console.log('Halo button clicked!')
             setIsOpen(true)
           }}
-          className="relative w-12 h-12 rounded-full overflow-hidden backdrop-blur-sm hover:opacity-90 group"
+          className="relative w-12 h-12 bg-blue-700 hover:bg-blue-600 group transition-colors duration-200"
           style={{
-            background: `
-              linear-gradient(45deg, #1e40af 25%, transparent 25%), 
-              linear-gradient(-45deg, #1e40af 25%, transparent 25%), 
-              linear-gradient(45deg, transparent 75%, #1e40af 75%), 
-              linear-gradient(-45deg, transparent 75%, #1e40af 75%)
-            `,
-            backgroundSize: '6px 6px',
-            backgroundPosition: '0 0, 0 3px, 3px -3px, -3px 0px',
-            backgroundColor: '#3b82f6'
+            clipPath: `polygon(
+              0% 20%, 20% 20%, 20% 0%, 40% 0%, 40% 20%, 60% 20%, 60% 0%, 80% 0%, 80% 20%, 100% 20%,
+              100% 40%, 80% 40%, 80% 60%, 100% 60%, 100% 80%, 80% 80%, 80% 100%, 60% 100%, 60% 80%,
+              40% 80%, 40% 100%, 20% 100%, 20% 80%, 0% 80%, 0% 60%, 20% 60%, 20% 40%, 0% 40%
+            )`
           }}
           aria-label="Open connections"
         >
-          {/* Outer glow ring */}
-          <div className="absolute inset-0 rounded-full bg-blue-700/20 group-hover:bg-blue-600/30" />
-          
-          {/* Center icon */}
+          {/* Center cloud icon */}
           <div className="absolute inset-0 flex items-center justify-center">
-            <Cloud className="w-7 h-7 text-white group-hover:text-white/90" fill="white" />
+            <Cloud className="w-6 h-6 text-white group-hover:text-white/90" />
           </div>
         </button>
         
