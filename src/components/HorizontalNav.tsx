@@ -89,7 +89,7 @@ const securityItems = [
 const enterpriseItems = [
   { name: "Overview", path: "/enterprise", icon: Building2 },
   { name: "Reports", path: "/reports", icon: BarChart3 },
-  { name: "Users", path: "/users", icon: User },
+  
   { name: "User Management", path: "/settings/users", icon: User },
   { name: "Integrations", path: "/integrations", icon: RefreshCw },
   { name: "AI Tools", path: "/ai-tools", icon: Settings },

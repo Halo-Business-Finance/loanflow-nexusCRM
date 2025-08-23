@@ -40,8 +40,6 @@ import Documents from "./pages/Documents";
 import Activities from "./pages/Activities";
 import Reports from "./pages/Reports";
 import Settings from "./pages/Settings";
-import Users from "./pages/Users";
-console.log('Users component imported:', Users);
 import UsersLeads from "./pages/UsersLeads";
 import Resources from "./pages/Resources";
 import Enterprise from "./pages/Enterprise";
@@ -146,7 +144,7 @@ function AuthenticatedApp() {
             <Route path="/settings/users" element={<HorizontalLayout><SettingsUsers /></HorizontalLayout>} errorElement={<RouteErrorBoundary />} />
             <Route path="/settings/system" element={<HorizontalLayout><SettingsSystem /></HorizontalLayout>} errorElement={<RouteErrorBoundary />} />
             
-            <Route path="/users" element={<HorizontalLayout><Users /></HorizontalLayout>} errorElement={<RouteErrorBoundary />} />
+            
             {/* Debug route */}
             <Route path="/users-debug" element={<div>Users route test</div>} errorElement={<RouteErrorBoundary />} />
             

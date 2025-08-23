@@ -1,22 +1,29 @@
 import React, { useState, useEffect } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import {
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+} from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
-import { 
-  User,
-  Building,
-  DollarSign,
-  FileText,
+import { ScrollArea } from "@/components/ui/scroll-area";
+import {
+  MapPin,
   Phone,
   Mail,
-  MapPin,
+  Building,
   Calendar,
-  CreditCard,
-  TrendingUp,
+  DollarSign,
+  FileText,
   History,
   MessageSquare,
   CheckCircle,
@@ -24,7 +31,8 @@ import {
   Clock,
   Target,
   Edit,
-  Share2
+  Share2,
+  Eye
 } from 'lucide-react';
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/components/auth/AuthProvider";
@@ -34,48 +42,34 @@ import { formatDistanceToNow, format } from "date-fns";
 
 interface CustomerInfo {
   id: string;
-  name: string;
-  business_name?: string;
+  first_name: string;
+  last_name: string;
   email: string;
   phone: string;
-  business_address?: string;
-  business_city?: string;
-  business_state?: string;
-  business_zip_code?: string;
-  loan_amount?: number;
-  loan_type?: string;
+  business_name: string;
+  business_address: string;
+  industry?: string;
   stage: string;
-  priority: string;
-  credit_score?: number;
+  loan_amount: number;
+  business_description?: string;
+  ssn?: string;
+  ein?: string;
+  years_in_business?: number;
   annual_revenue?: number;
-  year_established?: number;
-  created_at: string;
-  updated_at: string;
-  processor_name?: string;
-  bdo_name?: string;
-  existing_loans?: ExistingLoan[];
+  credit_score?: number;
+  existing_loans?: any[];
   interaction_history?: Interaction[];
   documents?: Document[];
 }
 
-interface ExistingLoan {
-  id: string;
-  loan_amount: number;
-  loan_type: string;
-  interest_rate?: number;
-  maturity_date?: string;
-  status: string;
-  funded_date?: string;
-}
-
 interface Interaction {
   id: string;
-  type: 'call' | 'email' | 'meeting' | 'document' | 'stage_change';
+  type: 'email' | 'call' | 'meeting' | 'stage_change';
   description: string;
   user_name: string;
   department: string;
   timestamp: string;
-  outcome?: string;
+  outcome: string;
 }
 
 interface Document {
@@ -101,6 +95,10 @@ export function SharedCustomerInfo({ customerId, onClose }: SharedCustomerInfoPr
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState('overview');
   const [isEditing, setIsEditing] = useState(false);
+  const [interactions, setInteractions] = useState<Interaction[]>([]);
+  const [documents, setDocuments] = useState<Document[]>([]);
+  const [sharedNotes, setSharedNotes] = useState<string[]>([]);
+  const [sharedDocuments, setSharedDocuments] = useState<Document[]>([]);
 
   useEffect(() => {
     if (customerId) {
@@ -119,24 +117,17 @@ export function SharedCustomerInfo({ customerId, onClose }: SharedCustomerInfoPr
 
       if (contactError) throw contactError;
 
-      // Fetch existing loans from clients table
-      const { data: clientData } = await supabase
+      // Fetch loan/client additional data
+      const { data: clientData, error: clientError } = await supabase
         .from('clients')
-        .select(`
-          *,
-          loans(
-            id,
-            loan_amount,
-            loan_type,
-            interest_rate,
-            maturity_date,
-            status,
-            created_at
-          )
-        `)
+        .select('*')
         .eq('contact_entity_id', customerId);
 
-      // Fetch real interaction history from audit logs
+      if (clientError) {
+        console.error('Client data error:', clientError);
+      }
+
+      // Fetch interaction history from audit logs
       const { data: auditLogs, error: auditError } = await supabase
         .from('audit_logs')
         .select('*')
@@ -157,19 +148,21 @@ export function SharedCustomerInfo({ customerId, onClose }: SharedCustomerInfoPr
           outcome: 'Completed'
         }))
         setInteractions(realInteractions)
+        setSharedNotes(realInteractions.map(i => i.description))
       } else {
         setInteractions([])
+        setSharedNotes([])
       }
 
       // Fetch real documents from lead_documents table
-      const { data: documents, error: docError } = await supabase
+      const { data: documentsData, error: docError } = await supabase
         .from('lead_documents')
         .select('*')
         .order('created_at', { ascending: false })
         .limit(10)
 
-      if (!docError && documents) {
-        const realDocuments: Document[] = documents.map(doc => ({
+      if (!docError && documentsData) {
+        const realDocuments: Document[] = documentsData.map(doc => ({
           id: doc.id,
           name: doc.document_name,
           type: doc.document_type || 'Other',
@@ -179,15 +172,17 @@ export function SharedCustomerInfo({ customerId, onClose }: SharedCustomerInfoPr
           department: 'Processing'
         }))
         setDocuments(realDocuments)
+        setSharedDocuments(realDocuments)
       } else {
         setDocuments([])
+        setSharedDocuments([])
       }
 
       const transformedCustomer: CustomerInfo = {
         ...contactData,
-        existing_loans: clientData?.[0]?.loans || [],
-        interaction_history: realInteractions,
-        documents: realDocuments
+        existing_loans: [],
+        interaction_history: interactions,
+        documents: documents
       };
 
       setCustomer(transformedCustomer);
@@ -202,406 +197,274 @@ export function SharedCustomerInfo({ customerId, onClose }: SharedCustomerInfoPr
       setLoading(false);
     }
   };
-
-  const getStageColor = (stage: string) => {
-    switch (stage) {
-      case 'New Lead': return 'bg-blue-100 text-blue-800 border-blue-200';
-      case 'Initial Contact': return 'bg-purple-100 text-purple-800 border-purple-200';
-      case 'Qualified': return 'bg-green-100 text-green-800 border-green-200';
-      case 'Application': return 'bg-yellow-100 text-yellow-800 border-yellow-200';
-      case 'Pre-approval': return 'bg-orange-100 text-orange-800 border-orange-200';
-      case 'Documentation': return 'bg-indigo-100 text-indigo-800 border-indigo-200';
-      case 'Underwriting': return 'bg-pink-100 text-pink-800 border-pink-200';
-      case 'Approved': return 'bg-green-100 text-green-800 border-green-200';
-      case 'Closing': return 'bg-teal-100 text-teal-800 border-teal-200';
-      case 'Funded': return 'bg-emerald-100 text-emerald-800 border-emerald-200';
-      default: return 'bg-gray-100 text-gray-800 border-gray-200';
-    }
-  };
-
-  const getPriorityColor = (priority: string) => {
-    switch (priority.toLowerCase()) {
-      case 'high': return 'bg-red-100 text-red-800 border-red-200';
-      case 'medium': return 'bg-yellow-100 text-yellow-800 border-yellow-200';
-      case 'low': return 'bg-green-100 text-green-800 border-green-200';
-      default: return 'bg-gray-100 text-gray-800 border-gray-200';
-    }
-  };
-
-  const getInteractionIcon = (type: string) => {
-    switch (type) {
-      case 'call': return Phone;
-      case 'email': return Mail;
-      case 'meeting': return Calendar;
-      case 'document': return FileText;
-      case 'stage_change': return Target;
-      default: return MessageSquare;
-    }
-  };
-
-  const getDocumentStatusColor = (status: string) => {
-    switch (status) {
-      case 'approved': return 'bg-green-100 text-green-800 border-green-200';
-      case 'pending': return 'bg-yellow-100 text-yellow-800 border-yellow-200';
-      case 'rejected': return 'bg-red-100 text-red-800 border-red-200';
-      default: return 'bg-gray-100 text-gray-800 border-gray-200';
-    }
-  };
-
+  
   if (loading) {
     return (
-      <Card className="w-full">
-        <CardContent className="flex items-center justify-center h-96">
-          <div className="text-center">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
-            <p className="text-sm text-muted-foreground">Loading customer information...</p>
-          </div>
-        </CardContent>
-      </Card>
+      <div className="flex items-center justify-center p-8">
+        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-gray-900"></div>
+      </div>
     );
   }
 
   if (!customer) {
     return (
-      <Card className="w-full">
-        <CardContent className="flex items-center justify-center h-96">
-          <p className="text-muted-foreground">Customer not found</p>
+      <Card className="w-full max-w-4xl mx-auto">
+        <CardContent className="p-8 text-center">
+          <AlertCircle className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+          <h3 className="text-lg font-semibold mb-2">Customer Not Found</h3>
+          <p className="text-muted-foreground">
+            The customer information could not be loaded.
+          </p>
         </CardContent>
       </Card>
     );
   }
 
   return (
-    <div className="space-y-6">
-      {/* Header */}
-      <Card>
-        <CardHeader>
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-4">
-              <div className="w-12 h-12 rounded-lg bg-gradient-primary flex items-center justify-center">
-                <User className="w-6 h-6 text-primary-foreground" />
-              </div>
-              <div>
-                <h2 className="text-xl font-bold">{customer.name}</h2>
-                {customer.business_name && (
-                  <p className="text-muted-foreground">{customer.business_name}</p>
-                )}
-                <div className="flex items-center gap-2 mt-1">
-                  <Badge className={getStageColor(customer.stage)}>
-                    {customer.stage}
-                  </Badge>
-                  <Badge className={getPriorityColor(customer.priority)}>
-                    {customer.priority} priority
-                  </Badge>
-                </div>
-              </div>
-            </div>
-            <div className="flex items-center gap-2">
-              <Button variant="outline" size="sm">
-                <Share2 className="h-4 w-4 mr-2" />
-                Share
-              </Button>
-              <Button variant="outline" size="sm" onClick={() => setIsEditing(!isEditing)}>
-                <Edit className="h-4 w-4 mr-2" />
-                {isEditing ? 'Save' : 'Edit'}
-              </Button>
-              {onClose && (
-                <Button variant="ghost" size="sm" onClick={onClose}>
-                  Close
-                </Button>
-              )}
-            </div>
-          </div>
-        </CardHeader>
-      </Card>
+    <Card className="w-full max-w-6xl mx-auto">
+      <CardHeader className="flex flex-row items-start justify-between space-y-0 pb-2">
+        <div className="space-y-1 flex-1">
+          <CardTitle className="text-2xl font-bold">
+            {customer.first_name} {customer.last_name}
+          </CardTitle>
+          <CardDescription className="text-base">
+            {customer.business_name} • {customer.industry}
+          </CardDescription>
+        </div>
+        <div className="flex items-center space-x-2">
+          <Badge variant={
+            customer.stage === 'Funded' ? 'default' :
+            customer.stage === 'Closing' ? 'secondary' :
+            customer.stage === 'Underwriting' ? 'outline' : 'destructive'
+          }>
+            {customer.stage}
+          </Badge>
+          <Button variant="outline" size="sm" onClick={() => setIsEditing(!isEditing)}>
+            <Edit className="h-4 w-4 mr-2" />
+            {isEditing ? 'Cancel' : 'Edit'}
+          </Button>
+          {onClose && (
+            <Button variant="outline" size="sm" onClick={onClose}>
+              <Share2 className="h-4 w-4 mr-2" />
+              Close
+            </Button>
+          )}
+        </div>
+      </CardHeader>
 
-      {/* Main Content */}
-      <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-        <TabsList className="grid w-full grid-cols-5">
-          <TabsTrigger value="overview">Overview</TabsTrigger>
-          <TabsTrigger value="loans">Existing Loans</TabsTrigger>
-          <TabsTrigger value="interactions">Interactions</TabsTrigger>
-          <TabsTrigger value="documents">Documents</TabsTrigger>
-          <TabsTrigger value="team">Team Notes</TabsTrigger>
-        </TabsList>
+      <CardContent>
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+          <TabsList className="grid w-full grid-cols-4">
+            <TabsTrigger value="overview">Overview</TabsTrigger>
+            <TabsTrigger value="financial">Financial</TabsTrigger>
+            <TabsTrigger value="documents">Documents</TabsTrigger>
+            <TabsTrigger value="history">History</TabsTrigger>
+          </TabsList>
 
-        <TabsContent value="overview" className="space-y-6">
-          <div className="grid gap-6 lg:grid-cols-2">
-            {/* Contact Information */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <User className="h-5 w-5" />
-                  Contact Information
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="grid grid-cols-2 gap-4">
+          <TabsContent value="overview" className="space-y-6 mt-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {/* Contact Information */}
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center">
+                    <MapPin className="h-5 w-5 mr-2" />
+                    Contact Information
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="flex items-center space-x-2">
+                    <Phone className="h-4 w-4 text-muted-foreground" />
+                    <span>{customer.phone || 'No phone provided'}</span>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <Mail className="h-4 w-4 text-muted-foreground" />
+                    <span>{customer.email}</span>
+                  </div>
+                  <div className="flex items-start space-x-2">
+                    <Building className="h-4 w-4 text-muted-foreground mt-1" />
+                    <span>{customer.business_address || 'No address provided'}</span>
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Business Information */}
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center">
+                    <Building className="h-5 w-5 mr-2" />
+                    Business Details
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
                   <div>
-                    <label className="text-xs font-medium text-muted-foreground">Email</label>
-                    <p className="font-medium">{customer.email}</p>
+                    <span className="font-medium">Industry:</span>
+                    <span className="ml-2">{customer.industry}</span>
                   </div>
                   <div>
-                    <label className="text-xs font-medium text-muted-foreground">Phone</label>
-                    <p className="font-medium">{customer.phone}</p>
+                    <span className="font-medium">Years in Business:</span>
+                    <span className="ml-2">{customer.years_in_business || 'Not specified'}</span>
                   </div>
-                </div>
-                {customer.business_address && (
                   <div>
-                    <label className="text-xs font-medium text-muted-foreground">Business Address</label>
-                    <p className="font-medium">
-                      {customer.business_address}
-                      {customer.business_city && `, ${customer.business_city}`}
-                      {customer.business_state && `, ${customer.business_state}`}
-                      {customer.business_zip_code && ` ${customer.business_zip_code}`}
+                    <span className="font-medium">Annual Revenue:</span>
+                    <span className="ml-2">
+                      {customer.annual_revenue ? formatCurrency(customer.annual_revenue) : 'Not specified'}
+                    </span>
+                  </div>
+                  <div>
+                    <span className="font-medium">Description:</span>
+                    <p className="mt-1 text-sm text-muted-foreground">
+                      {customer.business_description || 'No description provided'}
                     </p>
                   </div>
-                )}
-              </CardContent>
-            </Card>
+                </CardContent>
+              </Card>
+            </div>
+          </TabsContent>
 
-            {/* Business Information */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Building className="h-5 w-5" />
-                  Business Information
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="grid grid-cols-2 gap-4">
-                  {customer.annual_revenue && (
-                    <div>
-                      <label className="text-xs font-medium text-muted-foreground">Annual Revenue</label>
-                      <p className="font-medium">{formatCurrency(customer.annual_revenue)}</p>
-                    </div>
-                  )}
-                  {customer.year_established && (
-                    <div>
-                      <label className="text-xs font-medium text-muted-foreground">Year Established</label>
-                      <p className="font-medium">{customer.year_established}</p>
-                    </div>
-                  )}
-                  {customer.credit_score && (
-                    <div>
-                      <label className="text-xs font-medium text-muted-foreground">Credit Score</label>
-                      <p className="font-medium">{customer.credit_score}</p>
-                    </div>
-                  )}
-                </div>
-              </CardContent>
-            </Card>
+          <TabsContent value="financial" className="space-y-6 mt-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {/* Loan Information */}
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center">
+                    <DollarSign className="h-5 w-5 mr-2" />
+                    Current Loan Application
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div>
+                    <span className="font-medium">Requested Amount:</span>
+                    <span className="ml-2 text-lg font-bold text-green-600">
+                      {formatCurrency(customer.loan_amount)}
+                    </span>
+                  </div>
+                  <div>
+                    <span className="font-medium">Credit Score:</span>
+                    <span className="ml-2">{customer.credit_score || 'Not available'}</span>
+                  </div>
+                  <div>
+                    <span className="font-medium">Stage:</span>
+                    <Badge className="ml-2" variant={
+                      customer.stage === 'Funded' ? 'default' :
+                      customer.stage === 'Closing' ? 'secondary' : 'outline'
+                    }>
+                      {customer.stage}
+                    </Badge>
+                  </div>
+                </CardContent>
+              </Card>
 
-            {/* Current Loan Request */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <DollarSign className="h-5 w-5" />
-                  Current Loan Request
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="grid grid-cols-2 gap-4">
-                  {customer.loan_amount && (
-                    <div>
-                      <label className="text-xs font-medium text-muted-foreground">Requested Amount</label>
-                      <p className="font-medium text-lg">{formatCurrency(customer.loan_amount)}</p>
-                    </div>
-                  )}
-                  {customer.loan_type && (
-                    <div>
-                      <label className="text-xs font-medium text-muted-foreground">Loan Type</label>
-                      <p className="font-medium">{customer.loan_type}</p>
-                    </div>
-                  )}
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Team Assignments */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Target className="h-5 w-5" />
-                  Team Assignments
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="grid grid-cols-1 gap-4">
-                  {customer.processor_name && (
-                    <div className="flex items-center justify-between">
-                      <span className="text-sm text-muted-foreground">Loan Processor</span>
-                      <Badge variant="outline">{customer.processor_name}</Badge>
-                    </div>
-                  )}
-                  {customer.bdo_name && (
-                    <div className="flex items-center justify-between">
-                      <span className="text-sm text-muted-foreground">Underwriter</span>
-                      <Badge variant="outline">{customer.bdo_name}</Badge>
-                    </div>
-                  )}
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-        </TabsContent>
-
-        <TabsContent value="loans" className="space-y-6">
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <TrendingUp className="h-5 w-5" />
-                Existing Loans ({customer.existing_loans?.length || 0})
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              {customer.existing_loans && customer.existing_loans.length > 0 ? (
-                <div className="space-y-4">
-                  {customer.existing_loans.map(loan => (
-                    <div key={loan.id} className="p-4 border rounded-lg">
-                      <div className="flex items-center justify-between mb-2">
-                        <h4 className="font-medium">{loan.loan_type}</h4>
-                        <Badge variant="outline" className={getStageColor(loan.status)}>
-                          {loan.status}
-                        </Badge>
-                      </div>
-                      <div className="grid grid-cols-2 gap-4 text-sm">
-                        <div>
-                          <span className="text-muted-foreground">Amount: </span>
-                          <span className="font-medium">{formatCurrency(loan.loan_amount)}</span>
+              {/* Existing Loans */}
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center">
+                    <Target className="h-5 w-5 mr-2" />
+                    Existing Loans
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  {customer.existing_loans && customer.existing_loans.length > 0 ? (
+                    <div className="space-y-2">
+                      {customer.existing_loans.map((loan: any, index: number) => (
+                        <div key={index} className="p-3 border rounded">
+                          <div className="font-medium">{formatCurrency(loan.amount)}</div>
+                          <div className="text-sm text-muted-foreground">{loan.type}</div>
                         </div>
-                        {loan.interest_rate && (
-                          <div>
-                            <span className="text-muted-foreground">Rate: </span>
-                            <span className="font-medium">{loan.interest_rate}%</span>
-                          </div>
-                        )}
-                        {loan.funded_date && (
-                          <div>
-                            <span className="text-muted-foreground">Funded: </span>
-                            <span className="font-medium">{format(new Date(loan.funded_date), 'MMM dd, yyyy')}</span>
-                          </div>
-                        )}
-                        {loan.maturity_date && (
-                          <div>
-                            <span className="text-muted-foreground">Maturity: </span>
-                            <span className="font-medium">{format(new Date(loan.maturity_date), 'MMM dd, yyyy')}</span>
-                          </div>
-                        )}
-                      </div>
+                      ))}
                     </div>
-                  ))}
-                </div>
-              ) : (
-                <div className="text-center py-8 text-muted-foreground">
-                  No existing loans found
-                </div>
-              )}
-            </CardContent>
-          </Card>
-        </TabsContent>
+                  ) : (
+                    <p className="text-muted-foreground">No existing loans</p>
+                  )}
+                </CardContent>
+              </Card>
+            </div>
+          </TabsContent>
 
-        <TabsContent value="interactions" className="space-y-6">
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <History className="h-5 w-5" />
-                Interaction History
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <ScrollArea className="h-96">
-                <div className="space-y-4">
-                  {customer.interaction_history?.map(interaction => {
-                    const IconComponent = getInteractionIcon(interaction.type);
-                    return (
-                      <div key={interaction.id} className="flex items-start gap-3 p-3 border rounded-lg">
-                        <div className="w-8 h-8 rounded-full bg-muted flex items-center justify-center">
-                          <IconComponent className="w-4 h-4" />
-                        </div>
-                        <div className="flex-1">
-                          <div className="flex items-center gap-2 mb-1">
-                            <span className="font-medium text-sm">{interaction.user_name}</span>
-                            <Badge variant="outline" className="text-xs">
-                              {interaction.department}
+          <TabsContent value="documents" className="space-y-6 mt-6">
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center">
+                  <FileText className="h-5 w-5 mr-2" />
+                  Documents ({sharedDocuments.length})
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                {sharedDocuments.length > 0 ? (
+                  <ScrollArea className="h-[400px]">
+                    <div className="space-y-3">
+                      {sharedDocuments.map((doc) => (
+                        <div key={doc.id} className="flex items-center justify-between p-3 border rounded">
+                          <div className="flex-1">
+                            <div className="font-medium">{doc.name}</div>
+                            <div className="text-sm text-muted-foreground">
+                              {doc.type} • Uploaded by {doc.uploaded_by} • {formatDistanceToNow(new Date(doc.uploaded_at))} ago
+                            </div>
+                          </div>
+                          <div className="flex items-center space-x-2">
+                            <Badge variant={
+                              doc.status === 'approved' ? 'default' :
+                              doc.status === 'pending' ? 'secondary' : 'destructive'
+                            }>
+                              {doc.status}
                             </Badge>
-                            <span className="text-xs text-muted-foreground">
-                              {formatDistanceToNow(new Date(interaction.timestamp), { addSuffix: true })}
-                            </span>
+                            <Button variant="outline" size="sm">
+                              <Eye className="h-4 w-4" />
+                            </Button>
                           </div>
-                          <p className="text-sm">{interaction.description}</p>
-                          {interaction.outcome && (
-                            <p className="text-xs text-muted-foreground mt-1">
-                              Outcome: {interaction.outcome}
-                            </p>
-                          )}
                         </div>
-                      </div>
-                    );
-                  })}
-                </div>
-              </ScrollArea>
-            </CardContent>
-          </Card>
-        </TabsContent>
-
-        <TabsContent value="documents" className="space-y-6">
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <FileText className="h-5 w-5" />
-                Documents ({customer.documents?.length || 0})
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-3">
-                {customer.documents?.map(doc => (
-                  <div key={doc.id} className="flex items-center justify-between p-3 border rounded-lg">
-                    <div className="flex items-center gap-3">
-                      <FileText className="h-5 w-5 text-muted-foreground" />
-                      <div>
-                        <p className="font-medium text-sm">{doc.name}</p>
-                        <p className="text-xs text-muted-foreground">
-                          {doc.type} • Uploaded by {doc.uploaded_by} • {format(new Date(doc.uploaded_at), 'MMM dd, yyyy')}
-                        </p>
-                      </div>
+                      ))}
                     </div>
-                    <div className="flex items-center gap-2">
-                      <Badge variant="outline" className="text-xs">
-                        {doc.department}
-                      </Badge>
-                      <Badge className={`text-xs ${getDocumentStatusColor(doc.status)}`}>
-                        {doc.status}
-                      </Badge>
-                    </div>
-                  </div>
-                ))}
-                {(!customer.documents || customer.documents.length === 0) && (
-                  <div className="text-center py-8 text-muted-foreground">
-                    No documents uploaded yet
-                  </div>
+                  </ScrollArea>
+                ) : (
+                  <p className="text-muted-foreground">No documents available</p>
                 )}
-              </div>
-            </CardContent>
-          </Card>
-        </TabsContent>
+              </CardContent>
+            </Card>
+          </TabsContent>
 
-        <TabsContent value="team" className="space-y-6">
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <MessageSquare className="h-5 w-5" />
-                Team Notes & Communications
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="text-center py-8 text-muted-foreground">
-                Team communication history will appear here
-              </div>
-            </CardContent>
-          </Card>
-        </TabsContent>
-      </Tabs>
-    </div>
+          <TabsContent value="history" className="space-y-6 mt-6">
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center">
+                  <History className="h-5 w-5 mr-2" />
+                  Interaction History ({interactions.length})
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                {interactions.length > 0 ? (
+                  <ScrollArea className="h-[400px]">
+                    <div className="space-y-4">
+                      {interactions.map((interaction) => (
+                        <div key={interaction.id} className="flex space-x-3 p-3 border rounded">
+                          <div className="flex-shrink-0">
+                            {interaction.type === 'email' && <Mail className="h-5 w-5 text-blue-500" />}
+                            {interaction.type === 'call' && <Phone className="h-5 w-5 text-green-500" />}
+                            {interaction.type === 'meeting' && <Calendar className="h-5 w-5 text-purple-500" />}
+                            {interaction.type === 'stage_change' && <Target className="h-5 w-5 text-orange-500" />}
+                          </div>
+                          <div className="flex-1">
+                            <div className="font-medium">{interaction.description}</div>
+                            <div className="text-sm text-muted-foreground">
+                              {interaction.user_name} • {interaction.department} • {formatDistanceToNow(new Date(interaction.timestamp))} ago
+                            </div>
+                            {interaction.outcome && (
+                              <div className="text-sm mt-1">
+                                <Badge variant="outline">{interaction.outcome}</Badge>
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </ScrollArea>
+                ) : (
+                  <p className="text-muted-foreground">No interaction history available</p>
+                )}
+              </CardContent>
+            </Card>
+          </TabsContent>
+        </Tabs>
+      </CardContent>
+    </Card>
   );
 }

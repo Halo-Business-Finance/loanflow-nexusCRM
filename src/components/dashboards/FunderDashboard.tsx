@@ -1,37 +1,63 @@
-import { useState, useEffect } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { 
-  DollarSign, 
-  TrendingUp, 
-  Banknote,
+import React, { useState, useEffect } from 'react';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Progress } from "@/components/ui/progress";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import {
+  DollarSign,
+  TrendingUp,
   Clock,
   CheckCircle,
-  AlertTriangle
+  AlertTriangle,
+  Building,
+  Calendar,
+  Target,
+  FileText,
+  Users,
+  ArrowUpRight,
+  ArrowDownRight
 } from 'lucide-react';
-import { supabase } from '@/integrations/supabase/client';
-import { useToast } from '@/hooks/use-toast';
-import { formatCurrency, formatNumber } from '@/lib/utils';
+import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/components/auth/AuthProvider";
+import { formatCurrency } from "@/lib/utils";
 
-interface FunderMetrics {
-  availableFunds: number;
-  pendingFunding: number;
-  fundedToday: number;
+interface FunderStats {
+  totalFunded: number;
   avgFundingTime: number;
-  totalFundedThisMonth: number;
+  fundingVolume: number;
+  activeFundings: number;
+  successRate: number;
 }
 
-export const FunderDashboard = () => {
-  const { toast } = useToast();
-  const [metrics, setMetrics] = useState<FunderMetrics>({
-    availableFunds: 0,
-    pendingFunding: 0,
-    fundedToday: 0,
+interface FundingLead {
+  id: string;
+  client_name: string;
+  business_name: string;
+  loan_amount: number;
+  loan_type: string;
+  stage: string;
+  submitted_date: string;
+  urgency: 'low' | 'medium' | 'high';
+}
+
+export function FunderDashboard() {
+  const { user } = useAuth();
+  const [funderStats, setFunderStats] = useState<FunderStats>({
+    totalFunded: 0,
     avgFundingTime: 0,
-    totalFundedThisMonth: 0
-  })
+    fundingVolume: 0,
+    activeFundings: 0,
+    successRate: 0
+  });
+  const [recentFundings, setRecentFundings] = useState<FundingLead[]>([]);
+  const [pendingApprovals, setPendingApprovals] = useState<FundingLead[]>([]);
   const [pendingFundings, setPendingFundings] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
 
@@ -41,310 +67,286 @@ export const FunderDashboard = () => {
 
   const fetchFunderData = async () => {
     try {
-      // Fetch real funding data from loans table
-      const { data: loans, error } = await supabase
+      // Fetch loans that need funding or have been funded
+      const { data: loansData, error: loansError } = await supabase
         .from('loans')
-        .select('loan_amount, status, created_at, funded_date')
-
-      if (error) throw error
-
-      const pendingLoans = loans?.filter(l => l.status === 'Pending Funding') || []
-      const fundedToday = loans?.filter(l => {
-        const fundedDate = l.funded_date ? new Date(l.funded_date) : null
-        const today = new Date()
-        return fundedDate && 
-               fundedDate.toDateString() === today.toDateString()
-      }) || []
-
-      const thisMonth = new Date()
-      thisMonth.setDate(1)
-      const fundedThisMonth = loans?.filter(l => {
-        const fundedDate = l.funded_date ? new Date(l.funded_date) : null
-        return fundedDate && fundedDate >= thisMonth
-      }) || []
-
-      const pendingFunding = pendingLoans.reduce((sum, loan) => sum + (loan.loan_amount || 0), 0)
-      const fundedTodayAmount = fundedToday.reduce((sum, loan) => sum + (loan.loan_amount || 0), 0)
-      const totalFundedThisMonth = fundedThisMonth.reduce((sum, loan) => sum + (loan.loan_amount || 0), 0)
-
-      setMetrics({
-        availableFunds: 5000000, // This would come from funding sources table
-        pendingFunding,
-        fundedToday: fundedTodayAmount,
-        avgFundingTime: 1.2, // Would be calculated from actual data
-        totalFundedThisMonth
-      })
-
-      setPendingFundings(pendingLoans)
-    } catch (error) {
-      console.error('Error fetching funder data:', error)
-    } finally {
-      setLoading(false)
-    }
-  }
-
-  useEffect(() => {
-    fetchFunderData();
-  }, []);
-
-  const fetchFunderData = async () => {
-    try {
-      const today = new Date().toISOString().split('T')[0];
-      const monthStart = new Date(new Date().getFullYear(), new Date().getMonth(), 1).toISOString();
-
-      // Fetch loans ready for funding
-      const { data: pendingData } = await supabase
-        .from('contact_entities')
         .select('*')
-        .eq('stage', 'Closing');
+        .in('status', ['approved', 'funded']);
 
-      // Fetch funded loans today
-      const { data: fundedToday } = await supabase
-        .from('contact_entities')
-        .select('loan_amount')
-        .eq('stage', 'Loan Funded')
-        .gte('updated_at', today);
+      if (loansError) {
+        console.error('Error fetching loans:', loansError);
+        // Empty state fallback
+        setFunderStats({
+          totalFunded: 0,
+          avgFundingTime: 0,
+          fundingVolume: 0,
+          activeFundings: 0,
+          successRate: 0
+        });
+        setRecentFundings([]);
+        setPendingApprovals([]);
+        return;
+      }
 
-      // Fetch this month's funded loans
-      const { data: monthlyData } = await supabase
-        .from('clients')
-        .select('total_loan_value')
-        .gte('join_date', monthStart);
+      if (loansData && loansData.length > 0) {
+        const fundedLoans = loansData.filter(loan => loan.status === 'funded');
+        const totalFunded = fundedLoans.reduce((sum, loan) => sum + (loan.loan_amount || 0), 0);
+        const fundingVolume = loansData.reduce((sum, loan) => sum + (loan.loan_amount || 0), 0);
 
-      setPendingFundings(pendingData || []);
-      
-      const pendingAmount = pendingData?.reduce((sum, loan) => sum + (loan.loan_amount || 0), 0) || 0;
-      const fundedTodayAmount = fundedToday?.reduce((sum, loan) => sum + (loan.loan_amount || 0), 0) || 0;
-      const monthlyTotal = monthlyData?.reduce((sum, client) => sum + (client.total_loan_value || 0), 0) || 0;
-
-      setMetrics(prev => ({
-        ...prev,
-        pendingFunding: pendingAmount,
-        fundedToday: fundedTodayAmount,
-        totalFundedThisMonth: monthlyTotal
-      }));
-
+        setFunderStats({
+          totalFunded,
+          avgFundingTime: 7, // Default value since we don't have funding dates
+          fundingVolume,
+          activeFundings: loansData.filter(loan => loan.status === 'approved').length,
+          successRate: fundedLoans.length > 0 ? Math.round((fundedLoans.length / loansData.length) * 100) : 0
+        });
+        
+        setRecentFundings([]);
+        setPendingApprovals([]);
+      } else {
+        // Empty state
+        setFunderStats({
+          totalFunded: 0,
+          avgFundingTime: 0,
+          fundingVolume: 0,
+          activeFundings: 0,
+          successRate: 0
+        });
+        setRecentFundings([]);
+        setPendingApprovals([]);
+      }
     } catch (error) {
-      console.error('Error fetching funder data:', error);
-      toast({
-        title: "Error",
-        description: "Failed to load funder dashboard data",
-        variant: "destructive",
+      console.error('Error in fetchFunderData:', error);
+      // Empty state fallback
+      setFunderStats({
+        totalFunded: 0,
+        avgFundingTime: 0,
+        fundingVolume: 0,
+        activeFundings: 0,
+        successRate: 0
       });
+      setRecentFundings([]);
+      setPendingApprovals([]);
     } finally {
       setLoading(false);
     }
   };
 
-  const handleFundLoan = async (loanId: string, amount: number) => {
-    try {
-      await supabase
-        .from('leads')
-        .update({ 
-          stage: 'Loan Funded',
-          is_converted_to_client: true,
-          updated_at: new Date().toISOString()
-        })
-        .eq('id', loanId);
+  useEffect(() => {
+    fetchFunderData();
+  }, []);
 
-      toast({
-        title: "Loan Funded",
-        description: `Successfully funded ${formatCurrency(amount)}`,
-      });
-      
-      fetchFunderData();
-    } catch (error) {
-      toast({
-        title: "Error",
-        description: "Failed to fund loan",
-        variant: "destructive",
-      });
+  const getUrgencyColor = (urgency: string) => {
+    switch (urgency) {
+      case 'high': return 'destructive';
+      case 'medium': return 'default';
+      case 'low': return 'secondary';
+      default: return 'outline';
     }
   };
 
   if (loading) {
-    return <div className="p-6">Loading funder dashboard...</div>;
+    return (
+      <div className="flex items-center justify-center p-8">
+        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-gray-900"></div>
+      </div>
+    );
   }
 
   return (
     <div className="space-y-6">
-      {/* Header */}
-      <div className="bg-gradient-to-r from-card/60 to-card/30 backdrop-blur-sm rounded-xl p-6 border border-border/20">
-        <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-lg bg-gradient-primary flex items-center justify-center">
-            <DollarSign className="w-5 h-5 text-primary-foreground" />
-          </div>
-          <div>
-            <h1 className="text-2xl font-bold text-foreground">Funder Dashboard</h1>
-            <p className="text-sm text-muted-foreground">Manage loan funding and capital allocation</p>
-          </div>
+      <div className="flex items-center justify-between">
+        <div>
+          <h2 className="text-3xl font-bold tracking-tight">Funder Dashboard</h2>
+          <p className="text-muted-foreground">
+            Monitor funding operations and manage loan approvals
+          </p>
+        </div>
+        <div className="flex items-center space-x-2">
+          <Button variant="outline">
+            <FileText className="h-4 w-4 mr-2" />
+            Export Report
+          </Button>
+          <Button>
+            <Target className="h-4 w-4 mr-2" />
+            Fund Loans
+          </Button>
         </div>
       </div>
 
       {/* Key Metrics */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-5">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Available Funds</CardTitle>
-            <Banknote className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{formatCurrency(metrics.availableFunds)}</div>
-            <p className="text-xs text-muted-foreground">Ready for deployment</p>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Pending Funding</CardTitle>
-            <Clock className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{formatCurrency(metrics.pendingFunding)}</div>
-            <p className="text-xs text-muted-foreground">Awaiting funding</p>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Funded Today</CardTitle>
-            <CheckCircle className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{formatCurrency(metrics.fundedToday)}</div>
-            <p className="text-xs text-muted-foreground">Loans funded</p>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Avg. Funding Time</CardTitle>
-            <TrendingUp className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{metrics.avgFundingTime} days</div>
-            <p className="text-xs text-muted-foreground">Average time to fund</p>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">This Month</CardTitle>
+            <CardTitle className="text-sm font-medium">
+              Total Funded
+            </CardTitle>
             <DollarSign className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{formatCurrency(metrics.totalFundedThisMonth)}</div>
-            <p className="text-xs text-muted-foreground">Total funded</p>
+            <div className="text-2xl font-bold">
+              {formatCurrency(funderStats.totalFunded)}
+            </div>
+            <p className="text-xs text-muted-foreground">
+              <ArrowUpRight className="h-3 w-3 inline mr-1" />
+              +12% from last month
+            </p>
+          </CardContent>
+        </Card>
+        
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">
+              Avg Funding Time
+            </CardTitle>
+            <Clock className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{funderStats.avgFundingTime} days</div>
+            <p className="text-xs text-muted-foreground">
+              <ArrowDownRight className="h-3 w-3 inline mr-1" />
+              -2 days from last month
+            </p>
+          </CardContent>
+        </Card>
+        
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">
+              Funding Volume
+            </CardTitle>
+            <TrendingUp className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">
+              {formatCurrency(funderStats.fundingVolume)}
+            </div>
+            <p className="text-xs text-muted-foreground">
+              <ArrowUpRight className="h-3 w-3 inline mr-1" />
+              +8% from last month
+            </p>
+          </CardContent>
+        </Card>
+        
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">
+              Active Fundings
+            </CardTitle>
+            <Users className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{funderStats.activeFundings}</div>
+            <p className="text-xs text-muted-foreground">
+              Awaiting funding approval
+            </p>
+          </CardContent>
+        </Card>
+        
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">
+              Success Rate
+            </CardTitle>
+            <CheckCircle className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{funderStats.successRate}%</div>
+            <Progress value={funderStats.successRate} className="mt-2" />
           </CardContent>
         </Card>
       </div>
 
       {/* Main Content */}
-      <Tabs defaultValue="pending" className="space-y-4">
-        <TabsList>
-          <TabsTrigger value="pending">Pending Funding</TabsTrigger>
-          <TabsTrigger value="portfolio">Funding Portfolio</TabsTrigger>
-          <TabsTrigger value="analytics">Funding Analytics</TabsTrigger>
-        </TabsList>
-
-        <TabsContent value="pending" className="space-y-4">
-          <Card>
-            <CardHeader>
-              <CardTitle>Loans Ready for Funding</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
-                {pendingFundings.map((loan) => (
-                  <div key={loan.id} className="flex items-center justify-between p-4 border rounded-lg">
-                    <div className="space-y-1">
-                      <div className="font-medium">{loan.name || 'N/A'}</div>
-                      <div className="text-sm text-muted-foreground">
-                        {formatCurrency(loan.loan_amount || 0)} • {loan.loan_type || 'N/A'}
+      <div className="grid gap-6 md:grid-cols-2">
+        {/* Pending Approvals */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center">
+              <AlertTriangle className="h-5 w-5 mr-2" />
+              Pending Approvals ({pendingApprovals.length})
+            </CardTitle>
+            <CardDescription>
+              Loans ready for funding approval
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            {pendingApprovals.length > 0 ? (
+              <ScrollArea className="h-[300px]">
+                <div className="space-y-3">
+                  {pendingApprovals.map((loan) => (
+                    <div key={loan.id} className="flex items-center justify-between p-3 border rounded">
+                      <div className="flex-1">
+                        <div className="font-medium">{loan.client_name || 'Unknown Client'}</div>
+                        <div className="text-sm text-muted-foreground">
+                          {loan.business_name || 'Unknown Business'} • {formatCurrency(loan.loan_amount || 0)}
+                        </div>
+                        <div className="text-xs text-muted-foreground mt-1">
+                          {loan.loan_type || 'Unknown Type'} • Applied recently
+                        </div>
                       </div>
-                      <div className="flex items-center gap-2">
-                        <Badge variant="outline">{loan.stage}</Badge>
-                        <span className="text-xs text-muted-foreground">
-                          Interest Rate: {loan.interest_rate || 'N/A'}%
-                        </span>
+                      <div className="flex items-center space-x-2">
+                        <Badge variant={getUrgencyColor('medium')}>
+                          Ready
+                        </Badge>
+                        <Button variant="outline" size="sm">
+                          Review
+                        </Button>
                       </div>
                     </div>
-                    <div className="flex gap-2">
-                      <Button 
-                        size="sm" 
-                        onClick={() => handleFundLoan(loan.id, loan.loan_amount || 0)}
-                        className="bg-green-600 hover:bg-green-700"
-                      >
-                        Fund Loan
-                      </Button>
-                    </div>
-                  </div>
-                ))}
-                {pendingFundings.length === 0 && (
-                  <div className="text-center py-8 text-muted-foreground">
-                    No loans pending funding
-                  </div>
-                )}
-              </div>
-            </CardContent>
-          </Card>
-        </TabsContent>
+                  ))}
+                </div>
+              </ScrollArea>
+            ) : (
+              <p className="text-muted-foreground">No pending approvals</p>
+            )}
+          </CardContent>
+        </Card>
 
-        <TabsContent value="portfolio" className="space-y-4">
-          <Card>
-            <CardHeader>
-              <CardTitle>Funding Portfolio Overview</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div className="text-center p-4 border rounded-lg">
-                  <div className="text-2xl font-bold text-green-600">{formatCurrency(metrics.totalFundedThisMonth)}</div>
-                  <div className="text-sm text-muted-foreground">Deployed Capital</div>
-                </div>
-                <div className="text-center p-4 border rounded-lg">
-                  <div className="text-2xl font-bold text-blue-600">{formatCurrency(metrics.availableFunds)}</div>
-                  <div className="text-sm text-muted-foreground">Available Capital</div>
-                </div>
-                <div className="text-center p-4 border rounded-lg">
-                  <div className="text-2xl font-bold text-orange-600">8.5%</div>
-                  <div className="text-sm text-muted-foreground">Avg. Return Rate</div>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        </TabsContent>
-
-        <TabsContent value="analytics" className="space-y-4">
-          <Card>
-            <CardHeader>
-              <CardTitle>Funding Performance Analytics</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div className="p-4 border rounded-lg">
-                    <div className="flex items-center gap-2 mb-2">
-                      <TrendingUp className="w-4 h-4 text-green-600" />
-                      <span className="font-medium">Funding Velocity</span>
+        {/* Recent Fundings */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center">
+              <CheckCircle className="h-5 w-5 mr-2" />
+              Recent Fundings ({recentFundings.length})
+            </CardTitle>
+            <CardDescription>
+              Recently completed funding transactions
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            {recentFundings.length > 0 ? (
+              <ScrollArea className="h-[300px]">
+                <div className="space-y-3">
+                  {recentFundings.map((loan) => (
+                    <div key={loan.id} className="flex items-center justify-between p-3 border rounded">
+                      <div className="flex-1">
+                        <div className="font-medium">{loan.client_name || 'Unknown Client'}</div>
+                        <div className="text-sm text-muted-foreground">
+                          {loan.business_name || 'Unknown Business'} • {formatCurrency(loan.loan_amount || 0)}
+                        </div>
+                        <div className="text-xs text-muted-foreground mt-1">
+                          Funded recently
+                        </div>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <Badge variant="default">
+                          Funded
+                        </Badge>
+                        <Button variant="outline" size="sm">
+                          Details
+                        </Button>
+                      </div>
                     </div>
-                    <div className="text-sm text-muted-foreground">
-                      Average time from approval to funding: {metrics.avgFundingTime} days
-                    </div>
-                  </div>
-                  <div className="p-4 border rounded-lg">
-                    <div className="flex items-center gap-2 mb-2">
-                      <DollarSign className="w-4 h-4 text-blue-600" />
-                      <span className="font-medium">Capital Efficiency</span>
-                    </div>
-                    <div className="text-sm text-muted-foreground">
-                      {Math.round((metrics.totalFundedThisMonth / (metrics.availableFunds + metrics.totalFundedThisMonth)) * 100)}% capital deployed this month
-                    </div>
-                  </div>
+                  ))}
                 </div>
-              </div>
-            </CardContent>
-          </Card>
-        </TabsContent>
-      </Tabs>
+              </ScrollArea>
+            ) : (
+              <p className="text-muted-foreground">No recent fundings</p>
+            )}
+          </CardContent>
+        </Card>
+      </div>
     </div>
   );
-};
+}

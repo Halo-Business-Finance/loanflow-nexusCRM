@@ -1,17 +1,25 @@
 import React, { useState, useEffect } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import {
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+} from "@/components/ui/tabs";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { Badge } from "@/components/ui/badge";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
-import { 
-  MessageSquare, 
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import {
   Users, 
   Calendar,
   FileText,
@@ -23,10 +31,6 @@ import {
   Mail,
   Clock,
   CheckCircle,
-  AlertCircle,
-  Star,
-  Filter,
-  Search,
   Bell,
   Settings,
   UserPlus,
@@ -51,112 +55,148 @@ interface TeamMember {
 
 interface ChatMessage {
   id: string;
-  content: string;
-  senderId: string;
-  senderName: string;
+  user_id: string;
+  user_name: string;
+  message: string;
   timestamp: string;
-  type: 'text' | 'file' | 'system';
-  attachments?: string[];
+  type: 'message' | 'file' | 'system';
 }
 
 interface SharedDocument {
   id: string;
-  title: string;
-  type: 'lead' | 'client' | 'document' | 'report';
-  sharedBy: string;
-  sharedWith: string[];
-  timestamp: string;
-  permissions: 'view' | 'edit' | 'full';
+  name: string;
+  type: string;
+  shared_by: string;
+  shared_at: string;
+  access_level: 'view' | 'edit' | 'comment';
+  department: string;
 }
 
-interface TeamActivity {
+interface ActivityItem {
   id: string;
-  type: 'message' | 'document' | 'meeting' | 'task' | 'deal';
-  description: string;
-  user: string;
+  user_name: string;
+  action: string;
+  target: string;
   timestamp: string;
-  priority: 'low' | 'medium' | 'high';
+  type: 'lead_update' | 'document_share' | 'meeting_scheduled' | 'stage_change';
 }
 
 export function TeamCollaboration() {
   const { user } = useAuth();
   const { toast } = useToast();
+  
+  const [teamMembers, setTeamMembers] = useState<TeamMember[]>([]);
+  const [message, setMessage] = useState("");
+  const [chatMessages, setChatMessages] = useState<ChatMessage[]>([]);
+  const [sharedDocuments, setSharedDocuments] = useState<SharedDocument[]>([]);
+  const [teamActivity, setTeamActivity] = useState<ActivityItem[]>([]);
   const [loading, setLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState('chat');
-  const [selectedChannel, setSelectedChannel] = useState('general');
-  const [message, setMessage] = useState('');
-  const [searchQuery, setSearchQuery] = useState('');
-
-  // Fetch real team data from profiles and user_roles
-  const [teamMembers, setTeamMembers] = useState<TeamMember[]>([])
+  const [activeTab, setActiveTab] = useState('team');
 
   useEffect(() => {
-    fetchTeamMembers()
-  }, [])
-
-  const fetchTeamMembers = async () => {
-    try {
-      const { data: profiles, error } = await supabase
-        .from('profiles')
-        .select(`
-          id,
-          first_name,
-          last_name,
-          email,
-          phone_number
-        `)
-        .limit(20)
-
-      if (error) throw error
-
-      const realTeamMembers: TeamMember[] = (profiles || []).map(profile => ({
-        id: profile.id,
-        name: profile.first_name && profile.last_name 
-          ? `${profile.first_name} ${profile.last_name}`
-          : profile.email,
-        role: 'Team Member', // Would need to join with user_roles table
-        email: profile.email,
-        status: 'online', // Placeholder
-        avatar: `https://api.dicebear.com/7.x/avataaars/svg?seed=${profile.email}&size=32`
-      }))
-
-      setTeamMembers(realTeamMembers)
-    } catch (error) {
-      console.error('Error fetching team members:', error)
-      setTeamMembers([])
-    }
-  }
-
-  const channels = [
-    { id: 'general', name: 'General', unread: 0 },
-    { id: 'sales', name: 'Sales Team', unread: 0 },
-    { id: 'underwriting', name: 'Underwriting', unread: 0 },
-    { id: 'processing', name: 'Processing', unread: 0 },
-    { id: 'announcements', name: 'Announcements', unread: 0 }
-  ];
-
-  useEffect(() => {
-    setLoading(false);
+    fetchTeamData();
   }, []);
 
-  const handleSendMessage = () => {
+  const fetchTeamData = async () => {
+    try {
+      // Fetch team members from profiles
+      const { data: profiles, error: profilesError } = await supabase
+        .from('profiles')
+        .select('*')
+        .order('created_at', { ascending: false });
+
+      if (!profilesError && profiles) {
+        const members: TeamMember[] = profiles.map(profile => ({
+          id: profile.id,
+          name: `${profile.first_name || ''} ${profile.last_name || ''}`.trim() || 'Unknown User',
+          role: 'Team Member',
+          email: profile.email || 'No email',
+          status: 'offline' as const,
+          lastSeen: profile.updated_at
+        }));
+        setTeamMembers(members);
+      } else {
+        setTeamMembers([]);
+      }
+
+      // Fetch recent activity from audit logs
+      const { data: auditLogs, error: auditError } = await supabase
+        .from('audit_logs')
+        .select('*')
+        .order('created_at', { ascending: false })
+        .limit(20);
+
+      if (!auditError && auditLogs) {
+        const activities: ActivityItem[] = auditLogs.map(log => ({
+          id: log.id,
+          user_name: log.user_id || 'System',
+          action: log.action,
+          target: log.table_name,
+          timestamp: log.created_at,
+          type: log.action.includes('lead') ? 'lead_update' : 
+                log.action.includes('document') ? 'document_share' :
+                log.action.includes('stage') ? 'stage_change' : 'lead_update'
+        }));
+        setTeamActivity(activities);
+      } else {
+        setTeamActivity([]);
+      }
+
+      // Fetch shared documents
+      const { data: documents, error: documentsError } = await supabase
+        .from('lead_documents')
+        .select('*')
+        .order('created_at', { ascending: false })
+        .limit(10);
+
+      if (!documentsError && documents) {
+        const shared: SharedDocument[] = documents.map(doc => ({
+          id: doc.id,
+          name: doc.document_name,
+          type: doc.document_type || 'Document',
+          shared_by: doc.user_id || 'Unknown',
+          shared_at: doc.created_at,
+          access_level: 'view' as const,
+          department: 'General'
+        }));
+        setSharedDocuments(shared);
+      } else {
+        setSharedDocuments([]);
+      }
+
+      // Set empty chat messages for now
+      setChatMessages([]);
+
+    } catch (error) {
+      console.error('Error fetching team data:', error);
+      toast({
+        title: "Error",
+        description: "Failed to load team collaboration data",
+        variant: "destructive",
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleSendMessage = async () => {
     if (!message.trim()) return;
 
     const newMessage: ChatMessage = {
       id: Date.now().toString(),
-      content: message,
-      senderId: user?.id || '1',
-      senderName: user?.email?.split('@')[0] || 'You',
+      user_id: user?.id || '',
+      user_name: user?.user_metadata?.first_name || 'Anonymous',
+      message: message.trim(),
       timestamp: new Date().toISOString(),
-      type: 'text'
+      type: 'message'
     };
 
     setChatMessages(prev => [...prev, newMessage]);
-    setMessage('');
+    setMessage("");
 
     toast({
-      title: "Message sent",
-      description: "Your message has been sent to the team",
+      title: "Message Sent",
+      description: "Your message has been sent to the team.",
     });
   };
 
@@ -165,227 +205,155 @@ export function TeamCollaboration() {
       case 'online': return 'bg-green-500';
       case 'busy': return 'bg-red-500';
       case 'away': return 'bg-yellow-500';
-      case 'offline': return 'bg-gray-400';
       default: return 'bg-gray-400';
     }
   };
 
-  const getActivityIcon = (type: TeamActivity['type']) => {
+  const getActivityIcon = (type: ActivityItem['type']) => {
     switch (type) {
-      case 'message': return MessageSquare;
-      case 'document': return FileText;
-      case 'meeting': return Calendar;
-      case 'task': return CheckCircle;
-      case 'deal': return Star;
-      default: return AlertCircle;
-    }
-  };
-
-  const getPriorityColor = (priority: TeamActivity['priority']) => {
-    switch (priority) {
-      case 'high': return 'text-red-600 bg-red-50 border-red-200';
-      case 'medium': return 'text-yellow-600 bg-yellow-50 border-yellow-200';
-      case 'low': return 'text-green-600 bg-green-50 border-green-200';
-      default: return 'text-gray-600 bg-gray-50 border-gray-200';
+      case 'lead_update': return <Users className="h-4 w-4" />;
+      case 'document_share': return <FileText className="h-4 w-4" />;
+      case 'meeting_scheduled': return <Calendar className="h-4 w-4" />;
+      case 'stage_change': return <CheckCircle className="h-4 w-4" />;
+      default: return <Bell className="h-4 w-4" />;
     }
   };
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center h-96">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
-          <p>Loading collaboration workspace...</p>
-        </div>
+      <div className="flex items-center justify-center p-8">
+        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-gray-900"></div>
       </div>
     );
   }
 
   return (
     <div className="space-y-6">
-      {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-2xl font-bold">Team Collaboration</h2>
-          <p className="text-muted-foreground">Real-time communication and collaboration tools</p>
+          <h2 className="text-3xl font-bold tracking-tight">Team Collaboration</h2>
+          <p className="text-muted-foreground">
+            Coordinate with your team and share information across departments
+          </p>
         </div>
-        <div className="flex items-center gap-2">
-          <Button variant="outline" size="sm">
-            <Video className="h-4 w-4 mr-2" />
-            Start Meeting
+        <div className="flex items-center space-x-2">
+          <Button variant="outline">
+            <Settings className="h-4 w-4 mr-2" />
+            Settings
           </Button>
-          <Button variant="outline" size="sm">
+          <Button>
             <UserPlus className="h-4 w-4 mr-2" />
             Invite Member
           </Button>
         </div>
       </div>
 
-      <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-        <TabsList className="grid w-full grid-cols-5">
-          <TabsTrigger value="chat">Team Chat</TabsTrigger>
-          <TabsTrigger value="members">Team Members</TabsTrigger>
-          <TabsTrigger value="documents">Shared Files</TabsTrigger>
-          <TabsTrigger value="activity">Activity Feed</TabsTrigger>
-          <TabsTrigger value="calendar">Shared Calendar</TabsTrigger>
+      <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+        <TabsList className="grid w-full grid-cols-4">
+          <TabsTrigger value="team">Team ({teamMembers.length})</TabsTrigger>
+          <TabsTrigger value="chat">Chat ({chatMessages.length})</TabsTrigger>
+          <TabsTrigger value="documents">Documents ({sharedDocuments.length})</TabsTrigger>
+          <TabsTrigger value="activity">Activity ({teamActivity.length})</TabsTrigger>
         </TabsList>
 
-        <TabsContent value="chat" className="space-y-6">
-          <div className="grid gap-6 lg:grid-cols-4">
-            {/* Channels Sidebar */}
-            <Card className="lg:col-span-1">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <MessageCircle className="h-5 w-5" />
-                  Channels
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-2">
-                  {channels.map(channel => (
-                    <Button
-                      key={channel.id}
-                      variant={selectedChannel === channel.id ? "default" : "ghost"}
-                      className="w-full justify-between"
-                      onClick={() => setSelectedChannel(channel.id)}
-                    >
-                      <span># {channel.name}</span>
-                      {channel.unread > 0 && (
-                        <Badge variant="destructive" className="text-xs">
-                          {channel.unread}
-                        </Badge>
-                      )}
-                    </Button>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Chat Area */}
-            <Card className="lg:col-span-3">
-              <CardHeader>
-                <div className="flex items-center justify-between">
-                  <CardTitle># {channels.find(c => c.id === selectedChannel)?.name}</CardTitle>
-                  <div className="flex items-center gap-2">
-                    <Button variant="outline" size="sm">
-                      <Phone className="h-4 w-4" />
-                    </Button>
-                    <Button variant="outline" size="sm">
-                      <Video className="h-4 w-4" />
-                    </Button>
-                    <Button variant="outline" size="sm">
-                      <Settings className="h-4 w-4" />
-                    </Button>
+        <TabsContent value="team" className="space-y-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {teamMembers.map((member) => (
+              <Card key={member.id}>
+                <CardContent className="p-6">
+                  <div className="flex items-center space-x-4">
+                    <div className="relative">
+                      <Avatar>
+                        <AvatarImage src={member.avatar} />
+                        <AvatarFallback>
+                          {member.name.split(' ').map(n => n[0]).join('')}
+                        </AvatarFallback>
+                      </Avatar>
+                      <div className={`absolute -bottom-1 -right-1 w-4 h-4 rounded-full border-2 border-white ${getStatusColor(member.status)}`} />
+                    </div>
+                    <div className="flex-1">
+                      <h3 className="font-semibold">{member.name}</h3>
+                      <p className="text-sm text-muted-foreground">{member.role}</p>
+                      <Badge variant="outline" className="mt-1">
+                        {member.status}
+                      </Badge>
+                    </div>
                   </div>
-                </div>
-              </CardHeader>
-              <CardContent>
-                <ScrollArea className="h-96 mb-4">
+                  <Separator className="my-4" />
+                  <div className="flex items-center justify-between">
+                    <div className="flex space-x-2">
+                      <Button variant="outline" size="sm">
+                        <MessageCircle className="h-4 w-4" />
+                      </Button>
+                      <Button variant="outline" size="sm">
+                        <Phone className="h-4 w-4" />
+                      </Button>
+                      <Button variant="outline" size="sm">
+                        <Mail className="h-4 w-4" />
+                      </Button>
+                    </div>
+                    {member.lastSeen && (
+                      <span className="text-xs text-muted-foreground">
+                        {formatDistanceToNow(new Date(member.lastSeen))} ago
+                      </span>
+                    )}
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        </TabsContent>
+
+        <TabsContent value="chat" className="space-y-6">
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center">
+                <MessageCircle className="h-5 w-5 mr-2" />
+                Team Chat
+              </CardTitle>
+              <CardDescription>
+                Real-time communication with your team members
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <ScrollArea className="h-[400px] w-full border rounded p-4 mb-4">
+                {chatMessages.length > 0 ? (
                   <div className="space-y-4">
-                    {chatMessages.map(msg => (
-                      <div key={msg.id} className="flex items-start gap-3">
-                        <Avatar className="w-8 h-8">
-                          <AvatarFallback>{msg.senderName.charAt(0)}</AvatarFallback>
+                    {chatMessages.map((msg) => (
+                      <div key={msg.id} className="flex space-x-3">
+                        <Avatar className="h-8 w-8">
+                          <AvatarFallback className="text-xs">
+                            {msg.user_name.split(' ').map(n => n[0]).join('')}
+                          </AvatarFallback>
                         </Avatar>
                         <div className="flex-1">
-                          <div className="flex items-center gap-2 mb-1">
-                            <span className="font-medium text-sm">{msg.senderName}</span>
+                          <div className="flex items-center space-x-2">
+                            <span className="font-medium text-sm">{msg.user_name}</span>
                             <span className="text-xs text-muted-foreground">
-                              {formatDistanceToNow(new Date(msg.timestamp), { addSuffix: true })}
+                              {formatDistanceToNow(new Date(msg.timestamp))} ago
                             </span>
                           </div>
-                          <p className="text-sm">{msg.content}</p>
-                          {msg.attachments && (
-                            <div className="mt-2">
-                              {msg.attachments.map(file => (
-                                <div key={file} className="flex items-center gap-2 p-2 bg-gray-50 rounded">
-                                  <FileText className="h-4 w-4" />
-                                  <span className="text-sm">{file}</span>
-                                </div>
-                              ))}
-                            </div>
-                          )}
+                          <p className="text-sm mt-1">{msg.message}</p>
                         </div>
                       </div>
                     ))}
                   </div>
-                </ScrollArea>
-                
-                <div className="flex items-center gap-2">
-                  <Input
-                    placeholder="Type a message..."
-                    value={message}
-                    onChange={(e) => setMessage(e.target.value)}
-                    onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
-                  />
-                  <Button onClick={handleSendMessage}>
-                    <Send className="h-4 w-4" />
-                  </Button>
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-        </TabsContent>
-
-        <TabsContent value="members" className="space-y-6">
-          <Card>
-            <CardHeader>
-              <div className="flex items-center justify-between">
-                <CardTitle className="flex items-center gap-2">
-                  <Users className="h-5 w-5" />
-                  Team Members ({teamMembers.length})
-                </CardTitle>
-                <div className="flex items-center gap-2">
-                  <Input
-                    placeholder="Search members..."
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    className="w-64"
-                  />
-                  <Button variant="outline">
-                    <Filter className="h-4 w-4" />
-                  </Button>
-                </div>
-              </div>
-            </CardHeader>
-            <CardContent>
-              <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-                {teamMembers.map(member => (
-                  <Card key={member.id} className="p-4">
-                    <div className="flex items-center gap-3">
-                      <div className="relative">
-                        <Avatar>
-                          <AvatarImage src={member.avatar} />
-                          <AvatarFallback>{member.name.split(' ').map(n => n[0]).join('')}</AvatarFallback>
-                        </Avatar>
-                        <div className={`absolute -bottom-1 -right-1 w-3 h-3 rounded-full border-2 border-white ${getStatusColor(member.status)}`}></div>
-                      </div>
-                      <div className="flex-1">
-                        <h4 className="font-medium">{member.name}</h4>
-                        <p className="text-sm text-muted-foreground">{member.role}</p>
-                        <p className="text-xs text-muted-foreground">{member.email}</p>
-                        {member.status === 'offline' && member.lastSeen && (
-                          <p className="text-xs text-muted-foreground">
-                            Last seen {formatDistanceToNow(new Date(member.lastSeen), { addSuffix: true })}
-                          </p>
-                        )}
-                      </div>
-                    </div>
-                    <div className="flex items-center justify-between mt-3">
-                      <Badge variant={member.status === 'online' ? 'default' : 'secondary'}>
-                        {member.status}
-                      </Badge>
-                      <div className="flex gap-1">
-                        <Button size="sm" variant="outline">
-                          <MessageSquare className="h-3 w-3" />
-                        </Button>
-                        <Button size="sm" variant="outline">
-                          <Mail className="h-3 w-3" />
-                        </Button>
-                      </div>
-                    </div>
-                  </Card>
-                ))}
+                ) : (
+                  <div className="flex items-center justify-center h-full">
+                    <p className="text-muted-foreground">No messages yet. Start the conversation!</p>
+                  </div>
+                )}
+              </ScrollArea>
+              <div className="flex space-x-2">
+                <Input
+                  placeholder="Type your message..."
+                  value={message}
+                  onChange={(e) => setMessage(e.target.value)}
+                  onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
+                />
+                <Button onClick={handleSendMessage}>
+                  <Send className="h-4 w-4" />
+                </Button>
               </div>
             </CardContent>
           </Card>
@@ -394,48 +362,38 @@ export function TeamCollaboration() {
         <TabsContent value="documents" className="space-y-6">
           <Card>
             <CardHeader>
-              <div className="flex items-center justify-between">
-                <CardTitle className="flex items-center gap-2">
-                  <Share2 className="h-5 w-5" />
-                  Shared Documents
-                </CardTitle>
-                <Button>
-                  <Plus className="h-4 w-4 mr-2" />
-                  Share Document
-                </Button>
-              </div>
+              <CardTitle className="flex items-center">
+                <FileText className="h-5 w-5 mr-2" />
+                Shared Documents
+              </CardTitle>
+              <CardDescription>
+                Documents shared across departments and team members
+              </CardDescription>
             </CardHeader>
             <CardContent>
-              <div className="space-y-4">
-                {sharedDocuments.map(doc => (
-                  <div key={doc.id} className="flex items-center justify-between p-4 border rounded-lg">
-                    <div className="flex items-center gap-3">
-                      <FileText className="h-8 w-8 text-blue-600" />
-                      <div>
-                        <h4 className="font-medium">{doc.title}</h4>
-                        <p className="text-sm text-muted-foreground">
-                          Shared by {doc.sharedBy} • {formatDistanceToNow(new Date(doc.timestamp), { addSuffix: true })}
-                        </p>
-                        <div className="flex items-center gap-2 mt-1">
-                          <Badge variant="outline">{doc.type}</Badge>
-                          <Badge variant="outline">{doc.permissions}</Badge>
+              {sharedDocuments.length > 0 ? (
+                <div className="space-y-3">
+                  {sharedDocuments.map((doc) => (
+                    <div key={doc.id} className="flex items-center justify-between p-3 border rounded">
+                      <div className="flex-1">
+                        <div className="font-medium">{doc.name}</div>
+                        <div className="text-sm text-muted-foreground">
+                          {doc.type} • Shared by {doc.shared_by} • {formatDistanceToNow(new Date(doc.shared_at))} ago
                         </div>
                       </div>
+                      <div className="flex items-center space-x-2">
+                        <Badge variant="outline">{doc.access_level}</Badge>
+                        <Badge variant="secondary">{doc.department}</Badge>
+                        <Button variant="outline" size="sm">
+                          <Eye className="h-4 w-4" />
+                        </Button>
+                      </div>
                     </div>
-                    <div className="flex items-center gap-2">
-                      <Button size="sm" variant="outline">
-                        <Eye className="h-4 w-4" />
-                      </Button>
-                      <Button size="sm" variant="outline">
-                        <Edit className="h-4 w-4" />
-                      </Button>
-                      <Button size="sm" variant="outline">
-                        <Share2 className="h-4 w-4" />
-                      </Button>
-                    </div>
-                  </div>
-                ))}
-              </div>
+                  ))}
+                </div>
+              ) : (
+                <p className="text-muted-foreground">No shared documents available</p>
+              )}
             </CardContent>
           </Card>
         </TabsContent>
@@ -443,58 +401,43 @@ export function TeamCollaboration() {
         <TabsContent value="activity" className="space-y-6">
           <Card>
             <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Bell className="h-5 w-5" />
+              <CardTitle className="flex items-center">
+                <Clock className="h-5 w-5 mr-2" />
                 Team Activity Feed
               </CardTitle>
+              <CardDescription>
+                Recent actions and updates from team members
+              </CardDescription>
             </CardHeader>
             <CardContent>
-              <div className="space-y-4">
-                {teamActivity.map(activity => {
-                  const IconComponent = getActivityIcon(activity.type);
-                  return (
-                    <div key={activity.id} className={`flex items-start gap-3 p-3 border rounded-lg ${getPriorityColor(activity.priority)}`}>
-                      <IconComponent className="h-5 w-5 mt-0.5" />
-                      <div className="flex-1">
-                        <p className="text-sm">{activity.description}</p>
-                        <div className="flex items-center gap-2 mt-1">
-                          <span className="text-xs font-medium">{activity.user}</span>
-                          <span className="text-xs text-muted-foreground">
-                            {formatDistanceToNow(new Date(activity.timestamp), { addSuffix: true })}
-                          </span>
-                          <Badge variant="outline" className="text-xs">
-                            {activity.priority}
-                          </Badge>
+              {teamActivity.length > 0 ? (
+                <ScrollArea className="h-[400px]">
+                  <div className="space-y-4">
+                    {teamActivity.map((activity) => (
+                      <div key={activity.id} className="flex space-x-3 p-3 border rounded">
+                        <div className="flex-shrink-0 mt-1">
+                          {getActivityIcon(activity.type)}
                         </div>
+                        <div className="flex-1">
+                          <div className="text-sm">
+                            <span className="font-medium">{activity.user_name}</span>
+                            <span className="ml-2">{activity.action}</span>
+                            <span className="ml-2 text-muted-foreground">{activity.target}</span>
+                          </div>
+                          <div className="text-xs text-muted-foreground mt-1">
+                            {formatDistanceToNow(new Date(activity.timestamp))} ago
+                          </div>
+                        </div>
+                        <Badge variant="outline" className="text-xs">
+                          {activity.type.replace('_', ' ')}
+                        </Badge>
                       </div>
-                    </div>
-                  );
-                })}
-              </div>
-            </CardContent>
-          </Card>
-        </TabsContent>
-
-        <TabsContent value="calendar" className="space-y-6">
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Calendar className="h-5 w-5" />
-                Shared Team Calendar
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="text-center py-12">
-                <Calendar className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
-                <h3 className="text-lg font-medium mb-2">Shared Calendar</h3>
-                <p className="text-muted-foreground mb-4">
-                  View and manage team meetings, deadlines, and important events
-                </p>
-                <Button>
-                  <Plus className="h-4 w-4 mr-2" />
-                  Schedule Meeting
-                </Button>
-              </div>
+                    ))}
+                  </div>
+                </ScrollArea>
+              ) : (
+                <p className="text-muted-foreground">No recent activity</p>
+              )}
             </CardContent>
           </Card>
         </TabsContent>
