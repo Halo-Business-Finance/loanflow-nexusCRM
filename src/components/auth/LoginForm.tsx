@@ -17,7 +17,10 @@ export function LoginForm({ onToggleMode }: LoginFormProps) {
   const [password, setPassword] = useState('')
   const [isLoading, setIsLoading] = useState(false)
   const [isMicrosoftLoading, setIsMicrosoftLoading] = useState(false)
-  const { signIn } = useAuth()
+  const [showForgotPassword, setShowForgotPassword] = useState(false)
+  const [resetEmail, setResetEmail] = useState('')
+  const [isResetting, setIsResetting] = useState(false)
+  const { signIn, resetPassword } = useAuth()
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -90,6 +93,77 @@ export function LoginForm({ onToggleMode }: LoginFormProps) {
       // Only reset loading if we're not redirecting
       setTimeout(() => setIsMicrosoftLoading(false), 1000)
     }
+  }
+
+  const handleForgotPassword = async (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!resetEmail) {
+      toast.error('Please enter your email address')
+      return
+    }
+
+    setIsResetting(true)
+    try {
+      await resetPassword(resetEmail)
+      setShowForgotPassword(false)
+      setResetEmail('')
+    } catch (error) {
+      // Error handled in resetPassword function
+    } finally {
+      setIsResetting(false)
+    }
+  }
+
+  if (showForgotPassword) {
+    return (
+      <Card className="w-full">
+        <CardHeader className="space-y-1">
+          <CardTitle className="text-2xl text-center">Reset Password</CardTitle>
+          <CardDescription className="text-center">
+            Enter your email address and we'll send you a reset link
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <form onSubmit={handleForgotPassword} className="space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="reset-email">Email</Label>
+              <div className="relative">
+                <Mail className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                <Input
+                  id="reset-email"
+                  type="email"
+                  placeholder="Enter your email"
+                  className="pl-10"
+                  value={resetEmail}
+                  onChange={(e) => setResetEmail(e.target.value)}
+                  required
+                />
+              </div>
+            </div>
+            <Button 
+              type="submit" 
+              className="w-full" 
+              disabled={isResetting}
+            >
+              {isResetting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+              Send Reset Link
+            </Button>
+          </form>
+          <div className="text-center">
+            <Button
+              variant="ghost"
+              onClick={() => {
+                setShowForgotPassword(false)
+                setResetEmail('')
+              }}
+              className="text-sm"
+            >
+              Back to sign in
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
+    )
   }
 
   return (
@@ -188,15 +262,25 @@ export function LoginForm({ onToggleMode }: LoginFormProps) {
           </Button>
         </form>
 
-        <div className="mt-4 text-center">
+        <div className="mt-4 text-center space-y-2">
           <Button
-            variant="link"
-            onClick={onToggleMode}
-            className="text-sm text-muted-foreground"
+            variant="ghost"
+            onClick={() => setShowForgotPassword(true)}
+            className="text-sm text-muted-foreground hover:text-foreground"
             disabled={isLoading || isMicrosoftLoading}
           >
-            Don't have an account? Sign up
+            Forgot password?
           </Button>
+          <div>
+            <Button
+              variant="link"
+              onClick={onToggleMode}
+              className="text-sm text-muted-foreground"
+              disabled={isLoading || isMicrosoftLoading}
+            >
+              Don't have an account? Sign up
+            </Button>
+          </div>
         </div>
       </CardContent>
     </Card>
