@@ -276,8 +276,9 @@ export function FolderSidebar({ isOpen, onClose, activeFolder }: FolderSidebarPr
   return (
     <div 
       className={cn(
-        "w-80 bg-background border-r border-border shadow-lg transition-all duration-300 ease-in-out sticky top-0 h-screen overflow-hidden",
-        isOpen ? "translate-x-0 opacity-100" : "-translate-x-full opacity-0"
+        "w-80 bg-background border-r border-border shadow-lg transition-all duration-300 ease-in-out sticky top-0 self-start",
+        "h-screen overflow-hidden flex flex-col",
+        isOpen ? "translate-x-0 opacity-100" : "-translate-x-full opacity-0 w-0"
       )}
     >
       {/* Header - Fixed at top */}
@@ -296,7 +297,7 @@ export function FolderSidebar({ isOpen, onClose, activeFolder }: FolderSidebarPr
       </div>
 
       {/* Menu Items - Scrollable */}
-      <div className="p-4 space-y-1 h-full overflow-y-auto pb-20">
+      <div className="flex-1 p-4 space-y-1 overflow-y-auto">
         {menuItems.map((item) => renderMenuItem(item))}
       </div>
     </div>
