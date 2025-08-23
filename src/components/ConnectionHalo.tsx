@@ -14,22 +14,29 @@ export function ConnectionHalo() {
   const HaloButton = () => {
     console.log('HaloButton rendering')
     return (
-      <button
-        onClick={() => {
-          console.log('Halo button clicked!')
-          setIsOpen(true)
-        }}
-        className="relative w-12 h-12 rounded-full bg-blue-700 backdrop-blur-sm hover:bg-blue-600 group"
-        aria-label="Open connections"
-      >
-        {/* Outer glow ring */}
-        <div className="absolute inset-0 rounded-full bg-blue-700/20 group-hover:bg-blue-600/30" />
+      <div className="flex flex-col items-center gap-1">
+        <button
+          onClick={() => {
+            console.log('Halo button clicked!')
+            setIsOpen(true)
+          }}
+          className="relative w-12 h-12 rounded-full bg-blue-700 backdrop-blur-sm hover:bg-blue-600 group"
+          aria-label="Open connections"
+        >
+          {/* Outer glow ring */}
+          <div className="absolute inset-0 rounded-full bg-blue-700/20 group-hover:bg-blue-600/30" />
+          
+          {/* Center icon */}
+          <div className="absolute inset-0 flex items-center justify-center">
+            <Cloud className="w-7 h-7 text-white group-hover:text-white/90" fill="white" />
+          </div>
+        </button>
         
-        {/* Center icon */}
-        <div className="absolute inset-0 flex items-center justify-center">
-          <Cloud className="w-7 h-7 text-white group-hover:text-white/90" fill="white" />
-        </div>
-      </button>
+        {/* Applications text */}
+        <span className="text-xs font-medium text-blue-700 hover:text-blue-600 cursor-pointer" onClick={() => setIsOpen(true)}>
+          Applications
+        </span>
+      </div>
     )
   }
 
