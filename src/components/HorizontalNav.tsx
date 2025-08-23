@@ -243,22 +243,28 @@ export function HorizontalNav() {
 
       {/* Navigation Bar */}
       <div className="px-6 pb-0 relative">
-        <div className="border-b border-border absolute bottom-0 left-0 right-0 z-0"></div>
+        {/* Enhanced base line with gradient */}
+        <div className="absolute bottom-0 left-0 right-0 z-0 h-px bg-gradient-to-r from-transparent via-border to-transparent"></div>
         <nav className="flex items-center justify-center relative z-10">
-          <div className="flex items-center space-x-0">
+          <div className="flex items-center space-x-1">
           {/* Dashboard Button */}
           <Button 
             asChild
             variant="ghost" 
-            className={`relative flex items-center gap-2 px-5 py-3 text-sm font-medium transition-all duration-200 ${
+            className={`group relative flex items-center gap-2 px-6 py-4 text-sm font-medium transition-all duration-300 ${
               isActivePath("/")
-                ? 'text-primary bg-background border border-border rounded-t-lg border-b-transparent shadow-sm -mb-px z-20'
-                : 'text-muted-foreground hover:text-foreground hover:bg-muted/50 rounded-t-lg border-b border-transparent hover:border-border/50'
+                ? 'text-primary bg-gradient-to-b from-background to-background/95 border-x border-t border-border rounded-t-xl border-b-transparent shadow-lg shadow-primary/5 -mb-px z-20 before:absolute before:inset-x-0 before:-bottom-px before:h-px before:bg-gradient-to-r before:from-primary/0 before:via-primary/30 before:to-primary/0'
+                : 'text-muted-foreground hover:text-foreground hover:bg-gradient-to-b hover:from-muted/30 hover:to-muted/10 rounded-t-xl border border-transparent hover:border-border/30 hover:border-b-transparent hover:shadow-sm'
             }`}
           >
             <Link to="/" className="flex items-center gap-2">
-              <LayoutDashboard className="h-4 w-4" />
-              Dashboard
+              <LayoutDashboard className="h-4 w-4 transition-transform duration-200 group-hover:scale-110" />
+              <span className="relative">
+                Dashboard
+                {isActivePath("/") && (
+                  <div className="absolute -bottom-1 left-0 right-0 h-0.5 bg-gradient-to-r from-primary/0 via-primary to-primary/0 rounded-full"></div>
+                )}
+              </span>
             </Link>
           </Button>
 
@@ -267,23 +273,28 @@ export function HorizontalNav() {
             <DropdownMenuTrigger asChild>
               <Button 
                 variant="ghost" 
-                className={`relative flex items-center gap-2 px-5 py-3 text-sm font-medium transition-all duration-200 ${
+                className={`group relative flex items-center gap-2 px-6 py-4 text-sm font-medium transition-all duration-300 ${
                   leadsItems.some(item => isActivePath(item.path))
-                    ? 'text-primary bg-background border border-border rounded-t-lg border-b-transparent shadow-sm -mb-px z-20'
-                    : 'text-muted-foreground hover:text-foreground hover:bg-muted/50 rounded-t-lg border-b border-transparent hover:border-border/50'
+                    ? 'text-primary bg-gradient-to-b from-background to-background/95 border-x border-t border-border rounded-t-xl border-b-transparent shadow-lg shadow-primary/5 -mb-px z-20 before:absolute before:inset-x-0 before:-bottom-px before:h-px before:bg-gradient-to-r before:from-primary/0 before:via-primary/30 before:to-primary/0'
+                    : 'text-muted-foreground hover:text-foreground hover:bg-gradient-to-b hover:from-muted/30 hover:to-muted/10 rounded-t-xl border border-transparent hover:border-border/30 hover:border-b-transparent hover:shadow-sm'
                 }`}
               >
-                <Users className="h-4 w-4" />
-                Leads
-                <ChevronDown className="h-3 w-3 ml-1" />
+                <Users className="h-4 w-4 transition-transform duration-200 group-hover:scale-110" />
+                <span className="relative">
+                  Leads
+                  {leadsItems.some(item => isActivePath(item.path)) && (
+                    <div className="absolute -bottom-1 left-0 right-0 h-0.5 bg-gradient-to-r from-primary/0 via-primary to-primary/0 rounded-full"></div>
+                  )}
+                </span>
+                <ChevronDown className="h-3 w-3 ml-1 transition-transform duration-200 group-hover:rotate-180" />
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="start" className="w-48 bg-background border border-border shadow-lg z-50">
+            <DropdownMenuContent align="start" className="w-56 bg-background/95 backdrop-blur-sm border border-border shadow-xl z-50 rounded-lg">
               {leadsItems.map((item) => (
                 <DropdownMenuItem key={item.name} asChild>
-                  <Link to={item.path} className="flex items-center gap-2 w-full px-2 py-2 text-sm hover:bg-muted rounded-sm">
-                    <item.icon className="h-4 w-4" />
-                    {item.name}
+                  <Link to={item.path} className="flex items-center gap-3 w-full px-3 py-2.5 text-sm hover:bg-muted/50 rounded-md transition-colors duration-200">
+                    <item.icon className="h-4 w-4 text-muted-foreground" />
+                    <span>{item.name}</span>
                   </Link>
                 </DropdownMenuItem>
               ))}
@@ -295,23 +306,28 @@ export function HorizontalNav() {
             <DropdownMenuTrigger asChild>
               <Button 
                 variant="ghost" 
-                className={`relative flex items-center gap-2 px-5 py-3 text-sm font-medium transition-all duration-200 ${
+                className={`group relative flex items-center gap-2 px-6 py-4 text-sm font-medium transition-all duration-300 ${
                   borrowersItems.some(item => isActivePath(item.path))
-                    ? 'text-primary bg-background border border-border rounded-t-lg border-b-transparent shadow-sm -mb-px z-20'
-                    : 'text-muted-foreground hover:text-foreground hover:bg-muted/50 rounded-t-lg border-b border-transparent hover:border-border/50'
+                    ? 'text-primary bg-gradient-to-b from-background to-background/95 border-x border-t border-border rounded-t-xl border-b-transparent shadow-lg shadow-primary/5 -mb-px z-20 before:absolute before:inset-x-0 before:-bottom-px before:h-px before:bg-gradient-to-r before:from-primary/0 before:via-primary/30 before:to-primary/0'
+                    : 'text-muted-foreground hover:text-foreground hover:bg-gradient-to-b hover:from-muted/30 hover:to-muted/10 rounded-t-xl border border-transparent hover:border-border/30 hover:border-b-transparent hover:shadow-sm'
                 }`}
               >
-                <Building2 className="h-4 w-4" />
-                Existing Borrowers
-                <ChevronDown className="h-3 w-3 ml-1" />
+                <Building2 className="h-4 w-4 transition-transform duration-200 group-hover:scale-110" />
+                <span className="relative">
+                  Existing Borrowers
+                  {borrowersItems.some(item => isActivePath(item.path)) && (
+                    <div className="absolute -bottom-1 left-0 right-0 h-0.5 bg-gradient-to-r from-primary/0 via-primary to-primary/0 rounded-full"></div>
+                  )}
+                </span>
+                <ChevronDown className="h-3 w-3 ml-1 transition-transform duration-200 group-hover:rotate-180" />
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="start" className="w-48 bg-background border border-border shadow-lg z-50">
+            <DropdownMenuContent align="start" className="w-56 bg-background/95 backdrop-blur-sm border border-border shadow-xl z-50 rounded-lg">
               {borrowersItems.map((item) => (
                 <DropdownMenuItem key={item.name} asChild>
-                  <Link to={item.path} className="flex items-center gap-2 w-full px-2 py-2 text-sm hover:bg-muted rounded-sm">
-                    <item.icon className="h-4 w-4" />
-                    {item.name}
+                  <Link to={item.path} className="flex items-center gap-3 w-full px-3 py-2.5 text-sm hover:bg-muted/50 rounded-md transition-colors duration-200">
+                    <item.icon className="h-4 w-4 text-muted-foreground" />
+                    <span>{item.name}</span>
                   </Link>
                 </DropdownMenuItem>
               ))}
@@ -323,23 +339,28 @@ export function HorizontalNav() {
             <DropdownMenuTrigger asChild>
               <Button 
                 variant="ghost" 
-                className={`relative flex items-center gap-2 px-5 py-3 text-sm font-medium transition-all duration-200 ${
+                className={`group relative flex items-center gap-2 px-6 py-4 text-sm font-medium transition-all duration-300 ${
                   pipelineItems.some(item => isActivePath(item.path))
-                    ? 'text-primary bg-background border border-border rounded-t-lg border-b-transparent shadow-sm -mb-px z-20'
-                    : 'text-muted-foreground hover:text-foreground hover:bg-muted/50 rounded-t-lg border-b border-transparent hover:border-border/50'
+                    ? 'text-primary bg-gradient-to-b from-background to-background/95 border-x border-t border-border rounded-t-xl border-b-transparent shadow-lg shadow-primary/5 -mb-px z-20 before:absolute before:inset-x-0 before:-bottom-px before:h-px before:bg-gradient-to-r before:from-primary/0 before:via-primary/30 before:to-primary/0'
+                    : 'text-muted-foreground hover:text-foreground hover:bg-gradient-to-b hover:from-muted/30 hover:to-muted/10 rounded-t-xl border border-transparent hover:border-border/30 hover:border-b-transparent hover:shadow-sm'
                 }`}
               >
-                <Target className="h-4 w-4" />
-                Pipeline
-                <ChevronDown className="h-3 w-3 ml-1" />
+                <Target className="h-4 w-4 transition-transform duration-200 group-hover:scale-110" />
+                <span className="relative">
+                  Pipeline
+                  {pipelineItems.some(item => isActivePath(item.path)) && (
+                    <div className="absolute -bottom-1 left-0 right-0 h-0.5 bg-gradient-to-r from-primary/0 via-primary to-primary/0 rounded-full"></div>
+                  )}
+                </span>
+                <ChevronDown className="h-3 w-3 ml-1 transition-transform duration-200 group-hover:rotate-180" />
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="start" className="w-48 bg-background border border-border shadow-lg z-50">
+            <DropdownMenuContent align="start" className="w-56 bg-background/95 backdrop-blur-sm border border-border shadow-xl z-50 rounded-lg">
               {pipelineItems.map((item) => (
                 <DropdownMenuItem key={item.name} asChild>
-                  <Link to={item.path} className="flex items-center gap-2 w-full px-2 py-2 text-sm hover:bg-muted rounded-sm">
-                    <item.icon className="h-4 w-4" />
-                    {item.name}
+                  <Link to={item.path} className="flex items-center gap-3 w-full px-3 py-2.5 text-sm hover:bg-muted/50 rounded-md transition-colors duration-200">
+                    <item.icon className="h-4 w-4 text-muted-foreground" />
+                    <span>{item.name}</span>
                   </Link>
                 </DropdownMenuItem>
               ))}
@@ -351,23 +372,28 @@ export function HorizontalNav() {
             <DropdownMenuTrigger asChild>
               <Button 
                 variant="ghost" 
-                className={`relative flex items-center gap-2 px-5 py-3 text-sm font-medium transition-all duration-200 ${
+                className={`group relative flex items-center gap-2 px-6 py-4 text-sm font-medium transition-all duration-300 ${
                   underwriterItems.some(item => isActivePath(item.path))
-                    ? 'text-primary bg-background border border-border rounded-t-lg border-b-transparent shadow-sm -mb-px z-20'
-                    : 'text-muted-foreground hover:text-foreground hover:bg-muted/50 rounded-t-lg border-b border-transparent hover:border-border/50'
+                    ? 'text-primary bg-gradient-to-b from-background to-background/95 border-x border-t border-border rounded-t-xl border-b-transparent shadow-lg shadow-primary/5 -mb-px z-20 before:absolute before:inset-x-0 before:-bottom-px before:h-px before:bg-gradient-to-r before:from-primary/0 before:via-primary/30 before:to-primary/0'
+                    : 'text-muted-foreground hover:text-foreground hover:bg-gradient-to-b hover:from-muted/30 hover:to-muted/10 rounded-t-xl border border-transparent hover:border-border/30 hover:border-b-transparent hover:shadow-sm'
                 }`}
               >
-                <Shield className="h-4 w-4" />
-                Underwriter
-                <ChevronDown className="h-3 w-3 ml-1" />
+                <Shield className="h-4 w-4 transition-transform duration-200 group-hover:scale-110" />
+                <span className="relative">
+                  Underwriter
+                  {underwriterItems.some(item => isActivePath(item.path)) && (
+                    <div className="absolute -bottom-1 left-0 right-0 h-0.5 bg-gradient-to-r from-primary/0 via-primary to-primary/0 rounded-full"></div>
+                  )}
+                </span>
+                <ChevronDown className="h-3 w-3 ml-1 transition-transform duration-200 group-hover:rotate-180" />
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="start" className="w-48 bg-background border border-border shadow-lg z-50">
+            <DropdownMenuContent align="start" className="w-56 bg-background/95 backdrop-blur-sm border border-border shadow-xl z-50 rounded-lg">
               {underwriterItems.map((item) => (
                 <DropdownMenuItem key={item.name} asChild>
-                  <Link to={item.path} className="flex items-center gap-2 w-full px-2 py-2 text-sm hover:bg-muted rounded-sm">
-                    <item.icon className="h-4 w-4" />
-                    {item.name}
+                  <Link to={item.path} className="flex items-center gap-3 w-full px-3 py-2.5 text-sm hover:bg-muted/50 rounded-md transition-colors duration-200">
+                    <item.icon className="h-4 w-4 text-muted-foreground" />
+                    <span>{item.name}</span>
                   </Link>
                 </DropdownMenuItem>
               ))}
@@ -379,23 +405,28 @@ export function HorizontalNav() {
             <DropdownMenuTrigger asChild>
               <Button 
                 variant="ghost" 
-                className={`relative flex items-center gap-2 px-5 py-3 text-sm font-medium transition-all duration-200 ${
+                className={`group relative flex items-center gap-2 px-6 py-4 text-sm font-medium transition-all duration-300 ${
                   activitiesItems.some(item => isActivePath(item.path))
-                    ? 'text-primary bg-background border border-border rounded-t-lg border-b-transparent shadow-sm -mb-px z-20'
-                    : 'text-muted-foreground hover:text-foreground hover:bg-muted/50 rounded-t-lg border-b border-transparent hover:border-border/50'
+                    ? 'text-primary bg-gradient-to-b from-background to-background/95 border-x border-t border-border rounded-t-xl border-b-transparent shadow-lg shadow-primary/5 -mb-px z-20 before:absolute before:inset-x-0 before:-bottom-px before:h-px before:bg-gradient-to-r before:from-primary/0 before:via-primary/30 before:to-primary/0'
+                    : 'text-muted-foreground hover:text-foreground hover:bg-gradient-to-b hover:from-muted/30 hover:to-muted/10 rounded-t-xl border border-transparent hover:border-border/30 hover:border-b-transparent hover:shadow-sm'
                 }`}
               >
-                <Activity className="h-4 w-4" />
-                Activities
-                <ChevronDown className="h-3 w-3 ml-1" />
+                <Activity className="h-4 w-4 transition-transform duration-200 group-hover:scale-110" />
+                <span className="relative">
+                  Activities
+                  {activitiesItems.some(item => isActivePath(item.path)) && (
+                    <div className="absolute -bottom-1 left-0 right-0 h-0.5 bg-gradient-to-r from-primary/0 via-primary to-primary/0 rounded-full"></div>
+                  )}
+                </span>
+                <ChevronDown className="h-3 w-3 ml-1 transition-transform duration-200 group-hover:rotate-180" />
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="start" className="w-48 bg-background border border-border shadow-lg z-50">
+            <DropdownMenuContent align="start" className="w-56 bg-background/95 backdrop-blur-sm border border-border shadow-xl z-50 rounded-lg">
               {activitiesItems.map((item) => (
                 <DropdownMenuItem key={item.name} asChild>
-                  <Link to={item.path} className="flex items-center gap-2 w-full px-2 py-2 text-sm hover:bg-muted rounded-sm">
-                    <item.icon className="h-4 w-4" />
-                    {item.name}
+                  <Link to={item.path} className="flex items-center gap-3 w-full px-3 py-2.5 text-sm hover:bg-muted/50 rounded-md transition-colors duration-200">
+                    <item.icon className="h-4 w-4 text-muted-foreground" />
+                    <span>{item.name}</span>
                   </Link>
                 </DropdownMenuItem>
               ))}
@@ -407,23 +438,28 @@ export function HorizontalNav() {
             <DropdownMenuTrigger asChild>
               <Button 
                 variant="ghost" 
-                className={`relative flex items-center gap-2 px-5 py-3 text-sm font-medium transition-all duration-200 ${
+                className={`group relative flex items-center gap-2 px-6 py-4 text-sm font-medium transition-all duration-300 ${
                   securityItems.some(item => isActivePath(item.path))
-                    ? 'text-primary bg-background border border-border rounded-t-lg border-b-transparent shadow-sm -mb-px z-20'
-                    : 'text-muted-foreground hover:text-foreground hover:bg-muted/50 rounded-t-lg border-b border-transparent hover:border-border/50'
+                    ? 'text-primary bg-gradient-to-b from-background to-background/95 border-x border-t border-border rounded-t-xl border-b-transparent shadow-lg shadow-primary/5 -mb-px z-20 before:absolute before:inset-x-0 before:-bottom-px before:h-px before:bg-gradient-to-r before:from-primary/0 before:via-primary/30 before:to-primary/0'
+                    : 'text-muted-foreground hover:text-foreground hover:bg-gradient-to-b hover:from-muted/30 hover:to-muted/10 rounded-t-xl border border-transparent hover:border-border/30 hover:border-b-transparent hover:shadow-sm'
                 }`}
               >
-                <Shield className="h-4 w-4" />
-                Security
-                <ChevronDown className="h-3 w-3 ml-1" />
+                <Shield className="h-4 w-4 transition-transform duration-200 group-hover:scale-110" />
+                <span className="relative">
+                  Security
+                  {securityItems.some(item => isActivePath(item.path)) && (
+                    <div className="absolute -bottom-1 left-0 right-0 h-0.5 bg-gradient-to-r from-primary/0 via-primary to-primary/0 rounded-full"></div>
+                  )}
+                </span>
+                <ChevronDown className="h-3 w-3 ml-1 transition-transform duration-200 group-hover:rotate-180" />
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="start" className="w-48 bg-background border border-border shadow-lg z-50">
+            <DropdownMenuContent align="start" className="w-56 bg-background/95 backdrop-blur-sm border border-border shadow-xl z-50 rounded-lg">
               {securityItems.map((item) => (
                 <DropdownMenuItem key={item.name} asChild>
-                  <Link to={item.path} className="flex items-center gap-2 w-full px-2 py-2 text-sm hover:bg-muted rounded-sm">
-                    <item.icon className="h-4 w-4" />
-                    {item.name}
+                  <Link to={item.path} className="flex items-center gap-3 w-full px-3 py-2.5 text-sm hover:bg-muted/50 rounded-md transition-colors duration-200">
+                    <item.icon className="h-4 w-4 text-muted-foreground" />
+                    <span>{item.name}</span>
                   </Link>
                 </DropdownMenuItem>
               ))}
@@ -435,23 +471,28 @@ export function HorizontalNav() {
             <DropdownMenuTrigger asChild>
               <Button 
                 variant="ghost" 
-                className={`relative flex items-center gap-2 px-5 py-3 text-sm font-medium transition-all duration-200 ${
+                className={`group relative flex items-center gap-2 px-6 py-4 text-sm font-medium transition-all duration-300 ${
                   enterpriseItems.some(item => isActivePath(item.path.split('#')[0]))
-                    ? 'text-primary bg-background border border-border rounded-t-lg border-b-transparent shadow-sm -mb-px z-20'
-                    : 'text-muted-foreground hover:text-foreground hover:bg-muted/50 rounded-t-lg border-b border-transparent hover:border-border/50'
+                    ? 'text-primary bg-gradient-to-b from-background to-background/95 border-x border-t border-border rounded-t-xl border-b-transparent shadow-lg shadow-primary/5 -mb-px z-20 before:absolute before:inset-x-0 before:-bottom-px before:h-px before:bg-gradient-to-r before:from-primary/0 before:via-primary/30 before:to-primary/0'
+                    : 'text-muted-foreground hover:text-foreground hover:bg-gradient-to-b hover:from-muted/30 hover:to-muted/10 rounded-t-xl border border-transparent hover:border-border/30 hover:border-b-transparent hover:shadow-sm'
                 }`}
               >
-                <Building2 className="h-4 w-4" />
-                Enterprise
-                <ChevronDown className="h-3 w-3 ml-1" />
+                <Building2 className="h-4 w-4 transition-transform duration-200 group-hover:scale-110" />
+                <span className="relative">
+                  Enterprise
+                  {enterpriseItems.some(item => isActivePath(item.path.split('#')[0])) && (
+                    <div className="absolute -bottom-1 left-0 right-0 h-0.5 bg-gradient-to-r from-primary/0 via-primary to-primary/0 rounded-full"></div>
+                  )}
+                </span>
+                <ChevronDown className="h-3 w-3 ml-1 transition-transform duration-200 group-hover:rotate-180" />
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="start" className="w-48 bg-background border border-border shadow-lg z-50">
+            <DropdownMenuContent align="start" className="w-56 bg-background/95 backdrop-blur-sm border border-border shadow-xl z-50 rounded-lg">
               {enterpriseItems.map((item) => (
                 <DropdownMenuItem key={item.name} asChild>
-                  <Link to={item.path} className="flex items-center gap-2 w-full px-2 py-2 text-sm hover:bg-muted rounded-sm">
-                    <item.icon className="h-4 w-4" />
-                    {item.name}
+                  <Link to={item.path} className="flex items-center gap-3 w-full px-3 py-2.5 text-sm hover:bg-muted/50 rounded-md transition-colors duration-200">
+                    <item.icon className="h-4 w-4 text-muted-foreground" />
+                    <span>{item.name}</span>
                   </Link>
                 </DropdownMenuItem>
               ))}
