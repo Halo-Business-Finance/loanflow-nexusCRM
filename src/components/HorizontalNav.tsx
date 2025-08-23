@@ -143,7 +143,7 @@ export function HorizontalNav() {
         <div className="flex items-center justify-between">
           {/* Left Side - Logo */}
           <div className="flex items-center">
-            <img src="/lovable-uploads/e43cc6c0-ece4-497a-a3c6-e2e46d114c45.png" alt="Logo" className="h-48 w-auto" />
+            <img src="/lovable-uploads/e43cc6c0-ece4-497a-a3c6-e2e46d114c45.png" alt="Logo" className="h-60 w-auto" />
           </div>
 
           {/* Center - Welcome Message */}
