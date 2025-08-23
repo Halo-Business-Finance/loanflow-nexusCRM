@@ -20,46 +20,26 @@ export function ConnectionHalo() {
             console.log('Halo button clicked!')
             setIsOpen(true)
           }}
-          className="relative w-12 h-12 rounded-full bg-blue-700 backdrop-blur-sm hover:bg-blue-600 group"
+          className="relative w-12 h-12 rounded-full overflow-hidden backdrop-blur-sm hover:opacity-90 group"
+          style={{
+            background: `
+              linear-gradient(45deg, #1e40af 25%, transparent 25%), 
+              linear-gradient(-45deg, #1e40af 25%, transparent 25%), 
+              linear-gradient(45deg, transparent 75%, #1e40af 75%), 
+              linear-gradient(-45deg, transparent 75%, #1e40af 75%)
+            `,
+            backgroundSize: '6px 6px',
+            backgroundPosition: '0 0, 0 3px, 3px -3px, -3px 0px',
+            backgroundColor: '#3b82f6'
+          }}
           aria-label="Open connections"
         >
           {/* Outer glow ring */}
           <div className="absolute inset-0 rounded-full bg-blue-700/20 group-hover:bg-blue-600/30" />
           
-          {/* Center icon with waffle effect */}
+          {/* Center icon */}
           <div className="absolute inset-0 flex items-center justify-center">
-            <svg 
-              className="w-7 h-7 text-white group-hover:text-white/90" 
-              viewBox="0 0 24 24" 
-              fill="currentColor"
-            >
-              {/* Cloud outline */}
-              <path d="M19 18H6a4 4 0 0 1-1.85-7.53A5 5 0 0 1 14.5 6a3.5 3.5 0 0 1 4.5 3.3A3 3 0 0 1 19 18Z" stroke="currentColor" strokeWidth="1.5" fill="none"/>
-              
-              {/* Waffle grid pattern inside cloud */}
-              <g fill="currentColor">
-                {/* Top row */}
-                <rect x="7" y="9" width="1.5" height="1.5" rx="0.3"/>
-                <rect x="9.25" y="9" width="1.5" height="1.5" rx="0.3"/>
-                <rect x="11.5" y="9" width="1.5" height="1.5" rx="0.3"/>
-                <rect x="13.75" y="9" width="1.5" height="1.5" rx="0.3"/>
-                <rect x="16" y="9" width="1.5" height="1.5" rx="0.3"/>
-                
-                {/* Middle row */}
-                <rect x="7" y="11.25" width="1.5" height="1.5" rx="0.3"/>
-                <rect x="9.25" y="11.25" width="1.5" height="1.5" rx="0.3"/>
-                <rect x="11.5" y="11.25" width="1.5" height="1.5" rx="0.3"/>
-                <rect x="13.75" y="11.25" width="1.5" height="1.5" rx="0.3"/>
-                <rect x="16" y="11.25" width="1.5" height="1.5" rx="0.3"/>
-                
-                {/* Bottom row */}
-                <rect x="7" y="13.5" width="1.5" height="1.5" rx="0.3"/>
-                <rect x="9.25" y="13.5" width="1.5" height="1.5" rx="0.3"/>
-                <rect x="11.5" y="13.5" width="1.5" height="1.5" rx="0.3"/>
-                <rect x="13.75" y="13.5" width="1.5" height="1.5" rx="0.3"/>
-                <rect x="16" y="13.5" width="1.5" height="1.5" rx="0.3"/>
-              </g>
-            </svg>
+            <Cloud className="w-7 h-7 text-white group-hover:text-white/90" fill="white" />
           </div>
         </button>
         
