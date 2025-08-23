@@ -276,12 +276,12 @@ export function FolderSidebar({ isOpen, onClose, activeFolder }: FolderSidebarPr
   return (
     <div 
       className={cn(
-        "w-80 bg-background border-r border-border shadow-lg transition-all duration-300 ease-in-out",
+        "w-80 bg-background border-r border-border shadow-lg transition-all duration-300 ease-in-out sticky top-0 h-screen overflow-hidden",
         isOpen ? "translate-x-0 opacity-100" : "-translate-x-full opacity-0"
       )}
     >
-      {/* Header */}
-      <div className="flex items-center justify-between p-4 border-b border-border bg-gradient-to-r from-blue-600 to-blue-700">
+      {/* Header - Fixed at top */}
+      <div className="flex items-center justify-between p-4 border-b border-border bg-gradient-to-r from-blue-600 to-blue-700 flex-shrink-0">
         <h2 className="text-lg font-semibold text-white capitalize">
           {activeFolder} Menu
         </h2>
@@ -295,8 +295,8 @@ export function FolderSidebar({ isOpen, onClose, activeFolder }: FolderSidebarPr
         </Button>
       </div>
 
-      {/* Menu Items */}
-      <div className="p-4 space-y-1 max-h-[calc(100vh-200px)] overflow-y-auto">
+      {/* Menu Items - Scrollable */}
+      <div className="p-4 space-y-1 h-full overflow-y-auto pb-20">
         {menuItems.map((item) => renderMenuItem(item))}
       </div>
     </div>
